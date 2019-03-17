@@ -4,7 +4,7 @@ title: Welcome to Matt Sosna's site!
 ---
 
 ## Testing out the code blocks and syntax highlighting
-Let's keep trying things...
+Let's keep trying things... trying again.
 
 ![_config.yml](https://raw.githubusercontent.com/mgsosna/mgsosna.github.io/images/config.png)
 
