@@ -18,8 +18,12 @@ import numpy as np
 np.random.seed(1)
 
 # Create dataframe
-df = pd.DataFrame({'salary': np.round(np.random.uniform(10000, 100000, 100), 2),
-                   'food_perc': np.round(np.random.uniform(0.1, 0.9, 100), 2)})
+df = pd.DataFrame({'salary': np.random.uniform(10000, 100000, 100),
+                   'food_perc': np.random.uniform(0.1, 0.9, 100)})
+
+# Try some other things
+for i, col in enumerate(list(df)):
+    print(f"Col {i}: {col})
 
 ```
 
