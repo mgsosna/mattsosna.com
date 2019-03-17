@@ -10,7 +10,7 @@ We're just going to test out some ideas. Woo hoo!
 
 A code snippit just for fun:
 
-```python
+```python linenos
 import pandas as pd
 import numpy as np
 
