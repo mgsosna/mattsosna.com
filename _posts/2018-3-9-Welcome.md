@@ -10,7 +10,7 @@ We're just going to test out some ideas. Woo hoo!
 
 A code snippit just for fun:
 
-{% highlight python linenos %}
+```python
 import pandas as pd
 import numpy as np
 
@@ -25,7 +25,7 @@ df = pd.DataFrame({'salary': np.random.uniform(10000, 100000, 100),
 for i, col in enumerate(list(df)):
     print(f"Col {i}: {col}")
 
-{% endhighlight %}
+```
 
 When you look at the code above, you can see that `df` is a variable. You can access the columns with `df['salary']` and `df['food_perc']`.
 
