@@ -23,7 +23,7 @@ df = pd.DataFrame({'salary': np.random.uniform(10000, 100000, 100),
 
 # Try some other things
 for i, col in enumerate(list(df)):
-    print(f"Col {i}: {col})
+    print(f"Col {i}: {col}")
 
 ```
 
