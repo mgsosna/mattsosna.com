@@ -3,8 +3,8 @@ layout: post
 title: Welcome to Matt Sosna's site!
 ---
 
-## Welcome
-We're just going to test out some ideas. Woo hoo!
+## Testing out the code blocks and syntax highlighting
+Let's keep trying things...
 
 ![_config.yml](https://raw.githubusercontent.com/mgsosna/mgsosna.github.io/images/config.png)
 
