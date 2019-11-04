@@ -38,7 +38,7 @@ code {
 .highlight .k { color: #F92672; font-weight: bold } /* Keyword */ // default: #859900
 .highlight .l { color: #000000 } /* Literal */    // default: 93A1A1
 .highlight .n { color: #000000 } /* Name */       // default: #93A1A1
-.highlight .o { color: #859900 } /* Operator */
+.highlight .o { color: #F92672 } /* Operator */   // default: 859900 (gray)
 .highlight .x { color: #CB4B16 } /* Other */
 .highlight .p { color: #000000 } /* Punctuation */  // default: #93A1A1
 .highlight .cm { color: #586E75 } /* Comment.Multiline */
@@ -87,7 +87,9 @@ code {
 .highlight .sb { color: #586E75 } /* Literal.String.Backtick */
 .highlight .sc { color: #FF8C00 } /* Literal.String.Char */
 .highlight .sd { color: #93A1A1 } /* Literal.String.Doc */
-.highlight .s2 { color: #FF8C00 } /* Literal.String.Double */    // default: 2AA198
+
+// R's str color. #FF8C00 = nice orange. Default: 2AA198
+.highlight .s2 { color: #008A9C } /* Literal.String.Double */
 .highlight .se { color: #CB4B16 } /* Literal.String.Escape */
 .highlight .sh { color: #93A1A1 } /* Literal.String.Heredoc */
 .highlight .si { color: #FF8C00 } /* Literal.String.Interpol */  // default: 2AA198
