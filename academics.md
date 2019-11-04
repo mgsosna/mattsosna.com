@@ -7,11 +7,11 @@ permalink: /academics/
 Here is information about my academic life.
 
 ## Publications
-1. **Sosna MMG**, Twomey CR, Bak-Coleman J, Poel W, Daniels BC, Romanczuk P, Couzin ID. Individual and collective encoding of risk in animal groups. _**in review.**_
+1. **Sosna MMG**, Twomey CR, Bak-Coleman J, Poel W, Daniels BC, Romanczuk P, Couzin ID. [Individual and collective encoding of risk in animal groups.](https://www.pnas.org/content/pnas/early/2019/09/17/1905585116.full.pdf) _**Proceedings of the National Academy of Sciences.**_ 116(41): 20556-20561
 
-2. Twomey CR, Hartnett AT, **Grobis MM**, Romanczuk P. Searching for structure in collective systems. _**in review.**_
+2. Twomey CR, Hartnett AT, **Sosna MMG**, Romanczuk P. Searching for structure in collective systems. _**in review.**_
 
-3. **Sosna MMG**, Twomey CR, Davidson JD, Sridhar VH, Couzin ID. Vision as a basis for group structure. _**in prep.**_
+3. **Sosna MMG**, Davidson JD, Twomey CR, Sridhar VH, Couzin ID. Vision as a basis for group structure. _**in prep.**_
 
 4. **Sosna MMG**, Jolles JW, Mazué GPF, Twomey CR, Bak-Coleman J, Rubenstein DI, Couzin ID. Quantifying the spatial distribution of risk in animal groups. _**in prep.**_
 
