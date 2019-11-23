@@ -71,7 +71,7 @@ code {
 .highlight .nd { color: #268BD2 } /* Name.Decorator */
 .highlight .ni { color: #CB4B16 } /* Name.Entity */
 .highlight .ne { color: #CB4B16 } /* Name.Exception */
-.highlight .nf { color: #268BD2 } /* Name.Function */
+.highlight .nf { color: #F92672; font-weight: bold } /* Name.Function */           // #268BD2
 .highlight .nl { color: #F92672 } /* Name.Label */              // default: #93A1A1
 .highlight .nn { color: #000000 } /* Name.Namespace */          // default: #93A1A1
 .highlight .nx { color: #555 } /* Name.Other */
