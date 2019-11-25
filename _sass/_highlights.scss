@@ -19,6 +19,7 @@
   color: #ccc;
   display:inline-block;
   padding: 0 5px;
+  padding-right: 1em;
   border-right:1px solid #ccc;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -30,7 +31,7 @@
 
 code {
   font-family:'Bitstream Vera Sans Mono','Courier', monospace;
-  background-color: #eeeeee;
+  background-color: #eeeeee; // for inline code
 }
 
 .highlight .c { color: #586E75 } /* Comment */
