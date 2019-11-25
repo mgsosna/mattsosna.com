@@ -18,9 +18,9 @@
 .lineno {
   color: #3e6e7d; // #ccc
   display:inline-block;
-  padding: 0 5px;
-  padding-right: 0.5em;
-  margin-right: 16px;
+  // padding: 0 5px;
+  padding-right: 0.5em; // between lineno and border
+  margin-right: 16px;  // between border and code
   border-right:1px solid #3e6e7d; // #ccc
   -webkit-touch-callout: none;
   -webkit-user-select: none;
