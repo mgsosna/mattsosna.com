@@ -13,6 +13,7 @@
 .highlight .highlight {
   border: none;
   box-shadow: none;
+  vertical-align: top;
 }
 
 .lineno {
@@ -33,7 +34,6 @@
 code {
   font-family:'Bitstream Vera Sans Mono','Courier', monospace;
   background-color: #eeeeee; // for inline code
-  vertical-align: top;
 }
 
 .highlight .c { color: #586E75 } /* Comment */
