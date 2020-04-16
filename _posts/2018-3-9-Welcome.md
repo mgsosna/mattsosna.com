@@ -3,12 +3,9 @@ layout: post
 title: Welcome to Matt Sosna's site!
 header: https://www.american.edu/spa/data-science/images/datascience-hero.jpg
 ---
-Change made
 
 ## Testing out the code blocks and syntax highlighting
 Let's keep trying things... trying again.
-
-![](https://raw.githubusercontent.com/mgsosna/mgsosna.github.io/master/images/config.png)
 
 A code snippit just for fun:
 
