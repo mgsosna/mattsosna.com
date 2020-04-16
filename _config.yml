@@ -15,11 +15,7 @@ avatar: https://raw.githubusercontent.com/mgsosna/mgsosna.github.io/master/image
 # Flags below are optional
 #
 
-header: yes
-header_sm: images/datascience-hero.jpg
-header_med: images/datascience-hero.jpg
-header_large: images/datascience-hero.jpg
-header_xl: images/datascience-hero.jpg
+header: images/datascience-hero.jpg
 
 # Includes an icon in the footer for each username you enter
 footer-links:
