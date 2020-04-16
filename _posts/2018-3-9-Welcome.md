@@ -1,9 +1,9 @@
 ---
 layout: post
 title: Welcome to Matt Sosna's site!
-image: datascience-hero.jpg
+header: /images/datascience-hero.jpg
 ---
-
+Change made
 ## Testing out the code blocks and syntax highlighting
 Let's keep trying things... trying again.
 
