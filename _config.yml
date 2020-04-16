@@ -6,7 +6,7 @@
 name: Matt (Grobis) Sosna
 
 # Short bio or description (displayed in the header)
-description: Data Scientist at Aquicore
+description: Data dude
 
 # URL of your avatar or profile pic (you could use your GitHub profile pic)
 avatar: https://raw.githubusercontent.com/mgsosna/mgsosna.github.io/master/images/Matt_Sosna.png
@@ -23,7 +23,7 @@ footer-links:
   flickr:
   github: mgsosna
   instagram:
-  linkedin:
+  linkedin: /in/matt-sosna-ph-d-b2a18b34/
   pinterest:
   rss: # just type anything here for a working RSS icon
   twitter: mgsosna
@@ -41,7 +41,7 @@ google_analytics:
 
 # Your website URL (e.g. http://barryclark.github.io or http://www.barryclark.co)
 # Used for Sitemap.xml and your RSS feed
-url:
+url: https://mgsosna.github.io
 
 # If you're hosting your site at a Project repository on GitHub pages
 # (http://yourusername.github.io/repository-name)
