@@ -3,6 +3,7 @@ layout: page
 title: About
 permalink: /about/
 ---
+<img align="left" src="{{ site.avatar }}" height=200px width=200px>
 
 My name is Matt. I'm a data scientist passionate about data-driven decisions and sustainability. I work as a data scientist at [Aquicore](https://www.aquicore.com), where I help optimize energy usage for buildings to cut costs and carbon emissions. I am 2019 alum of the [Clean Energy Leadership Institute](https://cleanenergyleaders.org) fellowship, where I worked to bring a data science perspective to discussions on how to decarbonize our economy and mitigate the worst effects of climate change.
 
