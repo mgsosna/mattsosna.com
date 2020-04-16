@@ -7,7 +7,7 @@ image: datascience-hero.jpg
 ## Testing out the code blocks and syntax highlighting
 Let's keep trying things... trying again.
 
-![_config.yml](https://raw.githubusercontent.com/mgsosna/mgsosna.github.io/master/images/config.png)
+![](https://raw.githubusercontent.com/mgsosna/mgsosna.github.io/master/images/config.png)
 
 A code snippit just for fun:
 
