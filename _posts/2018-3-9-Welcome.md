@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Welcome to Matt Sosna's site!
+image: datascience-hero.jpg
 ---
 
 ## Testing out the code blocks and syntax highlighting
