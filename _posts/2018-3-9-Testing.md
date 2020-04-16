@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Welcome to Matt Sosna's site!
+title: New test post
 header: https://www.american.edu/spa/data-science/images/datascience-hero.jpg
 ---
 
