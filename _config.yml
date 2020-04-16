@@ -9,13 +9,13 @@ name: Matt (Grobis) Sosna
 description: Data dude
 
 # URL of your avatar or profile pic (you could use your GitHub profile pic)
-avatar: 
+avatar:
 
 #
 # Flags below are optional
 #
 
-header: https://www.american.edu/spa/data-science/images/datascience-hero.jpg
+header: images/datascience-hero.jpg
 
 # Includes an icon in the footer for each username you enter
 footer-links:
