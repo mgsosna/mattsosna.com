@@ -15,22 +15,27 @@ Anyway, in this post you'll follow along with my code and let me do the thinking
 Previous posts included 1) [an introduction to R](https://mgsosna.github.io/R-1-Intro/), 2) using R to understand distributions, plotting, and linear regression; and 3) for loops and random walks. The most important code from those posts is shown below.
 
 ```r
-c()                  # Concatenate
-x <- c(5, 10)        # x is now a two-element vector
-x[x > 7]             # Subset the values of x that are greater than 7
+c()            # Concatenate
+x <- c(5, 10)  # Assign the vector (5, 10) to the variable "x"
+x[x > 7]       # Subset the values of x that are greater than 7
 
-data <- rnorm(100)   # Assign 100 randomly-drawn values from a normal
-                     # distribution with mean zero and standard deviation 1 to  
-                     # the object "data"
-hist(data)           # Plot a histogram of the data
-y <- runif(100)      # Assign 100 randomly-drawn values from a uniform
-                     # distribution with minimum zero and maximum 1 to the
-                     # object "y"   
+# Assign 100 randomly-drawn values from a normal distribution with
+# mean=0 and sd=1 to the object "data"
+data <- rnorm(100)   
 
-plot(y ~ data)       # Make a scatterplot of y as a function of data
+# Plot a histogram of the data
+hist(data)           
 
-for(i in 1:length(x)){    # For i in the sequence 1 to the length of x...
-  print(i)                # ...print i
+# Assign 100 randomly-drawn values from a uniform distribution with
+# minimum=0 and maximum=1 to the object "y"
+y <- runif(100)       
+
+# Make scatterplot of the variable "y" as a function of "data"
+plot(y ~ data)       
+
+# For "i" in the sequence "1 to the length of x", print "i"
+for(i in 1:length(x)){  
+  print(i)                
 }
 ```
 

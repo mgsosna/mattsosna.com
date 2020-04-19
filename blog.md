@@ -4,10 +4,20 @@ title: Blog
 permalink: /blog/
 ---
 
-## Testing
-I'm just going to try to create a history page for my blogs. Let's try linking to one, too...
+# R blog posts
+## Introduction to R
+1. [Intro to R]({{ site.baseurl }}/R-1-Intro/)
+2. [Random data and plotting]({{ site.baseurl }}/R-2-Plotting/)
+3. [For loops and random walks]({{ site.baseurl }}/R-3-For-loops)
+4. [Functions and if statements]({{ site.baseurl }}/R-4-Functions)
 
-## R blog posts
-1. [Intro to R](https://mgsosna.github.io/R-1-Intro/)
-2. [Random data and plotting](https://mgsosna.github.io/R-2-Plotting/)
-3. [For loops and random walks](https://mgsosna.github.io/R-3-For-loops)
+## Random R
+1. [Comparing values]({{ site.baseurl }}/R-comparing-values)
+
+
+# Python blog posts
+1. [Testing]({{ site.baseurl }}/Testing)
+2. [Python fun]({{ site.baseurl }}/Python-fun)
+
+# R REPL test
+<iframe height="400px" width="100%" src="https://repl.it/@mgsosna/PointlessFamiliarNaturallanguage?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe>

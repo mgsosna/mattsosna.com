@@ -13,9 +13,9 @@ Effective communication and promoting technical literacy are two of my highest p
 Finally, success in a career is never independent, and I've been very lucky throughout my life to have the help of many people. I am always willing to try to help you succeed in what makes you happy, as many others have done the same for me (often before I even understood that I should be thanking them). As such, I will always do my best to answer any questions about academia that this blog might attract. You can reach me at <span style = "color:darkorange">[my first name].[g].[my last name]@gmail.com.</span>
 
 ## Quick questions
-**Sosna? Grobis?**
+**Sosna? Grobis?** <br>
 I got married in 2018. My wife and I decided to choose a new surname, Sosna, that reflected both our respective roots: California and Poland.
 
-**Why data science?**
+**Why data science?** <br>
 
 **Why did you leave academia?**

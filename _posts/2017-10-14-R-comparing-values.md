@@ -9,7 +9,8 @@ Let's say we have two variables, and we want to see which one is larger. The var
 
 ```r
 # Create the variables
-a <- 5 b <- 4
+a <- 5
+b <- 4
 
 # Method 1: max
 max(a, b)
@@ -53,8 +54,7 @@ Now we can find the max and ask which position in our vector corresponds to that
 max(data)
 which(data == max(data))
 
-# Instead of the vector index, how about the
-# variable name?
+# Instead of the vector index, how about the variable name?
 letters[which(data == max(data)]
 ```
 
@@ -127,9 +127,11 @@ B <- rnorm(4)
 C <- rnorm(4)
 
 # Run the nested if statements
-if( abs(0 - A) < abs(0 - B) & abs(0 - A) < abs(0 - C)){
-    D <- A} else if( abs(0 - B) < abs(0 - A) & abs(0 - B) < abs(0 - C)){
-            D <- B} else {D <- C}
+if( abs(0 - A) < abs(0 - B) &
+    abs(0 - A) < abs(0 - C)){D <- A} else
+    if( abs(0 - B) < abs(0 - A) &
+        abs(0 - B) < abs(0 - C)){D <- B} else
+        {D <- C}
 
 # Compare the vectors to confirm it worked
 A
@@ -163,20 +165,20 @@ Last example, and it's a weird one. Let's say that instead of comparing vectors 
 
 ```r
 # Create the variables
-our.vector <- runif(n = 5, min = 0, max = 10)
-our.matrix <- matrix(rnorm(10, mean = 5), nrow = length(our.vector))
+our.vec <- runif(n = 5, min = 0, max = 10)
+our.mat <- matrix(rnorm(10, mean = 5), nrow = length(our.vec))
 
 # Visualize them
-our.vector
-our.matrix
+our.vec
+our.mat
 
 # Find the larger value
-pmax(our.vector, our.matrix)
+pmax(our.vec, our.mat)
 ```
 
-_[Some clarification for the code above, because it's actually pretty easy to make a mistake here. It's important that the matrix is arranged so the number of rows is the same as the length of the vector, because **R makes comparisons down each column, not across each row, when it compares a matrix to a vector.** In other words, R will compare our.vector[1] to our.matrix[1,1], then our.vector[2] to our.matrix[2,1], then our.vector[3] to our.matrix[3,1], etc. So even if our.matrix was arranged so the number of columns was equal to the length of our.vector, R would still run down the rows and wrap along the columns, which is most likely not what you're trying to do. Just a heads up.]_
+_[Some clarification for the code above, because it's actually pretty easy to make a mistake here. It's important that the matrix is arranged so the number of rows is the same as the length of the vector, because **R makes comparisons down each column, not across each row, when it compares a matrix to a vector.** In other words, R will compare `our.vec[1]` to `our.mat[1,1]`, then `our.vec[2]` to `our.mat[2,1]`, then `our.vec[3]` to `our.mat[3,1]`, etc. So even if `our.mat` was arranged so the number of columns was equal to the length of `our.vec`, R would still run down the rows and wrap along the columns, which is most likely not what you're trying to do. Just a heads up.]_
 
 Thanks for reading, and shoot me a message if you have any ideas for a fun Random R project.
 
-Best,
+Best, <br>
 Matt
