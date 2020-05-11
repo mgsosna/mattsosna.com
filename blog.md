@@ -13,11 +13,16 @@ permalink: /blog/
 
 ## Random R
 1. [Comparing values]({{ site.baseurl }}/R-comparing-values)
+2. [T-tests vs. ANOVA]({{ site.baseurl }}/T-tests-vs-ANOVA)
+
+# Python
+## Introduction to Python
+4. [Organizing code]({{ site.baseurl }}/Python-4-Organizing-code/)
 
 
-# Python blog posts
+## Random Python
 1. [Testing]({{ site.baseurl }}/Testing)
 2. [Python fun]({{ site.baseurl }}/Python-fun)
 
 # R REPL test
-<iframe height="400px" width="100%" src="https://repl.it/@mgsosna/PointlessFamiliarNaturallanguage?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe>
+<!-- <iframe height="400px" width="100%" src="https://repl.it/@mgsosna/PointlessFamiliarNaturallanguage?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe> -->

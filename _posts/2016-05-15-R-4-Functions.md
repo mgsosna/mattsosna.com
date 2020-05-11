@@ -12,7 +12,7 @@ Anyway, in this post you'll follow along with my code and let me do the thinking
 - *(Briefly: logical operators)*
 - Integrating functions and if statements into for loops
 
-Previous posts included 1) [an introduction to R](https://mgsosna.github.io/R-1-Intro/), 2) using R to understand distributions, plotting, and linear regression; and 3) for loops and random walks. The most important code from those posts is shown below.
+Previous posts included 1) [an introduction to R]({{ site.baseurl }}/R-1-Intro/), 2) using R to understand distributions, plotting, and linear regression; and 3) for loops and random walks. The most important code from those posts is shown below.
 
 ```r
 c()            # Concatenate

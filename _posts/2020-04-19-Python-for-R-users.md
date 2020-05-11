@@ -8,25 +8,43 @@ My first programming language was R. I fell in love with the nuance R granted fo
 * R is a language for stats that is now diversifying
 
 
-## The `.` suddenly has significance
+# The `.` suddenly has significance
 In R, you can treat the `.` like any other character. This means that `our_test` and `our.test` are both valid names for variables.
 
 ```r
+# R
 our_test <- 1
 our.test <- 2
 ```
 
-In Python, though, the `.` has special significance. When we say `our.test`, we're telling Python we want _the function `test` of the object `our`._ This is because everything in Python is an object, which can have properties (attributes and functions (called "methods" when they belong to an object)). Everything in R is also an object, but we don't think of R objects quite the same way we do as Python objects.
+In Python, though, the `.` has special significance. The reason for this touches upon a major difference in how code in R and Python is organized: the prevalence of **classes.**
 
-In any programming language, as the amount of code grows, you need to start organizing it all. The typical levels of organization are as follows:
-1. **No organization** <br>
-Just individual scripts that exist in a vacuum, performing simple commands in sequence. <br><br>
-2. **Functions** <br>
-Place code you're using multiple times into functions, then just call the functions. <br><br>
-3. **Classes** <br>
-Group similar functions into classes. Import classes as a whole into different files, e.g. a "temperature converter" class with methods for Fahrenheit -> Celsius, Celsius -> Fahrenheit, Celsius -> Kelvin, etc. <br><br>
-4. **Modules** <br>
-Group similar classes into modules that can be imported as a whole.
+When we type `our.test`, we're telling Python we want _the function `test` of the object `our`._ This is because everything in Python is an object, whose _properties_ are accessed with the `.` operator. Objects are instances of _classes_, which are basically _templates_ of code. A simple example will make this clearer:
+
+```python
+# Python
+class Student:
+    def __init__(self, name):
+        self.name = name
+
+    def say_hi(self):
+        print("Hi")
+
+me = Student('Matt')
+print(me.name)   # 'Matt'
+me.say_hi()      # 'Hi'
+```
+Here, we have a class called `Student`. We create an instance of the class, `me`, that is initialized with a name `'Matt'`. `'Matt'` gets assigned to `.name` attribute of `me`. Our class also has a function that prints "Hi," which we access with `me.say_hi()`.
+
+Because the `.` is used to access properties of an object, it can't be used as part of a variable name.
+
+While everything in R [is also technically an object](https://stackoverflow.com/questions/34376318/whats-the-real-meaning-about-everything-that-exists-is-an-object-in-r), and there are [multiple ways to create classes](https://study.com/academy/lesson/classes-in-r-programming-definition-examples.html) with attributes and methods, I've personally never encountered R code that uses custom-created classes. Sure, there are plenty of online resources for _learning how to use these classes_, most notably [Hadley Wickham's _Advanced R_ textbook](https://adv-r.hadley.nz/). But actually seing them in action? Nope. To be transparent, maybe it's me: the R code I've read was either from 1) me, 2) an academic collaborator sharing their analyses, or 3) data science-focused online classes and blog posts. Maybe R classes are a bigger deal in the workflows of large collaborative teams, or in industries I don't have much exposure to. (I've found surprisingly little from searching on Google for who these teams or what these industries could be, though.)
+
+Regardless, the absence of classes is in sharp contrast to Python, where classes are an early part of learning how to organize your code. I talk about this in [Part 4]({{ site.baseurl }}/Python-4-Organizing-code) of the "Learning Python" track.
+
+##
+
+
 
 You can create a library in R that is a set of functions. When you import the library, all the functions are imported at once. In Python, in contrast, you can import specific _classes_ from a library, which have functions that belong to them.
 
@@ -65,7 +83,7 @@ Coming from RStudio, it was weird to think about needing to run entire blocks of
 
 
 ## There isn't an easy all-in-one solution except maybe Anaconda
-In R, you download R and RStudio, and then you're done. From there, you can do pretty much everything from the comfort of RStudio: install and update packages, produce visuals, create Markdown files that export to PDF, etc. 
+In R, you download R and RStudio, and then you're done. From there, you can do pretty much everything from the comfort of RStudio: install and update packages, produce visuals, create Markdown files that export to PDF, etc.
 
 Python is so broad.
 
