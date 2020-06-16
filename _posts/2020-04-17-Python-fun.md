@@ -3,6 +3,9 @@ layout: post
 title: Random Python fun
 ---
 
+{% include numpy_sin.html %}
+
+
 Some little tricks:
 ```python
 x = 5
@@ -64,6 +67,19 @@ do_math(1, 2, 3, 4, operator=multiply)
 ```
 
 You need to use a keyword argument for `add` or `multiply` to distinguish it from the positional arguments.
+
+### Another cool example
+```python
+def func(a, b):
+    return a + b
+
+arg_tuple = (1, 2)
+arg_dict = {'a': 1, 'b': 2}
+
+func(*arg_tuple)
+func(**arg_dict)
+
+```
 
 # Magic methods
 Let's say we have an `Item` class. An instance of the class will have `name` and `price` attributes.
@@ -159,5 +175,12 @@ class Student:
 
   def __repr__(self):
     print(f"Student with name {self.name} and grades {self.grades}")
+
+```
+
+
+# Treating everything as an object
+```python
+class
 
 ```
