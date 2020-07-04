@@ -3,6 +3,11 @@ layout: post
 title: Random Python fun
 ---
 
+# Tips for total beginners
+* It's hard to use Python without some additional support. Running Python in the command line is pretty spartan, and not a great way to learn the program.
+* You need an Integrated Development Environment (IDE). These include Spyder, Pycharm, etc. I recommend using Jupyter notebooks. They let you execute little sections of code, combine normal text and code, visualize tables and plots, etc.
+
+
 {% include numpy_sin.html %}
 
 
@@ -18,6 +23,8 @@ print(x)  # 6
 print(y)  # 6
 ```
 
+Pointing to the same locations in memory.
+
 ```python
 x = 5
 y = 5
@@ -29,9 +36,9 @@ x == z  # True
 x is y  # False
 x is z  # True
 ```
+
 # `*args` and `**kwargs`
 With unpacking, `args` itself is a tuple. `*args` is each argument, one after the other.
-
 
 ```python
 def add(*args):
@@ -62,8 +69,8 @@ def do_math(*args, operator):
 
 You can then do:
 ```python
-do_math(1, 2, 3, 4, operator=add)
-do_math(1, 2, 3, 4, operator=multiply)
+do_math(1, 2, 3, 4, operator=add)       # 10
+do_math(1, 2, 3, 4, operator=multiply)  # 24
 ```
 
 You need to use a keyword argument for `add` or `multiply` to distinguish it from the positional arguments.
@@ -99,8 +106,7 @@ cheeseburger = Item("nails", 9.99)
 hat = Item("hat", 1099.99)
 ```
 
-Normally, if we want to add the costs of a few items, we need to access their prices
-directly, as such:
+Normally, if we want to add the costs of a few items, we need to access their prices directly, as such:
 
 ```python
 total_price = hammer.price + cheeseburger.price
@@ -169,18 +175,103 @@ We can also make our classes nicer to interact with. Let's say that we want to b
 
 ```python
 class Student:
-  def __init__(self, name, grades=None):
-    self.name = name
-    self.grades = [] if not grades else grades  # <- check this
-
-  def __repr__(self):
-    print(f"Student with name {self.name} and grades {self.grades}")
+    def __init__(self, name, grades=None):
+        self.name = name
+        self.grades = [] if not grades else grades
 
 ```
+
+```python
+mark = Student("Mark", grades=[100, 100, 100])
+
+mark         # <__main__.Student at 0x1263c8c10>
+print(mark)  # <__main__.Student object at 0x1263c8c10>
+repr(mark)   # '<__main__.Student object at 0x1263c8c10>'
+
+```
+That's not very helpful. Let's create a new class, `FancyStudent`, that has magic methods that give us info about the student when you call the object outright, print it, or ask for Python's representation of it.
+
+```python
+class FancyStudent:
+    def __init__(self, name, grades=None):
+        self.name = name
+        self.grades = [] if not grades else grades
+
+    def __str__(self):
+        return f"Student with name {self.name} and grades {self.grades}"
+
+    def __repr__(self):
+        return f"Student(name='{self.name}', grades={self.grades})"
+
+```
+
+```python
+# Create an instance of Student
+elizabeth = FancyStudent("Elizabeth", grades=[100, 100, 100])
+
+mark         # Student(name='Elizabeth', grades=[100, 100, 100])
+print(mark)  # Student with name Elizabeth and grades [100, 100, 100]
+repr(mark)   # "Student(name='Elizabeth', grades=[100, 100, 100])""
+```
+
+`__str__` replaces what happens when you call `print` on `mark`. `__repr__`, meanwhile, replaces what happens when you just call `mark` outright.
+
+Then you can do:
+```python
+mark = Student("Mark", grades=[100, 100, 100])
+
+str(mark)   # 'Student with name Mark and grades [100, 100, 100]'
+repr(mark)  # 'Student(name='Mark', grades=[100, 100, 100])'
+
+```
+
+`repr` is like how to recreate the object in Python.
+
+
+```python
+import datetime as dt
+
+date = dt.date(2020, 1, 1)
+str(date)   # '2020-01-01'
+repr(date)  # 'datetime.date(2020, 1, 1)'
+date        # datetime.date(2020, 1, 1)  # no quotes
+```
+
 
 
 # Treating everything as an object
 ```python
-class
+class Item:
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+
+    def __str__(self):
+        return f"Item with name {self.name} and price {self.price}"
+
+    def __repr__(self):
+        return f"Item('{self.name}', {price})"
+
+    def __int__(self):
+        return int(self.price)
+
+    def __float__(self):
+        return float(self.price)
+
+```
+
+
+# Some other fancy stuff
+```python
+# Instantiate a dict with keys and values
+keys = ['a', 'b']
+values = [1, 2]
+
+d = dict(zip(keys, values))
+print(d)  # {'a': 1, 'b': 2}
+
+# If they're all the same value
+d = {}.fromkeys(keys, 1)
+print(d)   # {'a': 1, 'b': 1}
 
 ```

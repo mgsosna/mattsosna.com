@@ -3,7 +3,10 @@ layout: page
 title:
 permalink: /blog/
 ---
-Below are collections of my writing over the years. 
+Below are collections of my writing over the years.
+
+# External
+1. [Data quality at Aquicore](https://aquicore.com/blog/how-aquicore-built-the-ultimate-data-quality-safeguard/)
 
 # R blog posts
 ## Introduction to R

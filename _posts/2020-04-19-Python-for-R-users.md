@@ -19,7 +19,7 @@ our.test <- 2
 
 In Python, though, the `.` has special significance. The reason for this touches upon a major difference in how code in R and Python is organized: the prevalence of **classes.**
 
-When we type `our.test`, we're telling Python we want _the function `test` of the object `our`._ This is because everything in Python is an object, whose _properties_ are accessed with the `.` operator. Objects are instances of _classes_, which are basically _templates_ of code. A simple example will make this clearer:
+When we type `our.test`, we're telling Python we want _the attribute `test` of the object `our`._ This is because everything in Python is an object, whose _attributes_ are accessed with the `.` operator. Objects are instances of _classes_, which are basically _templates_ of code. A simple example will make this clearer:
 
 ```python
 # Python
