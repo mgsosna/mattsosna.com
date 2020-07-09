@@ -17,7 +17,7 @@ If you can't be bothered to download Python but still want to play with it, try 
 ## Tips for getting better
 * Try things out.
 * Start getting exposed to Python tips. [Real Python](https://realpython.com/) is a _fantastic_ resource - I follow them on Twitter, along with [Daily Python tip](https://twitter.com/python_tip) and a few others. The idea is to pick up tips here and there. That won't create your foundational knowledge, but it'll give you the little breakthroughs for making a bit of code more efficient. There's lots of ways to carry out a task, and as you become more experienced it's about narrowing down to the paths that are most readable and efficient.
-* To that end, get exposed to professional Python. The wonderful thing about open-source code is that you can just pick it up and read it. It's not hidden behind a paywall or carefully guarded on a secret server. It's right [here]()
+* To that end, get exposed to professional Python. The wonderful thing about open-source code is that you can just pick it up and read it. It's not hidden behind a paywall or carefully guarded on a secret server. It's right [here](https://github.com/python/cpython)! It's fairly incomprehensible unless you have expert-level Python and C/C++, but it's there for the reading if you want.
 
 
 

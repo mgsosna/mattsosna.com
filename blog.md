@@ -5,10 +5,36 @@ permalink: /blog/
 ---
 Below are collections of my writing over the years.
 
-# External
-1. [Data quality at Aquicore](https://aquicore.com/blog/how-aquicore-built-the-ultimate-data-quality-safeguard/)
+# Table of contents
+- [Data science](#data-science)
+- [Python](#python)
+  - [Introduction to Python](#introduction-to-python)
+  - [Random Python](#random-python)
+- [R](#r)
+  - [Introduction to R](#introduction-to-r)
+  - [Random R](#random-r)
+- [Academic advice](#academic-advice)
+  - [For undergraduates](#for-undergraduates)
+  - [For undergraduates and Masters students](#for-undergraduates-and-masters-students)
+  - [For undergraduates, Masters, and PhD students](#for-undergraduates-masters-and-phd-students)
 
-# R blog posts
+---
+# Data science
+1. [Transitioning to data science from academia]({{ site.baseurl }}/Transitioning-to-data-science)
+2. [Data quality at Aquicore](https://aquicore.com/blog/how-aquicore-built-the-ultimate-data-quality-safeguard/)
+3. [T-tests vs. ANOVA]({{ site.baseurl }}/T-tests-vs-ANOVA)
+
+# Python
+## Introduction to Python
+1. [Intro to Python]({{ site.baseurl }}/Python-1-Intro/)
+4. [Organizing code]({{ site.baseurl }}/Python-4-Organizing-code/)
+5. [Writing production-level Python]({{ site.baseurl }}/Python-5-Writing-production-level-Python)
+
+## Random Python
+1. [Python fun]({{ site.baseurl }}/Python-fun)
+
+
+# R
 ## Introduction to R
 1. [Intro to R]({{ site.baseurl }}/R-1-Intro/)
 2. [Random data and plotting]({{ site.baseurl }}/R-2-Plotting/)
@@ -17,15 +43,6 @@ Below are collections of my writing over the years.
 
 ## Random R
 1. [Comparing values]({{ site.baseurl }}/R-comparing-values)
-2. [T-tests vs. ANOVA]({{ site.baseurl }}/T-tests-vs-ANOVA)
-
-# Python
-## Introduction to Python
-4. [Organizing code]({{ site.baseurl }}/Python-4-Organizing-code/)
-
-## Random Python
-1. [Testing]({{ site.baseurl }}/Testing)
-2. [Python fun]({{ site.baseurl }}/Python-fun)
 
 # Academic advice
 ## For undergraduates
