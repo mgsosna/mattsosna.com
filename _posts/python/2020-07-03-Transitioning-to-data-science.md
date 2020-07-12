@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Transitioning to data science
+author: matt_sosna
 ---
 
 If you're in academia and looking to enter data science, you've likely able to distill interesting questions from large amounts of information, and you have the focus and analytical chops to find answers to those questions. These are incredibly valuable skills to have, but non-academic positions also require a fairly hefty set of skills _outside_ of the ones academics are most familiar in. This blog post will go through a checklist of those skills that will make you even more attractive as a candidate when applying to data science positions.

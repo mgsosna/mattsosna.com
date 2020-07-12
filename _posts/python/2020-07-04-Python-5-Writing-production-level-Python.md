@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Python 5 - Writing production-level Python
+author: matt_sosna
 ---
 
 In this post, we'll be diving down into production-level code. Here's a snippit we'll work through.

@@ -45,7 +45,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  font-size: 30px;
+  font-size: 45px;     // originally 30px
+  margin: 1em 0 1px;   // for author credit on blogs to be closer to title
   a {
     color: inherit;
   }

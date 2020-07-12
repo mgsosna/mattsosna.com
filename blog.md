@@ -3,9 +3,8 @@ layout: page
 title:
 permalink: /blog/
 ---
-Below are collections of my writing over the years.
 
-# Table of contents
+## Topics
 - [Data science](#data-science)
 - [Python](#python)
   - [Introduction to Python](#introduction-to-python)
@@ -32,7 +31,7 @@ Below are collections of my writing over the years.
 
 ## Random Python
 1. [Python fun]({{ site.baseurl }}/Python-fun)
-
+2. [Python for R users]({{ site.baseurl }}/Python-for-R-users)
 
 # R
 ## Introduction to R
@@ -40,6 +39,7 @@ Below are collections of my writing over the years.
 2. [Random data and plotting]({{ site.baseurl }}/R-2-Plotting/)
 3. [For loops and random walks]({{ site.baseurl }}/R-3-For-loops)
 4. [Functions and if statements]({{ site.baseurl }}/R-4-Functions)
+5. [The apply functions]({{ site.baseurl }}/R-5-Apply-functions)
 
 ## Random R
 1. [Comparing values]({{ site.baseurl }}/R-comparing-values)
@@ -75,6 +75,3 @@ Below are collections of my writing over the years.
 1. [Advice for those interested in applying for a Fulbright research grant](http://mattgrobis.blogspot.com/2013/04/fulbright.html)
 2. [Advice for those interested in applying for a National Science Foundation Graduate Research Fellowship (NSF-GRFP)](http://mattgrobis.blogspot.com/2013/04/nsf-grfp.html)
 3. [How do I write something anyone will read?](http://mattgrobis.blogspot.com/2013/11/writing-self-contained-universe.html)
-
-# R REPL test
-<!-- <iframe height="400px" width="100%" src="https://repl.it/@mgsosna/PointlessFamiliarNaturallanguage?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe> -->

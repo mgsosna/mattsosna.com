@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Visualizing the danger of multiple t-test comparisons
+author: matt_sosna
 ---
 
 It's often tempting to want to make multiple t-test comparisons when running analyses.

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Learning Python - 4. Organizing your code
+author: matt_sosna
 ---
 
 In any programming language, as the amount of code grows, you need to start organizing it all. The typical levels of organization are as follows:

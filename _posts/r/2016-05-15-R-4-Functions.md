@@ -1,6 +1,7 @@
 ---
 layout: post
-title: Learning R - 4. Functions and if statements
+title: Learning R <br> 4. Functions and if statements
+author: matt_sosna
 ---
 A critical step in growing up is learning to think for yourself. With so much conflicting information available from polarized media outlets, non-interacting academic schools of thought, and corporations with various shades of biased self-interest, the definition of the "right thing to do" or the "truth" is rarely clear or may not even objectively exist. Being able to think critically and independently is therefore a crucial skill to develop for academia, industry, and yourself.
 
@@ -12,7 +13,12 @@ Anyway, in this post you'll follow along with my code and let me do the thinking
 - *(Briefly: logical operators)*
 - Integrating functions and if statements into for loops
 
-Previous posts included 1) [an introduction to R]({{ site.baseurl }}/R-1-Intro/), 2) using R to understand [distributions, plotting, and linear regression]({{ site.baseurl }}/R-2-Plotting/); and 3) [for loops and random walks]({{ site.baseurl }}/R-3-For-loops). The most important code from those posts is shown below.
+**Previous posts included:**
+1. [an introduction to R]({{ site.baseurl }}/R-1-Intro/),
+2. using R to understand [distributions, plotting, and linear regression]({{ site.baseurl }}/R-2-Plotting/); and
+3. [for loops and random walks]({{ site.baseurl }}/R-3-For-loops).
+
+The most important code from those posts is shown below.
 
 ```r
 c()            # Concatenate

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Random Python fun
+author: matt_sosna
 ---
 
 # Tips for total beginners

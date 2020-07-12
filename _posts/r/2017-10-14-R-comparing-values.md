@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Comparing values in R
+author: matt_sosna
 ---
 Welcome to another episode of "Random R," where we'll ask random programming and statistical questions and answer them with R. Today, for whatever reason, let's say we want to dive into methods for comparing values. We'll start simple (e.g. is 5 greater than 4? Read on to find out.) and then work our way towards trickier element-wise comparisons among multiple matrices.
 

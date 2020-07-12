@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Learning Python - 1. Introduction
+author: matt_sosna
 ---
 
 So everyone seems to be talking about Python. It's quickly become a wildly popular language, especially for data science, and it's refreshingly easy to read and use. (While HTML is pretty easy to learn, I would argue Python is even easier.)
