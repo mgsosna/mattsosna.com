@@ -54,15 +54,10 @@ permalink: /blog/
 
 4. [Why start grad/med/law school right away? There's a whole world out there](http://mattgrobis.blogspot.com/2013/06/gap-years-trying-things-out.html)
 
-## For undergraduates and Masters students
-1. [Application advice for those interested in applying for a Gates Cambridge scholarship (written by Paul Bergen)](http://mattgrobis.blogspot.com/2013/04/gates-cambridge-paul-bergen_1541.html)
-
-2. [Interview advice and an overview of the application process and overall experience of the Gates Cambridge scholarship (written by Dr. Corina Logan)](http://mattgrobis.blogspot.com/2013/04/gates-cambridge-corina-logan.html)
-
 ## For undergraduates, Masters, and PhD students
 ### Ph.D. reflections
-1. [1st-year reflections](http://mattgrobis.blogspot.com/2014/06/phd-1st-year-reflections.html)
-2. [2nd-year reflections](http://mattgrobis.blogspot.com/2015/10/phd-2nd-year-reflections.html)
+1. [1st-year reflections]({{ site.baseurl }}/phd-1)
+2. [2nd-year reflections]({{ site.baseurl }}/phd-2)
 3. [3rd-year reflections](http://mattgrobis.blogspot.com/2016/08/phd-3rd-year-reflections.html)
 4. [4th-year reflections](http://mattgrobis.blogspot.com/2017/09/phd-4th-year-reflections.html)
 
@@ -75,3 +70,11 @@ permalink: /blog/
 1. [Advice for those interested in applying for a Fulbright research grant](http://mattgrobis.blogspot.com/2013/04/fulbright.html)
 2. [Advice for those interested in applying for a National Science Foundation Graduate Research Fellowship (NSF-GRFP)](http://mattgrobis.blogspot.com/2013/04/nsf-grfp.html)
 3. [How do I write something anyone will read?](http://mattgrobis.blogspot.com/2013/11/writing-self-contained-universe.html)
+
+### Applications
+1. [Application advice for those interested in applying for a Gates Cambridge scholarship (written by Paul Bergen)](http://mattgrobis.blogspot.com/2013/04/gates-cambridge-paul-bergen_1541.html)
+
+2. [Interview advice and an overview of the application process and overall experience of the Gates Cambridge scholarship (written by Dr. Corina Logan)](http://mattgrobis.blogspot.com/2013/04/gates-cambridge-corina-logan.html)
+
+### Behind the scenes
+1. [Behind the scenes for Couzin et al. 2011, *Science*]({{ site.baseurl }}/BTS-Couzin2011)
