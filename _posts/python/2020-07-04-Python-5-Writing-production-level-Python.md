@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Python 5 - Writing production-level Python
+title: Learn Python 5 - Writing production-level code
 author: matt_sosna
 ---
 

@@ -2,6 +2,8 @@
 layout: post
 title: Perspectives on fieldwork in Africa
 ---
+Written by [Matt Sosna]({{ site.baseurl }}), [Tyler Coverdale](https://tylercoverdale.weebly.com/) and [Jen Guyton](http://www.jenguyton.com/)
+
 Africa. The very name brings forth visions of lush savannas, the origins of humans, and maybe David Attenborough's voice narrating a lion hunt. But it might also bring forth memories of news articles on political unrest, disease, crime. For a new researcher looking to work in Africa, it's difficult to gain an understanding of what the continent is really like before visiting. Fortunately, knowing people in the field helps! Here is an interview with two of my colleagues and good friends, Jen Guyton and Tyler Coverdale. Their answers are quite thorough so I'll let them do the talking from here on out.
 
 ## Who are you?

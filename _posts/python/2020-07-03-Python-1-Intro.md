@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Learning Python - 1. Introduction
+title: Learn Python - 1. Introduction
 author: matt_sosna
 ---
 

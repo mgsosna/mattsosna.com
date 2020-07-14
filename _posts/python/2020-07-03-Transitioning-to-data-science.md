@@ -13,6 +13,7 @@ If you're in academia and looking to enter data science, you've likely able to d
 
 Especially in open-ended Ph.D. programs in the U.S., you have a lot of flexibility to choose the research questions you want to pursue, as well as how you go about answering those questions.
 
+<span style='color:red'> Think about mentioning boot camps, like the [Insight Fellowship](https://insightfellows.com/data-science) </span>
 
 This learning checklist is what I consider the basics. Data science is a broad field that is still iterating towards a solid distinction from data analytics, data engineering, and software engineering.
 
@@ -23,6 +24,7 @@ This learning checklist is what I consider the basics. Data science is a broad f
 - [ ] Machine learning: `scikit-learn`, `keras`
 - [ ] Working with dates: `datetime`
 - [ ] Interacting with cloud storage: `boto3`
+- [ ] Interacting with APIs: `requests`
 - [ ] Object-oriented programming (i.e. classes, module imports) <br><br>
 * **Software engineering**
 - [ ] Version control: [Git](https://git-scm.com/)
@@ -115,6 +117,20 @@ body = obj['Body'].read()
 string = body.decode(encoding=encoding)
 df = pd.DataFrame(json.load(StringIO(string)))
 ```
+
+## Interacting with APIs
+An API, or Application Programming Interface, is like the entrance to a hotel. If you want to enter, you need to follow a certain set of rules - maybe you need the right security credentials. <span style='color:red'>Think about this analogy a bit more. Bank = better? </span>
+
+```python
+import requests
+
+url = ""  # some free data from Google or something
+
+json = requests.get(url)
+
+```
+
+
 ## Object-oriented programming
 ```python
 import logging

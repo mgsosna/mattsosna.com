@@ -4,11 +4,6 @@ title: Random Python fun
 author: matt_sosna
 ---
 
-# Tips for total beginners
-* It's hard to use Python without some additional support. Running Python in the command line is pretty spartan, and not a great way to learn the program.
-* You need an Integrated Development Environment (IDE). These include Spyder, Pycharm, etc. I recommend using Jupyter notebooks. They let you execute little sections of code, combine normal text and code, visualize tables and plots, etc.
-
-
 {% include numpy_sin.html %}
 
 

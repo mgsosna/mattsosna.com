@@ -3,6 +3,7 @@ layout: post
 title: Python for R users
 author: matt_sosna
 ---
+![]({{ site.baseurl }}/images/r-python.png)
 My first programming language was R. I fell in love with the nuance R granted for visualizing data, and how with a little practice it was straightforward to pull off complex statistical analyses. I coded in R throughout my Ph.D., but the team I joined in my first job outside of academia solely coded in Python. Picking up a second language went much faster than the first, but there was a lot to get used to when I transitioned. I've compiled some of the major differences in this post.
 
 ## Table of contents
@@ -256,7 +257,9 @@ a = [1, 2, 3]
 
 # Option 1: create a new list for b, with same elements of a
 b1 = list(a)
+b2 = a[:]
 print(b1 is a)   # False
+print(b2 is a)   # False
 
 # Option 2: break the link by not using .append to update a
 b2 = a
