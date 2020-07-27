@@ -1,11 +1,11 @@
 ---
 layout: post
-title: Comparing values in R
+title: How to be fancy with comparisons
 author: matt_sosna
 ---
 Welcome to another episode of "Random R," where we'll ask random programming and statistical questions and answer them with R. Today, for whatever reason, let's say we want to dive into methods for comparing values. We'll start simple (e.g. is 5 greater than 4? Read on to find out.) and then work our way towards trickier element-wise comparisons among multiple matrices.
 
-# Comparing scalars
+## Comparing scalars
 Let's say we have two variables, and we want to see which one is larger. The variables are called scalars because they're just one value each. We can use either the `max` function or `ifelse`.
 
 ```r
@@ -39,7 +39,7 @@ max(a, b, c, d, e)
 
 The above code lets us find the maximum of the five separate scalars, but identifying which scalar(s) is the maximum would be a nightmare. (We'd probably need to use nested `if` statements, where it's easy to make a logical or grammatical mistake, for all the comparisons. Later on we use nested `if` statements for just three variables and it already starts getting lengthy.) Let's try a different approach.
 
-# Comparing vectors and matrices
+## Comparing vectors and matrices
 Finding the identity of the max value above when we're determined to keep the data as separate scalars is needlessly confusing and giving me a headache... it's much simpler if we let R know that these variables are related somehow (e.g. they're all height measurements, or time increments, or number of people moshing at a random moment in a metal show, etc.). We can do that by combining them into a vector. The elements of the vector are our variables.
 
 ```r
@@ -100,7 +100,7 @@ matrix3[1:3, 1:3]
 new.matrix[1:3, 1:3]
 ```
 
-# Comparing vectors and matrices to a constant
+## Comparing vectors and matrices to a constant
 So far, we've been comparing scalars, vectors, and matrices to each other. But what if we have some external value, and we want to keep the values that are closest to it?
 
 For this, we'll return to `ifelse`. Our external value will be zero. To keep things simple, we'll compare two vectors and find the distances that their elements are from zero.
@@ -141,7 +141,7 @@ C
 D
 ```
 
-# Comparing vectors and matrices to a vector or matrix
+## Comparing vectors and matrices to a vector or matrix
 For our final comparison, let's say that instead of some constant, e.g. zero, we have a whole set of numbers that we want to compare our vectors or matrices to. The `ifelse` line is identical for vectors and matrices, so let's use matrices to be fancy.
 
 ```r
