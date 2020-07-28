@@ -6,7 +6,6 @@ permalink: /blog/
 
 ## Topics
 - [**Data science**](#data-science)
-  - [Careers](#careers)
   - [Statistics](#statistics)
   - [External](#external)
 - [**Python**](#python)
@@ -22,9 +21,6 @@ permalink: /blog/
 
 ---
 ## Data science
-
-### Careers
-1. [Transitioning to data science from academia]({{ site.baseurl }}/Transitioning-to-data-science)
 
 ### Statistics
 1. [Visualizing the danger of multiple t-test comparisons]({{ site.baseurl }}/T-tests-vs-ANOVA)

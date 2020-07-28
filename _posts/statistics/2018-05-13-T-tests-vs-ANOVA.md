@@ -4,9 +4,10 @@ title: Visualizing the danger of multiple t-test comparisons
 author: matt_sosna
 ---
 
-It's often tempting to want to make multiple t-test comparisons when running analyses. I wrote a function in R to explain why, however, that's not a great idea. [This repository](https://github.com/mgsosna/t-tests_vs_ANOVA) contains a function, `false_pos`, for quantifying the false positive error rate with multiple t-tests.
+It's often tempting to make multiple t-test comparisons when running analyses with multiple groups. If you have three groups, this logic would look like "I'll run a t-test to see if Group A is significantly different from Group B, then another to check if Group A is significantly different from Group C, then one more for whether Group B is different from Group C." This logic, while seemingly intuitive, is seriously flawed. I'll use [an R function](https://github.com/mgsosna/t-tests_vs_ANOVA/blob/master/false_pos.R) I wrote, `false_pos`, to help visualize why multiple t-tests can lead to highly inflated false positive rates.
 
-For a given number of groups and observations per group, the function creates `n_groups` samples from the same (Gaussian) parent distribution, each with `n_obs` observations. Because these samples are drawn from the same population, any differences between them should not be statistically significant (i.e. p > 0.05).
+## Overview
+For a given number of groups and observations per group, `false_pos` creates `n_groups` samples from the same (Gaussian) parent distribution, each with `n_obs` observations. Because these samples are drawn from the same population, any differences between them should not be statistically significant (i.e. p > 0.05).
 
 The function then performs an ANOVA and all possible pairwise t-tests. The lowest pairwise t-test p-value and the ANOVA p-value are recorded. This is done `n_iter` times to form distributions of p-values for t-tests and ANOVAs, which are then plotted if `figure = T`. If `pretty = T`, the proportion of iterations with p-values below `p.val` is printed. (Default is p=0.05, but user can specify other values such as p=0.01). If `pretty = F`, a list is returned with summary statistics.
 

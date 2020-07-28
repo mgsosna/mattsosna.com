@@ -4,7 +4,7 @@ title: Academics
 permalink: /academics/
 ---
 
-Here is information about my academic life. For blog posts with advice for undergraduates or students currently pursuing Masters or PhD's, check out the [Blog]({{ site.baseurl }}/blog/) page.
+Here is information about my academic life. For blog posts with advice for undergraduates or students currently pursuing Masters or PhD's, check out the [Blog]({{ site.baseurl }}/blog/) page. My Google Scholar profile can be found [here](https://scholar.google.com/citations?user=osyIJMYAAAAJ&hl).
 
 ## Publications
 1. Twomey CR, Hartnett AT, **Sosna MMG**, Romanczuk P. [Searching for structure in collective systems.](https://link.springer.com/content/pdf/10.1007/s12064-020-00311-9.pdf) _**Theory in Biosciences.**_ (2020). https://doi.org/10.1007/s12064-020-00311-9
