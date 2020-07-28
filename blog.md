@@ -50,6 +50,7 @@ permalink: /blog/
 ### Random R
 1. [For loops vs. apply - a race in efficiency]({{ site.baseurl }}/For-vs-apply)
 2. [How to be fancy with comparisons]({{ site.baseurl }}/R-comparing-values)
+3. [Visualizing my daily commute]({{ site.baseurl }}/Visualizing-commute)
 
 
 ## Academic advice
