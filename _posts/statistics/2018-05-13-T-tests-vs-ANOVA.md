@@ -4,10 +4,7 @@ title: Visualizing the danger of multiple t-test comparisons
 author: matt_sosna
 ---
 
-It's often tempting to want to make multiple t-test comparisons when running analyses.
-
-
-I wrote a function in R to explain why, however, that's not a great idea. [This repository](https://github.com/mgsosna/t-tests_vs_ANOVA) contains a function, `false_pos`, for quantifying the false positive error rate with multiple t-tests. _[Side note: you might notice that the repo's README is awfully similar to this post. Completely coincidental... ;-)]_
+It's often tempting to want to make multiple t-test comparisons when running analyses. I wrote a function in R to explain why, however, that's not a great idea. [This repository](https://github.com/mgsosna/t-tests_vs_ANOVA) contains a function, `false_pos`, for quantifying the false positive error rate with multiple t-tests.
 
 For a given number of groups and observations per group, the function creates `n_groups` samples from the same (Gaussian) parent distribution, each with `n_obs` observations. Because these samples are drawn from the same population, any differences between them should not be statistically significant (i.e. p > 0.05).
 
@@ -22,7 +19,7 @@ The functional arguments are listed below:
 * `figure`: should a figure be printed?
 * `pretty`: should the output be simple (pretty = T) or thorough (pretty = F)?
 
-**Note:** [false_pos.R](https://github.com/mgsosna/t-tests_vs_ANOVA/false_pos.R) also contains all code necessary to generate the figures in this post.
+**Note:** [false_pos.R](https://github.com/mgsosna/t-tests_vs_ANOVA/blob/master/false_pos.R) also contains all code necessary to generate the figures in this post.
 
 ## Background
 ### Motivation
