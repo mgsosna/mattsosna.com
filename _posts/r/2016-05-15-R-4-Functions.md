@@ -6,7 +6,7 @@ author: matt_sosna
 If you've been following this series from the [first post]({{ site.baseurl }}/R-1-Intro), you might recall this soapbox speech I gave:
 > With programming, you get rid of the comfortable structure of a friendly interface with buttons in favor of freedom. Your analyses are now limited by your imagination and knowledge of the R language, not what someone else thought was relevant for you.
 
-I immediately followed that quote with three posts full of using R's built-in functions, which some developer at R "thought was relevant for you"... but it was all part of the grand plan! Now that we're comfortable with some R fundamentals, let's start really carrying out the meaning behind that quote above. In this post, we'll "customize" our code by taking hold of the tools to write our own functions.
+I immediately contradicted that quote with three posts full of using R's built-in functions, which some developer at R "thought was relevant for you"... but it was all part of the grand plan! Now that we're comfortable with some R fundamentals, let's start really carrying out the meaning behind that quote above. In this post, we'll "customize" our code by taking hold of the tools to write our own functions. We'll also get started with control flow (`if` and `else` statements) and logical operators (`&`, `|`, etc.).
 
 **This is the fourth in a series of posts on R. This post covers:**
 - Creating your own functions
