@@ -48,7 +48,7 @@ if(1 + 1 < 5){print("Yup, less than 5")}
 ```
 
 ## `apply`
-The simplest of the apply functions is the one the family is named after. Let's revisit the following plot from the [third R post on for loops]({{ site.baseurl }}/R-3-for-loops).
+The first of the apply functions is the one the family is named after. Let's revisit the following plot from the [third R post on for loops]({{ site.baseurl }}/R-3-for-loops).
 
 ![]({{ site.baseurl }}/images/R-3-for-loops/random_multiple.png)
 

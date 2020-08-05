@@ -23,5 +23,3 @@ Success in a career is never independent, and I've been fortunate throughout my 
 
 ## About this site
 This site is powered by [Jekyll](https://jekyllrb.com/) and is based on the [Jekyll Now](https://github.com/barryclark/jekyll-now) template. All blog posts are released under a [Creative Commons Attribution-ShareAlike 4.0](https://creativecommons.org/licenses/by-sa/4.0/) International License. All opinions and views are my own and do not represent my employer.
-
-<center>&copy; 2020 Matt Sosna</center>
