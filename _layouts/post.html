@@ -2,8 +2,19 @@
 layout: default
 ---
 
+<!-- Look the author details up from the site config. -->
+{% assign author = site.data.authors[page.author] %}
+
 <article class="post">
   <h1>{{ page.title }}</h1>
+
+  <!-- Output author details if some exist. -->
+  {% if author %}
+      <span>
+          <!-- Personal Info. -->
+          Written by <a href="{{ author.web }}">{{ author.name }}</a> on {{page.date | date: '%B %-d, %Y'}} <br><br>
+      </span>
+  {% endif %}
 
   <div class="entry">
     {{ content }}
@@ -15,3 +26,7 @@ layout: default
 
   {% include disqus.html %}
 </article>
+
+<!-- Mathjax Support -->
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+type="text/javascript"></script>

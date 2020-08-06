@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="shortcut icon" type="image/png" href="/images/ds_circle.png">
+
     <title>{% if page.title %}{{ page.title }} – {% endif %}{{ site.name }} – {{ site.description }}</title>
 
     {% include meta.html %}
@@ -80,6 +82,11 @@
 
     <div id="main" role="main" class="container">
       {{ content }}
+    </div>
+
+    <div id="copyright" class="container">
+        <br>
+        <center>&copy; 2020 Matt Sosna</center>
     </div>
 
     <div class="wrapper-footer">

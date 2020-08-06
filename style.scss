@@ -45,18 +45,22 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  font-size: 30px;
+  font-size: 45px;     // originally 30px
+  margin: 1em 0 7px;   // for author credit on blogs to be closer to title
+  line-height: 1.1;
   a {
     color: inherit;
   }
 }
 
 h2 {
-  font-size: 24px;
+  font-size: 36px;     // originally 24px
+  margin: 1em 0 -2px;  // originally no change
 }
 
 h3 {
-  font-size: 20px;
+  font-size: 24px;     // originally 20px
+  margin: 1em 0 -4px;
 }
 
 h4 {
@@ -124,12 +128,12 @@ img {
 
 // Specify the color of the selection
 ::-moz-selection {
-  color: $black;
-  background: $lightGray;
+  color: $white;
+  background: #0251b8;
 }
 ::selection {
-  color: $black;
-  background: $lightGray;
+  color: $white;
+  background: #0251b8;
 }
 
 // Nicolas Gallagher's micro clearfix hack
@@ -259,7 +263,7 @@ nav {
     border-left: 2px solid $gray;
     padding: 0.1em 1em;
     color: $gray;
-    font-size: 22px;
+    font-size: 18px;
     font-style: italic;
   }
 
