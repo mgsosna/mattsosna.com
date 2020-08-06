@@ -18,7 +18,7 @@ Another way to visualize this is to use a perspective plot. Here, the heights co
 ![](https://i.imgur.com/4Wcx8pV.png)
 
 ### Durations and speeds
-Below, the histogram on the left shows the distribution of commute durations, with the color corresponding to my mood at how long my commute took. ;-) The histogram on the right shows the GPS Logger's speed recordings. According to these data, I spent approximately 21% of my commute waiting for a street light to change, most likely to cross the major street.
+Below, the histogram on the left shows the distribution of commute durations, with the color corresponding to my mood at how long my commute took! The histogram on the right shows the GPS Logger's speed recordings. According to these data, I spent approximately 21% of my commute waiting for a street light to change, most likely to cross the major street.
 
 ![](https://i.imgur.com/3cwjKCi.png)
 

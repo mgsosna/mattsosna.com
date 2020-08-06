@@ -232,7 +232,7 @@ So why on earth would we allow any language to have linked variables? Well, it's
 
 (This is actually a major performance tip for beginner R users: never write a `for` loop with something like `vec <- c(vec, new_value)`! It's much better to pre-allocate a vector of NaNs as long as your loop, then fill in each index of the vector as the loop progresses.)
 
-There are also some times when we actually may want to update multiple variables simultaneously. Let's imagine we have some video game where a diamond, ruby, and sapphire are buried in different locations on a virtual island. To find the treasure, we have instances of a `TreasureFinder` class that search the island. The bots follow different rules for finding the different gems: sapphires tend to be by water, while volcanoes often hide rubies. If the sapphire is found, for example, we should stop searching the island coast. If we have multiple instances of `TreasureFinder`, whenever one instance finds a gem, it can alert all instances of `TreasureFinder` to stop searching for that gem. To do this, we'd use a class method that updates a shared list.
+There are also some times when we actually may want to update multiple variables simultaneously. As a toy example, let's imagine we have some video game where a diamond, ruby, and sapphire are buried in different locations on a virtual island. To find the treasure, we have instances of a `TreasureFinder` class that search the island. The bots follow different rules for finding the different gems: sapphires tend to be by water, while volcanoes often hide rubies. If the sapphire is found, for example, we should stop searching the island coast. If we have multiple instances of `TreasureFinder`, whenever one instance finds a gem, it can alert all instances of `TreasureFinder` to stop searching for that gem. To do this, we'd use a class method that updates a shared list.
 
 ```python
 class TreasureFinder:
@@ -272,7 +272,24 @@ Matt
 
 3. [[Variables can be linked]](#variables-can-be-linked) `my_list.append(5)` actually returns `None` since it just modifies `my_list`, so `my_list = my_list.append(5)` would introduce a whole other bug that'd be hard to figure out.
 
-4. [[Variables can be linked]](#variables-can-be-linked) Actually, _almost_ all objects in R are immutable. There are [some esoteric exceptions](https://win-vector.com/2014/04/01/you-dont-need-to-understand-pointers-to-program-using-r/) involving closures. But the vast majority of the time when you're programming in R, you don't have to worry about linked variables.
+4. [[Variables can be linked]](#variables-can-be-linked) Actually, _almost_ all objects in R are immutable. There are [some esoteric exceptions](https://win-vector.com/2014/04/01/you-dont-need-to-understand-pointers-to-program-using-r/) involving closures. But the vast majority of the time when you're programming in R, you don't have to worry about linked variables. This is because virtually all objects in R have unique addresses in memory, which means you can easily get a string of the variable name, like below:
+    ```r
+    # R
+    a <- c(1, 2, 3)
+    b <- a
+
+    deparse(substitute(a))  # 'a'
+    deparse(substitute(b))  # 'b'
+    ```
+This is [essentially impossible in Python](https://stackoverflow.com/questions/1534504/convert-variable-name-to-string/3683258) because objects can share addresses in memory. There's no built-in function for converting a variable into _the string of a variable name_, since when you give Python a variable, all Python sees is an address in memory, where multiple variables can point to. In other words, **Python fundamentally expects a many-to-one relationship between variables and addresses in memory. R, meanwhile, expects a one-to-one relationship.** In Python, the best we can do is scan the dictionary returned by `globals()` for keys that match the value of our variable.
+    ```python
+    # Python
+    a = [1, 2, 3]
+    b = a
+
+    [var for var, key in globals().items() if key == [1, 2, 3]]
+    # ['a', 'b']
+    ```
 
 5. [[Variables can be linked]](#variables-can-be-linked) There are a few other ways you can accidentally avoid updating `b` when `a` updates, making the variable linking even harder to catch:
 
@@ -296,7 +313,7 @@ Matt
     a1 += [4]   # instead of a1 = a1 + [4]
     print(b is a1)   # True
     ```
-6. [[Footnotes]](#footnotes) A few examples of how data manipulation is a little simpler in R:
+6. [[Final thoughts]](#final-thoughts) A few examples of how data manipulation is a little simpler in R:
 
 * Subset a dataframe
 ```r
