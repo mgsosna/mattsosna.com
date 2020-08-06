@@ -15,6 +15,9 @@
     <link rel="alternate" type="application/rss+xml" title="{{ site.name }} - {{ site.description }}" href="{{ site.baseurl }}/feed.xml" />
 
     <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+    {% if jekyll.environment == 'production' %}
+    {% include analytics.html %}
+    {% endif %}
   </head>
 
   <body>
@@ -37,49 +40,6 @@
         </header>
       </div>
 
-<!--
-<body>
-  <a><img src="images/ds_background-med.jpg"></a>
-    <div class="masthead">
-      <div class="masthead__inner-wrap">
-        <div class="masthead__menu">
-          <nav id="site-nav" class="greedy-nav">
-            <a href="{{ site.baseurl }}/">Home</a>
-            <a href="{{ site.baseurl }}/about">About_test</a>
-            <a href="{{ site.baseurl }}/blog/">Blog</a>
-            <a href="{{ site.baseurl }}/academics/">Academics</a>
-          </nav>
-        </div>
-      </div>
-    </div>
--->
-
-<!--
-  <body>
-    <div class="wrapper-masthead">
-      <div class="container">
-        <header class="masthead clearfix">
-          <div class="site-info">
-            <h1 class="site-name"><a href="{{ site.baseurl }}/">{{ site.name }}</a></h1>
-            <p class="site-description">{{ site.description }}</p>
-          </div>
-  -->
-  <!-- <body>
-    <img src="images/ds_background-med.jpg" align="middle">
-      <div class="wrapper-masthead">
-          <div class="container">
-            <header class="masthead clearfix">
-              <div class="site-info">
-                {{ site.name }}</a>
-                <a href="{{ site.baseurl }}/">Home</a>
-                <a href="{{ site.baseurl }}/about">About</a>
-                <a href="{{ site.baseurl }}/blog/">Blog</a>
-                <a href="{{ site.baseurl }}/academics/">Academics</a>
-            </nav>
-          </div>
-        </div>
-      </div> -->
-
     <div id="main" role="main" class="container">
       {{ content }}
     </div>
@@ -97,6 +57,5 @@
       </div>
     </div>
 
-    {% include analytics.html %}
   </body>
 </html>
