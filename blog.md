@@ -55,17 +55,17 @@ permalink: /blog/
 2. [2nd-year reflections]({{ site.baseurl }}/phd-2)
 3. [3rd-year reflections]({{ site.baseurl }}/phd-3)
 4. [4th-year reflections]({{ site.baseurl }}/phd-4)
-5. [Advice for generals/quals/prelims]({{ site.baseurl }}/prelims)
+5. [Advice for generals/quals/prelims]({{ site.baseurl }}/Prelims)
 
 ### Applications and writing
-1. [How to get into a biology Ph.D. program]({{ site.baseurl }}/getting-into-grad-school)
+1. [How to get into a biology Ph.D. program]({{ site.baseurl }}/Getting-into-grad-school)
 2. [How to get a National Science Foundation Graduate Research Fellowship (NSF-GRFP)]({{ site.baseurl }}/NSF-GRFP)
 3. [How to get a Gates Cambridge scholarship p.1 (written by Dr. Paul Bergen)]({{ site.baseurl }}/gates-i)
 4. [How to get a Gates Cambridge scholarship p.2 (written by Dr. Corina Logan)]({{ site.baseurl }}/gates-ii)
-5. [How to write the self-contained universe]({{ site.baseurl }}/writing-self-contained-universe)
+5. [How to write the self-contained universe]({{ site.baseurl }}/Writing-self-contained-universe)
 
 ### Tips for undergrads
-1. [Retrospective advice for undergrads to make the most of their four years]({{ site.baseurl }}/college-reflections)
+1. [Retrospective advice for undergrads to make the most of their four years]({{ site.baseurl }}/College-reflections)
 2. [Why start grad/med/law school right away? There's a whole world out there]({{ site.baseurl }}/gap-years)
 
 ### Behind the scenes in research
