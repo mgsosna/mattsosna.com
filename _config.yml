@@ -6,7 +6,7 @@
 name: Matt Sosna
 
 # Short bio or description (displayed in the header)
-description: 
+description:
 
 # URL of your avatar or profile pic (you could use your GitHub profile pic)
 avatar: https://raw.githubusercontent.com/mgsosna/mgsosna.github.io/master/images/sosna_photo.png
@@ -41,7 +41,7 @@ google_analytics: UA-174790636-1
 
 # Your website URL (e.g. http://barryclark.github.io or http://www.barryclark.co)
 # Used for Sitemap.xml and your RSS feed
-url: https://mgsosna.github.io
+url: https://mattsosna.com
 
 # If you're hosting your site at a Project repository on GitHub pages
 # (http://yourusername.github.io/repository-name)
