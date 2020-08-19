@@ -49,7 +49,7 @@ url: https://mattsosna.com
 # then add in the baseurl here, like this: "/repository-name"
 baseurl: ""
 
-title_image: https://raw.githubusercontent.com/mgsosna/mgsosna.github.io/master/images/ds_background_med.jpg
+title_image: "/images/ds_background_med.jpg"
 
 #
 # !! You don't need to change any of the configuration flags below !!
