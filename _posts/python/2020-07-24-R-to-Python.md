@@ -3,7 +3,7 @@ layout: post
 title: Perspectives on Python after R
 author: matt_sosna
 summary: An R user's journey into the depths of Python
-image: {{ site.baseurl }}/images/r-python.png
+image: "{{ site.baseurl }}/images/r-python.png"
 ---
 ![]({{ site.baseurl }}/images/r-python.png)
 My first programming language was R. I fell in love with the nuance R granted for visualizing data, and how with a little practice it was straightforward to pull off complex statistical analyses. I coded in R throughout my Ph.D., but I needed to switch to Python for my first non-academic job. Picking up a second language went much faster than the first, but there was a lot to get used to when I transitioned.
