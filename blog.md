@@ -30,6 +30,7 @@ permalink: /blog/
 
 ### External
 1. [Data quality at Aquicore](https://aquicore.com/blog/how-aquicore-built-the-ultimate-data-quality-safeguard/)
+2. [How we created the morning overshoot detector](https://aquicore.com/blog/peak-a-boo-aq-ai-makes-peak-demand-surprises-disappear/)
 
 
 ## Python
