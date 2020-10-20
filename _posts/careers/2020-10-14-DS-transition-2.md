@@ -5,7 +5,7 @@ author: matt_sosna
 summary: The skills needed to succeed in data science
 image: ""
 ---
-In [the last post]({{ site.baseurl }}/DS-transition-1), we defined data science as being about 1) deriving insights from data and 2) communicating those insights to others. Despite the huge diversity in how these key features are expressed in actual data scientist roles, there is a core skill set that will serve you well no matter where you go. This post will outline the _**technical**_, _**business**_, and _**personal**_ skills needed to be successful as a data scientist.
+In [the last post]({{ site.baseurl }}/DS-transition-1), we defined the key elements of data science as 1) deriving insights from data and 2) communicating those insights to others. Despite the huge diversity in how these elements are expressed in actual data scientist roles, there is a core skill set that will serve you well no matter where you go. This post will outline the _**technical**_, _**business**_, and _**personal**_ skills needed to be successful as a data scientist.
 
 ## Table of contents
 * [**Technical skills:** knowing _**how**_ to do it](#technical-skills-knowing-how-to-do-it)
@@ -38,9 +38,9 @@ Data science is a broad field that is still iterating towards a solid distinctio
 
 ### Python
 #### Dataframes
-Dataframes are at the core of data analytics and a huge range of data science applications. At their core, they're a table of rows and columns, where each row is a "record" and each column is an attribute of that record. You can have a table of employees, for example, where each row is a person and there are columns for their first and last names, their home address, their salary, etc. Because dataframes will play a huge role in your job, you'll need to master visualizing and manipulating the data within them. `pandas` is the key library here.
+Dataframes are at the core of data analytics and a huge range of data science applications. They're essentially just a table of rows and columns, typically where each row is a _**record**_ and each column is an _**attribute**_ of that record. You can have a table of employees, for example, where each row is a person with columns for their first and last names, their home address, their salary, etc. Because dataframes will play a central role in your job, you'll need to master visualizing and manipulating the data within them. `pandas` is the key library here.
 
-The basics include being able to load, clean, and write out CSVs.
+The basics include being able to load, clean, and write out [CSV files](https://en.wikipedia.org/wiki/Comma-separated_values). Cleaning data can involve removing rows with missing values or duplicated information, correcting erroneous values, and reformatting columns into different data types.
 
 ```python
 # Example 1: loading, cleaning, and writing out CSVs
@@ -51,32 +51,123 @@ import pandas as pd
 os.chdir("~/client/")
 df = pd.read_csv("data.csv")
 
-# Remove rows with missing states, duplicates
+# Fix issues with 'state' column
+df['state'].replace({'ill': 'IL', 'nan': None}, inplace=True)
 df_filt = df[df['state'].notna()]
-df_filt.drop_duplicates(['customer_id', 'store_id'], inplace=True)
 
-# Reformat columns and save data
+# Remove duplicates and reformat columns
+df_filt.drop_duplicates(['customer_id', 'store_id'], inplace=True)
 df_filt = df_filt.astype({'price': float, 'age': int})
+
+# Save data
 df_filt.to_csv("cleaned.csv", index=False)
 ```
 
-The next level of difficulty involves iteration and appending data.
+The next level of difficulty involves vectorized and iterative data transformations. For simple operations like adding every value in two columns together, `pandas` lets you simply add the two columns together like `df['col1'] + df['col2']`. For more nuanced operations, such as handling missing values that would otherwise cause columnwise operations to fail, you can use `.apply` with a lambda function.
+
 ```python
 # Example 2: iterating and appending data
+
+# Vectorized transformations
+df['added'] = df['col1'] + df['col2']
+df['divided'] = df.apply(lambda x: safe_divide(x['col1'], x['col2']),
+                         axis=1)
+
+# Iterated transformations
 df_final = pd.DataFrame()
 for tup in df.itertuples():
-    df_iter = some_function(tup.age, tup.start_date)
+
+    # Logic that can't easily be passed into a lambda
+    if tup.Index % 2 == 0:
+        df_iter = some_function(tup.age, tup.start_date)
+    else:
+        df_iter = some_other_fuction(tup.age, tup.pet_name)
+
     df_final = df_final.append(df_iter, ignore_index=True)
 ```
 
-Finally, we have merging and groupbys. These are some skills that overlap with SQL.
+Finally, we need the ability to combine data from multiple dataframes, as well as run aggregate commands on the data. In the code below, for example, we merge two dataframes, making sure not to drop any rows in `df1` by specifying that it's a left merge. Then we create a new dataframe, `df_agg`, that has the sums of all the columns for each user. We can then print out how much user `123` spent at Target, for example.
+
 ```python
 # Example 3: merging, groupbys
-df_merged = pd.merge(df1, df2, on=['account_id', 'service_id'],
-                     how='left')
-df_agg = df_merged.groupby('id').sum()
-print(df_agg.loc[123, 'illinois'])
+df_merged = pd.merge(df1, df2, on='user_id', how='left')
+df_agg = df_merged.groupby('user_id').sum()
+print(df_agg.loc[123, 'target'])
 ```
+
+#### Arrays
+`pandas` dataframes are actually built on top of `numpy` arrays, so it's helpful to have some knowledge on how to efficiently use `numpy`. `numpy`, or [Numerical Python](https://numpy.org/), is a library with classes built specifically for efficient mathematical operations. I'll highlight some main distinctions with Python's built-in `list` class. R users will find `numpy` arrays familiar, as they share a lot of coding logic with R's built-in vectors.
+
+First we have simple filtering of a vector. Python's built-in `list` requires either a list comprehension, or the `filter` function plus a lambda and unpacking (`[*...]`). `numpy`, meanwhile, just requires the array itself.
+
+```python
+# Example 1: filtering
+import numpy as np
+
+# Create the data
+list1 = [1, 2, 3, 4, 5]
+array1 = np.array([1, 2, 3, 4, 5])
+
+# Filter for elements > 3
+## The list way
+[val for val in list1 if val > 3]  # [4, 5]
+[*filter(lambda x: x > 3, list1)]  # [4, 5]
+
+## The numpy way
+array1[array1 > 3]   # array([4, 5])
+```
+
+A second major distinction is mathematical operations. The `+` operator causes lists to concatenate. `numpy` arrays, meanwhile, interpret `+` as elementwise addition.
+
+```python
+# Create the data
+list1 = [1, 2, 3]
+list2 = [4, 5, 6]
+array1 = np.array([1, 2, 3])
+array2 = np.array([4, 5, 6])
+
+# Addition
+## Lists: concatenation
+list1 + list2   # [1, 2, 3, 4, 5, 6]
+
+## Arrays: elementwise addition
+array1 + array2 # array([5, 7, 9])
+```
+
+To do elementwise math on Python lists, you need to use something like a list comprehension with `zip` on the two lists. For `numpy`, it's just the normal math operators. And to get something like the mean of the vector, it's just so much easier to lean on `numpy` regardless of whether you're using lists or arrays.
+
+```python
+# Elementwise multiplication
+## Lists: list comprehension
+[x * y for x, y in zip(list1, list2)]  # [4, 10, 18]
+
+## Arrays: just the * operator
+array1 * array2  # array([4, 10, 18])
+
+# Get the mean of an array
+np.mean(list1)  # 2.0
+array1.mean()   # 2.0
+```
+
+Finally, if you're dealing with data in higher dimensions, don't bother with lists of lists - just use `numpy`.
+
+```python
+list_2d = [[1, 2, 3],
+           [4, 5, 6]]
+
+arr_2d = np.array([[1, 2, 3],
+                   [4, 5, 6]])
+
+# Get mean of each row
+[np.mean(row) for row in list_2d]  # [2.0, 5.0]
+arr_2d.mean(axis=1)                # array([2.0, 5.0])
+
+# Get mean of each column
+[*map(np.mean, zip(*l_2d))]   # [2.5, 3.5, 4.5]
+arr_2d.mean(axis=0)           # array([2.5, 3.5, 4.5])
+```
+
+
 
 #### Visualizations
 After dataframes, the next most crucial data science skill is data visualization. Visualizing the data is one of the first steps in an analysis, as well as some of the final steps, when results are being communicated to stakeholders.
