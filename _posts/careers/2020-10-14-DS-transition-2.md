@@ -9,6 +9,8 @@ In [the last post]({{ site.baseurl }}/DS-transition-1), we defined the key eleme
 
 ## Table of contents
 * [**Technical skills:** knowing _**how**_ to do it](#technical-skills-knowing-how-to-do-it)
+  - [Programming](#programming)
+  - Architecture
 * [**Business skills:** knowing _**what**_ to do and _**why**_](#business-skills-knowing-what-to-do-and-why)
 * [**Personal skills:** knowing how to _**consistently deliver**_](#personal-skills-knowing-how-to-consistently-deliver)
 
@@ -16,13 +18,13 @@ In [the last post]({{ site.baseurl }}/DS-transition-1), we defined the key eleme
 ## Technical skills: knowing *how* to do it
 Data science is a broad field that is still iterating towards a solid distinction from data analytics, data engineering, and software engineering, so it's hard to create a definitive skill set that's applicable for all data scientist roles. Someone working all day with building statistical models out of spreadsheets, for example, is going to need a different set of skills than someone improving autonomous vehicles! But consider this learning checklist as a set of fundamental skills that will get you started for your role, no matter where you go. In the rest of this section, we'll cover a bit of each topic and provide code examples.
 
-### Your learning checklist
+### Programming
 * **Python**
 - [ ] Dataframes and arrays: `pandas`, `numpy`
 - [ ] Visualization: `matplotlib`, `seaborn`
-- [ ] Descriptive statistics: `numpy`
+- [ ] Descriptive statistics: `numpy`, `scipy`
+- [ ] Working with dates: `datetime`, `dateutil`
 - [ ] Machine learning: `scikit-learn`, `keras`
-- [ ] Working with dates: `datetime`
 - [ ] Interacting with cloud storage: `boto3`
 - [ ] Interacting with APIs: `requests`, `flask`
 - [ ] Object-oriented programming (i.e. classes, module imports) <br><br>
@@ -63,7 +65,7 @@ df_filt = df_filt.astype({'price': float, 'age': int})
 df_filt.to_csv("cleaned.csv", index=False)
 ```
 
-The next level of difficulty involves vectorized and iterative data transformations. For simple operations like adding every value in two columns together, `pandas` lets you simply add the two columns together like `df['col1'] + df['col2']`. For more nuanced operations, such as handling missing values that would otherwise cause columnwise operations to fail, you can use `.apply` with a lambda function.
+The next level of difficulty involves vectorized and iterative data transformations. For simple operations like adding every value in two columns together, `pandas` lets you simply add the two columns together like `df['col1'] + df['col2']`. For more nuanced operations, such as handling missing values that would otherwise cause columnwise operations to fail, you can use `.apply`. Below, we use a lambda to apply a custom function, `safe_divide`, to the `col1` and `col2` fields of each row. For logic that can't be easily passed into a lambda, we just iterate through the dataframe rows using `itertuples`.
 
 ```python
 # Example 2: iterating and appending data
@@ -78,7 +80,7 @@ df_final = pd.DataFrame()
 for tup in df.itertuples():
 
     # Logic that can't easily be passed into a lambda
-    if tup.Index % 2 == 0:
+    if tup.Index % 2 == 0 and tup.is_outdated:
         df_iter = some_function(tup.age, tup.start_date)
     else:
         df_iter = some_other_fuction(tup.age, tup.pet_name)
@@ -96,7 +98,7 @@ print(df_agg.loc[123, 'target'])
 ```
 
 #### Arrays
-`pandas` dataframes are actually built on top of `numpy` arrays, so it's helpful to have some knowledge on how to efficiently use `numpy`. `numpy`, or [Numerical Python](https://numpy.org/), is a library with classes built specifically for efficient mathematical operations. I'll highlight some main distinctions with Python's built-in `list` class. R users will find `numpy` arrays familiar, as they share a lot of coding logic with R's built-in vectors.
+`pandas` dataframes are actually built on top of `numpy` arrays, so it's helpful to have some knowledge on how to efficiently use `numpy`. `numpy`, or [Numerical Python](https://numpy.org/), is a library with classes built specifically for efficient mathematical operations. R users will find `numpy` arrays familiar, as they share a lot of coding logic with R's built-in vectors. Below, I'll highlight some distinctions from Python's built-in `list` class.
 
 First we have simple filtering of a vector. Python's built-in `list` requires either a list comprehension, or the `filter` function plus a lambda and unpacking (`[*...]`). `numpy`, meanwhile, just requires the array itself.
 
@@ -167,36 +169,70 @@ arr_2d.mean(axis=1)                # array([2.0, 5.0])
 arr_2d.mean(axis=0)           # array([2.5, 3.5, 4.5])
 ```
 
-
-
 #### Visualizations
-After dataframes, the next most crucial data science skill is data visualization. Visualizing the data is one of the first steps in an analysis, as well as some of the final steps, when results are being communicated to stakeholders.
+After dataframes and arrays, the next most crucial data science skill is data visualization. **Visualizing the data is one of the first and last steps of an analysis:** when Python is communicating the data to you, and when you're communicating the data to stakeholders. The main Python data visualization libraries are `matplotlib` and `seaborn`. I'll show some simple `matplotlib` examples below.
 
 ```python
-import datetime as dt
 import matplotlib.pyplot as plt
 
-plt.scatter(df['date'], df['age'])
-plt.xlim([dt.date(2020, 1, 1), dt.date(2020, 5, 1)])
-plt.ylim([df['a'].min(), df['a'].max()])
+# Create a 2-panel plot
+plt.subplots(1,2,1)
+plt.plot(df['date'], df['age'])
+plt.title('My age over time', fontweight='bold')
+
+plt.subplots(1,2,2)
+plt.hist(df['age'], color='blue')
+plt.title('Distribution of my ages', fontweight='bold')
+
+plt.show()
+
+# Iteratively add data to a plot
+for group in df['treatment'].unique():
+    df_group = df[df['treatment'] == group]
+    plt.scatter(df_group['age'], df['tumor_size'], label=group)
 plt.show()
 ```
 
-If you want to get fancy, you can look into interactive dashboarding tools like [Bokeh](https://bokeh.org/) or [Plotly](https://plotly.com/).
+If you want to get fancy, look into interactive dashboarding tools like [Bokeh](https://bokeh.org/) or [Plotly](https://plotly.com/). These tools let the user interact with the plot, such as getting more information about a point by hovering over it, or regenerating data in the plot by clicking on drop-down menus or dragging sliders.
+
+#### Descriptive statistics
+While you may be chomping at the bit to get to machine learning, I think a solid understanding of the fundamentals of descriptive statistics should come first. You'll often need to efficiently describe data to others, which is where descriptive stats comes in. Thankfully, the basics should cover you for most data science applications.
+
+It's critical to understand the average and spread of data. Is the data normally distributed, unimodal or bimodal, skewed left or right? Think of descriptive stats as the "hard numbers" pair to data visualization. Being able to quickly communicate these data metrics will provide an intuition for the data that helps identify outliers, such as data quality issues.
+
+```python
+import numpy as np
+from scipy.stats import sem, normaltest
+
+data = np.random.normal(50, 3, 1000)
+
+# Summarize mean and standard error
+print(data.mean())  # 50.053
+print(sem(data))    # 0.094
+
+# Is the data normally distributed?
+print(normaltest(data))  
+# NormaltestResult(statistic=3.98, pvalue=0.137) -> Yes
+```
 
 #### Working with dates
-At least with data analytics, you most likely won't be able to escape working with dates. `pandas` has great functionality for working with dates when you set the dataframe index to datetime.
+At least with data analytics, you most likely can't escape working with dates. The built-in `datetime` library is the standard, with expanded functionality in the `dateutil` library. Thankfully, the Python dataframe standard - `pandas` - has excellent functionality for working with dates when the index is set to datetime.
 
 ```python
 import pandas as pd
 import datetime as dt
+from dateutil.relativedelta import relativedelta
 
+# Play with dates
 today = dt.date.today()
 yesterday = today - dt.timedelta(days=1)
+last_year = today - relativedelta(years=1)
 
+# Generate sample data with datetime index
 df = pd.DataFrame({'data': [100]*60]},
                   index=pd.date_range('2020-01-01', '2020-02-29'))
 
+# Sum the data for each month
 df_new = df.resample('MS').sum()
 ```
 
