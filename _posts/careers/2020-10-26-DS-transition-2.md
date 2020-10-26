@@ -98,9 +98,9 @@ print(df_agg.loc[123, 'target'])
 ```
 
 #### Arrays
-`pandas` dataframes are actually built on top of `numpy` arrays, so it's helpful to have some knowledge on how to efficiently use `numpy`. `numpy`, or [Numerical Python](https://numpy.org/), is a library with classes built specifically for efficient mathematical operations. R users will find `numpy` arrays familiar, as they share a lot of coding logic with R's built-in vectors. Below, I'll highlight some distinctions from Python's built-in `list` class.
+`pandas` dataframes are actually built on top of `numpy` arrays, so it's helpful to have some knowledge on how to efficiently use `numpy`. `numpy`, or [Numerical Python](https://numpy.org/), is a library with classes built specifically for efficient mathematical operations. R users will find `numpy` arrays familiar, as they share a lot of coding logic with R's vectors. Below, I'll highlight some distinctions from Python's built-in `list` class.
 
-First we have simple filtering of a vector. Python's built-in `list` requires either a list comprehension, or the `filter` function plus a lambda and unpacking (`[*...]`). `numpy`, meanwhile, just requires the array itself.
+First, we have simple filtering of a vector. Python's built-in `list` requires either a list comprehension, or the `filter` function plus a lambda and unpacking (`[*...]`). `numpy`, meanwhile, just requires the array itself.
 
 ```python
 # Example 1: filtering
@@ -136,7 +136,7 @@ list1 + list2   # [1, 2, 3, 4, 5, 6]
 array1 + array2 # array([5, 7, 9])
 ```
 
-To do elementwise math on Python lists, you need to use something like a list comprehension with `zip` on the two lists. For `numpy`, it's just the normal math operators. And to get something like the mean of the vector, it's just so much easier to lean on `numpy` regardless of whether you're using lists or arrays.
+To do elementwise math on Python lists, you need to use something like a list comprehension with `zip` on the two lists. For `numpy`, it's just the normal math operators. You can still get away with manually calculating simple aggregations like the mean on lists, but we're nearly at the point where you should just use `numpy`.
 
 ```python
 # Elementwise multiplication
@@ -147,18 +147,17 @@ To do elementwise math on Python lists, you need to use something like a list co
 array1 * array2  # array([4, 10, 18])
 
 # Get the mean of an array
-np.mean(list1)  # 2.0
-array1.mean()   # 2.0
+sum(list1)/len(list1)  # 2.0
+array1.mean()          # 2.0
 ```
 
 Finally, if you're dealing with data in higher dimensions, don't bother with lists of lists - just use `numpy`.
 
 ```python
+# List of lists vs. matrix
 list_2d = [[1, 2, 3],
            [4, 5, 6]]
-
-arr_2d = np.array([[1, 2, 3],
-                   [4, 5, 6]])
+arr_2d = np.array(list_2d)
 
 # Get mean of each row
 [np.mean(row) for row in list_2d]  # [2.0, 5.0]
@@ -176,11 +175,11 @@ After dataframes and arrays, the next most crucial data science skill is data vi
 import matplotlib.pyplot as plt
 
 # Create a 2-panel plot
-plt.subplots(1,2,1)
+plt.subplot(1,2,1)
 plt.plot(df['date'], df['age'])
 plt.title('My age over time', fontweight='bold')
 
-plt.subplots(1,2,2)
+plt.subplot(1,2,2)
 plt.hist(df['age'], color='blue')
 plt.title('Distribution of my ages', fontweight='bold')
 
@@ -196,14 +195,15 @@ plt.show()
 If you want to get fancy, look into interactive dashboarding tools like [Bokeh](https://bokeh.org/) or [Plotly](https://plotly.com/). These tools let the user interact with the plot, such as getting more information about a point by hovering over it, or regenerating data in the plot by clicking on drop-down menus or dragging sliders.
 
 #### Descriptive statistics
-While you may be chomping at the bit to get to machine learning, I think a solid understanding of the fundamentals of descriptive statistics should come first. You'll often need to efficiently describe data to others, which is where descriptive stats comes in. Thankfully, the basics should cover you for most data science applications.
+While you may be chomping at the bit to get to machine learning, I think a solid understanding of descriptive statistics should come first. You'll often need to efficiently describe data to others, which is where descriptive stats comes in. Thankfully, the basics should cover you for most data science applications.
 
-It's critical to understand the average and spread of data. Is the data normally distributed, unimodal or bimodal, skewed left or right? Think of descriptive stats as the "hard numbers" pair to data visualization. Being able to quickly communicate these data metrics will provide an intuition for the data that helps identify outliers, such as data quality issues.
+It's critical to be able to quantify what the data looks like. Is the data normally distributed, unimodal or bimodal, skewed left or right? What's a typical value, and how much do the data vary from that value? Think of descriptive stats as the "hard numbers" pair to data visualization. Being able to quickly communicate these data metrics will provide an intuition for the data that helps identify outliers, such as data quality issues.
 
 ```python
 import numpy as np
 from scipy.stats import sem, normaltest
 
+# Generate random data
 data = np.random.normal(50, 3, 1000)
 
 # Summarize mean and standard error
@@ -216,7 +216,7 @@ print(normaltest(data))
 ```
 
 #### Working with dates
-At least with data analytics, you most likely can't escape working with dates. The built-in `datetime` library is the standard, with expanded functionality in the `dateutil` library. Thankfully, the Python dataframe standard - `pandas` - has excellent functionality for working with dates when the index is set to datetime.
+At least with data analytics, you most likely can't escape working with dates. The built-in `datetime` library is the standard, with expanded methods in the `dateutil` library. Thankfully, `pandas` has excellent functionality for working with dates when the index is set to datetime.
 
 ```python
 import pandas as pd
@@ -237,7 +237,20 @@ df_new = df.resample('MS').sum()
 ```
 
 #### Machine learning
-Finally, we have machine learning. While ML has the most hype of data science, you won't use it nearly as much as you think you will, unless you're in a really specialized role. Maybe in a really established company, or as a data science consultant.
+Finally, we have machine learning. Of all the things a data scientist does, machine learning receives the most hype *but is likely the smallest aspect of the job.*
+
+Think of being a data scientist as building a machine that can drill through concrete. The tip of the drill is machine learning - it lets you accomplish your task of breaking through that concrete, and there are always new and improved drill tips coming out that can break tougher concrete.
+
+**But the majority of your time will probably be spent building out _the rest of the machinery_** - the frame, levers, screws, etc. - and identifying *where* to apply the drill. (If you're in a particularly engineering-strapped organization, you might also end up building the front end: the seat and controls for the user!) If you only care about the drill tip instead of the whole machine, you'll likely find yourself disillusioned by many data science jobs. But if you find enjoyment in the whole process of building the machine, and creating something that truly helps people break that concrete, then you'll love your work.
+
+At any rate, you *will* need some knowledge of machine learning. I wouldn't stress very much about the specifics of different machine learning algorithms (e.g. random forests vs. support vector machines vs. XGBoost) unless your role is deep in research, education, or specialized consulting. Rather, you'll get a lot farther if you have a good understanding of the necessary steps *before and after* you use a machine learning algorithm.
+
+The main concepts to know, I'd argue, are:
+1. Training data vs. testing data
+2. Feature engineering
+3. Evaluating model fit (and whether your model is overfit).
+
+When you're building a predictive model, it's critical to know how accurate it is. This is where **training data versus testing data** come in. The main idea is to subset your data into "training" data that's fed into the model, and "testing" data that's used to evaluate model accuracy. Once your model learns the relationship between input and output, you give it the testing data and see how its predictions compare to the true outputs.
 
 ```python
 import pandas as pd
