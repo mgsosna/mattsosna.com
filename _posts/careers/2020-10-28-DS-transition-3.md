@@ -1,6 +1,6 @@
 ---
 layout: post
-title: How to enter data science - 3. Understand software engineering
+title: How to enter data science - <br>3. Understand the engineering
 author: matt_sosna
 summary: The software engineering skills needed to succeed in data science
 image: ""
@@ -16,11 +16,12 @@ In [the previous post]({{ site.baseurl }}/DS-transition-2), we talked about the 
   - [Statistics](#statistics)
 * [**Becoming one with yourself**](#becoming-one-with-yourself)
 
-### Software engineering
+## Software engineering
 The skills in the previous section are all about extracting insights from the data. But unless your role is deep in the [analytics side of the analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel), you'll also need some software engineering chops to be effective at your job. In this section, we shift the focus from analytics to engineering.
 
 Returning to our [drilling machine example](#machine-learning) from earlier, this section is about building the machinery *around* the drill that is analytics. How do you securely and scalably pull data from a database? How does your code need to change when you're part of *a team of programmers* instead of a lone wolf? What best practices do you need to adopt now to avoid hours or days of wasted time a year from now? These are the sorts of questions we'll answer in this section.
 
+### Accessing data
 #### SQL
 We'll start with a skill that spans the entire analytics-engineering spectrum, but I'd argue is more of an "engineering" skill than an analytical one. As a data scientist, you'll rarely access data through the familiar click-based graphical user interfaces of Google Drive or Dropbox. The majority of your time accessing data will be through SQL and **[APIs](#interacting-with-apis)**, which I'll talk about in a moment.
 
@@ -40,23 +41,37 @@ GROUP BY u.id
 ORDER BY u.name;
 ```
 
-For more complex queries, you'll want to bring in the `WITH {tab} AS` structure, which let you work with the output of nested queries. Make sure you're comfortable, too, with the difference between an `INNER JOIN`, `LEFT JOIN` and `RIGHT JOIN`, and `OUTER JOIN`. (The main thing to remember is which rows you want to make sure are present after the join: only the ones that are in both tables (`INNER`), all in the left (`LEFT`) or right (`RIGHT`), or all in both (`OUTER`).)
+For more complex queries, you'll want to bring in the `WITH {tab} AS` structure, which let you work with the output of nested queries. In the below query, we filter the table on the latest bill for each user.
 
 ```sql
-WITH lookup AS (
+WITH latest_bill AS (
     SELECT
-        id,
-        MIN(clicks) AS min_clicks,
-        MAX(clicks) AS max_clicks
-    FROM experiments
+        user_id,
+        MAX(bill_date) AS max_date
+    FROM bills
+    GROUP BY user_id
 )
-SELECT * FROM lookup AS l
-RIGHT JOIN users AS u  -- Don't drop any rows in 'users'
-ON (id);
+SELECT
+    b.user_id,
+    b.bill_date
+FROM bills AS b
+INNER JOIN latest_bill AS lb  -- Filter on the latest bill for each ID
+ON b.user_id = lb.user_id AND b.bill_date = lb.max_date;
 ```
 
+Make sure you're comfortable, too, with the difference between an `INNER JOIN`, `LEFT JOIN` and `RIGHT JOIN`, and `OUTER JOIN`. (The main thing to remember is which rows you want to make sure are present after the join: only the ones that are in both tables (`INNER`), all in the left (`LEFT`) or right (`RIGHT`), or all in both (`OUTER`).)
+
+```sql
+SELECT *
+FROM users AS u
+LEFT JOIN transactions AS t  -- Don't drop any rows in 'users'
+ON u.id = t.user_id;
+```
+
+
+
 #### Interacting with APIs
-Aside from SQL, the other main way you'll access data is via **APIs**, or Application Programming Interfaces.<sup>[[4]](#footnotes)</sup>
+Aside from SQL, the other main way you'll access data is via **APIs**, or Application Programming Interfaces.<sup>[[1]](#footnotes)</sup>
 
 An API is like the entrance to a bank: it's (hopefully) the only way to access the contents of the bank, and you have to follow certain rules to enter: you can't bring in weapons, you have to enter on foot, you'll be turned away if you're not wearing pants, etc. Another way to think of it is like an electrical outlet - you can't access electricity unless your chord plug is in the correct shape.
 
@@ -96,6 +111,7 @@ string = body.decode(encoding='utf-8')
 df = pd.DataFrame(json.load(StringIO(string)))
 ```
 
+### Other stuff
 #### Version control
 When you work on a coding project that can't be finished in one sitting, you need checkpoints to save the progress you've made. Even once the project is seemingly complete, you might not want to modify the working version with a new idea you have, but rather a copy of the project where you can make changes and compare them to the original.
 
@@ -200,3 +216,6 @@ This code block is quite a bit longer than the others, and it doesn't even inclu
 3. Doesn't grind those pipelines to a halt if it gets some unexpected input and breaks
 
 If you're interested in a deeper dive on these concepts and a step-by-step explanation of the (truncated) code above, check out [this post]({{ site.baseurl }}/Python-5-Writing-production-level-Python).
+
+## Footnotes
+1. [[Interacting with APIs]](#interacting-with-apis) APIs and SQL go hand-in-hand, actually. When you request data from an API, your request is most likely converted to a SQL query that is then executed on a database.

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: How to enter data science - 4. The personal and interpersonal skills
+title: How to enter data science - <br>4. The personal and interpersonal skills
 author: matt_sosna
 summary: The nontechnical skills needed to succeed in data science
 image: ""

@@ -1,67 +1,141 @@
 ---
 layout: post
-title: How to enter data science - 2. Master the analytics
+title: How to enter data science - <br>2. Master the analytics
 author: matt_sosna
 summary: The technical skills needed to succeed in data science
 image: ""
 ---
-In [the last post]({{ site.baseurl }}/DS-transition-1), we defined the key elements of data science as 1) deriving insights from data and 2) communicating those insights to others. Despite the huge diversity in how these elements are expressed in actual data scientist roles, there is a core skill set that will serve you well no matter where you go.
+In [the last post]({{ site.baseurl }}/DS-transition-1), we defined the key elements of data science as 1) deriving insights from data and 2) communicating those insights to others. Despite the huge diversity in how these elements are expressed in actual data scientist roles, **there is a core skill set** that will serve you well no matter where you go. The remaining posts in this series will define and explore these skills in detail.
 
-The next two posts will cover the _**technical**_ skills needed to be successful as a data scientist. The final post will cover the _**business**_, _**personal**_, and _**interpersonal**_ skills needed to succeed. Consider the distinction here as **knowing _how_ to do it** (technical) versus **knowing _what_ to do and _why_** (business, personal, and interpersonal).
+The next two posts will cover the _<u>technical</u>_ skills needed to be successful as a data scientist: the analytics (this post) and [the engineering]({{  site.baseurl  }}/DS-transition-3). The [final post]({{  site.baseurl  }}/DS-transition-4) will cover the _<u>business</u>_, _<u>personal</u>_, and _<u>interpersonal</u>_ skills needed to succeed. Consider the distinction here as **knowing _how_ to do it** (technical) versus **knowing _what_ to do and _why_** (business, personal, and interpersonal). Let's get started!
 
-Below is the full set of technical skills we'll cover in the next two posts. This post will focus on the **Programming** and **Statistics** sections, and the next one will cover **Software Engineering.**
+---
+**How to enter data science:**
+1. [Identify the target]({{  site.baseurl  }}/DS-transition-1)
+2. **Master the analytics**
+3. [Understand the engineering]({{  site.baseurl  }}/DS-transition-3)
+4. [Understand people]({{  site.baseurl  }}/DS-transition-4)
 
-* **Programming**
-- [ ] [Dataframes](#dataframes) and [arrays](#arrays): `pandas`, `numpy`
-- [ ] [Visualizations](#visualizations): `matplotlib`, `seaborn`
-- [ ] [Descriptive statistics](#descriptive-statistics): `numpy`, `scipy`
-- [ ] [Working with dates](#working-with-dates): `datetime`, `dateutil`
-- [ ] [Machine learning](#machine-learning): `scikit-learn`, `keras` <br><br>
-* **Statistics**
-- [ ] [Linear regression](#linear-regression)
-- [ ] [Logistic regression](#logistic-regression) <br><br>
-* **Software engineering**
-- [ ] [SQL](#sql): `psycopg2`
-- [ ] [Interacting with APIs](#interacting-with-apis): `requests`, `boto3`
-- [ ] [Version control](#git)
-- [ ] Object-oriented programming (i.e. classes, module imports)
-- [ ] Virtual environments
-- [ ] Writing tests, e.g. `pytest`
-- [ ] Servers and deployment <br><br>
-{: style='list-style-type: none'}
-
-## Table of contents
-* [**Becoming one with the machine**](#becoming-one-with-the-machine)
-  - [Programming](#working-with-data)
-  - [Statistics](#statistics)
-
+---
 
 ## Becoming one with the machine
-Data science is a broad field that is still iterating towards a solid distinction from data analytics, data engineering, and software engineering, so it's hard to create a definitive skill set that's applicable for all data scientist roles. Someone working all day with building statistical models out of spreadsheets, for example, is going to need a different set of skills than someone improving autonomous vehicles! But consider this learning checklist as a set of fundamental skills that will get you started for your role, no matter where you go. In the rest of this section, we'll cover a bit of each topic and provide code examples.
+Data science is a broad field that is still iterating towards a solid distinction from data analytics, data engineering, and software engineering, so it's hard to create a definitive skill set that's applicable for all data scientist roles. Someone working all day with building statistical models out of spreadsheets, for example, is going to need a different set of skills than someone improving autonomous vehicles!
 
+But consider this learning checklist as a set of fundamental skills that will get you started for your role, no matter where you go. We'll cover the **Inferential Statistics** and **Programming** sections in this post; in [the next post]({{  site.baseurl  }}/DS-transition-3), we'll cover **Software Engineering.**
+
+* **Inferential Statistics**
+- [ ] [Sampling and bias](#sampling-and-bias)
+- [ ] [Model fundamentals](#model-fundamentals)
+- [ ] [Linear regression](#linear-regression)
+- [ ] [Logistic regression](#logistic-regression) <br><br>
 * **Programming**
-- [ ] [Dataframes](#dataframes) and [arrays](#arrays): `pandas`, `numpy`
-- [ ] [Visualizations](#visualizations): `matplotlib`, `seaborn`
-- [ ] [Descriptive statistics](#descriptive-statistics): `numpy`, `scipy`
-- [ ] [Working with dates](#working-with-dates): `datetime`, `dateutil`
-- [ ] [Machine learning](#machine-learning): `scikit-learn`, `keras` <br><br>
-* **Statistics**
-- [ ] Linear regression
-- [ ] Logistic regression <br><br>
+- [ ] [Dataframes](#dataframes) and [arrays](#arrays)
+- [ ] [Visualizations](#visualizations)
+- [ ] [Descriptive statistics](#descriptive-statistics)
+- [ ] [Working with dates](#working-with-dates)
+- [ ] [Machine learning](#machine-learning) <br><br>
 * **Software engineering**
-- [ ] [SQL](#sql): `psycopg2`
-- [ ] [Interacting with APIs](#interacting-with-apis): `requests`, `boto3`
-- [ ] Version control: [Git](https://git-scm.com/)
+- [ ] [SQL]({{  site.baseurl  }}/DS-transition-3/#sql)
+- [ ] [Interacting with APIs]({{  site.baseurl  }}/DS-transition-3/#interacting-with-apis)
+- [ ] [Version control]({{  site.baseurl  }}/DS-transition-3/#version-control)
 - [ ] Object-oriented programming (i.e. classes, module imports)
 - [ ] Virtual environments
-- [ ] Writing tests, e.g. `pytest`
+- [ ] Writing tests
 - [ ] Servers and deployment <br><br>
 {: style='list-style-type: none'}
 
-### Programming
-While plenty of data science roles rely solely on R, this post will demonstrate coding concepts with Python. Python's versatility makes it an "all-in-one" language for a huge range of data science applications, as well as letting you dip into [the software engineering side of the analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel).
+## Inferential Statistics
+Inferential statistics is the discipline of drawing inferences about a _**population**_ from a _**sample.**_ We rarely have data on every single individual, decision, or atom in whatever process we're examining. Rather than throw in the towel on understanding anything around us, we can turn to statistics for tools that translate data on *our sample* into inferences on *the entire population*. Inferential statistics is used all around us to make sense of the world, from [weather forecasts](https://thisisstatistics.org/beyond-barometers-how-statisticians-help-to-predict-the-weather/) to [opinion polls](https://www.math.arizona.edu/~jwatkins/505d/Lesson_12.pdf) and [medical research](https://emj.bmj.com/content/17/5/357), and **thinking carefully about how to generalize from our data to the broader world is a critical skill for data science.** We'll start with some fundamentals of statistics before diving deep into programming.
 
-#### Dataframes
+### Wait, do I actually need to learn stats?
+In the era of big data and machine learning, it's tempting to shrug off learning any stats. When the average laptop is *2 million times* more powerful than [the computer that got us to the moon](https://www.realclearscience.com/articles/2019/07/02/your_mobile_phone_vs_apollo_11s_guidance_computer_111026.html),<sup>[[1]](#footnotes)</sup> it's easier than ever to throw a dataset into a deep learning algorithm, get a coffee while it crunches the numbers, and then come back to some model that always delivers world-shattering insights. Right? Well... not quite.
+
+The following quote usually refers to the *quality of data* going into an analysis or prediction, but I think it's an apt summary for why we need to care about stats as well.
+
+> "Garbage in, garbage out."
+
+A model is a simplified representation of reality. If that representation is flawed, it's incredibly easy for the picture it paints to be nonsensical or misleading. The reason statisticians spend years learning is because all these sources of variation...
+
+And unlike programming, hitting "run" on a half-baked model *will* output a result that qualitatively looks identical to a highly-polished accurate model.  
+
+
+[Good article from American Statistical Association](http://higherlogicdownload.s3.amazonaws.com/AMSTAT/UploadedImages/49ecf7cf-cb26-4c1b-8380-3dea3b7d8a9d/BigDataOnePager.pdf)
+
+
+In fact, unless the real-world process you're trying to model is simple, *you should expect* a statistical model to get distracted by sources of noise in the data. A simple example would be predicting someone's height based off their diet. You can build a pretty accurate model based on characteristics of the diet, but the model's predictions will be completely diluted by the individual's sex: men tend to be taller than women. Incorporating that will make your model better.
+
+ like unbalanced treatment groups, blocks, or
+
+
+
+
+The reason we need to care about stats, and more broadly how we formulate models in general, is aptly summarized here:
+
+
+And another quote, generally attributed to statistician George Box:
+> "All models are wrong, but some are useful."
+
+### Ok, how much stats do I actually need?
+Data science roles vary tremendously in the depth of statistical knowledge expected.
+
+
+
+
+
+The following concepts should serve as a starting point; if your role involves analyzing data, I think the more statistical knowledge the better, as statistics is a set of tools for parsing signals from noise in our data. If your analyses inform major decisions like public policy or the direction your company takes, you'll want to account for nuances like [random effects](https://www.theanalysisfactor.com/understanding-random-effects-in-mixed-models/), [regression discontinuities](https://en.wikipedia.org/wiki/Regression_discontinuity_design), [nonparametric](http://mlss.tuebingen.mpg.de/2015/slides/ghahramani/gp-neural-nets15.pdf) or [Bayesian](http://www.scholarpedia.org/article/Bayesian_statistics) alternatives to [frequentism](https://en.wikipedia.org/wiki/Frequentist_inference), etc. But the fundamentals here will serve as a good starting point, and they're likely enough to cover the stats you'll need for jobs on most of the [analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel).
+
+But why learn any stats in the first place? In the era of big data, can't we just throw the data into Tensorflow and have deep learning handle everything? Unfortunately, rather than removing the need for stats, big data introduces a whole new set of [possible statistical issues to account for](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4236847/), meaning it's even more important to understand the stats before you deploy a model.
+
+
+
+Why do we need stats? Don't skip the stats: https://www.kdnuggets.com/2017/11/10-statistical-techniques-data-scientists-need-master.html
+
+### Sampling and bias
+<img align="right" src="https://i.imgur.com/JbXsczj.png" align='right'>
+I talk about sampling [in this post]({{  site.baseurl  }}/T-tests-vs-ANOVA/#motivation). The main idea is that you have a **population** that you **sample** from.
+
+You can spend hours digging through the details on how to ensure a sample accurately represents the broader population (especially when the population characteristics you're interested in aren't normally distributed), but the fundamentals are that your sample should be simple and random.
+
+**Look up simple random sampling.**
+
+
+<br><br><br>
+
+
+
+### Model fundamentals
+#### Residuals
+<img src="{{  site.baseurl  }}/images/careers/residual.jpg" align='right'>
+In a classical statistical model, as well as when evaluating a machine learning model accuracy, we can compare the model's predictions to the actual values. In other words, given the inputs to the model, what did it think the output would be, versus what the output actually was? The **residual** is the distance between the predicted vs. actual values.
+
+The graphic on the right shows this well. The linear model's predictions are the red line. The distance between the predictions and the actual values are the residuals. The goal is to build a model that minimizes the residuals.
+
+
+
+#### Coefficients
+
+### Linear regression
+Let's try this: $A$.
+
+You should be able to explain the following equation again and again:
+
+$$ h(x) = \sum_{j=1}^{n}\beta_jx_j $$
+
+**Linear regression** is one of the most common statistical model you'll encounter in industry, and you need to understand its ins and outs. Make sure you have a solid understanding of what **residuals** are, **least squared error**, and $$R^2$$.
+
+### Logistic regression
+The below equation for logistic regression might not come up as frequently, but you should understand it and be able to explain it, as well.
+
+$$ P(y) = \frac{1}{1+e^{-h(x)}} $$
+
+For least squares:
+$$ y = \sum_{i=1}^{m}(h(x_i)-y_i)^2 $$
+
+
+## Programming
+While plenty of data science roles rely solely on R, this post will demonstrate coding concepts with Python. Python's versatility makes it an "all-in-one" language for a huge range of data science applications, from dataframe manipulations to computer vision. Python also lets you more easily dip into [the software engineering side of the analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel).
+
+### Dataframes
 Dataframes are at the core of data science and analytics. They're essentially just a table of rows and columns, typically where each row is a _**record**_ and each column is an _**attribute**_ of that record. You can have a table of employees, for example, where each row is a person with columns for their first and last names, their home address, their salary, etc. Because dataframes will play a central role in your job, you'll need to master visualizing and manipulating the data within them. `pandas` is the key library here.
 
 The basics include being able to load, clean, and write out [CSV files](https://en.wikipedia.org/wiki/Comma-separated_values). Cleaning data can involve removing rows with missing values or duplicated information, correcting erroneous values, and reformatting columns into different data types.
@@ -131,10 +205,10 @@ df_agg = df_merged.groupby('user_id').sum()
 print(df_agg.loc[123, 'target'])
 ```
 
-#### Arrays
+### Arrays
 `pandas` dataframes are actually built on top of `numpy` arrays, so it's helpful to have some knowledge on how to efficiently use `numpy`. Many operations on `pandas.Series` (the array-like datatype for rows and columns) are identical to `numpy.array` operations, for example.
 
-`numpy`, or [Numerical Python](https://numpy.org/), is a library with classes built specifically for efficient mathematical operations. R users will find `numpy` arrays familiar, as they share a lot of coding logic with R's vectors. Below, I'll highlight some distinctions from Python's built-in `list` class. A typical rule of thumb I follow is that it's better to use Python's built-in classes whenever possible, given that they've been highly optimized for the language. In data science, though, `numpy` arrays are generally a better choice.<sup>[[1]](#footnotes)
+`numpy`, or [Numerical Python](https://numpy.org/), is a library with classes built specifically for efficient mathematical operations. R users will find `numpy` arrays familiar, as they share a lot of coding logic with R's vectors. Below, I'll highlight some distinctions from Python's built-in `list` class. A typical rule of thumb I follow is that it's better to use Python's built-in classes whenever possible, given that they've been highly optimized for the language. In data science, though, `numpy` arrays are generally a better choice.<sup>[[2]](#footnotes)</sup>
 
 First, we have simple filtering of a vector. Python's built-in `list` requires either a list comprehension, or the `filter` function plus a lambda and unpacking (`[*...]`). `numpy`, meanwhile, just requires the array itself.
 
@@ -204,7 +278,7 @@ arr_2d.mean(axis=1)                # array([2.0, 5.0])
 arr_2d.mean(axis=0)           # array([2.5, 3.5, 4.5])
 ```
 
-#### Visualizations
+### Visualizations
 After dataframes and arrays, the next most crucial data science skill is data visualization. **Visualizing the data is one of the first and last steps of an analysis:** when Python is communicating the data to you, and when you're communicating the data to stakeholders. The main Python data visualization libraries are `matplotlib` and `seaborn`. I'll show some simple `matplotlib` examples below.
 
 ```python
@@ -230,8 +304,9 @@ plt.show()
 
 If you want to get fancy, look into interactive dashboarding tools like [Bokeh](https://bokeh.org/) or [Plotly](https://plotly.com/). These tools let the user interact with the plot, such as getting more information about a point by hovering over it, or regenerating data in the plot by clicking on drop-down menus or dragging sliders.
 
-#### Descriptive statistics
-While you may be chomping at the bit to get to machine learning, I think a solid understanding of [descriptive statistics](https://conjointly.com/kb/descriptive-statistics/) should come first. You'll often need to efficiently describe data to others, which is where descriptive stats comes in. Thankfully, the basics should cover you for most data science applications.
+### Descriptive statistics
+While you may be chomping at the bit to get to machine learning, I think a solid understanding of [descriptive statistics](https://conjointly.com/kb/descriptive-statistics/) should come first. In contrast to inferential statistics, descriptive statistics involves summarizing the data you have, as opposed to making inferences about a broader population.
+<span style='color:red'>Work on this... </span> You'll often need to efficiently describe data to others, which is where descriptive stats comes in. Thankfully, the basics should cover you for most data science applications.
 
 It's critical to be able to quantify what the data looks like. Is the data normally distributed, unimodal or bimodal, skewed left or right? What's a typical value, and how much do the data vary from that value? Think of descriptive stats as the "hard numbers" pair to data visualization. Being able to quickly communicate these metrics will provide an intuition for the data that helps identify outliers, such as data quality issues.
 
@@ -251,7 +326,7 @@ print(normaltest(data))
 # NormaltestResult(statistic=3.98, pvalue=0.137) -> Yes
 ```
 
-#### Working with dates
+### Working with dates
 At least with data analytics, you most likely won't escape working with dates. Dates form the backbone of [time series analysis](https://en.wikipedia.org/wiki/Time_series), which is ubiquitous in fields with continuous data streams like the [Internet of Things](https://www.wired.co.uk/article/internet-of-things-what-is-explained-iot).
 
 The built-in `datetime` library is Python's standard, with expanded methods in the `dateutil` library. Thankfully, `pandas` has excellent functionality for working with dates when the index is set to datetime, meaning you can stay in `pandas` for most types of data analysis in Python.
@@ -274,22 +349,23 @@ df = pd.DataFrame({'data': [100]*60]},
 df_new = df.resample('MS').sum()
 ```
 
-#### Machine learning
+### Machine learning
 Finally, we have machine learning. Of all the things a data scientist does, machine learning receives the most hype *but is likely the smallest aspect of the job.*
 
 Think of being a data scientist as building a machine that can drill through concrete. The drill itself is the eye-catching bit - the fancy statistics and analytics - and the tip is machine learning. The drill tip gets a lot of attention - it gets all the credit for breaking through the concrete, and there are always new and improved drill tips coming out that can break tougher concrete.
 
 **But the majority of your time will probably be spent building out _the rest of the machinery_** - the frame, levers, screws, etc. - and identifying *where* to apply the drill. (If you're in a particularly engineering-strapped organization, you might also end up building the front end: the seat and controls for the user!) If you only care about the drill tip instead of the whole machine, you'll likely find yourself disillusioned by many data science jobs. But if you find enjoyment in the entire process of building the machine and creating something that truly helps people break that concrete, then you'll love your work.
 
-At any rate, you *will* need some knowledge of machine learning. I wouldn't stress very much about the specifics of different machine learning algorithms (e.g. [random forests](https://en.wikipedia.org/wiki/Random_forest) vs. [support vector machines](https://en.wikipedia.org/wiki/Support_vector_machine) vs. [XGBoost](https://xgboost.readthedocs.io/en/latest/)) unless your role is deep in research, education, or machine learning consulting.<sup>[[2]](#footnotes)</sup> Rather, you'll get a lot farther if you have a good understanding of the necessary steps *before and after* you use a machine learning algorithm.
+At any rate, you *will* need some knowledge of machine learning. I wouldn't stress very much about the specifics of different machine learning algorithms (e.g. [random forests](https://en.wikipedia.org/wiki/Random_forest) vs. [support vector machines](https://en.wikipedia.org/wiki/Support_vector_machine) vs. [XGBoost](https://xgboost.readthedocs.io/en/latest/)) unless your role is deep in research, education, or machine learning consulting.<sup>[[3]](#footnotes)</sup> Rather, you'll get a lot farther if you have a good understanding of the necessary steps *before and after* you use a machine learning algorithm.
 
 The main concepts to know, I'd argue, are:
 1. Training data vs. testing data
 2. Feature engineering
 3. Evaluating model fit (and whether your model is overfit)
+4. The difference between machine learning and statistics
 
-<u><b>Training data vs. testing data</b></u><br>
-When you're building a predictive model, it's critical to know how accurate it is. This is where **training data versus testing data** come in. The main idea is to subset your data into "training" data that's used to create the model, and "testing" data that's later used to evaluate model accuracy. Once your model learns the relationship between input and output, you use the testing data to see how the model's predictions compare to the true outputs.<sup>[[3]](#footnotes)</sup>
+#### Training data vs. testing data
+When you're building a predictive model, it's critical to know how accurate it is. This is where **training data versus testing data** come in. The main idea is to subset your data into "training" data that's used to create the model, and "testing" data that's later used to evaluate model accuracy. Once your model learns the relationship between input and output, you use the testing data to see how the model's predictions compare to the true outputs.<sup>[[4]](#footnotes)</sup>
 
 ```python
 import pandas as pd
@@ -314,7 +390,7 @@ rf.fit(X_train, y_train)
 accuracy_score(rf.predict(X_test), y_test)
 ```
 
-<u><b>Feature engineering</b></u><br>
+#### Feature engineering
 Our raw data alone is often not sufficient to build a strong model. Let's say, for example, that we're trying to predict the number of items sold each day in an online store. We already know that sales are higher on weekends than weekdays, so we want our model to incorporate a weekday/weekend distinction to be more accurate. A weekday/weekend distinction isn't explicitly present in our data, though - we just have the date a sale occurred. A linear model will certainly have no idea what to do with raw dates. *Maybe* a complex deep learning model can pick up a cyclic pattern in sales related to dates, but it would likely need a lot of data to figure this out.
 
 A much simpler option is to **engineer** an `is_weekend` **feature** by asking whether each sale occurred on a Saturday or Sunday vs. the rest of the week. The `is_weekend` feature now serves as an unambiguous flag giving our model a heads up that something may be different between weekdays and weekends. Similarly, while the raw number of items in users' shopping carts is not an informative predictor, perhaps the square root or logarithm of those items actually is. (I actually have no idea. Send me a message if there's some transformation all the data scientists in e-commerce use!)
@@ -326,7 +402,7 @@ df['sqrt_n_cart_items'] = df['n_cart_items'].apply(np.sqrt)
 
 Ultimately, feature engineering is a way to incorporate domain expertise into your model, giving it more useful tools for making sense of your data. Expect to spend a good amount of time trying to identify and engineer the most informative features for your models. After precise data, relevant features are *the* most important component of an accurate machine learning model - far more than the exact algorithm used or time spent tuning [hyperparameters](https://towardsdatascience.com/understanding-hyperparameters-and-its-optimisation-techniques-f0debba07568).
 
-<u><b>Evaluating model fit</b></u><br>
+#### Evaluating model fit
 The final machine learning theory we need to understand is evaluating how well your model describes your data... as well as whether it describes the data *too* well. The graphic below visualizes this nicely. (Source: [Educative.io](https://www.educative.io/edpresso/overfitting-and-underfitting).)
 
 ![]({{  site.baseurl  }}/images/careers/model_fit.png)
@@ -337,30 +413,16 @@ Think of a model as the underlying "rules" converting inputs to outputs - the mo
 
 When we pack our model with correlated features like *hours of sleep yesterday* and *hours of sleep two days ago*, we squeeze out some extra accuracy in describing our data, but we also steadily create a picture like the top right, where our model doesn't translate well to the real world. To combat this, we need to employ techniques like [feature selection](https://machinelearningmastery.com/feature-selection-with-real-and-categorical-data/), [k-fold cross validation](https://machinelearningmastery.com/k-fold-cross-validation/), [regularization](https://explained.ai/regularization/index.html), and [information criteria](https://www.sciencedirect.com/science/article/abs/pii/S0167947313002776). These techniques enable us to create the most parsimonious representation of the real world, based on only the most informative features.
 
+#### Machine learning versus statistics
+The main way to partition machine learning from statistics is whether you're trying to [explain versus predict](https://healthcare.ai/machine-learning-versus-statistics-use/). There are some fundamental concepts you'll want to make sure you have a good grasp on.
+
+## Concluding thoughts
 
 
+## Footnotes
+1. [[Wait, do I actually need to learn stats?]](#wait-do-i-actually-need-to-learn-stats) The [Apollo Guidance Computer](https://www.realclearscience.com/articles/2019/07/02/your_mobile_phone_vs_apollo_11s_guidance_computer_111026.html) had 4.096 KB of RAM. An average laptop in 2020 has 8 GB, which is 1.95 million times more powerful. If we use a [memory-optimized AWS EC2 instance](https://aws.amazon.com/ec2/instance-types), we have access to upwards of _**1.57 billion**_ times more compute than the Apollo mission. And all to identify pictures of cats...
 
-
-## Statistics
-Don't skip the stats: https://www.kdnuggets.com/2017/11/10-statistical-techniques-data-scientists-need-master.html
-
-### Linear regression
-You should be able to explain the following equation again and again:
-
-$$ h(x) = \sum_{j=1}^{n}\beta_jx_j $$
-
-**Linear regression** is one of the most common statistical model you'll encounter in industry, and you need to understand its ins and outs. Make sure you have a solid understanding of what **residuals** are, **least squared error**, and $$R^2$$.
-
-### Logistic regression
-The below equation for logistic regression might not come up as frequently, but you should understand it and be able to explain it, as well.
-
-$$ P(y) = \frac{1}{1+e^{-h(x)}} $$
-
-For least squares:
-$$ y = \sum_{i=1}^{m}(h(x_i)-y_i)^2 $$
-
-# Footnotes
-1. [[Arrays]](#arrays) One clear exception is if you want your array to store values of different types. `numpy.array` and `pandas.Series` have type forcing, which means that [all elements must be the same type](https://numpy.org/doc/stable/user/quickstart.html#the-basics), and they'll be forced into the same type upon creation of the array. <br><br>Below, the `numpy` version of `our_list1` converts `1` and `2` to floats to match `3.0`. (Integers are converted to floats to preserve the information after the decimal in floats.) For `our_list2`, there's no clear integer of float version of `'a'`, so instead `1` and `2.0` are converted to strings. If you want your array to store data of different types for some reason, you're therefore better off sticking with Python's `list` class.
+2. [[Arrays]](#arrays) One clear exception to the rule of using `numpy` arrays over lists is if you want your array to store values of different types. `numpy.array` and `pandas.Series` have type forcing, which means that [all elements must be the same type](https://numpy.org/doc/stable/user/quickstart.html#the-basics), and they'll be forced into the same type upon creation of the array. <br><br>Below, the `numpy` version of `our_list1` converts `1` and `2` to floats to match `3.0`. (Integers are converted to floats to preserve the information after the decimal in floats.) For `our_list2`, there's no clear integer of float version of `'a'`, so instead `1` and `2.0` are converted to strings. If you want your array to store data of different types for some reason, you're therefore better off sticking with Python's `list` class.
 
     ```python
     import numpy as np
@@ -373,8 +435,6 @@ $$ y = \sum_{i=1}^{m}(h(x_i)-y_i)^2 $$
     np.array(our_list1)  # array([1., 2., 3.])
     np.array(our_list2)  # array(['1', 'a', '2.0'])
     ```
-2. [[Machine learning]](#machine-learning) As someone who loves figuring out the nuts and bolts of how things work, I'd personally recommend digging into the distinctions between algorithms like random forests and XGBoost! I find it fascinating, and the knowledge makes it easier for me to demystify machine learning to curious consumers of model outputs. But overall, my ability to deliver business value hasn't improved much from digging into these specifics; the real benefit is the personal satisfaction of understanding the nuances.
+3. [[Machine learning]](#machine-learning) As someone who loves figuring out the nuts and bolts of how things work, I'd personally recommend digging into the distinctions between algorithms like random forests and XGBoost! I find it fascinating, and the knowledge makes it easier for me to demystify machine learning to curious consumers of model outputs. But overall, my ability to deliver business value hasn't improved much from digging into these specifics; the real benefit is the personal satisfaction of understanding the nuances.
 
-3. [[Training data vs. testing data]](#machine-learning) Note that this is for supervised learning problems, where there is a "correct" output for each input. Evaluating model accuracy is [more complicated for unsupervised learning problems](https://www.researchgate.net/post/Which_are_the_methods_to_validate_an_unsupervised_machine_learning_algorithm).  
-
-4. [[Interacting with APIs]](#interacting-with-apis) APIs and SQL go hand-in-hand, actually. When you request data from an API, your request is most likely converted to a SQL query that is then executed on a database.
+4. [[Training data vs. testing data]](#machine-learning) Note that this is for supervised learning problems, where there is a "correct" output for each input. Evaluating model accuracy is [more complicated for unsupervised learning problems](https://www.researchgate.net/post/Which_are_the_methods_to_validate_an_unsupervised_machine_learning_algorithm).  
