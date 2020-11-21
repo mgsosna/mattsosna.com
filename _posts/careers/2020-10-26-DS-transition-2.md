@@ -48,47 +48,22 @@ But consider this learning checklist as a set of fundamental skills that will ge
 Inferential statistics is the discipline of drawing inferences about a _**population**_ from a _**sample.**_ We rarely have data on every single individual, decision, or atom in whatever process we're examining. Rather than throw in the towel on understanding anything around us, we can turn to statistics for tools that translate data on *our sample* into inferences on *the entire population*. Inferential statistics is used all around us to make sense of the world, from [weather forecasts](https://thisisstatistics.org/beyond-barometers-how-statisticians-help-to-predict-the-weather/) to [opinion polls](https://www.math.arizona.edu/~jwatkins/505d/Lesson_12.pdf) and [medical research](https://emj.bmj.com/content/17/5/357), and **thinking carefully about how to generalize from our data to the broader world is a critical skill for data science.** We'll start with some fundamentals of statistics before diving deep into programming.
 
 ### Wait, do I actually need to learn stats?
-In the era of big data and machine learning, it's tempting to shrug off learning any stats. When the average laptop is *2 million times* more powerful than [the computer that got us to the moon](https://www.realclearscience.com/articles/2019/07/02/your_mobile_phone_vs_apollo_11s_guidance_computer_111026.html),<sup>[[1]](#footnotes)</sup> it's easier than ever to throw a dataset into a deep learning algorithm, get a coffee while it crunches the numbers, and then come back to some model that always delivers world-shattering insights. Right? Well... not quite.
+In the era of big data and machine learning, it's tempting to shrug off learning any stats. When the average laptop is [*2 million times* more powerful](https://www.realclearscience.com/articles/2019/07/02/your_mobile_phone_vs_apollo_11s_guidance_computer_111026.html) than the computer that got us to the moon<sup>[[1]](#footnotes)</sup>, it's easier than ever to throw a dataset into a deep learning algorithm, get a coffee while it crunches the numbers, and then come back to some model that always delivers world-shattering insights. Right? Well... note quite.<sup>[[2]](#footnotes)</sup>
 
 The following quote usually refers to the *quality of data* going into an analysis or prediction, but I think it's an apt summary for why we need to care about stats as well.
 
 > "Garbage in, garbage out."
 
-A model is a simplified representation of reality. If that representation is flawed, it's incredibly easy for the picture it paints to be nonsensical or misleading. The reason statisticians spend years learning is because all these sources of variation...
+**A model is a simplified representation of reality.** If that representation is flawed, the picture it paints can very easily be nonsensical or misleading. The reason people dedicate their lives to researching statistics is that **condensing reality down to models is incredibly challenging, yet necessary.**
 
-And unlike programming, hitting "run" on a half-baked model *will* output a result that qualitatively looks identical to a highly-polished accurate model.  
+It's usually impossible or impractical to process every detail before making a decision; our brains, for example, constantly use [processing short-cuts](https://jamesclear.com/schemas) to interpret the world faster. The question isn't how to make a model that isn't flawed; it's how to ensure the flaws don't affect the conclusions. As statistician George Box ([allegedly](https://en.wikipedia.org/wiki/All_models_are_wrong)) said:
 
-
-[Good article from American Statistical Association](http://higherlogicdownload.s3.amazonaws.com/AMSTAT/UploadedImages/49ecf7cf-cb26-4c1b-8380-3dea3b7d8a9d/BigDataOnePager.pdf)
-
-
-In fact, unless the real-world process you're trying to model is simple, *you should expect* a statistical model to get distracted by sources of noise in the data. A simple example would be predicting someone's height based off their diet. You can build a pretty accurate model based on characteristics of the diet, but the model's predictions will be completely diluted by the individual's sex: men tend to be taller than women. Incorporating that will make your model better.
-
- like unbalanced treatment groups, blocks, or
-
-
-
-
-The reason we need to care about stats, and more broadly how we formulate models in general, is aptly summarized here:
-
-
-And another quote, generally attributed to statistician George Box:
 > "All models are wrong, but some are useful."
 
-### Ok, how much stats do I actually need?
-Data science roles vary tremendously in the depth of statistical knowledge expected.
+The difference between a model that's *wrong but useful* versus one that's *just wrong* is often hidden in the details. **Unlike in programming, hitting "run" on a half-baked model *will* output a result that qualitatively looks identical to a highly-polished, accurate model.** But whether the model represents *the reality we actually live in* requires a closer look.  
 
-
-
-
-
-The following concepts should serve as a starting point; if your role involves analyzing data, I think the more statistical knowledge the better, as statistics is a set of tools for parsing signals from noise in our data. If your analyses inform major decisions like public policy or the direction your company takes, you'll want to account for nuances like [random effects](https://www.theanalysisfactor.com/understanding-random-effects-in-mixed-models/), [regression discontinuities](https://en.wikipedia.org/wiki/Regression_discontinuity_design), [nonparametric](http://mlss.tuebingen.mpg.de/2015/slides/ghahramani/gp-neural-nets15.pdf) or [Bayesian](http://www.scholarpedia.org/article/Bayesian_statistics) alternatives to [frequentism](https://en.wikipedia.org/wiki/Frequentist_inference), etc. But the fundamentals here will serve as a good starting point, and they're likely enough to cover the stats you'll need for jobs on most of the [analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel).
-
-But why learn any stats in the first place? In the era of big data, can't we just throw the data into Tensorflow and have deep learning handle everything? Unfortunately, rather than removing the need for stats, big data introduces a whole new set of [possible statistical issues to account for](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4236847/), meaning it's even more important to understand the stats before you deploy a model.
-
-
-
-Why do we need stats? Don't skip the stats: https://www.kdnuggets.com/2017/11/10-statistical-techniques-data-scientists-need-master.html
+### Ok, so how much stats do I actually need?
+Data science roles vary tremendously in the depth of statistical knowledge expected. The following concepts should serve as a starting point; if your role involves analyzing data, I think the more statistical knowledge the better, as statistics gives us tools for parsing signals from noise in our data. If your analyses inform major decisions like public policy or the direction your company takes, you'll want to account for nuances like [random effects](https://www.theanalysisfactor.com/understanding-random-effects-in-mixed-models/), [regression discontinuities](https://en.wikipedia.org/wiki/Regression_discontinuity_design), [nonparametric](http://mlss.tuebingen.mpg.de/2015/slides/ghahramani/gp-neural-nets15.pdf) or [Bayesian](http://www.scholarpedia.org/article/Bayesian_statistics) alternatives to [frequentism](https://en.wikipedia.org/wiki/Frequentist_inference), and more. But the fundamentals here will serve as a good starting point, and they're likely enough to cover the stats you'll need for jobs on most of the [analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel).
 
 ### Sampling and bias
 <img align="right" src="https://i.imgur.com/JbXsczj.png" align='right'>
@@ -421,6 +396,10 @@ The main way to partition machine learning from statistics is whether you're try
 
 ## Footnotes
 1. [[Wait, do I actually need to learn stats?]](#wait-do-i-actually-need-to-learn-stats) The [Apollo Guidance Computer](https://www.realclearscience.com/articles/2019/07/02/your_mobile_phone_vs_apollo_11s_guidance_computer_111026.html) had 4.096 KB of RAM. An average laptop in 2020 has 8 GB, which is 1.95 million times more powerful. If we use a [memory-optimized AWS EC2 instance](https://aws.amazon.com/ec2/instance-types), we have access to upwards of _**1.57 billion**_ times more compute than the Apollo mission. And all to identify pictures of cats...
+
+2. [[Wait, do I actually need to learn stats?]](#wait-do-i-actually-need-to-learn-stats) Rather than removing the need for statistics, big data exacerbates common statistical risks. I've linked some further reading below.
+* American Statistical Association: [Statistics and Big Data](http://higherlogicdownload.s3.amazonaws.com/AMSTAT/UploadedImages/49ecf7cf-cb26-4c1b-8380-3dea3b7d8a9d/BigDataOnePager.pdf)
+* National Science Review: [Challenges of Big Data Analysis](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4236847/)
 
 2. [[Arrays]](#arrays) One clear exception to the rule of using `numpy` arrays over lists is if you want your array to store values of different types. `numpy.array` and `pandas.Series` have type forcing, which means that [all elements must be the same type](https://numpy.org/doc/stable/user/quickstart.html#the-basics), and they'll be forced into the same type upon creation of the array. <br><br>Below, the `numpy` version of `our_list1` converts `1` and `2` to floats to match `3.0`. (Integers are converted to floats to preserve the information after the decimal in floats.) For `our_list2`, there's no clear integer of float version of `'a'`, so instead `1` and `2.0` are converted to strings. If you want your array to store data of different types for some reason, you're therefore better off sticking with Python's `list` class.
 
