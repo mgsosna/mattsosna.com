@@ -13,8 +13,8 @@ In the last post...
 **How to enter data science:**
 1. [The target]({{  site.baseurl  }}/DS-transition-1)
 2. [The statistics]({{  site.baseurl  }}/DS-transition-2)
-3. [The programming]({{  site.baseurl  }}/DS-transition-3)
-4. **The engineering**
+3. **The programming**
+4. [The engineering]({{  site.baseurl  }}/DS-transition-4)
 5. [The people]({{  site.baseurl  }}/DS-transition-5)
 
 ---

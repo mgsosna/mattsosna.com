@@ -7,6 +7,15 @@ image: ""
 ---
 No matter how technically skilled you are in statistics and programming, you're not that effective if you're chasing answers to questions that don't help the business. Similarly, getting people to actually adopt the results of your analyses will require significant interpersonal skills. This post will outline the _**business**_ and _**personal**_ skills needed to be successful as a data scientist.
 
+---
+**How to enter data science:**
+1. [The target]({{  site.baseurl  }}/DS-transition-1)
+2. [The statistics]({{  site.baseurl  }}/DS-transition-2)
+3. [The programming]({{  site.baseurl  }}/DS-transition-3)
+4. [The engineering]({{  site.baseurl  }}/DS-transition-4)
+5. **The people**
+---
+
 ## Table of contents
 * [**Technical skills:** knowing _**how**_ to do it](#technical-skills-knowing-how-to-do-it)
   - [Programming](#programming)
