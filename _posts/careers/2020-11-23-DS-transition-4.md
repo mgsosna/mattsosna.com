@@ -1,12 +1,21 @@
 ---
 layout: post
-title: How to enter data science - <br>3. Understand the engineering
+title: How to enter data science - <br>4. Understand the engineering
 author: matt_sosna
 summary: The software engineering skills needed to succeed in data science
 image: ""
 ---
 In [the previous post]({{ site.baseurl }}/DS-transition-2), we talked about the analytical skills you'll need to succeed in data science. This post will cover the engineering skills.
 
+---
+**How to enter data science:**
+1. [The target]({{  site.baseurl  }}/DS-transition-1)
+2. [The statistics]({{  site.baseurl  }}/DS-transition-2)
+3. [The programming]({{  site.baseurl  }}/DS-transition-3)
+4. **The engineering**
+5. [The people]({{  site.baseurl  }}/DS-transition-5)
+
+---
 
 
 ## Table of contents
