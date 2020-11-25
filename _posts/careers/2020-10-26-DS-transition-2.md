@@ -22,7 +22,7 @@ The next three posts will cover the _<u>technical</u>_ skills needed to be succe
 ## Becoming one with the machine
 Data science is a broad field that is still iterating towards a solid distinction from data analytics, data engineering, and software engineering, so it's hard to create a definitive skill set that's applicable for all data scientist roles. Someone working all day with building statistical models out of spreadsheets, for example, is going to need a different set of skills than someone improving autonomous vehicles!
 
-But consider this learning checklist as a set of fundamental skills that will get you started for your role, no matter where you go. We'll cover the **Inferential Statistics** and **Programming** sections in this post; in [the next post]({{  site.baseurl  }}/DS-transition-3), we'll cover **Software Engineering.**
+But consider this learning checklist as a set of fundamental skills that will get you started for your role, no matter where you go. We'll cover the **Inferential Statistics** section in this post, **Programming** in the [next]({{  site.baseurl  }}/DS-transition-3/), and **Software Engineering** in the [fourth]({{  site.baseurl  }}/DS-transition-4/).
 
 * **Inferential Statistics**
 - [ ] [Sampling and bias](#sampling-and-bias)
@@ -30,15 +30,15 @@ But consider this learning checklist as a set of fundamental skills that will ge
 - [ ] [Linear regression](#linear-regression)
 - [ ] [Logistic regression](#logistic-regression) <br><br>
 * **Programming**
-- [ ] [Dataframes](#dataframes) and [arrays](#arrays)
-- [ ] [Visualizations](#visualizations)
-- [ ] [Descriptive statistics](#descriptive-statistics)
-- [ ] [Working with dates](#working-with-dates)
-- [ ] [Machine learning](#machine-learning) <br><br>
+- [ ] [Dataframes]({{  site.baseurl  }}/DS-transition-3/#dataframes) and [arrays](#arrays)
+- [ ] [Visualizations]({{  site.baseurl  }}/DS-transition-3/#visualizations)
+- [ ] [Descriptive statistics]({{  site.baseurl  }}/DS-transition-3/#descriptive-statistics)
+- [ ] [Working with dates]({{  site.baseurl  }}/DS-transition-3/#working-with-dates)
+- [ ] [Machine learning]({{  site.baseurl  }}/DS-transition-3/#machine-learning) <br><br>
 * **Software engineering**
-- [ ] [SQL]({{  site.baseurl  }}/DS-transition-3/#sql)
-- [ ] [Interacting with APIs]({{  site.baseurl  }}/DS-transition-3/#interacting-with-apis)
-- [ ] [Version control]({{  site.baseurl  }}/DS-transition-3/#version-control)
+- [ ] [SQL]({{  site.baseurl  }}/DS-transition-4/#sql)
+- [ ] [Interacting with APIs]({{  site.baseurl  }}/DS-transition-4/#interacting-with-apis)
+- [ ] [Version control]({{  site.baseurl  }}/DS-transition-4/#version-control)
 - [ ] Object-oriented programming (i.e. classes, module imports)
 - [ ] Virtual environments
 - [ ] Writing tests
@@ -80,30 +80,43 @@ A recent example of this is the 2020 U.S. election forecasts. After President Tr
 
 David Shor, the former head of political data science at [Civis Analytics](https://www.civisanalytics.com/), believes the predictions were so off because [**their underlying samples are not representative of American voters.**](https://www.vox.com/policy-and-politics/2020/11/10/21551766/election-polls-results-wrong-david-shor) In short, the people who respond to polls tend to score high on social trust, which the [General Social Survey](https://gssdataexplorer.norc.org/variables/441/vshow) indicates represents only 30% of Americans. Until 2016, this group used to vote comparably to low-trust voters who didn't pick up the phone for pollsters $-$ now, low-trust voters tend to vote more conservatively and are hence underrepresented in the sample.
 
-If we're aware of these discrepancies, we can try to implement fixes such as [differentially weighting classes in the sample](https://www.researchgate.net/post/How-can-I-deal-with-uneven-sample-sizes-in-my-study). But the best remedy is to make sure the sample [is truly representative of the broader population](https://www.healthknowledge.org.uk/public-health-textbook/research-methods/1a-epidemiology/methods-of-sampling-population).
+If we're aware of these discrepancies, we can try to implement fixes such as [differentially weighting classes in the sample](https://www.researchgate.net/post/How-can-I-deal-with-uneven-sample-sizes-in-my-study). But the best remedy is to make sure the sample [is truly representative of the broader population](https://www.healthknowledge.org.uk/public-health-textbook/research-methods/1a-epidemiology/methods-of-sampling-population). Note: this is often easier said than done!
 
 ### Model fundamentals
-Let's say we're confident our sample is representative of the broader population. Once we've built a model, two fundamental components to understand are **coefficients** and **residuals.**
+Let's say we take all these considerations to heart, are confident our sample is representative of the broader population, and then build a model. Now what? Two fundamental components to understand are **coefficients** and **residuals.** These concepts will help us understand two major benefits of a model: **understanding trends in our data** and **generating predictions for new data.**
 
 #### Coefficients
-Let's say we have a linear model that looks like this:
+Imagine we have a linear regression model that predicts a student's score on an exam based off 1) the number of hours the student studied and 2) the number of hours of sleep the night before. The model looks like this:
 
 $$y = \beta_0 + \beta_1x_1 + \beta_2x_2$$
 
-In plain English, this means $y$ is equal to:
-* Our intercept $\beta_0$...
-* ...plus $\beta_1$ times $x_1$...
-* ...plus $\beta_2$ times $x_2$.
+In plain English, this means $y$ (exam score) is equal to:
+* The student's score if they studied zero hours and got zero sleep (the intercept, $\beta_0$)
+* ...plus the "study multiplier" ($\beta_1$) times the hours studied ($x_1$)
+* ...plus the "sleep multiplier" ($\beta_2$) times the hours slept ($x_2$)
 
+The intercept ($\beta_0$), study multiplier ($\beta_1$), and sleep multiplier ($\beta_2$) are the **coefficients** of our model. These parameters convert our inputs (hours studied and hours slept) to the output (exam score). A coefficient of 10 for $\beta_1$, for example, means that a student's score is expected to increase by 10 for each additional hour they study. An intercept of 30 would mean the student is expected to get a 30 if they don't study or sleep at all.
 
+Model coefficients help us understand the trends in our data, such as whether studying an extra hour versus going to bed would lead to a higher exam score. **But we should always take a careful look at the coefficients before accepting our model.** I always try to mentally validate the *strength* and *direction* of each coefficient when I examine a model, making sure it's about what I'd expect, and taking a closer look if it isn't. A negative sleep coefficient $\beta_2$, for example, would indicate something wrong with our data, since sleep should improve exam scores! (If not, maybe our students or the exam they took are very strange...) Similarly, if our intercept is *above* 100 and the study and sleep coefficients are negative, we likely have too little data or there are outliers hijacking our model. **Make sure to plot your data to confirm the trends are actually what you think they should be.**
 
 #### Residuals
-<img src="{{  site.baseurl  }}/images/careers/residual.png" align='right' height='60%' width='60%'>
-In a classical statistical model, as well as when evaluating a machine learning model accuracy, we can compare the model's predictions to the actual values. In other words, given the inputs to the model, what did it think the output would be, versus what the output actually was? The **residual** is the distance between the predicted vs. actual values.
+<img src="{{  site.baseurl  }}/images/careers/residual.png" align='right' height='55%' width='55%'>
+Once we've built a model, how do we tell if it's any good? One way is to compare *<u>the model's predictions</u>* to *<u>the actual values</u>* in our data. In other words, given some sample inputs, what does the model *think the output is*, versus *what the output actually is*? The **residual** is the distance between the predicted versus actual values.
 
-The graphic on the right shows this well. The linear model's predictions are the red line. The distance between the predictions and the actual values are the residuals. The goal is to build a model that minimizes the residuals.
+You can see this illustrated in the graphic on the right. The model's predictions are the red line. The distance between the predictions and the actual values are the residuals. The goal with building a model is to get the predicted and actual values as similar as possible $-$ to *minimize the residuals*, in other words.<sup>[[3]](#footnotes)</sup> A more accurate model will have tend to generate predictions closer to the actual values than an inaccurate one.
+
+Especially for linear models, the residuals should be normally distributed around zero, meaning our predictions are usually pretty good but sometimes a little too high or too low, and rarely really high or really low.
+
+![]({{  site.baseurl  }}/images/careers/residuals_good.png)
+
+**It's important to plot your data.** Otherwise you can fit a model but realize it's crap, like this:
+
+![]({{  site.baseurl  }}/images/careers/residuals_bad.png)
 
 
+You need to do two models, or have a factor.
+
+![]({{  site.baseurl  }}/images/careers/two_models.png)
 
 
 
@@ -135,3 +148,5 @@ $$ y = \sum_{i=1}^{m}(h(x_i)-y_i)^2 $$
 2. [[Wait, do I actually need to learn stats?]](#wait-do-i-actually-need-to-learn-stats) Rather than removing the need for statistics, big data *exacerbates* common statistical risks. I've linked some further reading below.
 * American Statistical Association: [Statistics and Big Data](http://higherlogicdownload.s3.amazonaws.com/AMSTAT/UploadedImages/49ecf7cf-cb26-4c1b-8380-3dea3b7d8a9d/BigDataOnePager.pdf)
 * National Science Review: [Challenges of Big Data Analysis](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4236847/)
+
+3. [[Residuals]](#residuals) I talk about minimizing residuals at great length in [this blog post]({{  site.baseurl  }}/LR-grad-desc), where I recreate R's linear regression function by hand. Fun times!
