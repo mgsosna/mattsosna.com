@@ -83,17 +83,36 @@ David Shor, the former head of political data science at [Civis Analytics](https
 If we're aware of these discrepancies, we can try to implement fixes such as [differentially weighting classes in the sample](https://www.researchgate.net/post/How-can-I-deal-with-uneven-sample-sizes-in-my-study). But the best remedy is to make sure the sample [is truly representative of the broader population](https://www.healthknowledge.org.uk/public-health-textbook/research-methods/1a-epidemiology/methods-of-sampling-population). Note: this is often easier said than done!
 
 ### Model fundamentals
-Let's say we take all these considerations to heart, are confident our sample is representative of the broader population, and then build a model. Now what? Two fundamental components to understand are **coefficients** and **residuals.** These concepts will help us understand two major benefits of a model: **understanding trends in our data** and **generating predictions for new data.**
+Let's say we take all these considerations to heart and are confident our sample is representative of the broader population. Now what? Since it's easy to build a model that actually isn't informative at all, let's start with a foundation for what models and their components are. We'll first cover two of the main types of models $-$ **regression** and **classification** $-$ before diving into **coefficients** and **residuals.** These concepts will help us understand what a model is, how to quantify trends in our data, and how to evaluate model accuracy.
 
-#### Coefficients
-Imagine we have a linear regression model that predicts a student's score on an exam based off 1) the number of hours the student studied and 2) the number of hours of sleep the night before. The model looks like this:
+#### Regression and classification
+The type of model we'll want to build will depend on whether we're predicting a *continuous* or *discrete* outcome. A continuous value is a number with a decimal, like 0.555 mL, 1.0 g, or $13.81. A discrete value is a distinct category, like "big," "red," or "cat." ("Big red cat" could also be a category!)
+
+We use regression models to predict continuous outcomes and classification models to predict discrete outcomes. A typical regression model could answer the question *"What is a student's score on an exam, given factors like how much they studied?"* A classification model, meanwhile, would answer *"Does a student pass the exam, given factors like how much they studied?"* The regression is predicting the student's specific score, while the classification predicts whether they belong to the "passed" or "failed" categories.
+
+A simple **linear regression model** that predicts a student's exam score based off 1) the number of hours the student studied and 2) the number of hours of sleep the night before would look like this:
 
 $$y = \beta_0 + \beta_1x_1 + \beta_2x_2$$
 
-In plain English, this means $y$ (exam score) is equal to:
+In plain English, this equation is saying that $y$ (exam score) is equal to:
 * The student's score if they studied zero hours and got zero sleep (the intercept, $\beta_0$)
 * ...plus the "study multiplier" ($\beta_1$) times the hours studied ($x_1$)
 * ...plus the "sleep multiplier" ($\beta_2$) times the hours slept ($x_2$)
+
+Meanwhile, a **logistic regression model** (which is actually classification despite having "regression" in the name...) with the same predictors would look like this:
+
+$$ P(y) = \frac{1}{1+e^{-(\beta_0 + \beta_1x_1 + \beta_2x_2})} $$
+
+In plain English, this means $P(y)$ (the probability of passing the exam) is equal to:
+* 1 divided by...
+* 1 + $e$ raised to a negative linear regression line
+
+We'll dive deeper into both of these in the [linear regression](#linear-regression) and [logistic regression](#logistic-regression) sections below. But first, let's get a better understanding for *coefficients* and *residuals.*
+
+#### Coefficients
+Let's take another look at the linear regression model that predicts student exam scores.
+
+$$y = \beta_0 + \beta_1x_1 + \beta_2x_2$$
 
 The intercept ($\beta_0$), study multiplier ($\beta_1$), and sleep multiplier ($\beta_2$) are the **coefficients** of our model. These parameters convert our inputs (hours studied and hours slept) to the output (exam score). A coefficient of 10 for $\beta_1$, for example, means that a student's score is expected to increase by 10 for each additional hour they study. An intercept of 30 would mean the student is expected to get a 30 if they don't study or sleep at all.
 
@@ -105,7 +124,7 @@ Once we've built a model, how do we tell if it's any good? One way is to compare
 
 You can see this illustrated in the graphic on the right. The model's predictions are the red line. The distance between the predictions and the actual values are the residuals. The goal with building a model is to get the predicted and actual values as similar as possible $-$ to *minimize the residuals*, in other words.<sup>[[3]](#footnotes)</sup> A more accurate model will have tend to generate predictions closer to the actual values than an inaccurate one.
 
-Especially for linear models, the residuals should be normally distributed around zero, meaning our predictions are usually pretty good but sometimes a little too high or too low, and rarely really high or really low.
+Especially for linear models, the residuals should be normally distributed around zero, meaning our predictions are usually pretty good but sometimes a little too high or too low, and rarely way too high or way too low.
 
 ![]({{  site.baseurl  }}/images/careers/residuals_good.png)
 
