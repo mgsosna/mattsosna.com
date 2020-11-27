@@ -83,10 +83,10 @@ David Shor, the former head of political data science at [Civis Analytics](https
 If we're aware of these discrepancies, we can try to implement fixes such as [differentially weighting classes in the sample](https://www.researchgate.net/post/How-can-I-deal-with-uneven-sample-sizes-in-my-study). But the best remedy is to make sure the sample [is truly representative of the broader population](https://www.healthknowledge.org.uk/public-health-textbook/research-methods/1a-epidemiology/methods-of-sampling-population). Note: this is often easier said than done!
 
 ### Model fundamentals
-Let's say we take all these considerations to heart and are confident our sample is representative of the broader population. Now what? Since it's easy to build a model that actually isn't informative at all, let's start with a foundation for what models and their components are. We'll first cover two of the main types of models $-$ **regression** and **classification** $-$ before diving into **coefficients** and **residuals.** These concepts will help us understand what a model is, how to quantify trends in our data, and how to evaluate model accuracy.
+Let's say we take all these considerations to heart and are confident our sample is representative of the broader population. Now what? Since it's easy to build a model that actually isn't informative at all, let's start with a foundation for what models and their components are. We'll first take a high-level view of two of the main types of models $-$ **regression** and **classification** $-$ before diving into **coefficients** and **residuals**, as well as **linear and logistic regression.** These concepts will help us understand what a model is, how to quantify trends in our data, and how to evaluate model accuracy.
 
 #### Regression and classification
-The type of model we'll want to build will depend on whether we're predicting a *continuous* or *discrete* outcome. A continuous value is a number with a decimal, like 0.555 mL, 1.0 g, or $13.81. A discrete value is a distinct category, like "big," "red," or "cat." ("Big red cat" could also be a category!)
+The type of model we'll want to build will depend on whether we want to predict a *continuous* or *discrete* outcome. A continuous value is a number with a decimal, like 0.555 mL, 1.0 g, or $13.81. A discrete value is a distinct category, like "big," "red," or "cat." ("Big red cat" could also be a category!)
 
 We use regression models to predict continuous outcomes and classification models to predict discrete outcomes. A typical regression model could answer the question *"What is a student's score on an exam, given factors like how much they studied?"* A classification model, meanwhile, would answer *"Does a student pass the exam, given factors like how much they studied?"* The regression is predicting the student's specific score, while the classification predicts whether they belong to the "passed" or "failed" categories.
 
@@ -105,9 +105,11 @@ $$ P(y) = \frac{1}{1+e^{-(\beta_0 + \beta_1x_1 + \beta_2x_2})} $$
 
 In plain English, this means $P(y)$ (the probability of passing the exam) is equal to:
 * 1 divided by...
-* 1 + $e$ raised to a negative linear regression line
+* 1 plus...
+* the mathematical constant $e$ raised to the negative of some value
+  - <span style="font-size: 13px">(And that value looks a lot like a linear regression output!)</span>
 
-We'll dive deeper into both of these in the [linear regression](#linear-regression) and [logistic regression](#logistic-regression) sections below. But first, let's get a better understanding for *coefficients* and *residuals.*
+We'll dive deeper into both of these in the [linear regression](#linear-regression) and [logistic regression](#logistic-regression) sections below. But first, let's get a better understanding of *coefficients* and *residuals.*
 
 #### Coefficients
 Let's take another look at the linear regression model that predicts student exam scores.
@@ -152,6 +154,28 @@ $$ h(x) = \sum_{j=1}^{n}\beta_jx_j $$
 The below equation for logistic regression might not come up as frequently, but you should understand it and be able to explain it, as well.
 
 $$ P(y) = \frac{1}{1+e^{-h(x)}} $$
+
+where
+
+$$ h(x) = \sum_{j=1}^{n}\beta_jx_j $$
+
+#### A tiny probability
+While the equation may look intimidating, it looks a *lot* simpler if you set $h(x)$ to the extremes. Let's say $h(x)$ is *extremely negative.* That would mean $-h(x)$ would be positive, which would make $1 + e^{-h(x)}$ *huge*. For example, if $e^{-h(x)}$ is 10000000, we'd have the following equation:
+
+$$ P(y) = \frac{1}{1+10000000} $$
+
+$\frac{1}{10000001}$ is a tiny number. $P(y)$, then, is a tiny probability. **The likelihood of the event $y$ occuring, given our predictors, is tiny.**
+
+#### A huge probability
+On the other extreme, if $h(x)$ is *extremely positive*, then $-h(x)$ becomes *tiny*. For example:
+
+$$ P(y) = \frac{1}{1+0.00000001} $$
+
+$\frac{1}{1.00000001}$ is effectively 1, meaning the likelihood of this event happening is pretty much guaranteed.
+
+
+
+And what about that line, $h(x)$? Well, this is the line that separates our data into classes. (For multi-class classification, one approach is an iterative "one vs. rest" classifier.)
 
 For least squares:
 $$ y = \sum_{i=1}^{m}(h(x_i)-y_i)^2 $$
