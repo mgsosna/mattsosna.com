@@ -1,9 +1,9 @@
 ---
 layout: post
-title: How to enter data science - <br>2. Master the analytics
+title: How to enter data science - <br>2. The analytics
 author: matt_sosna
-summary: The technical skills needed to succeed in data science
-image: ""
+summary: The analytical skills needed to succeed in data science
+image: "images/careers/two_models.png"
 ---
 In [the last post]({{ site.baseurl }}/DS-transition-1), we defined the key elements of data science as 1) deriving insights from data and 2) communicating those insights to others. Despite the huge diversity in how these elements are expressed in actual data scientist roles, **there is a core skill set** that will serve you well no matter where you go. The remaining posts in this series will define and explore these skills in detail.
 
@@ -27,8 +27,11 @@ But consider this learning checklist as a set of fundamental skills that will ge
 * **Inferential Statistics**
 - [ ] [Sampling and bias](#sampling-and-bias)
 - [ ] [Model fundamentals](#model-fundamentals)
-- [ ] [Linear regression](#linear-regression)
-- [ ] [Logistic regression](#logistic-regression) <br><br>
+  - [ ] [The high-level view](#the-high-level-view)
+  - [ ] [Regression](#regression)
+  - [ ] [Classification](#classification)
+  - [ ] [Coefficients](#coefficients)
+  - [ ] [Residuals](#residuals) <br><br>
 * **Programming**
 - [ ] [Dataframes]({{  site.baseurl  }}/DS-transition-3/#dataframes) and [arrays](#arrays)
 - [ ] [Visualizations]({{  site.baseurl  }}/DS-transition-3/#visualizations)
@@ -57,7 +60,9 @@ The following quote usually refers to the *quality of data* going into an analys
 
 **A model is a simplified representation of reality.** If that representation is flawed, the picture it paints can very easily be nonsensical or misleading. The reason people dedicate their lives to researching statistics is that **condensing reality down to models is incredibly challenging, yet necessary.**
 
-It's usually impossible or impractical to process every detail before making a decision; our brains, for example, constantly use [processing short-cuts](https://jamesclear.com/schemas) to interpret the world faster. The question isn't how to make a model that isn't flawed; it's how to ensure the flaws don't affect the conclusions. As statistician George Box ([allegedly](https://en.wikipedia.org/wiki/All_models_are_wrong)) said:
+It's usually impossible or impractical to process every detail before making a decision; our brains, for example, constantly use [processing short-cuts](https://jamesclear.com/schemas) to interpret the world faster. You don't need to memorize what clothes to wear for every possible temperature outside; you know that, in general, as the temperature goes down, you put on more layers. This mental model isn't perfect $-$ sometimes it's windy or humid, and a different number of layers feels more comfortable $-$ but it's a great rule of thumb.
+
+When we build a model, **the question isn't how to make a model that isn't flawed; it's how to ensure the flaws don't affect the conclusions.** The fact that wind or humidity sometimes alters the best number of layers doesn't change the fact that "the colder it is, the more clothes I should put on" is a good model. As statistician George Box ([allegedly](https://en.wikipedia.org/wiki/All_models_are_wrong)) said:
 
 > "All models are wrong, but some are useful."
 
@@ -66,7 +71,7 @@ The difference between a model that's *wrong but useful* versus one that's *just
 ### Ok, so how much stats do I actually need?
 Data science roles vary tremendously in the depth of statistical knowledge expected, so the following concepts should serve as a *starting point*. If your role involves lots of data analysis, I think the more statistical knowledge the better, as you'll want as many tools as you can get for parsing *signals* from *noise* in your data.
 
-Especially if your analyses inform major decisions like public policy or the direction your company takes, you'll want to account for nuances like [random effects](https://www.theanalysisfactor.com/understanding-random-effects-in-mixed-models/), [regression discontinuities](https://en.wikipedia.org/wiki/Regression_discontinuity_design), [nonparametric](http://mlss.tuebingen.mpg.de/2015/slides/ghahramani/gp-neural-nets15.pdf) or [Bayesian](http://www.scholarpedia.org/article/Bayesian_statistics) alternatives to [frequentism](https://en.wikipedia.org/wiki/Frequentist_inference), and more. Similarly, if you're in a field where you actually *do* have access to all the data in a process, such as analyzing [Internet of Things (IoT)](https://www.zdnet.com/article/what-is-the-internet-of-things-everything-you-need-to-know-about-the-iot-right-now/) sensor data, then you'll want to dive deep on [time series analysis](https://www.statisticssolutions.com/time-series-analysis/) and [anomaly detection](https://www.anodot.com/blog/what-is-anomaly-detection/).
+Especially if your analyses inform major decisions like public policy or the direction your company takes, you'll want to account for nuances like [random effects](https://www.theanalysisfactor.com/understanding-random-effects-in-mixed-models/), [regression discontinuities](https://en.wikipedia.org/wiki/Regression_discontinuity_design), [nonparametric](http://mlss.tuebingen.mpg.de/2015/slides/ghahramani/gp-neural-nets15.pdf) or [Bayesian](http://www.scholarpedia.org/article/Bayesian_statistics) alternatives to [frequentism](https://en.wikipedia.org/wiki/Frequentist_inference), [bootstrapping](https://en.wikipedia.org/wiki/Bootstrapping_(statistics)) and more. Similarly, if you're in a field where you actually *do* have access to all the data in a process, such as analyzing [Internet of Things (IoT)](https://www.zdnet.com/article/what-is-the-internet-of-things-everything-you-need-to-know-about-the-iot-right-now/) sensor data, then you'll want to dive deep on [time series analysis](https://www.statisticssolutions.com/time-series-analysis/) and [anomaly detection](https://www.anodot.com/blog/what-is-anomaly-detection/).
 
 Regardless, the fundamentals here are likely enough to cover the stats you'll need for jobs on most of the [analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel).
 
@@ -76,7 +81,7 @@ One of the key concepts to understand is that when you collect data, you are **s
 
 In the graphic on the right, for example, our sample isn't really representative of the population $-$ several colors aren't present at all! We can't run an analysis on this sample and then generalize to the population; **we can only generalize to red, orange, yellow, and green.** No matter how perfectly we model our sample data, our model's scope is trapped. If we try to comment on the broader population, we'll find that our seemingly accurate model suddenly makes embarrassingly inaccurate predictions.
 
-A recent example of this is the 2020 U.S. election forecasts. After President Trump's surprise 2016 victory that [defied the vast majority of public opinion polls](https://www.voanews.com/usa/us-politics/election-experts-puzzled-over-surprise-trump-victory), pollsters spent years tweaking their models, fixing blindspots in preparation for a 2020 redemption. Yet, as states started releasing results on November 3, we found ourselves yet again watching [polls underestimate the number of Trump voters](https://www.scientificamerican.com/article/why-polls-were-mostly-wrong/).
+A recent example of this sample-population discrepancy is the 2020 U.S. election forecasts. After President Trump's surprise 2016 victory that [defied the vast majority of public opinion polls](https://www.voanews.com/usa/us-politics/election-experts-puzzled-over-surprise-trump-victory), pollsters spent years tweaking their models, fixing blindspots in preparation for a 2020 redemption. Yet, as states started releasing results on November 3, we found ourselves yet again watching [polls underestimate the number of Trump voters](https://www.scientificamerican.com/article/why-polls-were-mostly-wrong/).
 
 David Shor, the former head of political data science at [Civis Analytics](https://www.civisanalytics.com/), believes the predictions were so off because [**their underlying samples are not representative of American voters.**](https://www.vox.com/policy-and-politics/2020/11/10/21551766/election-polls-results-wrong-david-shor) In short, the people who respond to polls tend to score high on social trust, which the [General Social Survey](https://gssdataexplorer.norc.org/variables/441/vshow) indicates represents only 30% of Americans. Until 2016, this group used to vote comparably to low-trust voters who didn't pick up the phone for pollsters $-$ now, low-trust voters tend to vote more conservatively and are hence underrepresented in the sample.
 
@@ -85,12 +90,15 @@ If we're aware of these discrepancies, we can try to implement fixes such as [di
 ### Model fundamentals
 Let's say we take all these considerations to heart and are confident our sample is representative of the broader population. Now what? Since it's easy to build a model that actually isn't informative at all, let's start with a foundation for what models and their components are. We'll first take a high-level view of two of the main types of models $-$ **regression** and **classification** $-$ before diving into **coefficients** and **residuals**, as well as **linear and logistic regression.** These concepts will help us understand what a model is, how to quantify trends in our data, and how to evaluate model accuracy.
 
-#### Regression and classification
-The type of model we'll want to build will depend on whether we want to predict a *continuous* or *discrete* outcome. A continuous value is a number with a decimal, like 0.555 mL, 1.0 g, or $13.81. A discrete value is a distinct category, like "big," "red," or "cat." ("Big red cat" could also be a category!)
+#### The high-level view
+As a recap, a model is a simplified representation of reality, like "the colder it is, the more clothes I should put on" or "students are more likely to pass an exam if they study a lot and sleep well."<sup>[[4]](#footnotes)</sup> A model takes in inputs, such as temperature, and returns an output, such as the number of clothes to wear.
+
+The type of model we'll want to build will depend on whether we want to predict a *continuous* or *discrete* outcome. A continuous value is a number with a decimal, like 0.555 mL, $13.81, or 99.9%. A discrete value is a distinct category, like "big," "red," or "cat." ("Big red cat" could also be a category!)
 
 We use regression models to predict continuous outcomes and classification models to predict discrete outcomes. A typical regression model could answer the question *"What is a student's score on an exam, given factors like how much they studied?"* A classification model, meanwhile, would answer *"Does a student pass the exam, given factors like how much they studied?"* The regression is predicting the student's specific score, while the classification predicts whether they belong to the "passed" or "failed" categories.
 
-A simple **linear regression model** that predicts a student's exam score based off 1) the number of hours the student studied and 2) the number of hours of sleep the night before would look like this:
+#### Regression
+Here's a simple **linear regression model** that predicts a student's exam score based off 1) the number of hours the student studied and 2) the number of hours of sleep the night before:
 
 $$y = \beta_0 + \beta_1x_1 + \beta_2x_2$$
 
@@ -99,7 +107,14 @@ In plain English, this equation is saying that $y$ (exam score) is equal to:
 * ...plus the "study multiplier" ($\beta_1$) times the hours studied ($x_1$)
 * ...plus the "sleep multiplier" ($\beta_2$) times the hours slept ($x_2$)
 
-Meanwhile, a **logistic regression model** (which is actually classification despite having "regression" in the name...) with the same predictors would look like this:
+Even if you're in a big company working with cutting-edge data and technology, it's hard to escape the simplicity and convenience of a good linear regression model. Linear regressions are extremely fast to compute and they're easy to explain: the [coefficients](#coefficients) give a clear explanation of how each variable affects the output<sup>[[5]](#footnotes)</sup>, and you just add all the $\beta_jx_j$ together to get your output.
+
+
+You'll want to feel comfortable talking through linear regression, since you'll be
+
+
+#### Classification
+Meanwhile, a **logistic regression model** (which is actually classification despite having "regression" in the name...) with the same predictors looks like this:
 
 $$ P(y) = \frac{1}{1+e^{-(\beta_0 + \beta_1x_1 + \beta_2x_2})} $$
 
@@ -119,6 +134,9 @@ $$y = \beta_0 + \beta_1x_1 + \beta_2x_2$$
 The intercept ($\beta_0$), study multiplier ($\beta_1$), and sleep multiplier ($\beta_2$) are the **coefficients** of our model. These parameters convert our inputs (hours studied and hours slept) to the output (exam score). A coefficient of 10 for $\beta_1$, for example, means that a student's score is expected to increase by 10 for each additional hour they study. An intercept of 30 would mean the student is expected to get a 30 if they don't study or sleep at all.
 
 Model coefficients help us understand the trends in our data, such as whether studying an extra hour versus going to bed would lead to a higher exam score. **But we should always take a careful look at the coefficients before accepting our model.** I always try to mentally validate the *strength* and *direction* of each coefficient when I examine a model, making sure it's about what I'd expect, and taking a closer look if it isn't. A negative sleep coefficient $\beta_2$, for example, would indicate something wrong with our data, since sleep should improve exam scores! (If not, maybe our students or the exam they took are very strange...) Similarly, if our intercept is *above* 100 and the study and sleep coefficients are negative, we likely have too little data or there are outliers hijacking our model. **Make sure to plot your data to confirm the trends are actually what you think they should be.**
+
+
+TALK ABOUT EFFECT SIZES AND CONFIDENCE INTERVALS
 
 #### Residuals
 <img src="{{  site.baseurl  }}/images/careers/residual.png" align='right' height='55%' width='55%'>
@@ -140,8 +158,7 @@ You need to do two models, or have a factor.
 ![]({{  site.baseurl  }}/images/careers/two_models.png)
 
 
-
-### Linear regression
+### $R^2$
 Let's try this: $A$.
 
 You should be able to explain the following equation again and again:
@@ -164,7 +181,7 @@ While the equation may look intimidating, it looks a *lot* simpler if you set $h
 
 $$ P(y) = \frac{1}{1+10000000} $$
 
-$\frac{1}{10000001}$ is a tiny number. $P(y)$, then, is a tiny probability. **The likelihood of the event $y$ occuring, given our predictors, is tiny.**
+$\frac{1}{10000001}$ is a tiny number. $P(y)$, then, is a tiny probability. **The likelihood of the event $y$ occurring, given our predictors, is tiny.**
 
 #### A huge probability
 On the other extreme, if $h(x)$ is *extremely positive*, then $-h(x)$ becomes *tiny*. For example:
@@ -175,7 +192,9 @@ $\frac{1}{1.00000001}$ is effectively 1, meaning the likelihood of this event ha
 
 
 
-And what about that line, $h(x)$? Well, this is the line that separates our data into classes. (For multi-class classification, one approach is an iterative "one vs. rest" classifier.)
+And what about that line, $h(x)$? Well, this is the line that separates our data into classes. (For multi-class classification, one approach is an iterative "one vs. rest" classifier.) This line is called the **decision boundary.** It's the line at which the probability of belonging to the "positive" class becomes 50%, in which we start labeling it as the positive class.
+
+The logistic regression outputs a probability between 0 and 1 of belonging to the "positive" class. (Note that whichever class is "positive" is arbitrary; it's just the class with the 1s rather than 0s in your model. Need to adjust for multi-class...)
 
 For least squares:
 $$ y = \sum_{i=1}^{m}(h(x_i)-y_i)^2 $$
@@ -193,3 +212,7 @@ $$ y = \sum_{i=1}^{m}(h(x_i)-y_i)^2 $$
 * National Science Review: [Challenges of Big Data Analysis](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4236847/)
 
 3. [[Residuals]](#residuals) I talk about minimizing residuals at great length in [this blog post]({{  site.baseurl  }}/LR-grad-desc), where I recreate R's linear regression function by hand. Fun times!
+
+4. [[The high-level view]](#the-high-level-view) To the best of my knowledge, clustering unlabeled data falls neatly into machine learning rather than classical statistics, so I won't be covering it in this post. But of course, clustering is a crucial skill to have: make sure you understand [k-means clustering](https://en.wikipedia.org/wiki/K-means_clustering) as a starting point, and [Gaussian mixture models](https://scikit-learn.org/stable/modules/mixture.html) if you want to get fancy.
+
+5. [[Regression]](#regression) There *is* one important caveat to mention here regarding the ease of understanding a regression model's coefficients. Yes, they do show the influence each input variable has on the output, **but these coefficients are affected by all other variables in the model.** <br><span style="color:white">......</span>In our "study and sleep" exam model, for example, removing "hours studied" from our model will cause the "sleep" coefficient to skyrocket, since it's now entirely responsible for converting "hours slept" into an exam score. <br><span style="color:white">.....</span>You'll find that variables' coefficients can shrink, explode, or even change sign when you add or remove predictors and rerun the model. Trying to understand *these* changes is where you need a deep understanding of your data.
