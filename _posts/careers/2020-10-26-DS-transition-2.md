@@ -27,11 +27,10 @@ But consider this learning checklist as a set of fundamental skills that will ge
 * **Inferential Statistics**
 - [ ] [Sampling and bias](#sampling-and-bias)
 - [ ] [Model fundamentals](#model-fundamentals)
-  - [ ] [The high-level view](#the-high-level-view)
-  - [ ] [Regression](#regression)
-  - [ ] [Classification](#classification)
-  - [ ] [Coefficients](#coefficients)
-  - [ ] [Residuals](#residuals) <br><br>
+- [ ] [Regression](#regression)
+- [ ] [Classification](#classification)
+- [ ] [Coefficients](#coefficients)
+- [ ] [Residuals](#residuals) <br><br>
 * **Programming**
 - [ ] [Dataframes]({{  site.baseurl  }}/DS-transition-3/#dataframes) and [arrays](#arrays)
 - [ ] [Visualizations]({{  site.baseurl  }}/DS-transition-3/#visualizations)
@@ -49,7 +48,9 @@ But consider this learning checklist as a set of fundamental skills that will ge
 {: style='list-style-type: none'}
 
 ## Inferential Statistics
-Inferential statistics is the discipline of drawing inferences about a _**population**_ from a _**sample.**_ We rarely have data on every single individual, decision, or atom in whatever process we're examining. Rather than throw in the towel on understanding anything around us, we can turn to statistics for tools that translate data on *our sample* into inferences on *the entire population*. Inferential statistics is used all the time to make sense of the world, from [weather forecasts](https://thisisstatistics.org/beyond-barometers-how-statisticians-help-to-predict-the-weather/) to [opinion polls](https://www.math.arizona.edu/~jwatkins/505d/Lesson_12.pdf) and [medical research](https://emj.bmj.com/content/17/5/357), and **thinking carefully about how to generalize from our data to the broader world is a critical skill for data science.** We'll start with some fundamentals of statistics before diving deep into programming.
+Inferential statistics is the discipline of drawing inferences about a _**population**_ from a _**sample.**_ We rarely have data on every single individual, decision, or atom in whatever process we're examining. Rather than throw in the towel on understanding anything around us, we can turn to statistics for tools that translate data on *our sample* into inferences on *the entire population*. Inferential statistics is used all the time to make sense of the world, from [weather forecasts](https://thisisstatistics.org/beyond-barometers-how-statisticians-help-to-predict-the-weather/) to [opinion polls](https://www.math.arizona.edu/~jwatkins/505d/Lesson_12.pdf) and [medical research](https://emj.bmj.com/content/17/5/357), and **thinking carefully about how to generalize from our data to the broader world is a critical skill for data science.**
+
+This post will cover some fundamentals of statistics before diving deep into programming.
 
 ### Wait, do I actually need to learn stats?
 In the era of big data and machine learning, it's tempting to shrug off learning any stats. When the average laptop is [*2 million times* more powerful](https://www.realclearscience.com/articles/2019/07/02/your_mobile_phone_vs_apollo_11s_guidance_computer_111026.html) than the computer that got us to the moon<sup>[[1]](#footnotes)</sup>, it's easier than ever to throw a dataset into a deep learning algorithm, get a coffee while it crunches the numbers, and then come back to some model that always delivers world-shattering insights. Right? Well... not quite.<sup>[[2]](#footnotes)</sup>
@@ -90,14 +91,13 @@ If we're aware of these discrepancies, we can try to implement fixes such as [di
 ### Model fundamentals
 Let's say we take all these considerations to heart and are confident our sample is representative of the broader population. Now what? Since it's easy to build a model that actually isn't informative at all, let's start with a foundation for what models and their components are. We'll first take a high-level view of two of the main types of models $-$ **regression** and **classification** $-$ before diving into **coefficients** and **residuals**, as well as **linear and logistic regression.** These concepts will help us understand what a model is, how to quantify trends in our data, and how to evaluate model accuracy.
 
-#### The high-level view
-As a recap, a model is a simplified representation of reality, like "the colder it is, the more clothes I should put on" or "students are more likely to pass an exam if they study a lot and sleep well."<sup>[[4]](#footnotes)</sup> A model takes in inputs, such as temperature, and returns an output, such as the number of clothes to wear.
+As a recap, a model is a simplified representation of reality, like *"The colder it is, the more clothes I should put on"* or *"Students are more likely to pass an exam if they study a lot and sleep well."* <sup>[[4]](#footnotes)</sup> A model takes in inputs, such as temperature, and returns an output, such as the number of clothes to wear.
 
-The type of model we'll want to build will depend on whether we want to predict a *continuous* or *discrete* outcome. A continuous value is a number with a decimal, like 0.555 mL, $13.81, or 99.9%. A discrete value is a distinct category, like "big," "red," or "cat." ("Big red cat" could also be a category!)
+The type of model we'll want to build will depend on whether we want to predict a _**continuous**_ or _**discrete**_ outcome. A continuous value is a number with a decimal, like 0.555 mL, $13.81, or 99.9%. A discrete value is a distinct category, like "big," "red," or "cat." ("Big red cat" could also be a category!)
 
-We use regression models to predict continuous outcomes and classification models to predict discrete outcomes. A typical regression model could answer the question *"What is a student's score on an exam, given factors like how much they studied?"* A classification model, meanwhile, would answer *"Does a student pass the exam, given factors like how much they studied?"* The regression is predicting the student's specific score, while the classification predicts whether they belong to the "passed" or "failed" categories.
+We use regression models to predict continuous outcomes and classification models to predict discrete outcomes. A typical regression model could answer the question *"What is a student's score on an exam, given factors like how much they studied?"* A classification model, meanwhile, would answer *"Does a student pass the exam, given factors like how much they studied?"* The regression model predicts the student's specific score, while the classification model predicts whether they belong to the "passed" or "failed" categories.
 
-#### Regression
+### Regression
 Here's a simple **linear regression model** that predicts a student's exam score based off 1) the number of hours the student studied and 2) the number of hours of sleep the night before:
 
 $$y = \beta_0 + \beta_1x_1 + \beta_2x_2$$
@@ -109,24 +109,55 @@ In plain English, this equation is saying that $y$ (exam score) is equal to:
 
 Even if you're in a big company working with cutting-edge data and technology, it's hard to escape the simplicity and convenience of a good linear regression model. Linear regressions are extremely fast to compute and they're easy to explain: the [coefficients](#coefficients) give a clear explanation of how each variable affects the output<sup>[[5]](#footnotes)</sup>, and you just add all the $\beta_jx_j$ together to get your output.
 
+You'll want to feel comfortable talking through linear regression, since you'll be XXXXXX
 
-You'll want to feel comfortable talking through linear regression, since you'll be
+
+Once you're good with it, it'd be good to brush up on more advanced topics, like feature [scaling](https://en.wikipedia.org/wiki/Feature_scaling), [interactions](https://christophm.github.io/interpretable-ml-book/interaction.html), and [collinearity](https://medium.com/future-vision/collinearity-what-it-means-why-its-bad-and-how-does-it-affect-other-models-94e1db984168), as well as [model regularization](https://medium.com/@zxr.nju/the-classical-linear-regression-model-is-good-why-do-we-need-regularization-c89dba10c8eb).
 
 
-#### Classification
+### Classification
 Meanwhile, a **logistic regression model** (which is actually classification despite having "regression" in the name...) with the same predictors looks like this:
 
-$$ P(y) = \frac{1}{1+e^{-(\beta_0 + \beta_1x_1 + \beta_2x_2})} $$
+$$ P(y) = \frac{1}{1+e^{-h(x)}} $$
+
+where $$h(x) = \beta_0 + \beta_1x_1 + \beta_2x_2 $$.
 
 In plain English, this means $P(y)$ (the probability of passing the exam) is equal to:
 * 1 divided by...
 * 1 plus...
-* the mathematical constant $e$ raised to the negative of some value
+* the mathematical constant $e$ raised to the negative of some value $h(x)$
   - <span style="font-size: 13px">(And that value looks a lot like a linear regression output!)</span>
 
-We'll dive deeper into both of these in the [linear regression](#linear-regression) and [logistic regression](#logistic-regression) sections below. But first, let's get a better understanding of *coefficients* and *residuals.*
+#### Making sense of that equation
+While the equation may look intimidating, it looks a *lot* simpler if you set $h(x)$ to the extremes. Let's say $h(x)$ is *extremely negative.* That would mean $-h(x)$ would be positive, which would make $1 + e^{-h(x)}$ *huge*. For example, if $e^{-h(x)}$ is 10000000, we'd have the following equation:
 
-#### Coefficients
+$$ P(y) = \frac{1}{1+10000000} $$
+
+$\frac{1}{10000001}$ is a tiny number: 0.0000001. This means that **the likelihood of the event $y$ occurring, given our predictors, is tiny.**
+
+On the other extreme, if $h(x)$ is *extremely positive*, then $-h(x)$ becomes *tiny*. For example:
+
+$$ P(y) = \frac{1}{1+0.00000001} $$
+
+$\frac{1}{1.00000001}$ is effectively 1, meaning the likelihood of this event happening is pretty much guaranteed.
+
+#### Making sense of $h(x)$
+
+And what about that line, $h(x)$? Well, this is the line that separates our data into classes. (For multi-class classification, one approach is an iterative "one vs. rest" classifier.) This line is called the **decision boundary.** It's the line at which the probability of belonging to the "positive" class becomes 50%, in which we start labeling it as the positive class.
+
+<img src="{{  site.baseurl  }}/images/careers/decision_boundary.png" height="50%" width="50%" align="right">
+
+The logistic regression outputs a probability between 0 and 1 of belonging to the "positive" class. (Note that whichever class is "positive" is arbitrary; it's just the class with the 1s rather than 0s in your model. Need to adjust for multi-class...)
+
+For least squares:
+$$ y = \sum_{i=1}^{m}(h(x_i)-y_i)^2 $$
+
+
+Decision boundary time. Code can be found in this footnote.<sup>[[6]](#footnotes)</sup>
+
+
+
+### Coefficients
 Let's take another look at the linear regression model that predicts student exam scores.
 
 $$y = \beta_0 + \beta_1x_1 + \beta_2x_2$$
@@ -138,7 +169,7 @@ Model coefficients help us understand the trends in our data, such as whether st
 
 TALK ABOUT EFFECT SIZES AND CONFIDENCE INTERVALS
 
-#### Residuals
+### Residuals
 <img src="{{  site.baseurl  }}/images/careers/residual.png" align='right' height='55%' width='55%'>
 Once we've built a model, how do we tell if it's any good? One way is to compare *<u>the model's predictions</u>* to *<u>the actual values</u>* in our data. In other words, given some sample inputs, what does the model *think the output is*, versus *what the output actually is*? The **residual** is the distance between the predicted versus actual values.
 
@@ -167,37 +198,6 @@ $$ h(x) = \sum_{j=1}^{n}\beta_jx_j $$
 
 **Linear regression** is one of the most common statistical model you'll encounter in industry, and you need to understand its ins and outs. Make sure you have a solid understanding of what **residuals** are, **least squared error**, and $$R^2$$.
 
-### Logistic regression
-The below equation for logistic regression might not come up as frequently, but you should understand it and be able to explain it, as well.
-
-$$ P(y) = \frac{1}{1+e^{-h(x)}} $$
-
-where
-
-$$ h(x) = \sum_{j=1}^{n}\beta_jx_j $$
-
-#### A tiny probability
-While the equation may look intimidating, it looks a *lot* simpler if you set $h(x)$ to the extremes. Let's say $h(x)$ is *extremely negative.* That would mean $-h(x)$ would be positive, which would make $1 + e^{-h(x)}$ *huge*. For example, if $e^{-h(x)}$ is 10000000, we'd have the following equation:
-
-$$ P(y) = \frac{1}{1+10000000} $$
-
-$\frac{1}{10000001}$ is a tiny number. $P(y)$, then, is a tiny probability. **The likelihood of the event $y$ occurring, given our predictors, is tiny.**
-
-#### A huge probability
-On the other extreme, if $h(x)$ is *extremely positive*, then $-h(x)$ becomes *tiny*. For example:
-
-$$ P(y) = \frac{1}{1+0.00000001} $$
-
-$\frac{1}{1.00000001}$ is effectively 1, meaning the likelihood of this event happening is pretty much guaranteed.
-
-
-
-And what about that line, $h(x)$? Well, this is the line that separates our data into classes. (For multi-class classification, one approach is an iterative "one vs. rest" classifier.) This line is called the **decision boundary.** It's the line at which the probability of belonging to the "positive" class becomes 50%, in which we start labeling it as the positive class.
-
-The logistic regression outputs a probability between 0 and 1 of belonging to the "positive" class. (Note that whichever class is "positive" is arbitrary; it's just the class with the 1s rather than 0s in your model. Need to adjust for multi-class...)
-
-For least squares:
-$$ y = \sum_{i=1}^{m}(h(x_i)-y_i)^2 $$
 
 
 
@@ -216,3 +216,52 @@ $$ y = \sum_{i=1}^{m}(h(x_i)-y_i)^2 $$
 4. [[The high-level view]](#the-high-level-view) To the best of my knowledge, clustering unlabeled data falls neatly into machine learning rather than classical statistics, so I won't be covering it in this post. But of course, clustering is a crucial skill to have: make sure you understand [k-means clustering](https://en.wikipedia.org/wiki/K-means_clustering) as a starting point, and [Gaussian mixture models](https://scikit-learn.org/stable/modules/mixture.html) if you want to get fancy.
 
 5. [[Regression]](#regression) There *is* one important caveat to mention here regarding the ease of understanding a regression model's coefficients. Yes, they do show the influence each input variable has on the output, **but these coefficients are affected by all other variables in the model.** <br><span style="color:white">......</span>In our "study and sleep" exam model, for example, removing "hours studied" from our model will cause the "sleep" coefficient to skyrocket, since it's now entirely responsible for converting "hours slept" into an exam score. <br><span style="color:white">.....</span>You'll find that variables' coefficients can shrink, explode, or even change sign when you add or remove predictors and rerun the model. Trying to understand *these* changes is where you need a deep understanding of your data.
+
+6. [[Classification]](#classification) Here's the code to generate the decision boundary plot.
+    ```python
+    import numpy as np
+    import pandas as pd
+    import statsmodels.formula.api as smf
+
+    # Generate sample data with pos (x1) & neg (x2) slopes
+    x1 = np.arange(0, 10, 0.1) + np.random.normal(0, 2, 100)
+    x2 = np.arange(10, 0, -0.1) + np.random.normal(0, 2, 100)
+    y = np.round(np.arange(0, 1, 0.01) + np.random.normal(0, 0.1, 100))
+
+    # Put into df and fit a model
+    df = pd.DataFrame({'x1': x1, 'x2': x2, 'y': y})
+    mod = smf.logit('y ~ x1 + x2', data=df).fit()
+
+    # Get decision boundary params
+    b0 = mod.params.Intercept
+    b1 = mod.params.x1
+    b2 = mod.params.x2
+
+    # Calculate the intercept and gradient of the decision boundary
+    c = -b0/b2
+    m = -b1/b2
+
+    # Generate the decision boundary line
+    xmin, xmax = -2, 13
+    ymin, ymax = -3, 13
+
+    xd = np.array([xmin, xmax])
+    yd = m*xd + c
+
+    # Subset to prep for plotting
+    df0 = df[df['y'] == 0]
+    df1 = df[df['y'] == 1]
+
+    # Generate the plot
+    plt.figure(figsize=(5, 5))
+    plt.scatter(df0['x1'], df0['x2'], marker='o', color='orange', s=35)
+    plt.scatter(df1['x1'], df1['x2'], marker='x', color='red', s=40)
+
+    plt.plot(xd, yd, 'k', lw=1, ls='--', color='blue')
+    plt.ylim(-2.5, 13.5)
+    plt.xlabel(r'$x_1$', fontweight='bold', fontsize=25)
+    plt.ylabel(r'$x_2$', fontweight='bold', fontsize=25)
+    plt.tick_params(bottom= False, left=False, labelbottom=False,
+                    labelleft=False)
+    plt.show()
+    ```
