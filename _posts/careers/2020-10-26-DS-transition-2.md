@@ -1,13 +1,13 @@
 ---
 layout: post
-title: How to enter data science - <br>2. The analytics
+title: How to enter data science - <br>2. The statistics
 author: matt_sosna
 summary: The analytical skills needed to succeed in data science
 image: "images/careers/two_models.png"
 ---
 In [the last post]({{ site.baseurl }}/DS-transition-1), we defined the key elements of data science as 1) deriving insights from data and 2) communicating those insights to others. Despite the huge diversity in how these elements are expressed in actual data scientist roles, **there is a core skill set** that will serve you well no matter where you go. The remaining posts in this series will define and explore these skills in detail.
 
-The next three posts will cover the _<u>technical</u>_ skills needed to be successful as a data scientist: the statistics (this post), the [programming]({{  site.baseurl  }}/DS-transition-3) and [the engineering]({{  site.baseurl  }}/DS-transition-4). The [final post]({{  site.baseurl  }}/DS-transition-5) will cover the _<u>business</u>_, _<u>personal</u>_, and _<u>interpersonal</u>_ skills needed to succeed. Consider the distinction here as **knowing _how_ to do it** (technical) versus **knowing _what_ to do and _why_** (business, personal, and interpersonal). Let's get started!
+The next three posts will cover the _<u>technical</u>_ skills needed to be successful as a data scientist: the statistics (this post), [the programming]({{  site.baseurl  }}/DS-transition-3) and [the engineering]({{  site.baseurl  }}/DS-transition-4). The [final post]({{  site.baseurl  }}/DS-transition-5) will cover the _<u>business</u>_, _<u>personal</u>_, and _<u>interpersonal</u>_ skills needed to succeed. Consider the distinction here as **knowing _how_ to do it** (technical) versus **knowing _what_ to do and _why_** (business, personal, and interpersonal). Let's get started!
 
 ---
 **How to enter data science:**
@@ -48,20 +48,18 @@ But consider this learning checklist as a set of fundamental skills that will ge
 {: style='list-style-type: none'}
 
 ## Inferential Statistics
-Inferential statistics is the discipline of drawing inferences about a _**population**_ from a _**sample.**_ We rarely have data on every single individual, decision, or atom in whatever process we're examining. Rather than throw in the towel on understanding anything around us, we can turn to statistics for tools that translate data on *our sample* into inferences on *the entire population*. Inferential statistics is used all the time to make sense of the world, from [weather forecasts](https://thisisstatistics.org/beyond-barometers-how-statisticians-help-to-predict-the-weather/) to [opinion polls](https://www.math.arizona.edu/~jwatkins/505d/Lesson_12.pdf) and [medical research](https://emj.bmj.com/content/17/5/357), and **thinking carefully about how to generalize from our data to the broader world is a critical skill for data science.**
-
-This post will cover some fundamentals of statistics before diving deep into programming.
+Inferential statistics is the discipline of drawing inferences about a _**population**_ from a _**sample.**_ We rarely have data on every single individual, decision, or atom in whatever process we're examining. Rather than throw in the towel on understanding anything around us, we can turn to statistics for tools that translate data on *our sample* into inferences on *the entire population*. Inferential statistics is used all the time to make sense of the world, from [weather forecasts](https://thisisstatistics.org/beyond-barometers-how-statisticians-help-to-predict-the-weather/) to [opinion polls](https://www.math.arizona.edu/~jwatkins/505d/Lesson_12.pdf) and [medical research](https://emj.bmj.com/content/17/5/357). **Thinking carefully about how to generalize from our data to the broader world is a critical skill for data science,** so we'll want to make sure we have a solid grasp of stats.
 
 ### Wait, do I actually need to learn stats?
 In the era of big data and machine learning, it's tempting to shrug off learning any stats. When the average laptop is [*2 million times* more powerful](https://www.realclearscience.com/articles/2019/07/02/your_mobile_phone_vs_apollo_11s_guidance_computer_111026.html) than the computer that got us to the moon<sup>[[1]](#footnotes)</sup>, it's easier than ever to throw a dataset into a deep learning algorithm, get a coffee while it crunches the numbers, and then come back to some model that always delivers world-shattering insights. Right? Well... not quite.<sup>[[2]](#footnotes)</sup>
 
-The following quote usually refers to the *quality of data* going into an analysis or prediction, but I think it's an apt summary for why we need to care about stats as well.
+As data scientists, **a core part of our job is to generate models that help us understand the past and predict the future.** Despite the importance of getting models right, it's uncomfortably easy to create models that are nonsensical or misleading. The following quote usually refers to the *quality of data* going into an analysis or prediction, but I think it's an apt summary for why we need to care about stats as well.
 
 > "Garbage in, garbage out."
 
 **A model is a simplified representation of reality.** If that representation is flawed, the picture it paints can very easily be nonsensical or misleading. The reason people dedicate their lives to researching statistics is that **condensing reality down to models is incredibly challenging, yet necessary.**
 
-It's usually impossible or impractical to process every detail before making a decision; our brains, for example, constantly use [processing short-cuts](https://jamesclear.com/schemas) to interpret the world faster. You don't need to memorize what clothes to wear for every possible temperature outside; you know that, in general, as the temperature goes down, you put on more layers. This mental model isn't perfect $-$ sometimes it's windy or humid, and a different number of layers feels more comfortable $-$ but it's a great rule of thumb.
+<img src="{{  site.baseurl  }}/images/careers/clothes_model.png" align="right" height="40%" width="40%" style="padding-left: 30px" alt="A negative relationship between outdoor temperature and number of layers of clothes to wear."> It's usually impossible or impractical to process every detail before making a decision; our brains, for example, constantly use [processing short-cuts](https://jamesclear.com/schemas) to interpret the world faster. You don't need to memorize what clothes to wear for every possible temperature outside; you know that, in general, as the temperature goes down, you put on more layers. This mental model isn't perfect $-$ sometimes it's windy or humid, and a different number of layers feels more comfortable $-$ but it's a great rule of thumb.
 
 When we build a model, **the question isn't how to make a model that isn't flawed; it's how to ensure the flaws don't affect the conclusions.** The fact that wind or humidity sometimes alters the best number of layers doesn't change the fact that "the colder it is, the more clothes I should put on" is a good model. As statistician George Box ([allegedly](https://en.wikipedia.org/wiki/All_models_are_wrong)) said:
 
