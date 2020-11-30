@@ -53,13 +53,13 @@ Inferential statistics is the discipline of drawing inferences about a _**popula
 ### Wait, do I actually need to learn stats?
 In the era of big data and machine learning, it's tempting to shrug off learning any stats. When the average laptop is [*2 million times* more powerful](https://www.realclearscience.com/articles/2019/07/02/your_mobile_phone_vs_apollo_11s_guidance_computer_111026.html) than the computer that got us to the moon<sup>[[1]](#footnotes)</sup>, it's easier than ever to throw a dataset into a deep learning algorithm, get a coffee while it crunches the numbers, and then come back to some model that always delivers world-shattering insights. Right? Well... not quite.<sup>[[2]](#footnotes)</sup>
 
-As data scientists, **a core part of our job is to generate models that help us understand the past and predict the future.** Despite the importance of getting models right, it's uncomfortably easy to create models that are nonsensical or misleading. The following quote usually refers to the *quality of data* going into an analysis or prediction, but I think it's an apt summary for why we need to care about stats as well.
+As data scientists, **a core part of our job is to generate models that help us understand the past and predict the future.** Despite the importance of getting models right, it's easy to create models with serious flaws. It's then *uncomfortably* easy to make confident recommendations to stakeholders based on these flawed models. The following quote usually refers to the *quality of data* going into an analysis or prediction, but I think it's an apt summary for why we need to care about stats as well.
 
 > "Garbage in, garbage out."
 
 **A model is a simplified representation of reality.** If that representation is flawed, the picture it paints can very easily be nonsensical or misleading. The reason people dedicate their lives to researching statistics is that **condensing reality down to models is incredibly challenging, yet necessary.**
 
-<img src="{{  site.baseurl  }}/images/careers/clothes_model.png" align="right" height="40%" width="40%" style="padding-left: 30px" alt="A negative relationship between outdoor temperature and number of layers of clothes to wear."> It's usually impossible or impractical to process every detail before making a decision; our brains, for example, constantly use [processing short-cuts](https://jamesclear.com/schemas) to interpret the world faster. You don't need to memorize what clothes to wear for every possible temperature outside; you know that, in general, as the temperature goes down, you put on more layers. This mental model isn't perfect $-$ sometimes it's windy or humid, and a different number of layers feels more comfortable $-$ but it's a great rule of thumb.
+<img src="{{  site.baseurl  }}/images/careers/clothes_model.png" align="right" height="40%" width="40%" style="padding-left: 30px" alt="A positive relationship between how cold it is outside and how many layers of clothes I should wear."> It's usually impossible or impractical to process every detail before making a decision; our brains, for example, constantly use [processing short-cuts](https://jamesclear.com/schemas) to interpret the world faster. You don't need to memorize what clothes to wear for every possible temperature outside; you know that, in general, as the temperature goes down, you put on more layers. This mental model isn't perfect $-$ sometimes it's windy or humid, and a different number of layers feels more comfortable $-$ but it's a great rule of thumb.
 
 When we build a model, **the question isn't how to make a model that isn't flawed; it's how to ensure the flaws don't affect the conclusions.** The fact that wind or humidity sometimes alters the best number of layers doesn't change the fact that "the colder it is, the more clothes I should put on" is a good model. As statistician George Box ([allegedly](https://en.wikipedia.org/wiki/All_models_are_wrong)) said:
 
@@ -68,15 +68,13 @@ When we build a model, **the question isn't how to make a model that isn't flawe
 The difference between a model that's *wrong but useful* versus one that's *just wrong* is often hidden in the details. **Unlike in programming, hitting "run" on a half-baked model *will* output a result that qualitatively looks identical to a highly-polished, accurate model.** But whether the model represents *the reality we actually live in* requires a trained eye.  
 
 ### Ok, so how much stats do I actually need?
-Data science roles vary tremendously in the depth of statistical knowledge expected, so the following concepts should serve as a *starting point*. If your role involves lots of data analysis, I think the more statistical knowledge the better, as you'll want as many tools as you can get for parsing *signals* from *noise* in your data.
+Data science roles vary tremendously in the depth of statistical knowledge expected, so the following concepts should serve as a *starting point*. If your role involves lots of data analysis, I think the more statistical knowledge the better, as you'll want as many tools as you can get for parsing *signals* from *noise* in your data.<sup>[[3]](#footnotes)</sup> But the fundamentals here are likely enough to cover the stats you'll need for jobs on most of the [analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel).
 
-Especially if your analyses inform major decisions like public policy or the direction your company takes, you'll want to account for nuances like [random effects](https://www.theanalysisfactor.com/understanding-random-effects-in-mixed-models/), [regression discontinuities](https://en.wikipedia.org/wiki/Regression_discontinuity_design), [nonparametric](http://mlss.tuebingen.mpg.de/2015/slides/ghahramani/gp-neural-nets15.pdf) or [Bayesian](http://www.scholarpedia.org/article/Bayesian_statistics) alternatives to [frequentism](https://en.wikipedia.org/wiki/Frequentist_inference), [bootstrapping](https://en.wikipedia.org/wiki/Bootstrapping_(statistics)) and more. Similarly, if you're in a field where you actually *do* have access to all the data in a process, such as analyzing [Internet of Things (IoT)](https://www.zdnet.com/article/what-is-the-internet-of-things-everything-you-need-to-know-about-the-iot-right-now/) sensor data, then you'll want to dive deep on [time series analysis](https://www.statisticssolutions.com/time-series-analysis/) and [anomaly detection](https://www.anodot.com/blog/what-is-anomaly-detection/).
-
-Regardless, the fundamentals here are likely enough to cover the stats you'll need for jobs on most of the [analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel).
+Once you have these fundamentals down, you'll find it much easier to communicate to stakeholders about your analyses, as well as understand when it's necessary to pull in the more complicated analytics.
 
 ### Sampling and bias
 <img align="right" src="https://i.imgur.com/JbXsczj.png" height="40%" width="40%">
-One of the key concepts to understand is that when you collect data, you are **sampling** from a **population.** (Except, of course, in a case like IoT mentioned above.) Because we're condensing a large, diverse body down into a relatively small sample, we need to make sure the sample actually looks like a microcosm of the broader population.
+One of the key concepts to understand is that when you collect data, you are **sampling** from a **population.** (Except in very recent fields like [IoT](https://en.wikipedia.org/wiki/Internet_of_things).) Because we're condensing a large, diverse body down into a relatively small sample, we need to make sure the sample actually looks like a microcosm of the broader population.
 
 In the graphic on the right, for example, our sample isn't really representative of the population $-$ several colors aren't present at all! We can't run an analysis on this sample and then generalize to the population; **we can only generalize to red, orange, yellow, and green.** No matter how perfectly we model our sample data, our model's scope is trapped. If we try to comment on the broader population, we'll find that our seemingly accurate model suddenly makes embarrassingly inaccurate predictions.
 
@@ -105,18 +103,14 @@ In plain English, this equation is saying that $y$ (exam score) is equal to:
 * ...plus the "study multiplier" ($\beta_1$) times the hours studied ($x_1$)
 * ...plus the "sleep multiplier" ($\beta_2$) times the hours slept ($x_2$)
 
-Even if you're in a big company working with cutting-edge data and technology, it's hard to escape the simplicity and convenience of a good linear regression model. Linear regressions are extremely fast to compute and they're easy to explain: the [coefficients](#coefficients) give a clear explanation of how each variable affects the output<sup>[[5]](#footnotes)</sup>, and you just add all the $\beta_jx_j$ together to get your output.
+No matter where you work, it's hard to escape the simplicity and convenience of a good linear regression model. Linear regressions are extremely fast to compute and they're easy to explain: the [coefficients](#coefficients) give a clear explanation of how each variable affects the output<sup>[[5]](#footnotes)</sup>, and you just add all the $\beta_jx_j$ together to get your output. Make sure you have your "30-second spiel" ready for regression, since you'll likely be explaining these models repeatedly to various stakeholders.
 
-You'll want to feel comfortable talking through linear regression, since you'll be XXXXXX
-
-
-Once you're good with it, it'd be good to brush up on more advanced topics, like feature [scaling](https://en.wikipedia.org/wiki/Feature_scaling), [interactions](https://christophm.github.io/interpretable-ml-book/interaction.html), and [collinearity](https://medium.com/future-vision/collinearity-what-it-means-why-its-bad-and-how-does-it-affect-other-models-94e1db984168), as well as [model regularization](https://medium.com/@zxr.nju/the-classical-linear-regression-model-is-good-why-do-we-need-regularization-c89dba10c8eb).
-
+Once you're comfortable, it'd be good to brush up on more advanced topics, like feature [scaling](https://en.wikipedia.org/wiki/Feature_scaling), [interactions](https://christophm.github.io/interpretable-ml-book/interaction.html), and [collinearity](https://medium.com/future-vision/collinearity-what-it-means-why-its-bad-and-how-does-it-affect-other-models-94e1db984168), as well as [model regularization](https://medium.com/@zxr.nju/the-classical-linear-regression-model-is-good-why-do-we-need-regularization-c89dba10c8eb) and [how coefficients are calculated]({{  site.baseurl  }}/LR-grad-desc).
 
 ### Classification
-Meanwhile, a **logistic regression model** (which is actually classification despite having "regression" in the name...) with the same predictors looks like this:
+Our model above predicted an exam score based on the hours a student studied and slept. A **logistic regression model** (which is actually classification despite having "regression" in the name) with the same predictors looks like this:
 
-$$ P(y) = \frac{1}{1+e^{-h(x)}} $$
+$$ P(y) = \frac{1}{1+e^{-h(x)}}$$
 
 where $$h(x) = \beta_0 + \beta_1x_1 + \beta_2x_2 $$.
 
@@ -127,33 +121,29 @@ In plain English, this means $P(y)$ (the probability of passing the exam) is equ
   - <span style="font-size: 13px">(And that value looks a lot like a linear regression output!)</span>
 
 #### Making sense of that equation
-While the equation may look intimidating, it looks a *lot* simpler if you set $h(x)$ to the extremes. Let's say $h(x)$ is *extremely negative.* That would mean $-h(x)$ would be positive, which would make $1 + e^{-h(x)}$ *huge*. For example, if $e^{-h(x)}$ is 10000000, we'd have the following equation:
+While the equation may look intimidating, it looks a *lot* simpler if you set $h(x)$ to the extremes. Let's say $h(x)$ is *extremely negative.* That would mean $-h(x)$ would be positive, which would make $1 + e^{-h(x)}$ *huge*. For example, if $e^{-h(x)}$ is 10000000, we see $P(y)$ is nearly zero.
 
-$$ P(y) = \frac{1}{1+10000000} $$
+$$ P(y) = \frac{1}{1+10000000} = 0.0000001$$
 
-$\frac{1}{10000001}$ is a tiny number: 0.0000001. This means that **the likelihood of the event $y$ occurring, given our predictors, is tiny.**
+On the other extreme, if $h(x)$ is *extremely positive*, then $-h(x)$ becomes *tiny*, meaning we're essentially dividing 1 by 1. When $e^{-h(x)}$ is 0.00000001, we see $P(y)$ is pretty much 1.
 
-On the other extreme, if $h(x)$ is *extremely positive*, then $-h(x)$ becomes *tiny*. For example:
+$$ P(y) = \frac{1}{1+0.00000001} = 0.99999999$$
 
-$$ P(y) = \frac{1}{1+0.00000001} $$
+This is the major distinction from linear regression: **logistic regression outputs are constrained to between 0 and 1.** We interpret logistic regression outputs as **the probability of event $y$ occurring, given our predictors.** We can work with these outputted probabilities directly, or we can binarize them into 0s and 1s. In our student model, this would mean predicting whether the student passed (1) or failed (0) the exam. We typically use $P(y)$ = 0.5 as the probability cutoff.
 
-$\frac{1}{1.00000001}$ is effectively 1, meaning the likelihood of this event happening is pretty much guaranteed.
+One last thing before we move on. What happens when $h(x)$ equals zero? Any real number raised to the zeroth power equals 1, so $e^{-h(x)}$ becomes 1.
+
+$$ P(y) = \frac{1}{1+1} = 0.5 $$
+
+When $h(x)$ equals zero, $P(y)$ equals 0.5. If we're using 0.5 as the probability cutoff, that means **we'll predict the student passed if $h(x)$ is positive. If $h(x)$ is negative, we'll predict the student failed.** Interesting...
 
 #### Making sense of $h(x)$
+<img src="{{  site.baseurl  }}/images/careers/decision_boundary.png" height="55%" width="55%" align="right">
+So what's up with $h(x)$? In short, when $h(x)$ = 0, we get **a line that best separates our data into classes.** Training a logistic regression model is all about identifying *where to put this line* to best separate the classes in the data.
 
-And what about that line, $h(x)$? Well, this is the line that separates our data into classes. (For multi-class classification, one approach is an iterative "one vs. rest" classifier.) This line is called the **decision boundary.** It's the line at which the probability of belonging to the "positive" class becomes 50%, in which we start labeling it as the positive class.
+In the figure on the right<sup>[[6]](#footnotes)</sup>, we've plotted some fake training data of students who passed vs. failed the exam. The blue line is the model's **decision boundary**, where it determined the best separation of the "passed" vs. "failed" classes falls, based on $x_1$ and $x_2$. It's not perfect $-$ there are some "passed" students on the left and "failed" students on the right $-$ but this is the best separation the model could come up with. For any new data falling to the left of the decision boundary, our model will predict the student failed. For any new data falling on the right, our model will predict the student passed.  
 
-<img src="{{  site.baseurl  }}/images/careers/decision_boundary.png" height="50%" width="50%" align="right">
-
-The logistic regression outputs a probability between 0 and 1 of belonging to the "positive" class. (Note that whichever class is "positive" is arbitrary; it's just the class with the 1s rather than 0s in your model. Need to adjust for multi-class...)
-
-For least squares:
-$$ y = \sum_{i=1}^{m}(h(x_i)-y_i)^2 $$
-
-
-Decision boundary time. Code can be found in this footnote.<sup>[[6]](#footnotes)</sup>
-
-
+Once you're comfortable with these topics, it's a small step to move onto logistic regression models for more than two classes, such as [multinomial](https://en.wikipedia.org/wiki/Multinomial_logistic_regression) and [one-vs-rest](https://scikit-learn.org/stable/auto_examples/linear_model/plot_logistic_multinomial.html) classification.
 
 ### Coefficients
 Let's take another look at the linear regression model that predicts student exam scores.
@@ -167,11 +157,15 @@ Model coefficients help us understand the trends in our data, such as whether st
 
 TALK ABOUT EFFECT SIZES AND CONFIDENCE INTERVALS
 
+For least squares:
+$$ y = \sum_{i=1}^{m}(h(x_i)-y_i)^2 $$
+
+
 ### Residuals
 <img src="{{  site.baseurl  }}/images/careers/residual.png" align='right' height='55%' width='55%'>
 Once we've built a model, how do we tell if it's any good? One way is to compare *<u>the model's predictions</u>* to *<u>the actual values</u>* in our data. In other words, given some sample inputs, what does the model *think the output is*, versus *what the output actually is*? The **residual** is the distance between the predicted versus actual values.
 
-You can see this illustrated in the graphic on the right. The model's predictions are the red line. The distance between the predictions and the actual values are the residuals. The goal with building a model is to get the predicted and actual values as similar as possible $-$ to *minimize the residuals*, in other words.<sup>[[3]](#footnotes)</sup> A more accurate model will have tend to generate predictions closer to the actual values than an inaccurate one.
+You can see this illustrated in the graphic on the right. The model's predictions are the red line. The distance between the predictions and the actual values are the residuals. The goal with building a model is to get the predicted and actual values as similar as possible $-$ to *minimize the residuals*, in other words.<sup>[[7]](#footnotes)</sup> A more accurate model will have tend to generate predictions closer to the actual values than an inaccurate one.
 
 Especially for linear models, the residuals should be normally distributed around zero, meaning our predictions are usually pretty good but sometimes a little too high or too low, and rarely way too high or way too low.
 
@@ -209,7 +203,7 @@ $$ h(x) = \sum_{j=1}^{n}\beta_jx_j $$
 * American Statistical Association: [Statistics and Big Data](http://higherlogicdownload.s3.amazonaws.com/AMSTAT/UploadedImages/49ecf7cf-cb26-4c1b-8380-3dea3b7d8a9d/BigDataOnePager.pdf)
 * National Science Review: [Challenges of Big Data Analysis](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4236847/)
 
-3. [[Residuals]](#residuals) I talk about minimizing residuals at great length in [this blog post]({{  site.baseurl  }}/LR-grad-desc), where I recreate R's linear regression function by hand. Fun times!
+3. [[Ok, so how much stats do I actually need?]](#ok-so-how-much-stats-do-i-actually-need) Especially if your analyses inform major decisions like public policy or the direction your company takes, you'll want to account for nuances like [random effects](https://www.theanalysisfactor.com/understanding-random-effects-in-mixed-models/), [regression discontinuities](https://en.wikipedia.org/wiki/Regression_discontinuity_design), [nonparametric](http://mlss.tuebingen.mpg.de/2015/slides/ghahramani/gp-neural-nets15.pdf) or [Bayesian](http://www.scholarpedia.org/article/Bayesian_statistics) alternatives to [frequentism](https://en.wikipedia.org/wiki/Frequentist_inference), [bootstrapping](https://en.wikipedia.org/wiki/Bootstrapping_(statistics)) and more. Similarly, if you're in a field where you actually *do* have access to all the data in a process, such as analyzing [Internet of Things (IoT)](https://www.zdnet.com/article/what-is-the-internet-of-things-everything-you-need-to-know-about-the-iot-right-now/) sensor data, then you'll want to dive deep on [time series analysis](https://www.statisticssolutions.com/time-series-analysis/) and [anomaly detection](https://www.anodot.com/blog/what-is-anomaly-detection/).
 
 4. [[The high-level view]](#the-high-level-view) To the best of my knowledge, clustering unlabeled data falls neatly into machine learning rather than classical statistics, so I won't be covering it in this post. But of course, clustering is a crucial skill to have: make sure you understand [k-means clustering](https://en.wikipedia.org/wiki/K-means_clustering) as a starting point, and [Gaussian mixture models](https://scikit-learn.org/stable/modules/mixture.html) if you want to get fancy.
 
@@ -223,7 +217,7 @@ $$ h(x) = \sum_{j=1}^{n}\beta_jx_j $$
 
     # Generate sample data with pos (x1) & neg (x2) slopes
     x1 = np.arange(0, 10, 0.1) + np.random.normal(0, 2, 100)
-    x2 = np.arange(10, 0, -0.1) + np.random.normal(0, 2, 100)
+    x2 = np.arange(0, 10, 0.1) + np.random.normal(0, 2, 100)
     y = np.round(np.arange(0, 1, 0.01) + np.random.normal(0, 0.1, 100))
 
     # Put into df and fit a model
@@ -240,8 +234,8 @@ $$ h(x) = \sum_{j=1}^{n}\beta_jx_j $$
     m = -b1/b2
 
     # Generate the decision boundary line
-    xmin, xmax = -2, 13
-    ymin, ymax = -3, 13
+    xmin, xmax = -10, 15
+    ymin, ymax = -15, 15
 
     xd = np.array([xmin, xmax])
     yd = m*xd + c
@@ -256,10 +250,15 @@ $$ h(x) = \sum_{j=1}^{n}\beta_jx_j $$
     plt.scatter(df1['x1'], df1['x2'], marker='x', color='red', s=40)
 
     plt.plot(xd, yd, 'k', lw=1, ls='--', color='blue')
-    plt.ylim(-2.5, 13.5)
+    plt.xlim(-2.75, 13.25)
+    plt.ylim(-3.75, 13)
     plt.xlabel(r'$x_1$', fontweight='bold', fontsize=25)
     plt.ylabel(r'$x_2$', fontweight='bold', fontsize=25)
     plt.tick_params(bottom= False, left=False, labelbottom=False,
                     labelleft=False)
+    plt.legend(framealpha=1)
     plt.show()
     ```
+    <br>
+
+7. [[Residuals]](#residuals) I talk about minimizing residuals at great length in [this blog post]({{  site.baseurl  }}/LR-grad-desc), where I recreate R's linear regression function by hand. Fun times!
