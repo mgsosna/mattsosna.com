@@ -67,9 +67,9 @@ When we build a model, **the question isn't how to make a model that isn't flawe
 The difference between a model that's *wrong but useful* versus one that's *just wrong* is often hidden in the details. **Unlike in programming, hitting "run" on a half-baked model *will* output a result that qualitatively looks identical to a highly-polished, accurate model.** But whether the model represents *the reality we actually live in* requires a trained eye.  
 
 ### Ok, so how much stats do I actually need?
-It's hard not to write an entire textbook when it comes to important stats concepts for data science. It's also hard to identify which concepts are most relevant for data scientists, given the tremendous variation in depth of statistical knowledge expected. You'll need far more than intro stats if you're expected to inform major decisions like public policy or the direction your company takes<sup>[[3]](#3-ok-so-how-much-stats-do-i-actually-need)</sup>, but basic stats may be more than enough if your role is deep in the engineering side of data science.
+It's hard not to write an entire textbook when it comes to important stats concepts for data science. It's also hard to identify which concepts are most relevant for data scientists, given the tremendous variation in depth of statistical knowledge expected.
 
-Similarly, if you're in a field where you actually *do* have access to all the data in a process, such as analyzing [Internet of Things (IoT)](https://www.zdnet.com/article/what-is-the-internet-of-things-everything-you-need-to-know-about-the-iot-right-now/) sensor data or applying [natural language processing](https://en.wikipedia.org/wiki/Natural_language_processing) to legal documents, then you'll want a deep dive on additional stats skills, like [time series analysis](https://www.statisticssolutions.com/time-series-analysis/), [clustering](https://en.wikipedia.org/wiki/Cluster_analysis), and [anomaly detection](https://www.anodot.com/blog/what-is-anomaly-detection/).
+You'll need far more than intro stats if you're expected to inform major decisions like public policy or the direction your company takes<sup>[[3]](#3-ok-so-how-much-stats-do-i-actually-need)</sup>, but basic stats may be more than enough if your role is deep in the engineering side of data science. Similarly, if you're in a field where you actually *do* have access to all the data in a process, such as analyzing [Internet of Things (IoT)](https://www.zdnet.com/article/what-is-the-internet-of-things-everything-you-need-to-know-about-the-iot-right-now/) sensor data or applying [natural language processing](https://en.wikipedia.org/wiki/Natural_language_processing) to legal documents, then you'll want a deep dive on additional stats skills, like [time series analysis](https://www.statisticssolutions.com/time-series-analysis/), [clustering](https://en.wikipedia.org/wiki/Cluster_analysis), and [anomaly detection](https://www.anodot.com/blog/what-is-anomaly-detection/).
 
 Consider the following concepts, then, as a *starting point* that you can then build off and tailor to your specific role. I'm assuming you have some basic familiarity with modeling but maybe haven't had a deep dive into the nuances of coefficients and residuals. (If you're a newcomer to stats, check out an upcoming "Model fundamentals" series of posts with lots of content from earlier drafts of this post!)
 
@@ -84,7 +84,7 @@ Here are the stats essentials I think any data scientist should feel comfortable
 We'll go through each of these in the rest of the post. Let's get started!
 
 ## Experimental design
-Broadly, experimental design refers to how we structure our *data collection* process. Do we poll our friends on Facebook, random passersby at the mall, or random phone numbers? Does every patient get the drug, or do we give some a placebo? **Think of the quality of any analysis we run as a funnel starting from the quality of the data we collect.** If we have solid data, we can ask more interesting questions and discover more meaningful insights. If we have shoddy data, there'll always be that shadow of doubt for whether the results can truly be trusted. So let's make sure we can identify how to get good data.
+Broadly, experimental design refers to how we structure our *data collection* process. Do we poll our friends on Facebook, passersby at the mall, or random phone numbers? Does every patient get the drug, or do we give some a placebo? **Think of the quality of any analysis we run as a funnel starting from the quality of the data we collect.** If we have solid data, we can ask more interesting questions and discover more meaningful insights. If we have shoddy data, there'll always be that shadow of doubt for whether the results can truly be trusted. So let's make sure we can identify how to get good data.
 
 ### Sampling and bias
 <img align="right" src="https://i.imgur.com/JbXsczj.png" height="40%" width="40%">
@@ -99,9 +99,22 @@ David Shor, the former head of political data science at [Civis Analytics](https
 If we're aware of these discrepancies, we can try to implement fixes such as [differentially weighting classes in the sample](https://www.researchgate.net/post/How-can-I-deal-with-uneven-sample-sizes-in-my-study). But the best remedy is to make sure the sample [is truly representative of the broader population](https://www.healthknowledge.org.uk/public-health-textbook/research-methods/1a-epidemiology/methods-of-sampling-population). Note: this is often easier said than done!
 
 ### Control groups
+Another key concept to know for experimental design is **control groups.** Typically when we run an experiment, we're looking to quantify the effect of some **treatment.** Does the antidepressant reduce depression? Did the new website layout increase sales? To understand whatever number we get for our effect size, we need a *baseline* to compare it to. This is where control groups come in.
 
-When you remove the effect of the control, it lets you isolate what the true effect was. You're controlling for variation not due to the variable of interest.
+![]({{  site.baseurl  }}/images/careers/control_group.png)
+<span style="font-size: 12px"><i>Images adapted from [Kumar et al. 2013](https://www.semanticscholar.org/paper/Background-subtraction-based-on-threshold-detection-Kumar-Sureshkumar/39ad370de4a39ca868e0b8d91ceba120d48612b3)</i></span>
 
+In the real world, innumerable factors affect every process we observe. We need a way to *control* as many of those factors as possible so we can zone in on the one factor $-$ our treatment $-$ that we're interested in. **Think of a good control group as a (nearly) identical twin of our treatment group, differing only in our treatment.** "Subtracting out" the control, as is done in the background subtraction above, lets the effect of our treatment pop out. (Or not, if our treatment actually doesn't have an effect.)
+
+[Placebos](https://www.webmd.com/pain-management/what-is-the-placebo-effect#1) are a classic example of controls. Medical studies examining the effectiveness of new drugs always contain a control group that gets a placebo rather than the real drug, as [people often feel better just knowing they got a drug](https://www.health.harvard.edu/mental-health/the-power-of-the-placebo-effect), even if the "drug" is just a sugar pill. Without the placebo group, our false positive rate would be off the charts.
+
+Another classic control group is the treatment group itself, *before* receiving the treatment. [Within-subject designs](https://www.verywellmind.com/what-is-a-within-subjects-design-2796014) are incredibly powerful, as we have much finer control over all the external factors that could affect our experiment: they're literally the same participants! You can see this added power in the equations for a two-sample t-test versus a paired t-test: the $t$ value will be larger for the paired test because the denominator is smaller, since you're only counting the $n$ of one (paired) sample.
+
+$$ t_{two-sample} = \frac{x_1 - x_2}{\sqrt{\frac{(s_1)^2}{n_1}+\frac{(s_2)^2}{n_2}}} $$
+
+$$ t_{paired} = \frac{\bar{d}}{\frac{s_d}{\sqrt{n}}} $$
+
+One final example particularly relevant for web development is [A/B testing](https://www.optimizely.com/optimization-glossary/ab-testing/). To experimentally determine ways to drive higher user engagement or conversions, a company may present users with nearly identical versions of a webpage differing in only one aspect, like the color of a button. The company can then compare these webpage variants to one another, as well as the original webpage (the control group), to choose the most effective option.
 
 ## Predictive modeling
 
