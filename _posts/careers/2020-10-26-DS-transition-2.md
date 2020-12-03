@@ -26,8 +26,8 @@ But consider this learning checklist as a set of fundamental skills that will ge
 
 * **Inferential Statistics**
 - [ ] [Experimental design](#experimental-design)
-- [ ] [Predictive modeling](#predictive-modeling)
 - [ ] [Comparisons between groups](#comparisons-between-groups)
+- [ ] [Predictive modeling](#predictive-modeling)
 - [ ] [Measures of statistical significance](#measures-of-statistical-significance)
 - [ ] [Model evaluation](#model-evaluation) <br><br>
 * **Programming**
@@ -76,8 +76,8 @@ Consider the following concepts, then, as a *starting point* that you can then b
 Here are the stats essentials I think any data scientist should feel comfortable explaining to both technical and non-technical audiences:
 
 * **Experimental design:** sampling and bias, control groups
-* **Predictive modeling:** regression, classification
 * **Comparisons between groups:** t-tests, ANOVA
+* **Predictive modeling:** regression, classification
 * **Measures of statistical significance:** p-values, effect sizes, confidence intervals
 * **Model evaluation:** coefficients, residuals, AIC, correlation vs. causation, overfitting vs. underfitting
 
@@ -104,17 +104,31 @@ Another key concept to know for experimental design is **control groups.** Typic
 ![]({{  site.baseurl  }}/images/careers/control_group.png)
 <span style="font-size: 12px"><i>Images adapted from [Kumar et al. 2013](https://www.semanticscholar.org/paper/Background-subtraction-based-on-threshold-detection-Kumar-Sureshkumar/39ad370de4a39ca868e0b8d91ceba120d48612b3)</i></span>
 
-In the real world, innumerable factors affect every process we observe. We need a way to *control* as many of those factors as possible so we can zone in on the one factor $-$ our treatment $-$ that we're interested in. **Think of a good control group as a (nearly) identical twin of our treatment group, differing only in our treatment.** "Subtracting out" the control, as is done in the background subtraction above, lets the effect of our treatment pop out. (Or not, if our treatment actually doesn't have an effect.)
+In the real world, innumerable factors affect every process we observe. We need a way to *control* as many of those factors as possible so we can zone in on the one factor $-$ our treatment $-$ that we're interested in. **Think of a good control group as a (nearly) identical twin of our treatment group, differing only in our treatment.** "Subtracting out" the control, like in the background subtraction above, lets the effect of our treatment pop out. (Or not, if our treatment actually doesn't have an effect.)
 
 [Placebos](https://www.webmd.com/pain-management/what-is-the-placebo-effect#1) are a classic example of controls. Medical studies examining the effectiveness of new drugs always contain a control group that gets a placebo rather than the real drug, as [people often feel better just knowing they got a drug](https://www.health.harvard.edu/mental-health/the-power-of-the-placebo-effect), even if the "drug" is just a sugar pill. Without the placebo group, our false positive rate would be off the charts.
 
-Another classic control group is the treatment group itself, *before* receiving the treatment. [Within-subject designs](https://www.verywellmind.com/what-is-a-within-subjects-design-2796014) are incredibly powerful, as we have much finer control over all the external factors that could affect our experiment: they're literally the same participants! You can see this added power in the equations for a two-sample t-test versus a paired t-test: the $t$ value will be larger for the paired test because the denominator is smaller, since you're only counting the $n$ of one (paired) sample.
+Another classic control group is the treatment group itself, *before* receiving the treatment. [Within-subject designs](https://www.verywellmind.com/what-is-a-within-subjects-design-2796014) are incredibly powerful, as we have much finer control over all the external factors that could affect our experiment: they're literally the same participants! You can see this added power in the equations for a two-sample t-test versus a paired t-test: the $t$ value will be larger for the paired test because the denominator is smaller, since you're only counting the $n$ of one (paired) sample.<sup>[[4]](#4-control-groups)</sup>
 
 $$ t_{two-sample} = \frac{x_1 - x_2}{\sqrt{\frac{(s_1)^2}{n_1}+\frac{(s_2)^2}{n_2}}} $$
 
 $$ t_{paired} = \frac{\bar{d}}{\frac{s_d}{\sqrt{n}}} $$
 
 One final example particularly relevant for web development is [A/B testing](https://www.optimizely.com/optimization-glossary/ab-testing/). To experimentally determine ways to drive higher user engagement or conversions, a company may present users with nearly identical versions of a webpage differing in only one aspect, like the color of a button. The company can then compare these webpage variants to one another, as well as the original webpage (the control group), to choose the most effective option.
+
+## Comparisons between groups
+A central question in statistics $-$ and life, really $-$ is whether things are *the same* or *different.*
+
+### T-tests
+
+You should use nonparametric alternatives like the Wilcoxon test if your data aren't normally distributed.
+
+I'm actually a bigger fan of **permutation tests**, which allow for a relaxed version of stuff.
+
+### ANOVA
+
+
+
 
 ## Predictive modeling
 
@@ -231,16 +245,46 @@ $$ h(x) = \sum_{j=1}^{n}\beta_jx_j $$
 
 
 ## Footnotes
-#### 1. [[Wait, do I actually need to learn stats?]](#wait-do-i-actually-need-to-learn-stats)
+#### 1. [Wait, do I actually need to learn stats?](#wait-do-i-actually-need-to-learn-stats)
 The [Apollo Guidance Computer](https://www.realclearscience.com/articles/2019/07/02/your_mobile_phone_vs_apollo_11s_guidance_computer_111026.html) had 4.096 KB of RAM. An average laptop in 2020 has 8 GB, which is 1.95 million times more powerful. If we use a [memory-optimized AWS EC2 instance](https://aws.amazon.com/ec2/instance-types), we have access to upwards of _**1.57 billion**_ times more compute than the Apollo mission. And all to identify pictures of cats...
 
-#### 2. [[Wait, do I actually need to learn stats?]](#wait-do-i-actually-need-to-learn-stats)
+#### 2. [Wait, do I actually need to learn stats?](#wait-do-i-actually-need-to-learn-stats)
 Rather than removing the need for statistics, big data *exacerbates* common statistical risks. I've linked some further reading below.
 * American Statistical Association: [Statistics and Big Data](http://higherlogicdownload.s3.amazonaws.com/AMSTAT/UploadedImages/49ecf7cf-cb26-4c1b-8380-3dea3b7d8a9d/BigDataOnePager.pdf)
 * National Science Review: [Challenges of Big Data Analysis](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4236847/)
 
-#### 3. [[Ok, so how much stats do I actually need?]](#ok-so-how-much-stats-do-i-actually-need)
+#### 3. [Ok, so how much stats do I actually need?](#ok-so-how-much-stats-do-i-actually-need)
 If people come to you for help making crucial decisions from data, you'll want to account for statistical nuances like [random effects](https://www.theanalysisfactor.com/understanding-random-effects-in-mixed-models/), [regression discontinuities](https://en.wikipedia.org/wiki/Regression_discontinuity_design), [nonparametric](http://mlss.tuebingen.mpg.de/2015/slides/ghahramani/gp-neural-nets15.pdf) or [Bayesian](http://www.scholarpedia.org/article/Bayesian_statistics) alternatives to [frequentism](https://en.wikipedia.org/wiki/Frequentist_inference), [bootstrapping](https://en.wikipedia.org/wiki/Bootstrapping_(statistics)) and more.
+
+#### 4. [Control groups](#control-groups)
+You can easily see this effect for yourself in R or Python. (I use R below.) Note: it's critical to set `g2` equal to `g1` shifted upward, rather than just another `rnorm` with a higher mean, since the paired t-test looks closely at the *pairwise differences* between each element in the vector. The paired t-test will likely return a *weaker* result than a two-sample test if `g1` and `g2` are unrelated samples, since the distribution of `g1 - g2` straddles zero. And an obligatory note after the [#pruittgate fiasco](https://www.nature.com/articles/d41586-020-00287-y)... *never fabricate data in scientific studies!!* The intention of these demos is strictly to better understand how statistical tests work, not to game a system.
+
+```r
+# Generate sample data
+set.seed(0)
+g1 <- rnorm(10, 0, 1)
+
+set.seed(0)
+g2 <- g1 + rnorm(10, 0.5, 0.25)  # shift g2 upward
+
+# Run t-tests
+mod1 <- t.test(g1, g2)
+mod2 <- t.test(g1, g2, paired=T)
+
+# Unpaired is not significant; paired is significant
+mod1[['p.value']]  # 0.3472
+mod2[['p.value']]  # 0.0002
+
+# Unpaired t-value is small; paired is larger
+mod1[['statistic']][['t']]  # -0.967
+mod2[['statistic']][['t']]  # -6.189
+
+# Unpaired confidence interval is large; paired is narrower
+diff(mod1[['conf.int']])  # 2.573
+diff(mod2[['conf.int']])  # 0.431
+```
+
+
 
 5. [[The high-level view]](#the-high-level-view) To the best of my knowledge, clustering unlabeled data falls neatly into machine learning rather than classical statistics, so I won't be covering it in this post. But of course, clustering is a crucial skill to have: make sure you understand [k-means clustering](https://en.wikipedia.org/wiki/K-means_clustering) as a starting point, and [Gaussian mixture models](https://scikit-learn.org/stable/modules/mixture.html) if you want to get fancy.
 
