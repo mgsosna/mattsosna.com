@@ -71,7 +71,7 @@ It's hard not to write an entire textbook when it comes to important stats conce
 
 You'll need far more than intro stats if you're expected to inform major decisions like public policy or the direction your company takes<sup>[[3]](#3-ok-so-how-much-stats-do-i-actually-need)</sup>, but basic stats may be more than enough if your role is deep in the engineering side of data science. Similarly, if you're in a field where you actually *do* have access to all the data in a process, such as analyzing [Internet of Things (IoT)](https://www.zdnet.com/article/what-is-the-internet-of-things-everything-you-need-to-know-about-the-iot-right-now/) sensor data or applying [natural language processing](https://en.wikipedia.org/wiki/Natural_language_processing) to legal documents, then you'll want a deep dive on additional stats skills, like [time series analysis](https://www.statisticssolutions.com/time-series-analysis/), [clustering](https://en.wikipedia.org/wiki/Cluster_analysis), and [anomaly detection](https://www.anodot.com/blog/what-is-anomaly-detection/).
 
-Consider the following concepts, then, as a *starting point* that you can then build off and tailor to your specific role. I'm assuming you have some basic familiarity with modeling but maybe haven't had a deep dive into the nuances of coefficients and residuals. (If you're a newcomer to stats, check out an upcoming "Model fundamentals" series of posts with lots of content from earlier drafts of this post!)
+Consider the following concepts, then, as a *starting point* that you can then build off and tailor to your specific role. I'm assuming you have some basic familiarity with stats but maybe haven't done a deep dive into the nuances of assumptions, coefficients, residuals, etc. (If you're a newcomer to stats, check out an upcoming "Model fundamentals" series of posts with lots of content from earlier drafts of this post!)
 
 Here are the stats essentials I think any data scientist should feel comfortable explaining to both technical and non-technical audiences:
 
@@ -110,50 +110,52 @@ In the real world, innumerable factors affect every process we observe. We need 
 
 Another classic control group is the treatment group itself, *before* receiving the treatment. [Within-subject designs](https://www.verywellmind.com/what-is-a-within-subjects-design-2796014) are incredibly powerful, as we have much finer control over all the external factors that could affect our experiment: they're literally the same participants! You can see this added power in the equations for a two-sample t-test versus a paired t-test: the $t$ value will be larger for the paired test because the denominator is smaller, since you're only counting the $n$ of one (paired) sample.<sup>[[4]](#4-control-groups)</sup>
 
-$$ t_{two-sample} = \frac{x_1 - x_2}{\sqrt{\frac{(s_1)^2}{n_1}+\frac{(s_2)^2}{n_2}}} $$
+$$ t_{two-sample} = \frac{\bar{x_1} - \bar{x_2}}{\sqrt{\frac{(s_1)^2}{\color{orange}{\boldsymbol{n_1}}}+\frac{(s_2)^2}{\color{orange}{\boldsymbol{n_2}}}}} $$
 
-$$ t_{paired} = \frac{\bar{d}}{\frac{s_d}{\sqrt{n}}} $$
+$$ t_{paired} = \frac{\bar{d}}{\frac{s_d}{\sqrt{\color{violet}{\boldsymbol{n}}}}} $$
 
 One final example particularly relevant for web development is [A/B testing](https://www.optimizely.com/optimization-glossary/ab-testing/). To experimentally determine ways to drive higher user engagement or conversions, a company may present users with nearly identical versions of a webpage differing in only one aspect, like the color of a button. The company can then compare these webpage variants to one another, as well as the original webpage (the control group), to choose the most effective option.
 
 ## Comparisons between groups
-A central question in statistics $-$ and life, really $-$ is whether things are *the same* or *different.*
+A central question in statistics $-$ and life, really $-$ is whether things are *the same* or *different.* Do smokers tend to have higher rates of lung cancer than non-smokers? Does eating an apple in the morning make you more productive than eating an orange? When we collect data on our groups of apple-eaters versus orange-eaters, the means of our *samples* will inevitably be different. **But do the *populations* of apple-eaters and orange-eaters differ in the productivity?**
+
+We need to use statistics to *draw inferences* about the populations from our samples. I'll briefly cover t-tests and Analyses of Variance below.
 
 ### T-tests
+The main idea behind a t-test is to determine **whether two samples are drawn from the same population**. I'm going to assume this isn't the first time you're reading about t-tests (if it is, there are lots of great resources like [this post](https://www.investopedia.com/terms/t/t-test.asp)), so I'll instead focus on **how to avoid misusing a t-test.**
 
-You should use nonparametric alternatives like the Wilcoxon test if your data aren't normally distributed.
+**When you conduct a t-test, you're assuming the following about your data:**
+1. The data in your sample are <u><i>continuous</i></u>, not discrete
+2. The data in your sample are <u><i>independent from one another</i></u> and were <u><i>all equally likely to be selected from their population</i></u>
+3. Your sample is not skewed and doesn't have outliers ([less important as sample size increases](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4744321/))
+4. For a two-sample test, the variances of the <u><i>population distributions</i></u> are equal
 
-I'm actually a bigger fan of **permutation tests**, which allow for a relaxed version of stuff.
+If these conditions aren't met, <u><i>don't run a t-test!</i></u> R, Python, and the t-test equation itself won't stop you from generating a meaningless result $-$ _**it's on you to realize whether you should run the test.**_ \#2 in particular can be devastating for unwary researchers; violating this assumption means you have to [dip into some gnarly advanced methods](https://www.ijcai.org/Proceedings/07/Papers/121.pdf) or [throw out the data and try again](https://www.researchgate.net/post/How-do-you-compare-samples-if-they-are-not-IID). \#3 is more generous: it's possible to use nonparametric alternatives like the [Wilcoxon test](https://www.investopedia.com/terms/w/wilcoxon-test.asp) or to transform your data to make it normally distributed.
 
 ### ANOVA
+If you have more than two samples you're comparing at once, you'll need to run an [Analysis of Variance](https://en.wikipedia.org/wiki/Analysis_of_variance). **Don't run multiple consecutive t-tests!** [I did a deep dive here](({{  site.baseurl  }}/T-tests-vs-ANOVA)) on how the false positive rate skyrockets when you run consecutive pairwise t-tests on multiple groups. I think the heatmaps below summarize the main message well.
 
+<center>
+<img src="{{  site.baseurl }}/images/statistics/t_vs_anova_heatmap.png" height="90%" width="90%" alt="Two heatmaps showing a high false positive rate for multiple t-tests and a low rate for ANOVA">
+</center>
 
-
+In short: if you're trying to determine whether the means of the populations of multiple samples differ, first run an ANOVA, followed by [Tukey's method](https://support.minitab.com/en-us/minitab/18/help-and-how-to/modeling-statistics/anova/supporting-topics/multiple-comparisons/what-is-tukey-s-method/) or [Bonferroni's correction](http://mathworld.wolfram.com/BonferroniCorrection.html) if you find significant differences.
 
 ## Predictive modeling
-
-### Model fundamentals
-Let's say we take all these considerations to heart and are confident our sample is representative of the broader population. Now what? Since it's easy to build a model that actually isn't informative at all, let's start with a foundation for what models and their components are. We'll first take a high-level view of two of the main types of models $-$ **regression** and **classification** $-$ before diving into **coefficients** and **residuals**, as well as **linear and logistic regression.** These concepts will help us understand what a model is, how to quantify trends in our data, and how to evaluate model accuracy.
+Predictive modeling means taking in data and trying to model the *underlying process* that generated that data. Once we understand the underlying rules, we can then generate *predictions* for new data. Thinking back to our [weather outside vs. clothing model](#wait-do-i-actually-need-to-learn-stats)...
 
 ### Regression
-As a recap, a model is a simplified representation of reality, like *"The colder it is, the more clothes I should put on"* or *"Students are more likely to pass an exam if they study a lot and sleep well."* <sup>[[5]](#footnotes)</sup> A model takes in inputs, such as temperature, and returns an output, such as the number of clothes to wear.
+We use regression for continuous predictions. Here's the equation for linear regression. Learn it well!
 
-The type of model we'll want to build will depend on whether we want to predict a _**continuous**_ or _**discrete**_ outcome. A continuous value is a number with a decimal, like 0.555 mL, $13.81, or 99.9%. A discrete value is a distinct category, like "big," "red," or "cat." ("Big red cat" could also be a category!)
+$$ h(x) = \sum_{j=0}^{n}\beta_jx_j $$
 
-We use regression models to predict continuous outcomes and classification models to predict discrete outcomes. A typical regression model could answer the question *"What is a student's score on an exam, given factors like how much they studied?"* A classification model, meanwhile, would answer *"Does a student pass the exam, given factors like how much they studied?"* The regression model predicts the student's specific score, while the classification model predicts whether they belong to the "passed" or "failed" categories.
+where $h(x)$ is our predicted value and $n$ is the number of features in our data. The equation for a model where we predict a student's exam score ($h(x)$) based off their hours studied ($x_1$) and hours slept the previous night ($x_2$) would look like this<sup>[[5]](#5-regression)</sup>:
 
-Here's a simple **linear regression model** that predicts a student's exam score based off 1) the number of hours the student studied and 2) the number of hours of sleep the night before:
+$$ h(x) = \beta_0 + \beta_1x_1 + \beta_2x_2 $$
 
-$$y = \beta_0 + \beta_1x_1 + \beta_2x_2$$
+No matter where you work, it's hard to escape the simplicity and convenience of a good linear regression model. Linear regressions are extremely fast to compute and they're easy to explain: the [coefficients](#coefficients) give a clear explanation of how each variable affects the output<sup>[[6]](#6-regression)</sup>, and you just add all the $\beta_jx_j$ together to get your output. Make sure you have your "30-second spiel" ready for regression, since you'll likely be explaining these models repeatedly to various stakeholders.
 
-In plain English, this equation is saying that $y$ (exam score) is equal to:
-* The student's score if they studied zero hours and got zero sleep (the intercept, $\beta_0$)
-* ...plus the "study multiplier" ($\beta_1$) times the hours studied ($x_1$)
-* ...plus the "sleep multiplier" ($\beta_2$) times the hours slept ($x_2$)
-
-No matter where you work, it's hard to escape the simplicity and convenience of a good linear regression model. Linear regressions are extremely fast to compute and they're easy to explain: the [coefficients](#coefficients) give a clear explanation of how each variable affects the output<sup>[[6]](#footnotes)</sup>, and you just add all the $\beta_jx_j$ together to get your output. Make sure you have your "30-second spiel" ready for regression, since you'll likely be explaining these models repeatedly to various stakeholders.
-
-Once you're comfortable, it'd be good to brush up on more advanced topics, like feature [scaling](https://en.wikipedia.org/wiki/Feature_scaling), [interactions](https://christophm.github.io/interpretable-ml-book/interaction.html), and [collinearity](https://medium.com/future-vision/collinearity-what-it-means-why-its-bad-and-how-does-it-affect-other-models-94e1db984168), as well as [model regularization](https://medium.com/@zxr.nju/the-classical-linear-regression-model-is-good-why-do-we-need-regularization-c89dba10c8eb) and [how coefficients are calculated]({{  site.baseurl  }}/LR-grad-desc).
+Once you're comfortable, make sure to brush up on more advanced topics, like feature [scaling](https://en.wikipedia.org/wiki/Feature_scaling), [interactions](https://christophm.github.io/interpretable-ml-book/interaction.html), and [collinearity](https://medium.com/future-vision/collinearity-what-it-means-why-its-bad-and-how-does-it-affect-other-models-94e1db984168), as well as [model regularization](https://medium.com/@zxr.nju/the-classical-linear-regression-model-is-good-why-do-we-need-regularization-c89dba10c8eb) and [how coefficients are calculated]({{  site.baseurl  }}/LR-grad-desc). This might sound like a lot, but given how frequently you're likely going to run and explain regressions in your work, it's good to really understand what they're about.
 
 ### Classification
 Our model above predicted an exam score based on the hours a student studied and slept. A **logistic regression model** (which is actually classification despite having "regression" in the name) with the same predictors looks like this:
@@ -284,11 +286,15 @@ diff(mod1[['conf.int']])  # 2.573
 diff(mod2[['conf.int']])  # 0.431
 ```
 
+#### 5. [Regression](#regression)
+If you look closely (or have taken enough statistics to use linear algebra), you might notice that $ h(x) = \sum_{j=0}^{n}\beta_jx_j $ expects a $x_0$ to accompany $\beta_0$, but there's no $x_0$ in the equation for our example model $h(x) = \beta_0 + \beta_1x_1 + \beta_2x_2$. This reflects a difference in whether or not we're using matrix multiplication to generate our predictions. A necessary pre-processing step for using linear algebra is to add a column of 1's for $x_0$ to our feature matrix; otherwise, there's a mismatch between the number of features ($n$) and the number of coefficients ($n+1$). Because $x_0$ is always 1 and is just a bookkeeping step, it's usually omitted from the equation when you expand it out.
 
+#### 6. [Regression](#regression)
+There *is* one important caveat to mention here regarding the ease of understanding a regression model's coefficients. Yes, they do show the influence each input variable has on the output, **but these coefficients are affected by all other variables in the model.**
 
-5. [[The high-level view]](#the-high-level-view) To the best of my knowledge, clustering unlabeled data falls neatly into machine learning rather than classical statistics, so I won't be covering it in this post. But of course, clustering is a crucial skill to have: make sure you understand [k-means clustering](https://en.wikipedia.org/wiki/K-means_clustering) as a starting point, and [Gaussian mixture models](https://scikit-learn.org/stable/modules/mixture.html) if you want to get fancy.
+In our "study and sleep" exam model, for example, removing "hours studied" from our model will cause the "sleep" coefficient to skyrocket, since it's now entirely responsible for converting "hours slept" into an exam score.
 
-6. [[Regression]](#regression) There *is* one important caveat to mention here regarding the ease of understanding a regression model's coefficients. Yes, they do show the influence each input variable has on the output, **but these coefficients are affected by all other variables in the model.** <br><span style="color:white">......</span>In our "study and sleep" exam model, for example, removing "hours studied" from our model will cause the "sleep" coefficient to skyrocket, since it's now entirely responsible for converting "hours slept" into an exam score. <br><span style="color:white">.....</span>You'll find that variables' coefficients can shrink, explode, or even change sign when you add or remove predictors and rerun the model. Trying to understand *these* changes is where you need a deep understanding of your data.
+You'll find that variables' coefficients can shrink, explode, or even change sign when you add or remove predictors and rerun the model. Trying to understand *these* changes is where you need a deep understanding of your data.
 
 7. [[Classification]](#classification) Here's the code to generate the decision boundary plot.
     ```python
