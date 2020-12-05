@@ -27,9 +27,7 @@ But consider this learning checklist as a set of fundamental skills that will ge
 * **Inferential Statistics**
 - [ ] [Experimental design](#experimental-design)
 - [ ] [Comparisons between groups](#comparisons-between-groups)
-- [ ] [Predictive modeling](#predictive-modeling)
-- [ ] [Measures of statistical significance](#measures-of-statistical-significance)
-- [ ] [Model evaluation](#model-evaluation) <br><br>
+- [ ] [Predictive modeling](#predictive-modeling) <br><br>
 * **Programming**
 - [ ] [Dataframes]({{  site.baseurl  }}/DS-transition-3/#dataframes) and [arrays](#arrays)
 - [ ] [Visualizations]({{  site.baseurl  }}/DS-transition-3/#visualizations)
@@ -73,22 +71,20 @@ You'll need far more than intro stats if you're expected to inform major decisio
 
 Consider the following concepts, then, as a *starting point* that you can then build off and tailor to your specific role. I'm assuming you have some basic familiarity with stats but maybe haven't done a deep dive into the nuances of assumptions, coefficients, residuals, etc. (If you're a newcomer to stats, check out an upcoming "Model fundamentals" series of posts with lots of content from earlier drafts of this post!)
 
-Here are the stats essentials I think any data scientist should feel comfortable explaining to both technical and non-technical audiences:
+Here are (some!) stats essentials I think any data scientist should feel comfortable explaining to both technical and non-technical audiences:
 
-* **Experimental design:** sampling and bias, control groups
+* **Experimental design:** sampling and bias, control groups, correlation vs. causation
 * **Comparisons between groups:** t-tests, ANOVA
-* **Predictive modeling:** regression, classification
-* **Measures of statistical significance:** p-values, effect sizes, confidence intervals
-* **Model evaluation:** coefficients, residuals, AIC, correlation vs. causation, overfitting vs. underfitting
+* **Predictive modeling:** regression, classification, coefficients, residuals
 
 We'll go through each of these in the rest of the post. Let's get started!
 
 ## Experimental design
-Broadly, experimental design refers to how we structure our *data collection* process. Do we poll our friends on Facebook, passersby at the mall, or random phone numbers? Does every patient get the drug, or do we give some a placebo? **Think of the quality of any analysis we run as a funnel starting from the quality of the data we collect.** If we have solid data, we can ask more interesting questions and discover more meaningful insights. If we have shoddy data, there'll always be that shadow of doubt for whether the results can truly be trusted. So let's make sure we can identify how to get good data.
+Broadly, experimental design refers to how we structure our *data collection* process. Do we poll our friends on Facebook, passersby at the mall, or random phone numbers? Does every patient get the drug, or do we give some a placebo? **Think of the quality of any analysis we run as a funnel starting from the quality of the data we collect.** If we have solid data, we can ask more interesting questions and discover more meaningful insights. If we have shoddy data, there'll always be that shadow of doubt for whether the results can truly be trusted. So, let's make sure we can identify how to get good data.
 
 ### Sampling and bias
 <img align="right" src="https://i.imgur.com/JbXsczj.png" height="40%" width="40%">
-One of the key concepts to understand is that when you collect data, you are **sampling** from a **population.** (Except, as I mentioned, in fields like [IoT](https://en.wikipedia.org/wiki/Internet_of_things).) Because we're condensing a large, diverse body down into a relatively small sample, we need to make sure the sample actually looks like a microcosm of the broader population.
+One of the key concepts to understand is that when you collect data, you are **sampling** from a **population.** (Except in newer fields like [IoT](https://en.wikipedia.org/wiki/Internet_of_things).) Because we're condensing a large, diverse body down into a relatively small sample, we need to make sure the sample actually looks like a microcosm of the broader population.
 
 In the graphic on the right, for example, our sample isn't really representative of the population $-$ several colors aren't present at all! We can't run an analysis on this sample and then generalize to the population; **we can only generalize to red, orange, yellow, and green.** No matter how perfectly we model our sample data, our model's scope is trapped. If we try to comment on the broader population, we'll find that our seemingly accurate model suddenly makes embarrassingly inaccurate predictions.
 
@@ -116,6 +112,13 @@ $$ t_{paired} = \frac{\bar{d}}{\frac{s_d}{\sqrt{\color{violet}{\boldsymbol{n}}}}
 
 One final example particularly relevant for web development is [A/B testing](https://www.optimizely.com/optimization-glossary/ab-testing/). To experimentally determine ways to drive higher user engagement or conversions, a company may present users with nearly identical versions of a webpage differing in only one aspect, like the color of a button. The company can then compare these webpage variants to one another, as well as the original webpage (the control group), to choose the most effective option.
 
+### Correlation vs. causation
+When analyzing data, it's common to see that two variables are **correlated**: when A changes, B changes too. We might notice that [sales of ice cream and sunscreen](https://www.abs.gov.au/websitedbs/D3310114.nsf/home/statistical+language+-+correlation+and+causation) neatly follow one another, but does this mean that ice cream sales cause sunscreen sales? ("I'd like a scoop of chocolate chip, and hm... let's get some sunscreen too.") How can we tell what drives the sales of these two items?
+
+Disentangling whether changes in ice cream sales are **causing** changes in sunscreen sales (or vice versa), there's some hidden factor affecting both, or [it's just a random coincidence](http://www.tylervigen.com/spurious-correlations) is a job for experimental design. To truly say that A causes B, we need to control for variation *external* to A and B, then carefully manipulate A and observe B. For example, we could have ice cream marketing blitzes throughout the year, driving up sales regardless of the weather, and see whether sunscreen sales then follow.
+
+Note that there's nothing wrong with saying that A and B are *related.* If there's a correlation, it still tells us something about A and B. But the bar is much higher if you want to say one *causes* the other.
+
 ## Comparisons between groups
 A central question in statistics $-$ and life, really $-$ is whether things are *the same* or *different.* Do smokers tend to have higher rates of lung cancer than non-smokers? Does eating an apple in the morning make you more productive than eating an orange? When we collect data on our groups of apple-eaters versus orange-eaters, the means of our *samples* will inevitably be different. **But do the *populations* of apple-eaters and orange-eaters differ in the productivity?**
 
@@ -142,10 +145,12 @@ If you have more than two samples you're comparing at once, you'll need to run a
 In short: if you're trying to determine whether the means of the populations of multiple samples differ, first run an ANOVA, followed by [Tukey's method](https://support.minitab.com/en-us/minitab/18/help-and-how-to/modeling-statistics/anova/supporting-topics/multiple-comparisons/what-is-tukey-s-method/) or [Bonferroni's correction](http://mathworld.wolfram.com/BonferroniCorrection.html) if you find significant differences.
 
 ## Predictive modeling
-Predictive modeling means taking in data and trying to model the *underlying process* that generated that data. Once we understand the underlying rules, we can then generate *predictions* for new data. Thinking back to our [weather outside vs. clothing model](#wait-do-i-actually-need-to-learn-stats)...
+Predictive modeling is about **taking in data and trying to model the _underlying process_ that generated that data.** Once we understand the underlying rules, we can then generate *predictions* for new data. Thinking back to our [weather outside vs. clothing model](#wait-do-i-actually-need-to-learn-stats), we don't need to memorize what clothes to wear for every possible temperature; we just need to use our mental model.
+
+This section will cover regression, classification, coefficients, and residuals.
 
 ### Regression
-We use regression for continuous predictions. Here's the equation for linear regression. Learn it well!
+When we want to predict a *continuous* value, we use regression. Here's the equation for linear regression. Learn it well!
 
 $$ h(x) = \sum_{j=0}^{n}\beta_jx_j $$
 
@@ -158,20 +163,18 @@ No matter where you work, it's hard to escape the simplicity and convenience of 
 Once you're comfortable, make sure to brush up on more advanced topics, like feature [scaling](https://en.wikipedia.org/wiki/Feature_scaling), [interactions](https://christophm.github.io/interpretable-ml-book/interaction.html), and [collinearity](https://medium.com/future-vision/collinearity-what-it-means-why-its-bad-and-how-does-it-affect-other-models-94e1db984168), as well as [model regularization](https://medium.com/@zxr.nju/the-classical-linear-regression-model-is-good-why-do-we-need-regularization-c89dba10c8eb) and [how coefficients are calculated]({{  site.baseurl  }}/LR-grad-desc). This might sound like a lot, but given how frequently you're likely going to run and explain regressions in your work, it's good to really understand what they're about.
 
 ### Classification
-Our model above predicted an exam score based on the hours a student studied and slept. A **logistic regression model** (which is actually classification despite having "regression" in the name) with the same predictors looks like this:
+Classification models predict distinct output *categories*. A **logistic regression** version of the above model, where we're now predicting *whether a student passed or failed the exam* based on the number of hours they studied and slept, would look like this:
 
 $$ P(y) = \frac{1}{1+e^{-h(x)}}$$
 
-where $$h(x) = \beta_0 + \beta_1x_1 + \beta_2x_2 $$.
+where $$h(x) = \beta_0 + \beta_1x_1 + \beta_2x_2 $$ and $y$ is the event of passing the exam.<sup>[[7]](#7-classification)</sup>
 
-In plain English, this means $P(y)$ (the probability of passing the exam) is equal to:
-* 1 divided by...
-* 1 plus...
-* the mathematical constant $e$ raised to the negative of some value $h(x)$
-  - <span style="font-size: 13px">(And that value looks a lot like a linear regression output!)</span>
+**Our model will output a *probability* of $y$ occurring, given our predictors.** We can work with these outputted probabilities directly (as in [credit default risk models](https://financetrain.com/modelling-probability-default-using-logistic-regression/)), or we can binarize them into 0's and 1's. In our student model, this would mean predicting whether the student passed (1) or failed (0) the exam. We typically use $P(y)$ = 0.5 as the probability cutoff.
 
-#### Making sense of that equation
-While the equation may look intimidating, it looks a *lot* simpler if you set $h(x)$ to the extremes. Let's say $h(x)$ is *extremely negative.* That would mean $-h(x)$ would be positive, which would make $1 + e^{-h(x)}$ *huge*. For example, if $e^{-h(x)}$ is 10000000, we see $P(y)$ is nearly zero.
+Let's quickly go through two important concepts for logistic regression: 1) understanding how values of $h(x)$ translate into probabilities $P(y)$, and 2) understanding the decision boundary.
+
+#### Translating $h(x)$ to $P(y)$
+Setting $h(x)$ to the extremes helps clarify its role in the equation. Let's say $h(x)$ is *extremely negative.* That would mean $-h(x)$ would be positive, which would make $1 + e^{-h(x)}$ *huge*. For example, if $e^{-h(x)}$ is 10000000, we see $P(y)$ is nearly zero.
 
 $$ P(y) = \frac{1}{1+10000000} = 0.0000001$$
 
@@ -179,37 +182,30 @@ On the other extreme, if $h(x)$ is *extremely positive*, then $-h(x)$ becomes *t
 
 $$ P(y) = \frac{1}{1+0.00000001} = 0.99999999$$
 
-This is the major distinction from linear regression: **logistic regression outputs are constrained to between 0 and 1.** We interpret logistic regression outputs as **the probability of event $y$ occurring, given our predictors.** We can work with these outputted probabilities directly, or we can binarize them into 0s and 1s. In our student model, this would mean predicting whether the student passed (1) or failed (0) the exam. We typically use $P(y)$ = 0.5 as the probability cutoff.
-
-One last thing before we move on. What happens when $h(x)$ equals zero? Any real number raised to the zeroth power equals 1, so $e^{-h(x)}$ becomes 1.
+Finally, what happens when $h(x)$ equals zero? Any real number raised to the zeroth power equals 1, so $e^{-h(x)}$ becomes 1.
 
 $$ P(y) = \frac{1}{1+1} = 0.5 $$
 
-When $h(x)$ equals zero, $P(y)$ equals 0.5. If we're using 0.5 as the probability cutoff, that means **we'll predict the student passed if $h(x)$ is positive. If $h(x)$ is negative, we'll predict the student failed.** Interesting...
+When $h(x)$ equals zero, $P(y)$ equals 0.5. If we're using 0.5 as the probability cutoff, that means **we'll predict the student passed if $h(x)$ is positive. If $h(x)$ is negative, we'll predict the student failed.** This leads us nicely into the next section...
 
 #### Making sense of $h(x)$
 <img src="{{  site.baseurl  }}/images/careers/decision_boundary.png" height="55%" width="55%" align="right">
 So what's up with $h(x)$? In short, when $h(x)$ = 0, we get **a line that best separates our data into classes.** Training a logistic regression model is all about identifying *where to put this line* to best separate the classes in the data.
 
-In the figure on the right<sup>[[7]](#footnotes)</sup>, we've plotted some fake training data of students who passed vs. failed the exam. The blue line is the model's **decision boundary**, where it determined the best separation of the "passed" vs. "failed" classes falls, based on $x_1$ and $x_2$. It's not perfect $-$ there are some "passed" students on the left and "failed" students on the right $-$ but this is the best separation the model could come up with. For any new data falling to the left of the decision boundary, our model will predict the student failed. For any new data falling on the right, our model will predict the student passed.  
+In the figure on the right, we've plotted some fake training data of students who passed vs. failed the exam. The blue line is the model's **decision boundary**, where it determined the best separation of the "passed" vs. "failed" classes falls, based on $x_1$ and $x_2$. It's not perfect $-$ there are some "passed" students on the left and "failed" students on the right $-$ but this is the best separation the model could come up with. For any new data falling to the left of the decision boundary, our model will predict the student failed. For any new data falling on the right, our model will predict the student passed.  
 
 Once you're comfortable with these topics, it's a small step to move onto logistic regression models for more than two classes, such as [multinomial](https://en.wikipedia.org/wiki/Multinomial_logistic_regression) and [one-vs-rest](https://scikit-learn.org/stable/auto_examples/linear_model/plot_logistic_multinomial.html) classification.
 
 ### Coefficients
 Let's take another look at the linear regression model that predicts student exam scores.
 
-$$y = \beta_0 + \beta_1x_1 + \beta_2x_2$$
+$$h(x) = \beta_0 + \beta_1x_1 + \beta_2x_2$$
 
 The intercept ($\beta_0$), study multiplier ($\beta_1$), and sleep multiplier ($\beta_2$) are the **coefficients** of our model. These parameters convert our inputs (hours studied and hours slept) to the output (exam score). A coefficient of 10 for $\beta_1$, for example, means that a student's score is expected to increase by 10 for each additional hour they study. An intercept of 30 would mean the student is expected to get a 30 if they don't study or sleep at all.
 
 Model coefficients help us understand the trends in our data, such as whether studying an extra hour versus going to bed would lead to a higher exam score. **But we should always take a careful look at the coefficients before accepting our model.** I always try to mentally validate the *strength* and *direction* of each coefficient when I examine a model, making sure it's about what I'd expect, and taking a closer look if it isn't. A negative sleep coefficient $\beta_2$, for example, would indicate something wrong with our data, since sleep should improve exam scores! (If not, maybe our students or the exam they took are very strange...) Similarly, if our intercept is *above* 100 and the study and sleep coefficients are negative, we likely have too little data or there are outliers hijacking our model. **Make sure to plot your data to confirm the trends are actually what you think they should be.**
 
-
-TALK ABOUT EFFECT SIZES AND CONFIDENCE INTERVALS
-
-For least squares:
-$$ y = \sum_{i=1}^{m}(h(x_i)-y_i)^2 $$
-
+Finally, we should always look at the **confidence interval** for our coefficient before accepting it. If the interval crosses zero, for example, our model is saying it can't determine the direction our feature affects the target variable. Unless you have good reason to keep that feature (e.g. to specifically show its lack of impact), you should drop it from the model. Similarly, if the interval doesn't cross zero but is still large relative to the size of the coefficient, our model is indicating it can't pinpoint the specific effect our feature has on the target variable, so we perhaps need more data or a different model formulation to understand the relationship.
 
 ### Residuals
 <img src="{{  site.baseurl  }}/images/careers/residual.png" align='right' height='55%' width='55%'>
@@ -231,19 +227,9 @@ You need to do two models, or have a factor.
 ![]({{  site.baseurl  }}/images/careers/two_models.png)
 
 
-### $R^2$
-Let's try this: $A$.
-
-You should be able to explain the following equation again and again:
-
-$$ h(x) = \sum_{j=1}^{n}\beta_jx_j $$
-
-**Linear regression** is one of the most common statistical model you'll encounter in industry, and you need to understand its ins and outs. Make sure you have a solid understanding of what **residuals** are, **least squared error**, and $$R^2$$.
-
-
-
-
 ## Concluding thoughts
+This is a non-exhaustive list. There's a lot of good material out there about p-values, model and feature selection, etc.
+
 
 
 ## Footnotes
@@ -296,56 +282,9 @@ In our "study and sleep" exam model, for example, removing "hours studied" from 
 
 You'll find that variables' coefficients can shrink, explode, or even change sign when you add or remove predictors and rerun the model. Trying to understand *these* changes is where you need a deep understanding of your data.
 
-7. [[Classification]](#classification) Here's the code to generate the decision boundary plot.
-    ```python
-    import numpy as np
-    import pandas as pd
-    import statsmodels.formula.api as smf
+#### 7. [Classification](#classification)
+Note that the concept of "success" versus "failure" is completely arbitrary. If in our data `1` corresponds to passing the exam and `0` for failing, our "success" is passing the exam, and our model outputs probabilities of passing, given our predictors.
 
-    # Generate sample data with pos (x1) & neg (x2) slopes
-    x1 = np.arange(0, 10, 0.1) + np.random.normal(0, 2, 100)
-    x2 = np.arange(0, 10, 0.1) + np.random.normal(0, 2, 100)
-    y = np.round(np.arange(0, 1, 0.01) + np.random.normal(0, 0.1, 100))
-
-    # Put into df and fit a model
-    df = pd.DataFrame({'x1': x1, 'x2': x2, 'y': y})
-    mod = smf.logit('y ~ x1 + x2', data=df).fit()
-
-    # Get decision boundary params
-    b0 = mod.params.Intercept
-    b1 = mod.params.x1
-    b2 = mod.params.x2
-
-    # Calculate the intercept and gradient of the decision boundary
-    c = -b0/b2
-    m = -b1/b2
-
-    # Generate the decision boundary line
-    xmin, xmax = -10, 15
-    ymin, ymax = -15, 15
-
-    xd = np.array([xmin, xmax])
-    yd = m*xd + c
-
-    # Subset to prep for plotting
-    df0 = df[df['y'] == 0]
-    df1 = df[df['y'] == 1]
-
-    # Generate the plot
-    plt.figure(figsize=(5, 5))
-    plt.scatter(df0['x1'], df0['x2'], marker='o', color='orange', s=35)
-    plt.scatter(df1['x1'], df1['x2'], marker='x', color='red', s=40)
-
-    plt.plot(xd, yd, 'k', lw=1, ls='--', color='blue')
-    plt.xlim(-2.75, 13.25)
-    plt.ylim(-3.75, 13)
-    plt.xlabel(r'$x_1$', fontweight='bold', fontsize=25)
-    plt.ylabel(r'$x_2$', fontweight='bold', fontsize=25)
-    plt.tick_params(bottom= False, left=False, labelbottom=False,
-                    labelleft=False)
-    plt.legend(framealpha=1)
-    plt.show()
-    ```
-    <br>
+But if we flip the `1`'s and `0`'s, then our "success" becomes *failing* the exam, and our model just outputs probabilities of *failing* rather than passing.
 
 8. [[Residuals]](#residuals) I talk about minimizing residuals at great length in [this blog post]({{  site.baseurl  }}/LR-grad-desc), where I recreate R's linear regression function by hand. Fun times!
