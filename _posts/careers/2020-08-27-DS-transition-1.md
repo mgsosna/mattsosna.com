@@ -12,7 +12,17 @@ When there's a good match between employer and employee, data science is [a rewa
 
 Wait, so what's the take-away? Is data science a dream job or should I stay away? My take-away, which I share even with [disillusioned data scientists](https://towardsdatascience.com/why-so-many-data-scientists-are-leaving-their-jobs-a1f0329d7ea4), is that **data science is indeed an awesome profession - come join us!** But at the same time, **choose your employer carefully.**
 
-This post assumes you're interested in making the switch to data science. Welcome! In this post, **I'll help you make an informed choice** on the exact type of data science role you'd be happiest in. In part two of this series (coming out soon), I'll outline the technical and non-technical skills needed for you to succeed.
+This post assumes you're interested in making the switch to data science. Welcome! In this post, **I'll help you make an informed choice** on the exact type of data science role you'd be happiest in. In parts two through five of this series, I'll outline the technical and non-technical skills needed for you to succeed.
+
+---
+**How to enter data science:**
+1. **The target**
+2. [The statistics]({{  site.baseurl  }}/DS-transition-2)
+3. The programming *(coming soon)*
+4. The engineering *(coming soon)*
+5. The people *(coming soon)*
+
+---
 
 ## Table of contents
 * [What is a data scientist?](#what-is-a-data-scientist)
@@ -31,10 +41,10 @@ Let's try to make some sense of the variation. At its core, **data science revol
 1. **Deriving insights from data**
 2. **Communicating those insights to others**
 
-These two points sound straightforward, but there is *tremendous* variability in what they mean in the real world. The methods used for deriving insights vary from techniques we've had [for over 100 years](https://en.wikipedia.org/wiki/Student%27s_t-test#History) to methods [at the limits of present-day computational capacity](https://venturebeat.com/2020/07/15/mit-researchers-warn-that-deep-learning-is-approaching-computational-limits/). Similarly, communicating insights looks a lot different if the consumer of those insights is [a CEO or an algorithm](https://hbr.org/2018/11/the-kinds-of-data-scientist). The internet abounds with great thought pieces carefully outlining data scientists' exact responsibilities<sup>[[1]](#footnotes)</sup>, so in this post I'll instead frame things in terms of **_spectrums_ of responsibilities.**
+These two points sound straightforward, but there is *tremendous* variability in what they mean in the real world. The methods used for deriving insights vary from techniques we've had [for over 100 years](https://en.wikipedia.org/wiki/Student%27s_t-test#History) to methods [at the limits of present-day computational capacity](https://venturebeat.com/2020/07/15/mit-researchers-warn-that-deep-learning-is-approaching-computational-limits/). Similarly, communicating insights looks a lot different if the consumer of those insights is [a CEO or an algorithm](https://hbr.org/2018/11/the-kinds-of-data-scientist). The internet abounds with great thought pieces carefully outlining data scientists' exact responsibilities<sup>[[1]](#1-what-is-a-data-scientist)</sup>, so in this post I'll instead frame things in terms of **_spectrums_ of responsibilities.**
 
 ### The scalpel versus the shovel
-Let's start with something I call the "analytics-engineering" spectrum. Note that I've purposely omitted several related occupations<sup>[[2]](#footnotes)</sup> to narrow in on what most differentiates data science from analytics and engineering.
+Let's start with something I call the "analytics-engineering" spectrum. Note that I've purposely omitted several related occupations<sup>[[2]](#2-the-scalpel-versus-the-shovel)</sup> to narrow in on what most differentiates data science from analytics and engineering.
 
 ![]({{ site.baseurl }}/images/careers/analytics-engineering.png)
 
@@ -108,10 +118,12 @@ Best,<br>
 Matt
 
 ## Footnotes
-1. [[What is a data scientist?]](#what-is-a-data-scientist) Here are a few pieces that I think are particularly insightful.
+#### 1. [What is a data scientist?](#what-is-a-data-scientist)
+Here are a few pieces that I think are particularly insightful.
   - Andrew Zola, *Springboard*: ["Machine Learning Engineer vs. Data Scientist"](https://www.springboard.com/blog/machine-learning-engineer-vs-data-scientist/)
   - Yael Gerten, *Harvard Business Review*: ["The Kinds of Data Scientist"](https://hbr.org/2018/11/the-kinds-of-data-scientist)
-  - Cassie Kozyrkov, *Hackernoon*: ["Why businesses fail at machine learning"](https://hackernoon.com/why-businesses-fail-at-machine-learning-fbff41c4d5db) <br><br>
+  - Cassie Kozyrkov, *Hackernoon*: ["Why businesses fail at machine learning"](https://hackernoon.com/why-businesses-fail-at-machine-learning-fbff41c4d5db)
 
-2. [[The scalpel versus the shovel]](#the-scalpel-versus-the-shovel) Machine learning engineers, computational social scientists, statisticians, deep learning researchers, business intelligence analysts... there's [a lot more](https://www.northeastern.edu/graduate/blog/data-science-careers-shaping-our-future/) we could add here, but our spectrum would start becoming two- or three-dimensional. For an alternate take, here are some interesting visuals I spliced together from a piece by [efinancialcareers](https://news.efinancialcareers.com/uk-en/3001517/data-science-careers-finance): <br>
+#### 2. [The scalpel versus the shovel](#the-scalpel-versus-the-shovel)
+Machine learning engineers, computational social scientists, statisticians, deep learning researchers, business intelligence analysts... there's [a lot more](https://www.northeastern.edu/graduate/blog/data-science-careers-shaping-our-future/) we could add here, but our spectrum would start becoming two- or three-dimensional. For an alternate take, here are some interesting visuals I spliced together from a piece by [efinancialcareers](https://news.efinancialcareers.com/uk-en/3001517/data-science-careers-finance): <br>
   ![]({{ site.baseurl }}/images/careers/efinance_figure.png)
