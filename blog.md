@@ -22,7 +22,8 @@ permalink: /blog/
 ---
 ## Data science
 ### How to transition into data science
-1. [Identify the target]({{ site.baseurl }}/DS-transition-1)
+1. [The target]({{ site.baseurl }}/DS-transition-1)
+2. [The statistics]({{  site.baseurl  }}/DS-transition-2)
 
 ### Statistics
 1. [Visualizing the danger of multiple t-test comparisons]({{ site.baseurl }}/T-tests-vs-ANOVA)
@@ -30,6 +31,7 @@ permalink: /blog/
 
 ### External
 1. [Data quality at Aquicore](https://aquicore.com/blog/how-aquicore-built-the-ultimate-data-quality-safeguard/)
+2. [How we created the morning overshoot detector](https://aquicore.com/blog/peak-a-boo-aq-ai-makes-peak-demand-surprises-disappear/)
 
 
 ## Python

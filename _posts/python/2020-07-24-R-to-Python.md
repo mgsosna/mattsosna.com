@@ -11,7 +11,7 @@ My first programming language was R. I fell in love with the nuance R granted fo
 This post outlines some of the major differences between R and Python, as well as why those differences exist.
 
 ## Table of contents
-* [How do I actually get started?](#how-do-i-actually-get-started)
+* [How do I *actually* get started?](#how-do-i-actually-get-started)
 * [The `.` suddenly has significance](#the--suddenly-has-significance)
 * [Where are all the built-in functions?](#where-are-all-the-built-in-functions)
 * [Zero-indexing](#zero-indexing)
@@ -63,7 +63,7 @@ kid.say_hi()      # 'Hi'
 
 **Because the `.` is used to access properties of an object, it can't be used as part of a variable name.**
 
-While everything in R [is also technically an object](https://stackoverflow.com/questions/34376318/whats-the-real-meaning-about-everything-that-exists-is-an-object-in-r), and there are [multiple ways to create classes](https://study.com/academy/lesson/classes-in-r-programming-definition-examples.html) with attributes and methods, I've personally never encountered R code that uses custom-created classes. Sure, there are plenty of online resources for _learning how to use these classes_, most notably [Hadley Wickham's _Advanced R_ textbook](https://adv-r.hadley.nz/). But actually seeing them in action? Nope. To be transparent, maybe it's me: the R code I've read was either from 1) me, 2) an academic collaborator sharing their analyses, or 3) data science-focused online classes and blog posts. Maybe R classes are a bigger deal in the workflows of large collaborative teams, or in industries I don't have much exposure to. (I've found surprisingly little from searching on Google for who these teams or what these industries could be, though.)
+While everything in R [is also technically an object](https://stackoverflow.com/questions/34376318/whats-the-real-meaning-about-everything-that-exists-is-an-object-in-r), and there are [multiple ways to create classes](https://study.com/academy/lesson/classes-in-r-programming-definition-examples.html) with attributes and methods, I've personally never encountered R code that uses custom-created classes. Sure, there are plenty of online resources for _learning how to use these classes_, most notably [Hadley Wickham's _Advanced R_ textbook](https://adv-r.hadley.nz/). But actually seeing them in action? Nope. To be transparent, maybe it's me: the R code I've read was either from 1) an academic collaborator sharing their analyses, or 2) data science-focused online classes and blog posts. Maybe R classes are a bigger deal in the workflows of large collaborative teams, or in industries I don't have much exposure to. (I've found surprisingly little from searching on Google for who these teams or what these industries could be, though.)
 
 Regardless, the absence of classes is in sharp contrast to Python, where classes are an integral part of organizing your code. Keep an eye out for a future Intro to Python series, where I'll go further into detail on this.
 
@@ -315,6 +315,7 @@ This is [essentially impossible in Python](https://stackoverflow.com/questions/1
     a1 += [4]   # instead of a1 = a1 + [4]
     print(b is a1)   # True
     ```
+<br>
 6. [[Final thoughts]](#final-thoughts) A few examples of how data manipulation is a little simpler in R:
 
 * Subset a dataframe
