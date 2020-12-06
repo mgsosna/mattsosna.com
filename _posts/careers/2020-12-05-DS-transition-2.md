@@ -7,38 +7,38 @@ image: "images/careers/two_models.png"
 ---
 In [the last post]({{ site.baseurl }}/DS-transition-1), we defined the key elements of data science as 1) deriving insights from data and 2) communicating those insights to others. Despite the huge diversity in how these elements are expressed in actual data scientist roles, **there is a core skill set** that will serve you well no matter where you go. The remaining posts in this series will define and explore these skills in detail.
 
-The next three posts will cover the _<u>technical</u>_ skills needed to be successful as a data scientist: the statistics (this post), [the programming]({{  site.baseurl  }}/DS-transition-3) and [the engineering]({{  site.baseurl  }}/DS-transition-4). The [final post]({{  site.baseurl  }}/DS-transition-5) will cover the _<u>business</u>_, _<u>personal</u>_, and _<u>interpersonal</u>_ skills needed to succeed. Consider the distinction here as **knowing _how_ to do it** (technical) versus **knowing _what_ to do and _why_** (business, personal, and interpersonal). Let's get started!
+The next three posts will cover the _<u>technical</u>_ skills needed to be successful as a data scientist: the statistics (this post), the programming and the engineering. The final post will cover the _<u>business</u>_, _<u>personal</u>_, and _<u>interpersonal</u>_ skills needed to succeed. Consider the distinction here as **knowing _how_ to do it** (technical) versus **knowing _what_ to do and _why_** (business, personal, and interpersonal). Let's get started!
 
 ---
 **How to enter data science:**
 1. [The target]({{  site.baseurl  }}/DS-transition-1)
 2. **The statistics**
-3. [The programming]({{  site.baseurl  }}/DS-transition-3)
-4. [The engineering]({{  site.baseurl  }}/DS-transition-4)
-5. [The people]({{  site.baseurl  }}/DS-transition-5)
+3. The programming *(coming soon)*
+4. The engineering *(coming soon)*
+5. The people *(coming soon)*
 
 ---
 
 ## Becoming one with the machine
 Data science is a broad field that is still iterating towards a solid distinction from data analytics, data engineering, and software engineering, so it's hard to create a definitive skill set that's applicable for all data scientist roles. Someone working all day with building statistical models out of spreadsheets, for example, is going to need a different set of skills than someone improving autonomous vehicles!
 
-But consider this learning checklist as a set of fundamental skills that will get you started for your role, no matter where you go. We'll cover the **Inferential Statistics** section in this post, **Programming** in the [next]({{  site.baseurl  }}/DS-transition-3/), and **Software Engineering** in the [fourth]({{  site.baseurl  }}/DS-transition-4/).
+But consider this learning checklist as a set of fundamental skills that will get you started for your role, no matter where you go. We'll cover the **Inferential Statistics** section in this post, **Programming** in the next, and **Software Engineering** in the fourth.
 
 * **Inferential Statistics**
 - [ ] [Experimental design](#experimental-design)
 - [ ] [Comparisons between groups](#comparisons-between-groups)
 - [ ] [Predictive modeling](#predictive-modeling) <br><br>
 * **Programming**
-- [ ] [Dataframes]({{  site.baseurl  }}/DS-transition-3/#dataframes) and [arrays](#arrays)
-- [ ] [Visualizations]({{  site.baseurl  }}/DS-transition-3/#visualizations)
-- [ ] [Descriptive statistics]({{  site.baseurl  }}/DS-transition-3/#descriptive-statistics)
-- [ ] [Working with dates]({{  site.baseurl  }}/DS-transition-3/#working-with-dates)
-- [ ] [Machine learning]({{  site.baseurl  }}/DS-transition-3/#machine-learning) <br><br>
+- [ ] Dataframes
+- [ ] Visualizations
+- [ ] Descriptive statistics
+- [ ] Working with dates
+- [ ] Machine learning <br><br>
 * **Software engineering**
-- [ ] [SQL]({{  site.baseurl  }}/DS-transition-4/#sql)
-- [ ] [Interacting with APIs]({{  site.baseurl  }}/DS-transition-4/#interacting-with-apis)
-- [ ] [Version control]({{  site.baseurl  }}/DS-transition-4/#version-control)
-- [ ] Object-oriented programming (i.e. classes, module imports)
+- [ ] SQL
+- [ ] Interacting with APIs
+- [ ] Version control
+- [ ] Object-oriented programming
 - [ ] Virtual environments
 - [ ] Writing tests
 - [ ] Servers and deployment <br><br>
@@ -69,9 +69,9 @@ It's hard not to write an entire textbook when it comes to important stats conce
 
 You'll need far more than intro stats if you're expected to inform major decisions like public policy or the direction your company takes<sup>[[3]](#3-ok-so-how-much-stats-do-i-actually-need)</sup>, but basic stats may be more than enough if your role is deep in the engineering side of data science. Similarly, if you're in a field where you actually *do* have access to all the data in a process, such as analyzing [Internet of Things (IoT)](https://www.zdnet.com/article/what-is-the-internet-of-things-everything-you-need-to-know-about-the-iot-right-now/) sensor data or applying [natural language processing](https://en.wikipedia.org/wiki/Natural_language_processing) to legal documents, then you'll want a deep dive on additional stats skills, like [time series analysis](https://www.statisticssolutions.com/time-series-analysis/), [clustering](https://en.wikipedia.org/wiki/Cluster_analysis), and [anomaly detection](https://www.anodot.com/blog/what-is-anomaly-detection/).
 
-Consider the following concepts, then, as a *starting point* that you can then build off and tailor to your specific role. I'm assuming you have some basic familiarity with stats but maybe haven't done a deep dive into the nuances of assumptions, coefficients, residuals, etc. (If you're a newcomer to stats, check out an upcoming "Model fundamentals" series of posts with lots of content from earlier drafts of this post!)
+Consider the following concepts, then, as a *starting point* that you can then build off and tailor to your specific role. I'm assuming you have some basic familiarity with stats but maybe haven't done a deep dive into the nuances of assumptions, coefficients, residuals, etc.
 
-Here are (some!) stats essentials I think any data scientist should feel comfortable explaining to both technical and non-technical audiences:
+Here are (some!<sup>[[4]](#4-ok-so-how-much-stats-do-i-actually-need)</sup>) stats essentials I think any data scientist should feel comfortable explaining to both technical and non-technical audiences:
 
 * **Experimental design:** sampling and bias, control groups, correlation vs. causation
 * **Comparisons between groups:** t-tests, ANOVA
@@ -104,7 +104,7 @@ In the real world, innumerable factors affect every process we observe. We need 
 
 [Placebos](https://www.webmd.com/pain-management/what-is-the-placebo-effect#1) are a classic example of controls. Medical studies examining the effectiveness of new drugs always contain a control group that gets a placebo rather than the real drug, as [people often feel better just knowing they got a drug](https://www.health.harvard.edu/mental-health/the-power-of-the-placebo-effect), even if the "drug" is just a sugar pill. Without the placebo group, our false positive rate would be off the charts.
 
-Another classic control group is the treatment group itself, *before* receiving the treatment. [Within-subject designs](https://www.verywellmind.com/what-is-a-within-subjects-design-2796014) are incredibly powerful, as we have much finer control over all the external factors that could affect our experiment: they're literally the same participants! You can see this added power in the equations for a two-sample t-test versus a paired t-test: the $t$ value will be larger for the paired test because the denominator is smaller, since you're only counting the $n$ of one (paired) sample.<sup>[[4]](#4-control-groups)</sup>
+Another classic control group is the treatment group itself, *before* receiving the treatment. [Within-subject designs](https://www.verywellmind.com/what-is-a-within-subjects-design-2796014) are incredibly powerful, as we have much finer control over all the external factors that could affect our experiment: they're literally the same participants! You can see this added power in the equations for a two-sample t-test versus a paired t-test: the $t$ value will be larger for the paired test because the denominator is smaller, since you're only counting the $n$ of one (paired) sample.<sup>[[5]](#5-control-groups)</sup>
 
 $$ t_{two-sample} = \frac{\bar{x_1} - \bar{x_2}}{\sqrt{\frac{(s_1)^2}{\color{orange}{\boldsymbol{n_1}}}+\frac{(s_2)^2}{\color{orange}{\boldsymbol{n_2}}}}} $$
 
@@ -113,7 +113,7 @@ $$ t_{paired} = \frac{\bar{d}}{\frac{s_d}{\sqrt{\color{violet}{\boldsymbol{n}}}}
 One final example particularly relevant for web development is [A/B testing](https://www.optimizely.com/optimization-glossary/ab-testing/). To experimentally determine ways to drive higher user engagement or conversions, a company may present users with nearly identical versions of a webpage differing in only one aspect, like the color of a button. The company can then compare these webpage variants to one another, as well as the original webpage (the control group), to choose the most effective option.
 
 ### Correlation vs. causation
-When analyzing data, it's common to see that two variables are **correlated**: when A changes, B changes too. We might notice that [sales of ice cream and sunscreen](https://www.abs.gov.au/websitedbs/D3310114.nsf/home/statistical+language+-+correlation+and+causation) neatly follow one another, but does this mean that ice cream sales cause sunscreen sales? ("I'd like a scoop of chocolate chip, and hm... let's get some sunscreen too.") How can we tell what drives the sales of these two items?
+When analyzing data, it's common to see that two variables are **correlated**: when A changes, B changes too. We might notice that [sales of ice cream and sunscreen](https://www.abs.gov.au/websitedbs/D3310114.nsf/home/statistical+language+-+correlation+and+causation) neatly follow one another, for example, but does this mean that ice cream sales *cause* sunscreen sales? ("I'd like a scoop of chocolate chip, and hm... let's get some sunscreen too.")
 
 Disentangling whether changes in ice cream sales are **causing** changes in sunscreen sales (or vice versa), there's some hidden factor affecting both, or [it's just a random coincidence](http://www.tylervigen.com/spurious-correlations) is a job for experimental design. To truly say that A causes B, we need to control for variation *external* to A and B, then carefully manipulate A and observe B. For example, we could have ice cream marketing blitzes throughout the year, driving up sales regardless of the weather, and see whether sunscreen sales then follow.
 
@@ -125,7 +125,7 @@ A central question in statistics $-$ and life, really $-$ is whether things are 
 We need to use statistics to *draw inferences* about the populations from our samples. I'll briefly cover t-tests and Analyses of Variance below.
 
 ### T-tests
-The main idea behind a t-test is to determine **whether two samples are drawn from the same population**. I'm going to assume this isn't the first time you're reading about t-tests (if it is, there are lots of great resources like [this post](https://www.investopedia.com/terms/t/t-test.asp)), so I'll instead focus on **how to avoid misusing a t-test.**
+The main idea behind a two-sample t-test is to determine **whether the samples are drawn from the same population**. I'm going to assume this isn't the first time you're reading about t-tests (if it is, there are lots of great resources like [this post](https://www.investopedia.com/terms/t/t-test.asp)), so I'll instead focus on **how to avoid misusing a t-test.**
 
 **When you conduct a t-test, you're assuming the following about your data:**
 1. The data in your sample are <u><i>continuous</i></u>, not discrete
@@ -147,18 +147,18 @@ In short: if you're trying to determine whether the means of the populations of 
 ## Predictive modeling
 Predictive modeling is about **taking in data and trying to model the _underlying process_ that generated that data.** Once we understand the underlying rules, we can then generate *predictions* for new data. Thinking back to our [weather outside vs. clothing model](#wait-do-i-actually-need-to-learn-stats), we don't need to memorize what clothes to wear for every possible temperature; we just need to use our mental model.
 
-This section will cover regression, classification, coefficients, and residuals.
+This section will cover regression, classification, coefficients, and residuals. But before we get started, a quick pro tip: **always plot your data before you start building any models!** This step can help you catch outliers, determine whether feature engineering steps like log transformations are required, and ensure your model is actually describing your data.
 
 ### Regression
 When we want to predict a *continuous* value, we use regression. Here's the equation for linear regression. Learn it well!
 
 $$ h(x) = \sum_{j=0}^{n}\beta_jx_j $$
 
-where $h(x)$ is our predicted value and $n$ is the number of features in our data. The equation for a model where we predict a student's exam score ($h(x)$) based off their hours studied ($x_1$) and hours slept the previous night ($x_2$) would look like this<sup>[[5]](#5-regression)</sup>:
+Here $h(x)$ is our predicted value and $n$ is the number of features in our data. The equation for a model where we predict a student's exam score ($h(x)$) based off their hours studied ($x_1$) and hours slept the previous night ($x_2$) would look like this<sup>[[6]](#6-regression)</sup>:
 
 $$ h(x) = \beta_0 + \beta_1x_1 + \beta_2x_2 $$
 
-No matter where you work, it's hard to escape the simplicity and convenience of a good linear regression model. Linear regressions are extremely fast to compute and they're easy to explain: the [coefficients](#coefficients) give a clear explanation of how each variable affects the output<sup>[[6]](#6-regression)</sup>, and you just add all the $\beta_jx_j$ together to get your output. Make sure you have your "30-second spiel" ready for regression, since you'll likely be explaining these models repeatedly to various stakeholders.
+No matter where you work, it's hard to escape the simplicity and convenience of a good linear regression model. Linear regressions are extremely fast to compute and they're easy to explain: the [coefficients](#coefficients) give a clear explanation of how each variable affects the output<sup>[[7]](#7-regression)</sup>, and you just add all the $\beta_jx_j$ together to get your output. Make sure you have your "30-second spiel" ready for regression, since you'll likely be explaining these models repeatedly to various stakeholders.
 
 Once you're comfortable, make sure to brush up on more advanced topics, like feature [scaling](https://en.wikipedia.org/wiki/Feature_scaling), [interactions](https://christophm.github.io/interpretable-ml-book/interaction.html), and [collinearity](https://medium.com/future-vision/collinearity-what-it-means-why-its-bad-and-how-does-it-affect-other-models-94e1db984168), as well as [model regularization](https://medium.com/@zxr.nju/the-classical-linear-regression-model-is-good-why-do-we-need-regularization-c89dba10c8eb) and [how coefficients are calculated]({{  site.baseurl  }}/LR-grad-desc). This might sound like a lot, but given how frequently you're likely going to run and explain regressions in your work, it's good to really understand what they're about.
 
@@ -167,7 +167,7 @@ Classification models predict distinct output *categories*. A **logistic regress
 
 $$ P(y) = \frac{1}{1+e^{-h(x)}}$$
 
-where $$h(x) = \beta_0 + \beta_1x_1 + \beta_2x_2 $$ and $y$ is the event of passing the exam.<sup>[[7]](#7-classification)</sup>
+Here $$h(x) = \beta_0 + \beta_1x_1 + \beta_2x_2 $$ and $y$ is the event of passing the exam.<sup>[[8]](#8-classification)</sup>
 
 **Our model will output a *probability* of $y$ occurring, given our predictors.** We can work with these outputted probabilities directly (as in [credit default risk models](https://financetrain.com/modelling-probability-default-using-logistic-regression/)), or we can binarize them into 0's and 1's. In our student model, this would mean predicting whether the student passed (1) or failed (0) the exam. We typically use $P(y)$ = 0.5 as the probability cutoff.
 
@@ -178,9 +178,9 @@ Setting $h(x)$ to the extremes helps clarify its role in the equation. Let's say
 
 $$ P(y) = \frac{1}{1+10000000} = 0.0000001$$
 
-On the other extreme, if $h(x)$ is *extremely positive*, then $-h(x)$ becomes *tiny*, meaning we're essentially dividing 1 by 1. When $e^{-h(x)}$ is 0.00000001, we see $P(y)$ is pretty much 1.
+On the other extreme, if $h(x)$ is *extremely positive*, then $-h(x)$ becomes *tiny*, meaning we're essentially dividing 1 by 1. When $e^{-h(x)}$ is 0.0000001, we see $P(y)$ is pretty much 1.
 
-$$ P(y) = \frac{1}{1+0.00000001} = 0.99999999$$
+$$ P(y) = \frac{1}{1+0.0000001} = 0.9999999$$
 
 Finally, what happens when $h(x)$ equals zero? Any real number raised to the zeroth power equals 1, so $e^{-h(x)}$ becomes 1.
 
@@ -209,27 +209,33 @@ Finally, we should always look at the **confidence interval** for our coefficien
 
 ### Residuals
 <img src="{{  site.baseurl  }}/images/careers/residual.png" align='right' height='55%' width='55%'>
-Once we've built a model, how do we tell if it's any good? One way is to compare *<u>the model's predictions</u>* to *<u>the actual values</u>* in our data. In other words, given some sample inputs, what does the model *think the output is*, versus *what the output actually is*? The **residual** is the distance between the predicted versus actual values.
+Once we've built a model, how do we tell if it's any good? One way is to compare *<u>the model's predictions</u>* to *<u>the actual values</u>* in our data. In other words, given some sample inputs, what does the model *think the output is*, versus *what the output actually is*? For regression models, the **residual** is the distance between the predicted versus actual values.<sup>[[9]](#9-residuals)</sup>
 
-You can see this illustrated in the graphic on the right. The model's predictions are the red line. The distance between the predictions and the actual values are the residuals. The goal with building a model is to get the predicted and actual values as similar as possible $-$ to *minimize the residuals*, in other words.<sup>[[8]](#footnotes)</sup> A more accurate model will have tend to generate predictions closer to the actual values than an inaccurate one.
+You can see this illustrated in the graphic on the right. The distance between the predictions (red line) and the actual values (black points) are the residuals. The goal with building a model is to get the predicted and actual values as similar as possible $-$ to *minimize the residuals*, in other words.<sup>[[10]](#10-residuals)</sup> A more accurate model will have tend to generate predictions closer to the actual values than an inaccurate one.
 
-Especially for linear models, the residuals should be normally distributed around zero, meaning our predictions are usually pretty good but sometimes a little too high or too low, and rarely way too high or way too low.
+Especially for linear models, **the residuals should be normally distributed around zero**, meaning our predictions are usually pretty good but sometimes a little too high or too low, and rarely way too high or way too low.
 
 ![]({{  site.baseurl  }}/images/careers/residuals_good.png)
 
-**It's important to plot your data.** Otherwise you can fit a model but realize it's crap, like this:
+As a third reminder in this section alone, **it's important to plot your data!** R and Python won't stop you from fitting a model that doesn't make sense, and stakeholders will quickly lose faith in your recommendations if they find logical holes in your models that you didn't catch. (It's often already hard enough to convince stakeholders to trust a model with airtight logic... don't make it harder!)
+
+For example, let's say you build a model predicting *how happy a person is* as a function of *the size of their Pokémon card collection.* You plot the data on top of the model's predictions, plot the residuals, and see something like this:
 
 ![]({{  site.baseurl  }}/images/careers/residuals_bad.png)
 
-
-You need to do two models, or have a factor.
+The double sets of points and the bimodal residuals clearly indicate there's some unaccounted factor affecting our data... maybe whether the person is a child or an adult! A simple fix for this would be to add a "child vs. adult" feature in our model, or to split the model into one for children and one for adults.
 
 ![]({{  site.baseurl  }}/images/careers/two_models.png)
 
+Much better!<img src="{{  site.baseurl  }}/images/thumbs-up.png" height="6%" width="6%" style="vertical-align:-55%">
 
 ## Concluding thoughts
-This is a non-exhaustive list. There's a lot of good material out there about p-values, model and feature selection, etc.
+To reiterate from [earlier](#ok-so-how-much-stats-do-i-actually-need), it's challenging to write out the statistics useful for data science without writing a massive textbook. Stats is a series of tools for parsing *signals* from *noise* in our data, and the more tools you have, the more types of problems you can handle. While the more stats knowledge the better, it's unrealistic to expect every data scientist to have PhD-level statistics knowledge *as well as* the other skill sets we'll cover in this series of posts. I've therefore specifically focused on the fundamentals rather than the latest cutting-edge libraries, as the fundamentals tend not to change much, and the advanced topics *build* on the core concepts. Understand these really well, and the rest will come naturally.
 
+In the next post, we'll be covering programming skills. See you there!
+
+Best,<br>
+Matt
 
 
 ## Footnotes
@@ -244,7 +250,10 @@ Rather than removing the need for statistics, big data *exacerbates* common stat
 #### 3. [Ok, so how much stats do I actually need?](#ok-so-how-much-stats-do-i-actually-need)
 If people come to you for help making crucial decisions from data, you'll want to account for statistical nuances like [random effects](https://www.theanalysisfactor.com/understanding-random-effects-in-mixed-models/), [regression discontinuities](https://en.wikipedia.org/wiki/Regression_discontinuity_design), [nonparametric](http://mlss.tuebingen.mpg.de/2015/slides/ghahramani/gp-neural-nets15.pdf) or [Bayesian](http://www.scholarpedia.org/article/Bayesian_statistics) alternatives to [frequentism](https://en.wikipedia.org/wiki/Frequentist_inference), [bootstrapping](https://en.wikipedia.org/wiki/Bootstrapping_(statistics)) and more.
 
-#### 4. [Control groups](#control-groups)
+#### 4. [Ok, so how much stats do I actually need?](#ok-so-how-much-stats-do-i-actually-need)
+While writing this post, I kept imagining stats gurus criticizing an omission here, or going into too little detail there. After weeks of writing, I'm just cutting it at the amount I've written and saying this is a non-exhaustive list. Consider it a starting point; add to your repertoire as needed!
+
+#### 5. [Control groups](#control-groups)
 You can easily see this effect for yourself in R or Python. (I use R below.) Note: it's critical to set `g2` equal to `g1` shifted upward, rather than just another `rnorm` with a higher mean, since the paired t-test looks closely at the *pairwise differences* between each element in the vector. The paired t-test will likely return a *weaker* result than a two-sample test if `g1` and `g2` are unrelated samples, since the distribution of `g1 - g2` straddles zero. And an obligatory note after the [#pruittgate fiasco](https://www.nature.com/articles/d41586-020-00287-y)... *never fabricate data in scientific studies!!* The intention of these demos is strictly to better understand how statistical tests work, not to game a system.
 
 ```r
@@ -272,19 +281,23 @@ diff(mod1[['conf.int']])  # 2.573
 diff(mod2[['conf.int']])  # 0.431
 ```
 
-#### 5. [Regression](#regression)
+#### 6. [Regression](#regression)
 If you look closely (or have taken enough statistics to use linear algebra), you might notice that $ h(x) = \sum_{j=0}^{n}\beta_jx_j $ expects a $x_0$ to accompany $\beta_0$, but there's no $x_0$ in the equation for our example model $h(x) = \beta_0 + \beta_1x_1 + \beta_2x_2$. This reflects a difference in whether or not we're using matrix multiplication to generate our predictions. A necessary pre-processing step for using linear algebra is to add a column of 1's for $x_0$ to our feature matrix; otherwise, there's a mismatch between the number of features ($n$) and the number of coefficients ($n+1$). Because $x_0$ is always 1 and is just a bookkeeping step, it's usually omitted from the equation when you expand it out.
 
-#### 6. [Regression](#regression)
+#### 7. [Regression](#regression)
 There *is* one important caveat to mention here regarding the ease of understanding a regression model's coefficients. Yes, they do show the influence each input variable has on the output, **but these coefficients are affected by all other variables in the model.**
 
 In our "study and sleep" exam model, for example, removing "hours studied" from our model will cause the "sleep" coefficient to skyrocket, since it's now entirely responsible for converting "hours slept" into an exam score.
 
 You'll find that variables' coefficients can shrink, explode, or even change sign when you add or remove predictors and rerun the model. Trying to understand *these* changes is where you need a deep understanding of your data.
 
-#### 7. [Classification](#classification)
+#### 8. [Classification](#classification)
 Note that the concept of "success" versus "failure" is completely arbitrary. If in our data `1` corresponds to passing the exam and `0` for failing, our "success" is passing the exam, and our model outputs probabilities of passing, given our predictors.
 
 But if we flip the `1`'s and `0`'s, then our "success" becomes *failing* the exam, and our model just outputs probabilities of *failing* rather than passing.
 
-8. [[Residuals]](#residuals) I talk about minimizing residuals at great length in [this blog post]({{  site.baseurl  }}/LR-grad-desc), where I recreate R's linear regression function by hand. Fun times!
+#### 9. [Residuals](#residuals)
+The "distance between actual versus predicted" for classification models is simpler $-$ the only options are whether the classification was correct or incorrect, even for multi-class classification. A great measure of accuracy for classification models is the [**confusion matrix**](https://www.dataschool.io/simple-guide-to-confusion-matrix-terminology/), which provides a ton of info about your model's accuracy, its false positive and false negative rates, etc.
+
+#### 10. [Residuals](#residuals)
+I talk about minimizing residuals at great length in [this blog post]({{  site.baseurl  }}/LR-grad-desc), where I recreate R's linear regression function by hand. Check it out if you're looking for a deep dive into how coefficients are determined for linear regression models.
