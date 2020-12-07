@@ -1,21 +1,20 @@
 ---
 layout: post
-title: How to enter data science - <br>3. Programming
+title: How to enter data science - <br>3. The programming
 author: matt_sosna
-summary: The software engineering skills needed to succeed in data science
+summary: The programming knowledge needed to succeed in data science
 image: ""
 ---
 
-In the last post...
-
+Welcome to the third post in our series of how to enter data science. The [first post]({{  site.baseurl  }}/DS-transition-1) covered how to navigate the broad diversity of data science roles in the industry, and [the second]({{  site.baseurl  }}/DS-transition-2) was a deep dive on (some!) statistics essential to being an effective data scientist. In this post, we'll cover programming skills. Get ready for lots of syntax highlighting!
 
 ---
 **How to enter data science:**
 1. [The target]({{  site.baseurl  }}/DS-transition-1)
 2. [The statistics]({{  site.baseurl  }}/DS-transition-2)
 3. **The programming**
-4. [The engineering]({{  site.baseurl  }}/DS-transition-4)
-5. [The people]({{  site.baseurl  }}/DS-transition-5)
+4. The engineering *(coming soon)*
+5. The people *(coming soon)*
 
 ---
 

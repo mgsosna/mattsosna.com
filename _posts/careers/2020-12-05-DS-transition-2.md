@@ -7,13 +7,13 @@ image: "images/careers/two_models.png"
 ---
 In [the last post]({{ site.baseurl }}/DS-transition-1), we defined the key elements of data science as 1) deriving insights from data and 2) communicating those insights to others. Despite the huge diversity in how these elements are expressed in actual data scientist roles, **there is a core skill set** that will serve you well no matter where you go. The remaining posts in this series will define and explore these skills in detail.
 
-The next three posts will cover the _<u>technical</u>_ skills needed to be successful as a data scientist: the statistics (this post), the programming and the engineering. The final post will cover the _<u>business</u>_, _<u>personal</u>_, and _<u>interpersonal</u>_ skills needed to succeed. Consider the distinction here as **knowing _how_ to do it** (technical) versus **knowing _what_ to do and _why_** (business, personal, and interpersonal). Let's get started!
+The next three posts will cover the _<u>technical</u>_ skills needed to be successful as a data scientist: the statistics (this post), the [programming]({{  site.baseurl  }}/DS-transition-3), and the engineering. The final post will cover the _<u>business</u>_, _<u>personal</u>_, and _<u>interpersonal</u>_ skills needed to succeed. Consider the distinction here as **knowing _how_ to do it** (technical) versus **knowing _what_ to do and _why_** (business, personal, and interpersonal). Let's get started!
 
 ---
 **How to enter data science:**
 1. [The target]({{  site.baseurl  }}/DS-transition-1)
 2. **The statistics**
-3. The programming *(coming soon)*
+3. [The programming]({{  site.baseurl  }}/DS-transition-3)
 4. The engineering *(coming soon)*
 5. The people *(coming soon)*
 
