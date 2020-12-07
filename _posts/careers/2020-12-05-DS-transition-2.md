@@ -27,7 +27,8 @@ But consider this learning checklist as a set of fundamental skills that will ge
 * **Inferential Statistics**
 - [ ] [Experimental design](#experimental-design)
 - [ ] [Comparisons between groups](#comparisons-between-groups)
-- [ ] [Predictive modeling](#predictive-modeling) <br><br>
+- [ ] [Predictive modeling](#predictive-modeling)
+- [ ] [Model internals](#model-internals) <br><br>
 * **Programming**
 - [ ] [Dataframes]({{  site.baseurl  }}/DS-transition-3/#dataframes)
 - [ ] [Visualizations]({{  site.baseurl  }}/DS-transition-3/#visualizations)
@@ -75,9 +76,10 @@ Here are (some!<sup>[[4]](#4-ok-so-how-much-stats-do-i-actually-need)</sup>) sta
 
 * **Experimental design:** sampling and bias, control groups, correlation vs. causation
 * **Comparisons between groups:** t-tests, ANOVA
-* **Predictive modeling:** regression, classification, coefficients, residuals
+* **Predictive modeling:** regression, classification
+* **Model internals:** coefficients, residuals, p-values, $R^2$
 
-We'll go through each of these in the rest of the post. Let's get started!
+We'll go through each of these in the rest of the post. Note that machine learning will be covered in the next post. Let's get started!
 
 ## Experimental design
 Broadly, experimental design refers to how we structure our *data collection* process. Do we poll our friends on Facebook, passersby at the mall, or random phone numbers? Does every patient get the drug, or do we give some a placebo? **Think of the quality of any analysis we run as a funnel starting from the quality of the data we collect.** If we have solid data, we can ask more interesting questions and discover more meaningful insights. If we have shoddy data, there'll always be that shadow of doubt for whether the results can truly be trusted. So, let's make sure we can identify how to get good data.
@@ -196,6 +198,9 @@ In the figure on the right, we've plotted some fake training data of students wh
 
 Once you're comfortable with these topics, it's a small step to move onto logistic regression models for more than two classes, such as [multinomial](https://en.wikipedia.org/wiki/Multinomial_logistic_regression) and [one-vs-rest](https://scikit-learn.org/stable/auto_examples/linear_model/plot_logistic_multinomial.html) classification.
 
+## Model internals
+Once we've actually fit a model and it's sitting there in R or Python, what do we actually have? How can we tell which features are significant, and if the model is actually explaining variation in our target variable? This section will examine [coefficients](#coefficients) and [residuals](#residuals), as well as the meaning behind [p-values](#p-values) and [$R^2$](#r2).
+
 ### Coefficients
 Let's take another look at the linear regression model that predicts student exam scores.
 
@@ -229,8 +234,39 @@ The double sets of points and the bimodal residuals clearly indicate there's som
 
 Much better!<img src="{{  site.baseurl  }}/images/thumbs-up.png" height="6%" width="6%" style="vertical-align:-55%">
 
+### p-values
+p-values are [a can of worms](https://www.nature.com/news/statisticians-issue-warning-over-misuse-of-p-values-1.19503). Given their status as the gatekeepers of significant results, there's tremendous pressure for researchers to "hack" analyses such that their models output a value below 0.05, the generally-accepted threshold. The below figure from [Perneger & Combescure 2017](https://www.researchgate.net/profile/Federico_Nave/post/What_is_your_opinion_on_a_new_p-value_threshold_P_0005_for_a_statistical_significance/attachment/59d658cb79197b80779ae8f4/AS:539943584124928@1505743990519/download/The+distribution+of+P-values+in+medical+research+articles+suggested+selective+reporting.pdf), for example, is a distribution of 667 reported p-values from four medical journals. Note the fascinating difference between p-values below 0.05 and those above...
+
+<center>
+<img src="{{  site.baseurl  }}/images/careers/p-value-hacking.jpg" height="70%" width="70%">
+</center>
+
+But until everyone switches to [Bayesian statistics](http://www.scholarpedia.org/article/Bayesian_statistics), p-values are here to stay and you'll need to understand them. The formal definition of a p-value is **the probability of obtaining results *at least as extreme* as ours, assuming the null hypothesis is correct.** Our null hypothesis is typically that the true effect size, difference in means between populations, correlation between variables, etc. is **zero**. p-values are the commonly-accepted method by which we say that the differences we're observing are either:
+1. <u><i>Large enough to reject the null hypothesis</i></u> (meaning our observed patterns are **statistically significant**)
+2. <u><i>Not large enough to reject the null hypothesis</i></u> (meaning our observed patterns are just **noise**).
+
+Note the careful wording there. There's a sort of humility you need to adopt with statistics; the conclusions from our current data are our *best guess* at what the broader population looks like, but maybe that guess will be proven wrong in the future when more data is available.
+
+_**Even with a "significant" p-value, we may still be wrong!**_ Our acceptance threshold is **also our false positive rate.** In other words, with a $p$ = 0.05 cutoff, 5% of significant results are expected to actually be false positives. If the output of your analyses are informing crucial decisions, I'd set the p-value threshold at 0.01 or even 0.001.
+
+Going back to our "study and sleep" model, if we see that the p-value for $\beta_1$, our study coefficient, is 0.0008 while the p-value for $\beta_2$, our sleep coefficient, is 0.26, we would conclude that studying affects exam scores and sleep does not.
+
+### $R^2$
+One final concept before we close out this massive post. R-squared is a valuable metric for determining whether our model is actually any good. In short, $R^2$ is the **proportion of variation in _our target variable_ explained by _variation in our predictors_.** The metric ranges from 0 (our model explains literally nothing about our target) to 1 (we can perfectly predict our target).
+
+The higher the $R^2$ the better... to a point. An $R^2$ of 0.8 for our "study and sleep" model would mean that study and sleep account for 80% of the variation in exam scores for the students in our dataset. Maybe an additional feature like *whether they ate breakfast* could bump up our $R^2$ to 0.85, meaning our model is a bit better at explaining variation in scores. Indeed, if we have a lot of features to choose from, we could conduct [feature selection](https://machinelearningmastery.com/feature-selection-with-real-and-categorical-data/) to determine which features are most predictive.
+
+But once we start getting an $R^2$ greater than ~0.97, I'd bet we're hitting one of the following issues:
+1. There are too many features in our model and the model is [overfit](https://www.investopedia.com/terms/o/overfitting.asp) to our data
+2. We have too little data to begin with
+3. Some feature(s) may be "peeking" at the target variable by being the target in another form (e.g. an [engineered feature](https://machinelearningmastery.com/discover-feature-engineering-how-to-engineer-features-and-how-to-get-good-at-it/) that included the target)
+
+The real world is messy, and it's hard to condense it down into a model. Unless we're modeling the universe's physical laws, **there will always be variation we can't account for in our model.** Maybe a student's pencil broke halfway through the exam and it threw them off their game. Maybe one student is actually an X-Man and could secretly read the answer key. This again reflects that humility we need to have when talking about statistics: our model is a *best guess* at explaining the real world.
+
 ## Concluding thoughts
-To reiterate from [earlier](#ok-so-how-much-stats-do-i-actually-need), it's challenging to write out the statistics useful for data science without writing a massive textbook. Stats is a series of tools for parsing *signals* from *noise* in our data, and the more tools you have, the more types of problems you can handle. While the more stats knowledge the better, it's unrealistic to expect every data scientist to have PhD-level statistics knowledge *as well as* the other skill sets we'll cover in this series of posts. I've therefore specifically focused on the fundamentals rather than the latest cutting-edge libraries, as the fundamentals tend not to change much, and the advanced topics *build* on the core concepts. Understand these really well, and the rest will come naturally.
+Phew, that was a whirlwind! To reiterate from [earlier](#ok-so-how-much-stats-do-i-actually-need), it's challenging to write out the statistics useful for data science without writing a massive textbook... but we can at least write a massive blog post.
+
+Stats is a series of tools for parsing *signals* from *noise* in our data, and the more tools you have, the more types of problems you can handle. But of course, with so much stats out there, we need to choose what to learn first. This post has focused on giving you the fundamentals rather than the latest cutting-edge libraries, as the fundamentals tend not to change much, and the advanced topics *build* on the core concepts. Understand these really well, and the rest will come naturally.
 
 In the next post, we'll be covering programming skills. See you there!
 
@@ -251,7 +287,7 @@ Rather than removing the need for statistics, big data *exacerbates* common stat
 If people come to you for help making crucial decisions from data, you'll want to account for statistical nuances like [random effects](https://www.theanalysisfactor.com/understanding-random-effects-in-mixed-models/), [regression discontinuities](https://en.wikipedia.org/wiki/Regression_discontinuity_design), [nonparametric](http://mlss.tuebingen.mpg.de/2015/slides/ghahramani/gp-neural-nets15.pdf) or [Bayesian](http://www.scholarpedia.org/article/Bayesian_statistics) alternatives to [frequentism](https://en.wikipedia.org/wiki/Frequentist_inference), [bootstrapping](https://en.wikipedia.org/wiki/Bootstrapping_(statistics)) and more.
 
 #### 4. [Ok, so how much stats do I actually need?](#ok-so-how-much-stats-do-i-actually-need)
-While writing this post, I kept imagining stats gurus criticizing an omission here, or going into too little detail there. After weeks of writing, I'm just cutting it at the amount I've written and saying this is a non-exhaustive list. Consider it a starting point; add to your repertoire as needed!
+While writing this post, I kept imagining stats gurus criticizing an omission here, or going into too little detail there. After weeks of writing, I've decided to not dive into [AIC](https://en.wikipedia.org/wiki/Akaike_information_criterion), [clustering](https://en.wikipedia.org/wiki/Cluster_analysis), distributions besides the Gaussian, and a few other topics. We have to stop somewhere! I'm just calling this is a non-exhaustive list. Consider it a starting point; add to your repertoire as needed!
 
 #### 5. [Control groups](#control-groups)
 You can easily see this effect for yourself in R or Python. (I use R below.) Note: it's critical to set `g2` equal to `g1` shifted upward, rather than just another `rnorm` with a higher mean, since the paired t-test looks closely at the *pairwise differences* between each element in the vector. The paired t-test will likely return a *weaker* result than a two-sample test if `g1` and `g2` are unrelated samples, since the distribution of `g1 - g2` straddles zero. And an obligatory note after the [#pruittgate fiasco](https://www.nature.com/articles/d41586-020-00287-y)... *never fabricate data in scientific studies!!* The intention of these demos is strictly to better understand how statistical tests work, not to game a system.
