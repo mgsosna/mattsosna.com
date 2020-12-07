@@ -149,7 +149,7 @@ In short: if you're trying to determine whether the means of the populations of 
 ## Predictive modeling
 Predictive modeling is about **taking in data and trying to model the _underlying process_ that generated that data.** Once we understand the underlying rules, we can then generate *predictions* for new data. Thinking back to our [weather outside vs. clothing model](#wait-do-i-actually-need-to-learn-stats), we don't need to memorize what clothes to wear for every possible temperature; we just need to use our mental model.
 
-This section will cover regression, classification, coefficients, and residuals. But before we get started, a quick pro tip: **always plot your data before you start building any models!** This step can help you catch outliers, determine whether feature engineering steps like log transformations are required, and ensure your model is actually describing your data.
+This section will cover regression and classification. But before we get started, a quick pro tip: **always plot your data before you start building any models!** This step can help you catch outliers, determine whether feature engineering steps like log transformations are required, and ensure your model is actually describing your data.
 
 ### Regression
 When we want to predict a *continuous* value, we use regression. Here's the equation for linear regression. Learn it well!
