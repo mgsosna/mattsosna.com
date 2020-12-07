@@ -29,11 +29,11 @@ But consider this learning checklist as a set of fundamental skills that will ge
 - [ ] [Comparisons between groups](#comparisons-between-groups)
 - [ ] [Predictive modeling](#predictive-modeling) <br><br>
 * **Programming**
-- [ ] Dataframes
-- [ ] Visualizations
-- [ ] Descriptive statistics
-- [ ] Working with dates
-- [ ] Machine learning <br><br>
+- [ ] [Dataframes]({{  site.baseurl  }}/DS-transition-3/#dataframes)
+- [ ] [Visualizations]({{  site.baseurl  }}/DS-transition-3/#visualizations)
+- [ ] [Descriptive statistics]({{  site.baseurl  }}/DS-transition-3/#descriptive-statistics)
+- [ ] [Working with dates]({{  site.baseurl  }}/DS-transition-3/#working-with-dates)
+- [ ] [Machine learning]({{  site.baseurl  }}/DS-transition-3/#machine-learning) <br><br>
 * **Software engineering**
 - [ ] SQL
 - [ ] Interacting with APIs

@@ -6,7 +6,7 @@ summary: The programming knowledge needed to succeed in data science
 image: ""
 ---
 
-Welcome to the third post in our series of how to enter data science. The [first post]({{  site.baseurl  }}/DS-transition-1) covered how to navigate the broad diversity of data science roles in the industry, and [the second]({{  site.baseurl  }}/DS-transition-2) was a deep dive on (some!) statistics essential to being an effective data scientist. In this post, we'll cover programming skills. Get ready for lots of syntax highlighting!
+Welcome to the third post in our series of how to enter data science! The [first post]({{  site.baseurl  }}/DS-transition-1) covered how to navigate the broad diversity of data science roles in the industry, and [the second]({{  site.baseurl  }}/DS-transition-2) was a deep dive on (some!) statistics essential to being an effective data scientist. In this post, we'll cover programming skills. Get ready for lots of syntax highlighting!
 
 ---
 **How to enter data science:**
@@ -18,9 +18,33 @@ Welcome to the third post in our series of how to enter data science. The [first
 
 ---
 
+## Code for days
+As a data scientist, most of your time will be spent writing and reading code.
 
-## Programming
 While plenty of data science roles rely solely on R, this post will demonstrate coding concepts with Python. Python's versatility makes it an "all-in-one" language for a huge range of data science applications, from dataframe manipulations to computer vision. Python also lets you more easily dip into [the software engineering side of the analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel).
+
+Here are the technical skills we're covering in this series. Inferential statistics is covered in [the last post]({{  site.baseurl  }}/DS-transition-2), programming in this post, and software engineering in the next post.
+
+* **Inferential Statistics**
+- [ ] [Experimental design]({{  site.baseurl  }}/DS-transition-2/#experimental-design)
+- [ ] [Comparisons between groups]({{  site.baseurl  }}/DS-transition-2/#comparisons-between-groups)
+- [ ] [Predictive modeling]({{  site.baseurl  }}/DS-transition-2/#predictive-modeling) <br><br>
+* **Programming**
+- [ ] [Dataframes](#programming)
+- [ ] [Visualizations](#visualizations)
+- [ ] [Descriptive statistics](#descriptive-statistics)
+- [ ] [Working with dates](#working-with-dates)
+- [ ] [Machine learning](#machine-learning) <br><br>
+* **Software engineering**
+- [ ] SQL
+- [ ] Interacting with APIs
+- [ ] Version control
+- [ ] Object-oriented programming
+- [ ] Virtual environments
+- [ ] Writing tests
+- [ ] Servers and deployment <br><br>
+{: style='list-style-type: none'}
+
 
 ### Dataframes
 Dataframes are at the core of data science and analytics. They're essentially just a table of rows and columns, typically where each row is a _**record**_ and each column is an _**attribute**_ of that record. You can have a table of employees, for example, where each row is a person with columns for their first and last names, their home address, their salary, etc. Because dataframes will play a central role in your job, you'll need to master visualizing and manipulating the data within them. `pandas` is the key library here.
