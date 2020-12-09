@@ -5,7 +5,8 @@ author: matt_sosna
 summary: The software engineering skills needed to succeed in data science
 image: ""
 ---
-In [the previous post]({{ site.baseurl }}/DS-transition-2), we talked about the analytical skills you'll need to succeed in data science. This post will cover the engineering skills.
+
+So far, we've covered [the range of data science roles]({{  site.baseurl  }}/DS-transition-1), some [inferential statistics fundamentals]({{  site.baseurl  }}/DS-transition-2), and [Python-based programming]({{  site.baseurl  }}/DS-transition-3). This post will shift from programming to broader software engineering concepts that are essential for data science.
 
 ---
 **How to enter data science:**
@@ -13,9 +14,29 @@ In [the previous post]({{ site.baseurl }}/DS-transition-2), we talked about the 
 2. [The statistics]({{  site.baseurl  }}/DS-transition-2)
 3. [The programming]({{  site.baseurl  }}/DS-transition-3)
 4. **The engineering**
-5. [The people]({{  site.baseurl  }}/DS-transition-5)
+5. The people *(coming soon)*
 
 ---
+
+* **Inferential Statistics**
+- [ ] [Experimental design]({{  site.baseurl  }}/DS-transition-2/#experimental-design)
+- [ ] [Comparisons between groups]({{  site.baseurl  }}/DS-transition-2/#comparisons-between-groups)
+- [ ] [Predictive modeling]({{  site.baseurl  }}/DS-transition-2/#predictive-modeling) <br><br>
+* **Programming**
+- [ ] [Dataframes]({{  site.baseurl  }}/DS-transition-3/#programming)
+- [ ] [Visualizations]({{  site.baseurl  }}/DS-transition-3/#visualizations)
+- [ ] [Descriptive statistics]({{  site.baseurl  }}/DS-transition-3/#descriptive-statistics)
+- [ ] [Working with dates]({{  site.baseurl  }}/DS-transition-3/#working-with-dates)
+- [ ] [Machine learning]({{  site.baseurl  }}/DS-transition-3/#machine-learning) <br><br>
+* **Software engineering**
+- [ ] [SQL](#sql)
+- [ ] [Interacting with APIs](#interacting-with-apis)
+- [ ] [Version control](#version-control)
+- [ ] [Object-oriented programming](#object-oriented-programming)
+- [ ] [Virtual environments](#virtual-environments)
+- [ ] [Writing tests](#writing-tests)
+- [ ] [Servers and deployment](#servers-and-deployment) <br><br>
+{: style='list-style-type: none'}
 
 
 ## Table of contents
@@ -119,6 +140,23 @@ body = obj['Body'].read()
 string = body.decode(encoding='utf-8')
 df = pd.DataFrame(json.load(StringIO(string)))
 ```
+
+What if you want to collect data from an external website that doesn't provide a convenient API? This is a job for [web scraping](https://www.scrapinghub.com/what-is-web-scraping/), and Python's [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) module is our answer.
+
+```python
+import requests
+from bs4 import BeautifulSoup
+
+url = "https://en.wikipedia.org/wiki/Web_scraping"
+
+response = requests.get(url)
+soup = BeautifulSoup(response.text, 'html')
+
+for heading in soup.findAll('h2'):
+    print(heading.text)  
+    # Contents, History[edit], Techniques[edit]...
+```
+
 
 ### Other stuff
 #### Version control
