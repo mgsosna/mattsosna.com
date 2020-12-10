@@ -19,7 +19,17 @@ Welcome to the third post in our series of how to enter data science! The [first
 ---
 
 ## Code for days
-As a data scientist, most of your time will be spent writing and reading code. You'll want to make sure you have the programming chops to carry out the analyses you'll need, as well as any pipelining to send the results of those analyses to storage or processed for stakeholders.
+As a data scientist, it's critical that you have highly polished coding chops. Here's why:
+
+1. **Most of your day will be spent writing and reading code.** The more fluent you are as a programmer, the more effective you'll be at your work. This can mean knowing more ways to tackle coding challenges, as well as knowing the right tool for the job. You'll also be a more helpful teammate when reviewing others' code.
+
+2. **You will need to share your code with others.** When providing a deliverable to stakeholders, you can't just show your end result without explaining how you got there. Your teammates will be the ones reviewing your code to follow your logical process, checking for edge cases, and in general making sure the code does what you think it's doing. It's important that you can code in a way that others can more easily follow your thought process, as well as modify the code down if needed in the future.
+
+3. **Your work will need to be scalable.** Especially for self-learners or academics, a lot of your code can look be "one-off" scripts that does the job but is a pain to modify. (I personally had R scripts that were hundreds of lines long, and rerunning them to process data differently always felt like performing surgery. It shouldn't be that way!)
+
+
+Compared to formulas in an Excel spreadsheet, programming lets you both run *more nuanced analyses* as well as *automate and scale those analyses.* Coding lets you share analyses and provides a way for others to easily review the steps in your work, rather than just the end product.
+
 
 
 While plenty of data science roles rely solely on R, this post will demonstrate coding concepts with Python. Python's versatility makes it an "all-in-one" language for a huge range of data science applications, from dataframe manipulations to computer vision. Python also lets you more easily dip into [the software engineering side of the analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel).
