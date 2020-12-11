@@ -19,22 +19,10 @@ Welcome to the third post in our series of how to enter data science! The [first
 ---
 
 ## Code for days
-While Excel wizardry might cut it for many analytics tasks, **data science work relies heavily on the _nuance_, _reproducibility_, and _scalability_ of programming.** Here are a few reasons coding is important:
+While Excel wizardry might cut it for many analytics tasks, **data science work relies heavily on the _nuance_, _reproducibility_, and _scalability_ of programming.** From statistical tests only available in specialized R and Python libraries, to being able to show step-by-step how a model is formulated and generates predictions, to being able to go from processing one dataset to 1,000 with a few keystrokes, *fluency in programming is essential for being an effective data scientist*. We'll therefore focus on some key programming skills that will serve you well no matter your role is on the
+[analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel).
 
-1. **You need to show your work.** You can't just show the end result to a stakeholder. You need a train of thought that will be verified by your teammates. (Check out the upcoming post to ensure you're not driving those teammates crazy when they read your code!)
-
-2. **You need to be able to automate your work.** If you write a script that performs data quality checks for a user and outputs a CSV, you don't want to manually hit "run" 1000 times.
-
-For analyzing data, Python and R allow...
-
-* Reproducibility
-* Scalability
-* Transparency
-
-(Should this post be called the analytics?)
-
-
-While plenty of data science roles rely solely on R, this post will demonstrate coding concepts with Python. Python's versatility makes it an "all-in-one" language for a huge range of data science applications, from dataframe manipulations to computer vision. Python also lets you more easily dip into [the software engineering side of the analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel).
+While plenty of data science roles rely solely on R, this post will demonstrate coding concepts with Python. Python's versatility makes it an "all-in-one" language for a huge range of data science applications, from dataframe manipulations to speech recognition and computer vision. Even if your role involves crunching numbers all day in R, consider learning a little Python for automating steps like [saving results to your company's Dropbox](https://stackoverflow.com/questions/23894221/upload-file-to-my-dropbox-from-python-script).
 
 Here are the technical skills we're covering in this series. Inferential statistics is covered in [the last post]({{  site.baseurl  }}/DS-transition-2), programming in this post, and software engineering in the next post.
 
@@ -58,7 +46,6 @@ Here are the technical skills we're covering in this series. Inferential statist
 - [ ] Writing tests
 - [ ] Servers and deployment <br><br>
 {: style='list-style-type: none'}
-
 
 ### Dataframes
 Dataframes are at the core of data science and analytics. They're essentially just a table of rows and columns, typically where each row is a _**record**_ and each column is an _**attribute**_ of that record. You can have a table of employees, for example, where each row is a person with columns for their first and last names, their home address, their salary, etc. Because dataframes will play a central role in your job, you'll need to master visualizing and manipulating the data within them. `pandas` is the key library here.
@@ -88,9 +75,9 @@ df_filt.to_csv("cleaned.csv", index=False)
 
 The next level of difficulty involves vectorized and iterative data transformations. For simple operations like adding every value in two columns together, `pandas` lets you simply add the two columns together like `df['col1'] + df['col2']`.
 
-For more nuanced operations, such as handling missing values that would otherwise cause columnwise operations to fail, you can use `.apply`. Below, we use a lambda to apply a custom function, `safe_divide`, to the `col1` and `col2` fields of each row. (`numpy`'s `divide` function is pretty similar, but let's say we want `np.nan` instead of `Inf` when dividing by zero.)
+For more nuanced operations, such as handling missing values that would otherwise cause columnwise operations to fail, you can use `.apply`. Below, we use a lambda to apply a custom function, `safe_divide`, to the `col1` and `col2` fields of each row.<sup>[[1]](#1-dataframes)</sup>
 
-For logic that can't be easily passed into a lambda, we just iterate through the dataframe rows using `itertuples`.
+For logic that can't be easily passed into a lambda, we just iterate through the dataframe rows using `itertuples`. ([Don't use `iterrows`](https://medium.com/swlh/why-pandas-itertuples-is-faster-than-iterrows-and-how-to-make-it-even-faster-bc50c0edd30d) if you can avoid it!)
 
 ```python
 # Example 2: iterating and appending data
@@ -121,7 +108,7 @@ for tup in df.itertuples():
     df_final = df_final.append(df_iter, ignore_index=True)
 ```
 
-Finally, we need the ability to combine data from multiple dataframes, as well as run aggregate commands on the data. In the code below, for example, we merge two dataframes, making sure not to drop any rows in `df1` by specifying that it's a left merge. Then we create a new dataframe, `df_agg`, that has the sums of all the columns for each user. We can then print out how much user `123` spent at Target, for example.
+Finally, we need the ability to combine data from multiple dataframes, as well as run aggregate commands on the data. In the code below we merge two dataframes, making sure not to drop any rows in `df1` by specifying that it's a [left merge](https://www.shanelynn.ie/merge-join-dataframes-python-pandas-index-1/). Then we create a new dataframe, `df_agg`, that has the sums of all the columns for each user. We can then print out how much user `123` spent at Target, for example.
 
 ```python
 # Example 3: merging, groupbys
@@ -131,9 +118,9 @@ print(df_agg.loc[123, 'target'])
 ```
 
 ### Arrays
-`pandas` dataframes are actually built on top of `numpy` arrays, so it's helpful to have some knowledge on how to efficiently use `numpy`. Many operations on `pandas.Series` (the array-like datatype for rows and columns) are identical to `numpy.array` operations, for example. If you're working with [computer vision](https://en.wikipedia.org/wiki/Computer_vision), `numpy` multidimensional arrays are essential.
+`pandas` dataframes are actually built on top of `numpy` arrays, so it's helpful to have some knowledge on how to efficiently use `numpy`. Many operations on `pandas.Series` (the array-like datatype for rows and columns) are identical to `numpy.array` operations, for example.
 
-`numpy`, or [Numerical Python](https://numpy.org/), is a library with classes built specifically for efficient mathematical operations. R users will find `numpy` arrays familiar, as they share a lot of coding logic with R's vectors. Below, I'll highlight some distinctions from Python's built-in `list` class. A typical rule of thumb I follow is that it's better to use Python's built-in classes whenever possible, given that they've been highly optimized for the language. In data science, though, `numpy` arrays are generally a better choice.<sup>[[1]](#1-arrays)</sup>
+`numpy`, or [Numerical Python](https://numpy.org/), is a library with classes built specifically for efficient mathematical operations. R users will find `numpy` arrays familiar, as they share a lot of coding logic with R's vectors. Below, I'll highlight some distinctions from Python's built-in `list` class. A typical rule of thumb I follow is that it's better to use Python's built-in classes whenever possible, given that they've been highly optimized for the language. In data science, though, `numpy` arrays are generally a better choice.<sup>[[2]](#2-arrays)</sup>
 
 First, we have simple filtering of a vector. Python's built-in `list` requires either a list comprehension, or the `filter` function plus a lambda and unpacking (`[*...]`). `numpy`, meanwhile, just requires the array itself.
 
@@ -203,6 +190,8 @@ arr_2d.mean(axis=1)                # array([2.0, 5.0])
 arr_2d.mean(axis=0)           # array([2.5, 3.5, 4.5])
 ```
 
+If you end up working in [computer vision](https://en.wikipedia.org/wiki/Computer_vision), `numpy` multidimensional arrays will be essential, as they're the default for storing pixel intensities in images. You might come across a two-dimensional array with tuples for each pixel's [RGB](https://en.wikipedia.org/wiki/RGB_color_model) values, for example, or a five-dimensional array where dimensions 3, 4, and 5 are R, G, and B, respectively.
+
 ### Visualizations
 After dataframes and arrays, the next most crucial data science skill is data visualization. **Visualizing the data is one of the first and last steps of an analysis:** when Python is communicating the data to you, and when you're communicating the data to stakeholders. The main Python data visualization libraries are `matplotlib` and `seaborn`. I'll show some simple `matplotlib` examples below.
 
@@ -227,15 +216,14 @@ for group in df['treatment'].unique():
 plt.show()
 ```
 
-If you want to get fancy, look into interactive dashboarding tools like [Bokeh](https://bokeh.org/) or [Plotly](https://plotly.com/). These tools let the user interact with the plot, such as getting more information about a point by hovering over it, or regenerating data in the plot by clicking on drop-down menus or dragging sliders. You can even embed them into Markdown, like this simple one below.
+If you want to get fancy, look into interactive dashboarding tools like [Bokeh](https://bokeh.org/) or [Plotly](https://plotly.com/). These tools let the user interact with the plot, such as getting more information about a point by hovering over it, or regenerating data in the plot by clicking on drop-down menus or dragging sliders. You can even embed simple plots into static HTML, like this Bokeh plot below.
 
 <center>
 {% include bokeh_example.html %}
 </center>
 
-
 ### Descriptive statistics
-While you may be chomping at the bit to get to machine learning, I think a solid understanding of [descriptive statistics](https://conjointly.com/kb/descriptive-statistics/) should come first. In contrast to inferential statistics, descriptive statistics involves summarizing the data you have, as opposed to making inferences about a broader population.
+While you may be chomping at the bit to get to machine learning, I think a solid understanding of [descriptive statistics](https://conjointly.com/kb/descriptive-statistics/) should come first. (As well as [inferential statistics]({{  site.baseurl  }}/DS-transition-2) if you skipped the last post!) In contrast to inferential statistics, descriptive statistics involves summarizing the data you have, as opposed to making inferences about a broader population.
 <span style='color:red'>Work on this... </span> You'll often need to efficiently describe data to others, which is where descriptive stats comes in. Thankfully, the basics should cover you for most data science applications.
 
 It's critical to be able to quantify what the data looks like. Is the data normally distributed, unimodal or bimodal, skewed left or right? What's a typical value, and how much do the data vary from that value? Think of descriptive stats as the "hard numbers" pair to data visualization. Being able to quickly communicate these metrics will provide an intuition for the data that helps identify outliers, such as data quality issues.
@@ -286,7 +274,7 @@ Think of being a data scientist as building a machine that can drill through con
 
 **But the majority of your time will probably be spent building out _the rest of the machinery_** - the frame, levers, screws, etc. - and identifying *where* to apply the drill. (If you're in a particularly engineering-strapped organization, you might also end up building the front end: the seat and controls for the user!) If you only care about the drill tip instead of the whole machine, you'll likely find yourself disillusioned by many data science jobs. But if you find enjoyment in the entire process of building the machine and creating something that truly helps people break that concrete, then you'll love your work.
 
-At any rate, you *will* need some knowledge of machine learning. I wouldn't stress very much about the specifics of different machine learning algorithms (e.g. [random forests](https://en.wikipedia.org/wiki/Random_forest) vs. [support vector machines](https://en.wikipedia.org/wiki/Support_vector_machine) vs. [XGBoost](https://xgboost.readthedocs.io/en/latest/)) unless your role is deep in research, education, or machine learning consulting.<sup>[[2]](#2-machine-learning)</sup> Rather, you'll get a lot farther if you have a good understanding of the necessary steps *before and after* you use a machine learning algorithm.
+At any rate, you *will* need some knowledge of machine learning. I wouldn't stress very much about the specifics of different machine learning algorithms (e.g. [random forests](https://en.wikipedia.org/wiki/Random_forest) vs. [support vector machines](https://en.wikipedia.org/wiki/Support_vector_machine) vs. [XGBoost](https://xgboost.readthedocs.io/en/latest/)) unless your role is deep in research, education, or machine learning consulting.<sup>[[3]](#3-machine-learning)</sup> Rather, you'll get a lot farther if you have a good understanding of the necessary steps *before and after* you use a machine learning algorithm.
 
 The main concepts to know, I'd argue, are:
 1. Training data vs. testing data
@@ -295,7 +283,7 @@ The main concepts to know, I'd argue, are:
 4. The difference between machine learning and statistics
 
 #### Training data vs. testing data
-When you're building a predictive model, it's critical to know how accurate it is. This is where **training data versus testing data** come in. The main idea is to subset your data into "training" data that's used to create the model, and "testing" data that's later used to evaluate model accuracy. Once your model learns the relationship between input and output, you use the testing data to see how the model's predictions compare to the true outputs.<sup>[[3]](#3-training-data-vs-testing-data)</sup>
+When you're building a predictive model, it's critical to know how accurate it is. This is where **training data versus testing data** come in. The main idea is to subset your data into "training" data that's used to create the model, and "testing" data that's later used to evaluate model accuracy. Once your model learns the relationship between input and output, you use the testing data to see how the model's predictions compare to the true outputs.<sup>[[4]](#4-training-data-vs-testing-data)</sup>
 
 ```python
 import pandas as pd
@@ -350,8 +338,14 @@ The main way to partition machine learning from statistics is whether you're try
 
 
 ## Footnotes
-#### 1. [Arrays](#arrays)
-One clear exception to the rule of using `numpy` arrays over lists is if you want your array to store values of different types. `numpy.array` and `pandas.Series` have type forcing, which means that [all elements must be the same type](https://numpy.org/doc/stable/user/quickstart.html#the-basics), and they'll be forced into the same type upon creation of the array. <br><br>Below, the `numpy` version of `our_list1` converts `1` and `2` to floats to match `3.0`. (Integers are converted to floats to preserve the information after the decimal in floats.) For `our_list2`, there's no clear integer of float version of `'a'`, so instead `1` and `2.0` are converted to strings. If you want your array to store data of different types for some reason, you're therefore better off sticking with Python's `list` class.
+
+#### 1. [Dataframes](#dataframes)
+`numpy`'s `divide` function is pretty similar to our `safe_divide` function, and I'd normally recommend working with code that's already been written and optimized. But maybe in this case, let's say we want `np.nan` instead of `Inf` when dividing by zero.
+
+#### 2. [Arrays](#arrays)
+One clear exception to the rule of using `numpy` arrays over lists is if you want your array to store values of different types. `numpy.array` and `pandas.Series` have type forcing, which means that [all elements must be the same type](https://numpy.org/doc/stable/user/quickstart.html#the-basics), and they'll be forced into the same type upon creation of the array.
+
+Below, the `numpy` version of `our_list1` converts `1` and `2` to floats to match `3.0`. (Integers are converted to floats to preserve the information after the decimal in floats.) For `our_list2`, there's no clear integer of float version of `'a'`, so instead `1` and `2.0` are converted to strings. If you want your array to store data of different types for some reason, you're therefore better off sticking with Python's `list` class.
 
 ```python
 import numpy as np
@@ -365,8 +359,8 @@ np.array(our_list1)  # array([1., 2., 3.])
 np.array(our_list2)  # array(['1', 'a', '2.0'])
 ```
 
-#### 2. [Machine learning](#machine-learning)
+#### 3. [Machine learning](#machine-learning)
 As someone who loves figuring out the nuts and bolts of how things work, I'd personally recommend digging into the distinctions between algorithms like random forests and XGBoost! I find it fascinating, and the knowledge makes it easier for me to demystify machine learning to curious consumers of model outputs. But overall, my ability to deliver business value hasn't improved much from digging into these specifics; the real benefit is the personal satisfaction of understanding the nuances.
 
-#### 3. [Training data vs. testing data](#training-data-vs-testing-data)
+#### 4. [Training data vs. testing data](#training-data-vs-testing-data)
 Note that this is for supervised learning problems, where there is a "correct" output for each input. Evaluating model accuracy is [more complicated for unsupervised learning problems](https://www.researchgate.net/post/Which_are_the_methods_to_validate_an_unsupervised_machine_learning_algorithm).  
