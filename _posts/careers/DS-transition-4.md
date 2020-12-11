@@ -18,10 +18,17 @@ So far, we've covered [the range of data science roles]({{  site.baseurl  }}/DS-
 
 ---
 
+## Other types of coding for days
+It's important to be good at coding beyond just writing good code. Like... "meta-skills" at programming.
+You may be processing datasets that are too large to load onto your laptop's memory, for example, or you may need to dip into statistics that you can only access with specialized packages in Python or R. Similarly, while one-off scripts might have cut it during school<sup>[[1]](#1-code-for-days)</sup>, [you're living on borrowed time](https://en.wikipedia.org/wiki/Technical_debt) if you don't organize your code in a way that's easily read, reused, and modified by others.
+
+
+
 * **Inferential Statistics**
 - [ ] [Experimental design]({{  site.baseurl  }}/DS-transition-2/#experimental-design)
 - [ ] [Comparisons between groups]({{  site.baseurl  }}/DS-transition-2/#comparisons-between-groups)
-- [ ] [Predictive modeling]({{  site.baseurl  }}/DS-transition-2/#predictive-modeling) <br><br>
+- [ ] [Predictive modeling]({{  site.baseurl  }}/DS-transition-2/#predictive-modeling)
+- [ ] [Model internals]({{  site.baseurl  }}/DS-transition-2/#model-internals) <br><br>
 * **Programming**
 - [ ] [Dataframes]({{  site.baseurl  }}/DS-transition-3/#programming)
 - [ ] [Visualizations]({{  site.baseurl  }}/DS-transition-3/#visualizations)
@@ -265,4 +272,9 @@ This code block is quite a bit longer than the others, and it doesn't even inclu
 If you're interested in a deeper dive on these concepts and a step-by-step explanation of the (truncated) code above, check out [this post]({{ site.baseurl }}/Python-5-Writing-production-level-Python).
 
 ## Footnotes
+#### 1. NEED TO NAME
+XXX
+This is aimed at me as much as at anyone else. In grad school, I had R scripts that were hundreds of lines long, and rerunning them to process data differently always felt like performing surgery. It shouldn't be that way! Looking back, it's amazing how much easier the Ph.D. would have been with some basic software engineering and project management best practices in place. Maybe next time...
+
+
 1. [[Interacting with APIs]](#interacting-with-apis) APIs and SQL go hand-in-hand, actually. When you request data from an API, your request is most likely converted to a SQL query that is then executed on a database.

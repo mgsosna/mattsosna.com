@@ -19,17 +19,19 @@ Welcome to the third post in our series of how to enter data science! The [first
 ---
 
 ## Code for days
-As a data scientist, it's critical that you have highly polished coding chops. Here's why:
+While Excel wizardry might cut it for many analytics tasks, **data science work relies heavily on the _nuance_, _reproducibility_, and _scalability_ of programming.** Here are a few reasons coding is important:
 
-1. **Most of your day will be spent writing and reading code.** The more fluent you are as a programmer, the more effective you'll be at your work. This can mean knowing more ways to tackle coding challenges, as well as knowing the right tool for the job. You'll also be a more helpful teammate when reviewing others' code.
+1. **You need to show your work.** You can't just show the end result to a stakeholder. You need a train of thought that will be verified by your teammates. (Check out the upcoming post to ensure you're not driving those teammates crazy when they read your code!)
 
-2. **You will need to share your code with others.** When providing a deliverable to stakeholders, you can't just show your end result without explaining how you got there. Your teammates will be the ones reviewing your code to follow your logical process, checking for edge cases, and in general making sure the code does what you think it's doing. It's important that you can code in a way that others can more easily follow your thought process, as well as modify the code down if needed in the future.
+2. **You need to be able to automate your work.** If you write a script that performs data quality checks for a user and outputs a CSV, you don't want to manually hit "run" 1000 times.
 
-3. **Your work will need to be scalable.** Especially for self-learners or academics, a lot of your code can look be "one-off" scripts that does the job but is a pain to modify. (I personally had R scripts that were hundreds of lines long, and rerunning them to process data differently always felt like performing surgery. It shouldn't be that way!)
+For analyzing data, Python and R allow...
 
+* Reproducibility
+* Scalability
+* Transparency
 
-Compared to formulas in an Excel spreadsheet, programming lets you both run *more nuanced analyses* as well as *automate and scale those analyses.* Coding lets you share analyses and provides a way for others to easily review the steps in your work, rather than just the end product.
-
+(Should this post be called the analytics?)
 
 
 While plenty of data science roles rely solely on R, this post will demonstrate coding concepts with Python. Python's versatility makes it an "all-in-one" language for a huge range of data science applications, from dataframe manipulations to computer vision. Python also lets you more easily dip into [the software engineering side of the analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel).
@@ -39,7 +41,8 @@ Here are the technical skills we're covering in this series. Inferential statist
 * **Inferential Statistics**
 - [ ] [Experimental design]({{  site.baseurl  }}/DS-transition-2/#experimental-design)
 - [ ] [Comparisons between groups]({{  site.baseurl  }}/DS-transition-2/#comparisons-between-groups)
-- [ ] [Predictive modeling]({{  site.baseurl  }}/DS-transition-2/#predictive-modeling) <br><br>
+- [ ] [Predictive modeling]({{  site.baseurl  }}/DS-transition-2/#predictive-modeling)
+- [ ] [Model internals]({{  site.baseurl  }}/DS-transition-2/#model-internals) <br><br>
 * **Programming**
 - [ ] [Dataframes](#programming)
 - [ ] [Visualizations](#visualizations)
@@ -168,7 +171,7 @@ list1 + list2   # [1, 2, 3, 4, 5, 6]
 array1 + array2 # array([5, 7, 9])
 ```
 
-To do elementwise math on Python lists, you need to use something like a list comprehension with `zip` on the two lists. For `numpy`, it's just the normal math operators. You can still get away with manually calculating simple aggregations like the mean on lists, but we're nearly at the point where you should just use `numpy`.
+To do elementwise math on Python lists, you need to use something like a list comprehension with `zip` on the two lists. For `numpy`, it's just the normal math operators. You can still get away with manually calculating simple aggregations like the mean on lists, but we're nearly at the point where it doesn't make sense to use lists.
 
 ```python
 # Elementwise multiplication
@@ -224,7 +227,12 @@ for group in df['treatment'].unique():
 plt.show()
 ```
 
-If you want to get fancy, look into interactive dashboarding tools like [Bokeh](https://bokeh.org/) or [Plotly](https://plotly.com/). These tools let the user interact with the plot, such as getting more information about a point by hovering over it, or regenerating data in the plot by clicking on drop-down menus or dragging sliders.
+If you want to get fancy, look into interactive dashboarding tools like [Bokeh](https://bokeh.org/) or [Plotly](https://plotly.com/). These tools let the user interact with the plot, such as getting more information about a point by hovering over it, or regenerating data in the plot by clicking on drop-down menus or dragging sliders. You can even embed them into Markdown, like this simple one below.
+
+<center>
+{% include bokeh_example.html %}
+</center>
+
 
 ### Descriptive statistics
 While you may be chomping at the bit to get to machine learning, I think a solid understanding of [descriptive statistics](https://conjointly.com/kb/descriptive-statistics/) should come first. In contrast to inferential statistics, descriptive statistics involves summarizing the data you have, as opposed to making inferences about a broader population.
