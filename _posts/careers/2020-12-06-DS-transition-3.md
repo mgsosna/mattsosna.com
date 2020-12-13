@@ -212,12 +212,12 @@ plt.plot(df['date'], df['age'])
 plt.title('My age over time', fontweight='bold')
 
 plt.subplot(1,2,2)
-plt.hist(df['age'], color='C0', bins=31)
+plt.hist(df['age'], bins=31)
 plt.title('Distribution of my ages', fontweight='bold')
 
 plt.show()
 ```
-![]({{  site.baseurl  }}/images/careers/matplotlib1.png)
+![]({{  site.baseurl  }}/images/careers/DS-3/matplotlib1.png)
 
 And below is a simple way to plot data with multiple groups. The `label` keyword is incredibly handy, as you can then simply call `plt.legend` and auto-populate the legend with info on each group.
 
@@ -238,20 +238,27 @@ plt.legend(fontsize=12)
 plt.show()
 ```
 <center>
-<img src="{{  site.baseurl  }}/images/careers/matplotlib2.png" height="75%" width="75%" alt="Scatterplot">
+<img src="{{  site.baseurl  }}/images/careers/DS-3/matplotlib2.png" height="75%" width="75%" alt="Scatterplot">
 </center>
 
-If you want to get fancy, look into interactive dashboarding tools like [Bokeh](https://bokeh.org/) or [Plotly](https://plotly.com/). These tools let the user interact with the plot, such as getting more information about a point by hovering over it, or regenerating data in the plot by clicking on drop-down menus or dragging sliders. You can even embed simple plots into static HTML, like this Bokeh plot below.
+If you want to get fancy, look into interactive dashboarding tools like [Bokeh](https://bokeh.org/) or [Plotly](https://plotly.com/). These tools let the user interact with the plot, such as getting more information about a point by hovering over it, or regenerating data in the plot by clicking on drop-down menus or dragging sliders. You can even embed simple plots into static HTML, like this Bokeh plot below.<sup>[[3]](#3-visualizations)</sup>
 
 <center>
 {% include bokeh_example.html %}
 </center>
 
 ### Descriptive statistics
-While you may be chomping at the bit to get to machine learning, I think a solid understanding of [descriptive statistics](https://conjointly.com/kb/descriptive-statistics/) should come first. (As well as [inferential statistics]({{  site.baseurl  }}/DS-transition-2) if you skipped the last post!) In contrast to inferential statistics, descriptive statistics involves summarizing the data you have, as opposed to making inferences about a broader population.
-<span style='color:red'>Work on this... </span> You'll often need to efficiently describe data to others, which is where descriptive stats comes in. Thankfully, the basics should cover you for most data science applications.
+While you may be chomping at the bit to get to machine learning, I think a solid understanding of [descriptive statistics](https://conjointly.com/kb/descriptive-statistics/) should come first. (As well as [inferential statistics]({{  site.baseurl  }}/DS-transition-2) if you skipped the last post!)
 
-It's critical to be able to quantify what the data looks like. Is the data normally distributed, unimodal or bimodal, skewed left or right? What's a typical value, and how much do the data vary from that value? Think of descriptive stats as the "hard numbers" pair to data visualization. Being able to quickly communicate these metrics will provide an intuition for the data that helps identify outliers, such as data quality issues.
+In contrast to inferential statistics, **descriptive statistics involves summarizing the data you have**, as opposed to making inferences about a broader population. You'll often need to efficiently describe data to others, which is where descriptive stats comes in. Thankfully, the basics should cover you for most data science applications.
+
+It's critical to be able to quantify what the data looks like. Is the data normally distributed, [unimodal or bimodal](https://www.statisticshowto.com/what-is-a-bimodal-distribution/), [skewed left or right](https://www.mathsisfun.com/data/skewness.html)? What's a [typical value](https://en.wikipedia.org/wiki/Mean), and how much do the data [vary from that value](https://en.wikipedia.org/wiki/Variance)? Think of descriptive stats as the "hard numbers" pair to data visualization. Being able to quickly communicate these metrics will provide an intuition for the data that helps identify outliers, such as data quality issues.
+
+Here are the main metrics I think are essential to know:
+* **Averages:** mean, median, mode
+* **Spread:** standard deviation
+* **Modality:** unimodal, bimodal, multimodal distributions
+* **Skew:** left, right
 
 ```python
 import numpy as np
@@ -299,7 +306,7 @@ Think of being a data scientist as building a machine that can drill through con
 
 **But the majority of your time will probably be spent building out _the rest of the machinery_** - the frame, levers, screws, etc. - and identifying *where* to apply the drill. (If you're in a particularly engineering-strapped organization, you might also end up building the front end: the seat and controls for the user!) If you only care about the drill tip instead of the whole machine, you'll likely find yourself disillusioned by many data science jobs. But if you find enjoyment in the entire process of building the machine and creating something that truly helps people break that concrete, then you'll love your work.
 
-At any rate, you *will* need some knowledge of machine learning. I wouldn't stress very much about the specifics of different machine learning algorithms (e.g. [random forests](https://en.wikipedia.org/wiki/Random_forest) vs. [support vector machines](https://en.wikipedia.org/wiki/Support_vector_machine) vs. [XGBoost](https://xgboost.readthedocs.io/en/latest/)) unless your role is deep in research, education, or machine learning consulting.<sup>[[3]](#3-machine-learning)</sup> Rather, you'll get a lot farther if you have a good understanding of the necessary steps *before and after* you use a machine learning algorithm.
+At any rate, you *will* need some knowledge of machine learning. I wouldn't stress very much about the specifics of different machine learning algorithms (e.g. [random forests](https://en.wikipedia.org/wiki/Random_forest) vs. [support vector machines](https://en.wikipedia.org/wiki/Support_vector_machine) vs. [XGBoost](https://xgboost.readthedocs.io/en/latest/)) unless your role is deep in research, education, or machine learning consulting.<sup>[[4]](#4-machine-learning)</sup> Rather, you'll get a lot farther if you have a good understanding of the necessary steps *before and after* you use a machine learning algorithm.
 
 The main concepts to know, I'd argue, are:
 1. Training data vs. testing data
@@ -308,7 +315,7 @@ The main concepts to know, I'd argue, are:
 4. The difference between machine learning and statistics
 
 #### Training data vs. testing data
-When you're building a predictive model, it's critical to know how accurate it is. This is where **training data versus testing data** come in. The main idea is to subset your data into "training" data that's used to create the model, and "testing" data that's later used to evaluate model accuracy. Once your model learns the relationship between input and output, you use the testing data to see how the model's predictions compare to the true outputs.<sup>[[4]](#4-training-data-vs-testing-data)</sup>
+When you're building a predictive model, it's critical to know how accurate it is. This is where **training data versus testing data** come in. The main idea is to subset your data into "training" data that's used to create the model, and "testing" data that's later used to evaluate model accuracy. Once your model learns the relationship between input and output, you use the testing data to see how the model's predictions compare to the true outputs.<sup>[[5]](#5-training-data-vs-testing-data)</sup>
 
 ```python
 import pandas as pd
@@ -384,8 +391,40 @@ np.array(our_list1)  # array([1., 2., 3.])
 np.array(our_list2)  # array(['1', 'a', '2.0'])
 ```
 
-#### 3. [Machine learning](#machine-learning)
+#### 3. [Visualizations](#visualizations)
+Here's the code to generate that Bokeh plot, if you're interested.
+
+```python
+from bokeh.io import output_file, show
+from bokeh.plotting import figure
+from bokeh.models import HoverTool
+import numpy as np
+
+# Generate data
+n = 500
+x = np.linspace(0, 13, n)
+y = np.sin(x) + np.random.random(n) * 1
+
+# Create canvas
+plot = figure(plot_width=525, plot_height=300,
+              title='Hover your mouse over the data!',
+              x_axis_label="x", y_axis_label="y")
+plot.title.text_font_size = '12pt'
+
+# Add scatterplot data
+plot.circle(x, y, size=10, fill_color='grey', alpha=0.1,
+            line_color=None, hover_alpha=0.5,
+            hover_fill_color='orange', hover_line_color='white')
+
+# Create the hover tool
+hover = HoverTool(tooltips=None, mode='vline')
+plot.add_tools(hover)
+
+show(plot)
+```
+
+#### 4. [Machine learning](#machine-learning)
 As someone who loves figuring out the nuts and bolts of how things work, I'd personally recommend digging into the distinctions between algorithms like random forests and XGBoost! I find it fascinating, and the knowledge makes it easier for me to demystify machine learning to curious consumers of model outputs. But overall, my ability to deliver business value hasn't improved much from digging into these specifics; the real benefit is the personal satisfaction of understanding the nuances.
 
-#### 4. [Training data vs. testing data](#training-data-vs-testing-data)
+#### 5. [Training data vs. testing data](#training-data-vs-testing-data)
 Note that this is for supervised learning problems, where there is a "correct" output for each input. Evaluating model accuracy is [more complicated for unsupervised learning problems](https://www.researchgate.net/post/Which_are_the_methods_to_validate_an_unsupervised_machine_learning_algorithm).  
