@@ -22,7 +22,7 @@ Welcome to the third post in our series of how to enter data science! The [first
 While Excel wizardry might cut it for many analytics tasks, **data science work relies heavily on the _nuance_, _reproducibility_, and _scalability_ of programming.** From statistical tests only available in specialized R and Python libraries, to being able to show step-by-step how a model is formulated and generates predictions, to being able to go from processing one dataset to 1,000 with a few keystrokes, *fluency in programming is essential for being an effective data scientist*. We'll therefore focus on some key programming skills that will serve you well no matter your role is on the
 [analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel).
 
-While plenty of data science roles rely solely on R, this post will demonstrate coding concepts with Python. Python's versatility makes it an "all-in-one" language for a huge range of data science applications, from dataframe manipulations to speech recognition and computer vision. Even if your role involves crunching numbers all day in R, consider learning a little Python for automating steps like [saving results to your company's Dropbox](https://stackoverflow.com/questions/23894221/upload-file-to-my-dropbox-from-python-script).
+While plenty of data science roles rely solely on R, this post will demonstrate coding concepts with Python. Python's versatility makes it an "all-in-one" language for a huge range of data science applications, from [dataframe manipulations](#dataframes) to [speech recognition](https://pypi.org/project/SpeechRecognition/) and [computer vision](https://en.wikipedia.org/wiki/Computer_vision). Even if your role involves crunching numbers all day in R, consider learning a little Python for automating steps like [saving results to your company's Dropbox](https://stackoverflow.com/questions/23894221/upload-file-to-my-dropbox-from-python-script).
 
 Here are the technical skills we're covering in this series. Inferential statistics is covered in [the last post]({{  site.baseurl  }}/DS-transition-2), programming in this post, and software engineering in the next post.
 
@@ -77,7 +77,7 @@ The next level of difficulty involves vectorized and iterative data transformati
 
 For more nuanced operations, such as handling missing values that would otherwise cause columnwise operations to fail, you can use `.apply`. Below, we use a lambda to apply a custom function, `safe_divide`, to the `col1` and `col2` fields of each row.<sup>[[1]](#1-dataframes)</sup>
 
-For logic that can't be easily passed into a lambda, we just iterate through the dataframe rows using `itertuples`. ([Don't use `iterrows`](https://medium.com/swlh/why-pandas-itertuples-is-faster-than-iterrows-and-how-to-make-it-even-faster-bc50c0edd30d) if you can avoid it!)
+For logic that can't be easily passed into a lambda, we just iterate through the dataframe rows using `itertuples`. ([Don't use `iterrows` if you can avoid it!)](https://medium.com/swlh/why-pandas-itertuples-is-faster-than-iterrows-and-how-to-make-it-even-faster-bc50c0edd30d)
 
 ```python
 # Example 2: iterating and appending data
@@ -108,17 +108,23 @@ for tup in df.itertuples():
     df_final = df_final.append(df_iter, ignore_index=True)
 ```
 
-Finally, we need the ability to combine data from multiple dataframes, as well as run aggregate commands on the data. In the code below we merge two dataframes, making sure not to drop any rows in `df1` by specifying that it's a [left merge](https://www.shanelynn.ie/merge-join-dataframes-python-pandas-index-1/). Then we create a new dataframe, `df_agg`, that has the sums of all the columns for each user. We can then print out how much user `123` spent at Target, for example.
+Finally, we need the ability to combine data from multiple dataframes, as well as run aggregate commands on the data. In the code below we merge two dataframes, making sure not to drop any rows in `df1` by specifying that it's a [left merge](https://www.shanelynn.ie/merge-join-dataframes-python-pandas-index-1/). Then we create a new dataframe, `df_agg`, that has the sums of all the columns for each user. Since `user_id` is now our index, we can easily display a specific user's spending in a given category with `.loc`.
 
 ```python
 # Example 3: merging, groupbys
+
+# Merge data, avoiding dropping rows in df1
 df_merged = pd.merge(df1, df2, on='user_id', how='left')
+
+# Sum all numerical columns by user
 df_agg = df_merged.groupby('user_id').sum()
-print(df_agg.loc[123, 'target'])
+
+# Display user 123's grocery spending
+print(df_agg.loc[123, 'groceries'])
 ```
 
 ### Arrays
-`pandas` dataframes are actually built on top of `numpy` arrays, so it's helpful to have some knowledge on how to efficiently use `numpy`. Many operations on `pandas.Series` (the array-like datatype for rows and columns) are identical to `numpy.array` operations, for example.
+`pandas` dataframes [are actually built on top of `numpy` arrays](https://stackoverflow.com/questions/11077023/what-are-the-differences-between-pandas-and-numpyscipy-in-python), so it's helpful to have some knowledge on how to efficiently use `numpy`. Many operations on `pandas.Series` (the array-like datatype for rows and columns) are identical to `numpy.array` operations, for example.
 
 `numpy`, or [Numerical Python](https://numpy.org/), is a library with classes built specifically for efficient mathematical operations. R users will find `numpy` arrays familiar, as they share a lot of coding logic with R's vectors. Below, I'll highlight some distinctions from Python's built-in `list` class. A typical rule of thumb I follow is that it's better to use Python's built-in classes whenever possible, given that they've been highly optimized for the language. In data science, though, `numpy` arrays are generally a better choice.<sup>[[2]](#2-arrays)</sup>
 
@@ -190,13 +196,15 @@ arr_2d.mean(axis=1)                # array([2.0, 5.0])
 arr_2d.mean(axis=0)           # array([2.5, 3.5, 4.5])
 ```
 
-If you end up working in [computer vision](https://en.wikipedia.org/wiki/Computer_vision), `numpy` multidimensional arrays will be essential, as they're the default for storing pixel intensities in images. You might come across a two-dimensional array with tuples for each pixel's [RGB](https://en.wikipedia.org/wiki/RGB_color_model) values, for example, or a five-dimensional array where dimensions 3, 4, and 5 are R, G, and B, respectively.
+If you end up working in computer vision, `numpy` multidimensional arrays will be essential, as they're the default for storing pixel intensities in images. You might come across a two-dimensional array with tuples for each pixel's [RGB](https://en.wikipedia.org/wiki/RGB_color_model) values, for example, or a five-dimensional array where dimensions 3, 4, and 5 are R, G, and B, respectively.
 
 ### Visualizations
-After dataframes and arrays, the next most crucial data science skill is data visualization. **Visualizing the data is one of the first and last steps of an analysis:** when Python is communicating the data to you, and when you're communicating the data to stakeholders. The main Python data visualization libraries are `matplotlib` and `seaborn`. I'll show some simple `matplotlib` examples below.
+After dataframes and arrays, the next most crucial data science skill is data visualization. **Visualizing the data is one of the first and last steps of an analysis:** when Python is communicating the data to you, and when you're communicating the data to stakeholders. The main Python data visualization libraries are `matplotlib` and `seaborn`. Here's how to create a simple two-panel plot in `matplotlib`.
 
 ```python
 import matplotlib.pyplot as plt
+
+plt.figure(figsize=(10, 4))
 
 # Create a 2-panel plot
 plt.subplot(1,2,1)
@@ -204,17 +212,34 @@ plt.plot(df['date'], df['age'])
 plt.title('My age over time', fontweight='bold')
 
 plt.subplot(1,2,2)
-plt.hist(df['age'], color='blue')
+plt.hist(df['age'], color='C0', bins=31)
 plt.title('Distribution of my ages', fontweight='bold')
 
 plt.show()
+```
+![]({{  site.baseurl  }}/images/careers/matplotlib1.png)
+
+And below is a simple way to plot data with multiple groups. The `label` keyword is incredibly handy, as you can then simply call `plt.legend` and auto-populate the legend with info on each group.
+
+```python
+# Define dict for colors
+trt_dict = {'Trt1': 'red', 'Trt2': 'darkorange', 'Control': 'C0'}
 
 # Iteratively add data to a plot
-for group in df['treatment'].unique():
-    df_group = df[df['treatment'] == group]
-    plt.scatter(df_group['age'], df['tumor_size'], label=group)
+for trt in df['treatment'].unique():
+    df_trt = df[df['treatment'] == trt]
+    plt.scatter(df_trt['exposure'], df_trt['tumor_size'], label=trt,
+                color=trt_dict[trt], alpha=0.8)
+
+plt.xlabel('Exposure (mL)', fontweight='bold', fontsize=12)
+plt.ylabel('Tumor size (g$^3$)', fontweight='bold', fontsize=12)
+plt.legend(fontsize=12)
+
 plt.show()
 ```
+<center>
+<img src="{{  site.baseurl  }}/images/careers/matplotlib2.png" height="75%" width="75%" alt="Scatterplot">
+</center>
 
 If you want to get fancy, look into interactive dashboarding tools like [Bokeh](https://bokeh.org/) or [Plotly](https://plotly.com/). These tools let the user interact with the plot, such as getting more information about a point by hovering over it, or regenerating data in the plot by clicking on drop-down menus or dragging sliders. You can even embed simple plots into static HTML, like this Bokeh plot below.
 
