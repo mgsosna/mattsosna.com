@@ -279,7 +279,7 @@ print(normaltest(data))
 ### Working with dates
 At least with data analytics, you most likely won't escape working with dates. Dates form the backbone of [time series analysis](https://en.wikipedia.org/wiki/Time_series), which is ubiquitous in fields with continuous data streams like the [Internet of Things](https://www.wired.co.uk/article/internet-of-things-what-is-explained-iot).
 
-The built-in `datetime` library is Python's standard, with expanded methods in the `dateutil` library. Thankfully, `pandas` has excellent functionality for working with dates when the index is set to datetime, meaning you can stay in `pandas` for most types of data analysis in Python.
+The built-in `datetime` library is Python's standard, with expanded methods in the `dateutil` library. Thankfully, `pandas` has excellent functionality for working with dates when the index is set to datetime, meaning you can stay in `pandas` for most types of data analysis in Python. Similarly, `matplotlib` lets you pass in a list of `dt.datetime` values as if they were normal numbers.
 
 ```python
 import pandas as pd
@@ -292,19 +292,22 @@ yesterday = today - dt.timedelta(days=1)
 last_year = today - relativedelta(years=1)
 
 # Generate sample data with datetime index
-df = pd.DataFrame({'data': [100]*60]},
+df = pd.DataFrame({'data': [100]*60},
                   index=pd.date_range('2020-01-01', '2020-02-29'))
 
 # Sum the data for each month
 df_new = df.resample('MS').sum()
+df_new.plot(kind='bar')  # Call built-in matplotlib from pandas
 ```
 
 ### Machine learning
 Finally, we have machine learning. Of all the things a data scientist does, machine learning receives the most hype *but is likely the smallest aspect of the job.*
 
-Think of being a data scientist as building a machine that can drill through concrete. The drill itself is the eye-catching bit - the fancy statistics and analytics - and the tip is machine learning. The drill tip gets a lot of attention - it gets all the credit for breaking through the concrete, and there are always new and improved drill tips coming out that can break tougher concrete.
+<img src="{{  site.baseurl  }}/images/careers/DS-3/ml_drill.png" align="right" height="48%" width="48%"> Think of being a data scientist as building a huge drilling machine. The drill itself is the eye-catching bit $-$ the fancy statistics and analytics $-$ and the tip is machine learning. The drill tip gets all the credit for breakthroughs, and there are always new and improved drill tips coming out that can break tougher ground.
 
-**But the majority of your time will probably be spent building out _the rest of the machinery_** - the frame, levers, screws, etc. - and identifying *where* to apply the drill. (If you're in a particularly engineering-strapped organization, you might also end up building the front end: the seat and controls for the user!) If you only care about the drill tip instead of the whole machine, you'll likely find yourself disillusioned by many data science jobs. But if you find enjoyment in the entire process of building the machine and creating something that truly helps people break that concrete, then you'll love your work.
+**But the majority of your time will probably be spent building out _the rest of the machinery_** - the frame, levers, screws, etc. - and identifying *where* to apply the drill. (If you're in a particularly engineering-strapped organization, you might also end up building the front end: the seat and controls for the user!)
+
+If you only care about the drill tip instead of the whole machine, you'll likely find yourself disillusioned by many data science jobs. But if you find enjoyment in the *entire process of building the machine* and creating something that truly helps people break that ground, then you'll love your work.
 
 At any rate, you *will* need some knowledge of machine learning. I wouldn't stress very much about the specifics of different machine learning algorithms (e.g. [random forests](https://en.wikipedia.org/wiki/Random_forest) vs. [support vector machines](https://en.wikipedia.org/wiki/Support_vector_machine) vs. [XGBoost](https://xgboost.readthedocs.io/en/latest/)) unless your role is deep in research, education, or machine learning consulting.<sup>[[4]](#4-machine-learning)</sup> Rather, you'll get a lot farther if you have a good understanding of the necessary steps *before and after* you use a machine learning algorithm.
 
