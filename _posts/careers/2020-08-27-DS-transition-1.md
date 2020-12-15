@@ -18,7 +18,7 @@ This post assumes you're interested in making the switch to data science. Welcom
 **How to enter data science:**
 1. **The target**
 2. [The statistics]({{  site.baseurl  }}/DS-transition-2)
-3. [The programming]({{  site.baseurl  }}/DS-transition-3)
+3. [The analytics]({{  site.baseurl  }}/DS-transition-3)
 4. The engineering *(coming soon)*
 5. The people *(coming soon)*
 
