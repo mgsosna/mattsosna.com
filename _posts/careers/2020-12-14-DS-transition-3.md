@@ -6,7 +6,7 @@ summary: The analytics needed to succeed in data science
 image: ""
 ---
 
-Welcome to the third post in our series of how to enter data science! The [first post]({{  site.baseurl  }}/DS-transition-1) covered how to navigate the broad diversity of data science roles in the industry, and [the second]({{  site.baseurl  }}/DS-transition-2) was a deep dive on (some!) statistics essential to being an effective data scientist. In this post, we'll cover the skills you'll need when manipulating and analyzing data. Get ready for lots of syntax highlighting!
+Welcome to the third post in our series of how to enter data science! The [first post]({{  site.baseurl  }}/DS-transition-1) covered how to navigate the broad diversity of data science roles in the industry, and [the second]({{  site.baseurl  }}/DS-transition-2) was a deep dive on (some!) statistics essential to being an effective data scientist. In this post, we'll cover skills you'll need when manipulating and analyzing data. Get ready for lots of syntax highlighting!
 
 ---
 **How to enter data science:**
@@ -19,7 +19,7 @@ Welcome to the third post in our series of how to enter data science! The [first
 ---
 
 ## Code for days
-While Excel wizardry might cut it for many analytics tasks, **data science work relies heavily on the _nuance_, _reproducibility_, and _scalability_ of programming.** From statistical tests only available in specialized R and Python libraries, to being able to show step-by-step how a model is formulated and generates predictions, to being able to go from processing one dataset to 1,000 with a few keystrokes, *fluency in programming is essential for being an effective data scientist*. We'll therefore focus on some key data manipulation and analytics skills that will serve you well no matter your role is on the [analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel).
+While Excel wizardry might cut it for many analytics tasks, **data science work relies heavily on the _nuance_, _reproducibility_, and _scalability_ of programming.** From statistical tests only available in specialized R and Python libraries, to being able to show step-by-step how a model is formulated and generates predictions, to being able to go from processing one dataset to 1,000 with a few keystrokes, _**fluency in programming is essential for being an effective data scientist.**_ We'll therefore focus on programming skills that are key to effectively manipulating and analyzing data. These skills should prove useful no matter where your role is on the [analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel).
 
 While plenty of data science roles rely solely on R, this post will demonstrate coding concepts with Python. Python's versatility makes it an "all-in-one" language for a huge range of data science applications, from [dataframe manipulations](#dataframes) to [speech recognition](https://pypi.org/project/SpeechRecognition/) and [computer vision](https://en.wikipedia.org/wiki/Computer_vision). Even if your role involves crunching numbers all day in R, consider learning a little Python for automating steps like [saving results to your company's Dropbox](https://stackoverflow.com/questions/23894221/upload-file-to-my-dropbox-from-python-script).
 
@@ -48,12 +48,11 @@ Here are the technical skills we're covering in this series. Inferential statist
 {: style='list-style-type: none'}
 
 ### Dataframes
-Dataframes are at the core of data science and analytics. They're essentially just a table of rows and columns, typically where each row is a _**record**_ and each column is an _**attribute**_ of that record. You can have a table of employees, for example, where each row is a person with columns for their first and last names, their home address, their salary, etc. Because dataframes will play a central role in your job, you'll need to master visualizing and manipulating the data within them. `pandas` is the key library here.
+Dataframes are at the core of data science and analytics. They're essentially just a table of rows and columns, typically where each row is a _**record**_ and each column is an _**attribute**_ of that record. You can have a table of employees, for example, where each row is a person and the columns are their name, home address, and job title. Because dataframes will play a central role in data science, you'll need to master visualizing and manipulating the data within them. `pandas` is the key library here.
 
-The basics include being able to load, clean, and write out [CSV files](https://en.wikipedia.org/wiki/Comma-separated_values). Cleaning data can involve removing rows with missing values or duplicated information, correcting erroneous values, and reformatting columns into different data types.
+The basics include being able to load, clean, and write out [CSV files](https://en.wikipedia.org/wiki/Comma-separated_values). Cleaning data can involve removing rows with missing values or duplicated information, correcting erroneous values, and reformatting columns into different [data types](https://realpython.com/python-data-types/).
 
 ```python
-# Example 1: loading, cleaning, and writing out CSVs
 import os
 import pandas as pd
 
@@ -66,21 +65,24 @@ df['state'].replace({'ill': 'IL', 'nan': None}, inplace=True)
 df_filt = df[df['state'].notna()]
 
 # Remove duplicates and reformat columns
-df_filt.drop_duplicates(['customer_id', 'store_id'], inplace=True)
+df_filt = df_filt.drop_duplicates(['customer_id', 'store_id'])
 df_filt = df_filt.astype({'price': float, 'age': int})
 
 # Save data
 df_filt.to_csv("cleaned.csv", index=False)
 ```
 
-The next level of difficulty involves vectorized and iterative data transformations. For simple operations like adding every value in two columns together, `pandas` lets you simply add the two columns together like `df['col1'] + df['col2']`.
+Other important data manipulations include vectorized and iterative data transformations. For simple operations like adding every value in two columns together, `pandas` lets you simply add the two columns together like `df['col1'] + df['col2']`.
+
+```python
+# Simple vectorized transformation
+df['added'] = df['col1'] + df['col2']
+```
 
 For more nuanced operations, such as handling missing values that would otherwise cause columnwise operations to fail, you can use `.apply`. Below, we use a [lambda](https://www.programiz.com/python-programming/anonymous-function) to apply a custom function, `safe_divide`, to the `col1` and `col2` fields of each row.<sup>[[1]](#1-dataframes)</sup>
 
-For logic that can't be easily passed into a lambda, we just iterate through the dataframe rows using `itertuples`. ([Don't use `iterrows` if you can avoid it!)](https://medium.com/swlh/why-pandas-itertuples-is-faster-than-iterrows-and-how-to-make-it-even-faster-bc50c0edd30d)
-
 ```python
-# Example 2: iterating and appending data
+# Define a custom function
 def safe_divide(x, y):
     """
     | Divide x by y. Returns np.nan if x or y are null
@@ -90,13 +92,18 @@ def safe_divide(x, y):
         return np.nan
     return x / y
 
-# Vectorized transformations
-df['added'] = df['col1'] + df['col2']
+# Apply it to our df
 df['divided'] = df.apply(lambda x: safe_divide(x['col1'], x['col2']),
                          axis=1)
+```
 
-# Iterated transformations
+For logic that can't be easily passed into a lambda, we can iterate through the dataframe rows using `.itertuples`. ([Don't use `.iterrows` if you can avoid it!)](https://medium.com/swlh/why-pandas-itertuples-is-faster-than-iterrows-and-how-to-make-it-even-faster-bc50c0edd30d)
+
+```python
+# Instantiate a df to append data to
 df_final = pd.DataFrame()
+
+# Iterate through the rows of our df
 for tup in df.itertuples():
 
     # Logic that can't easily be passed into a lambda
@@ -111,8 +118,6 @@ for tup in df.itertuples():
 Finally, we need the ability to combine data from multiple dataframes, as well as run aggregate commands on the data. In the code below we merge two dataframes, making sure not to drop any rows in `df1` by specifying that it's a [left merge](https://www.shanelynn.ie/merge-join-dataframes-python-pandas-index-1/). Then we create a new dataframe, `df_agg`, that has the sums of all the columns for each user. Since `user_id` is now our index, we can easily display a specific user's spending in a given category with `.loc`.
 
 ```python
-# Example 3: merging, groupbys
-
 # Merge data, avoiding dropping rows in df1
 df_merged = pd.merge(df1, df2, on='user_id', how='left')
 
@@ -131,7 +136,6 @@ print(df_agg.loc[123, 'groceries'])
 First, we have simple filtering of a vector. Python's built-in `list` requires either a list comprehension, or the `filter` function plus a lambda and unpacking (`[*...]`). `numpy`, meanwhile, just requires the array itself.
 
 ```python
-# Example 1: filtering
 import numpy as np
 
 # Create the data
@@ -196,10 +200,10 @@ arr_2d.mean(axis=1)                # array([2.0, 5.0])
 arr_2d.mean(axis=0)           # array([2.5, 3.5, 4.5])
 ```
 
-If you end up working in computer vision, `numpy` multidimensional arrays will be essential, as they're the default for storing pixel intensities in images. You might come across a two-dimensional array with tuples for each pixel's [RGB](https://en.wikipedia.org/wiki/RGB_color_model) values, for example, or a five-dimensional array where dimensions 3, 4, and 5 are R, G, and B, respectively.
+If you end up working in computer vision, `numpy` multidimensional arrays will be essential, as they're the default for storing pixel intensities in images. You might come across a two-dimensional array with tuples for each pixel's [RGB](https://en.wikipedia.org/wiki/RGB_color_model) values, for example, or a five-dimensional array where dimensions 3, 4, and 5 are red, green, and blue, respectively.
 
 ### Visualizations
-After dataframes and arrays, the next most crucial data science skill is data visualization. **Visualizing the data is one of the first and last steps of an analysis:** when Python is communicating the data to you, and when you're communicating the data to stakeholders. The main Python data visualization libraries are `matplotlib` and `seaborn`. Here's how to create a simple two-panel plot in `matplotlib`.
+After dataframes and arrays, the next most crucial analytics skill is data visualization. **Visualizing the data is one of the first and last steps of an analysis:** when Python is communicating the data to you, and when you're communicating the data to stakeholders. The main Python data visualization libraries are `matplotlib` and `seaborn`. Here's how to create a simple two-panel plot in `matplotlib`.
 
 ```python
 import matplotlib.pyplot as plt
@@ -279,7 +283,7 @@ print(normaltest(data))
 ### Working with dates and time
 At least with data analytics, you most likely won't escape working with dates. Dates form the backbone of [time series analysis](https://en.wikipedia.org/wiki/Time_series), which is ubiquitous in fields with continuous data streams like the [Internet of Things](https://www.wired.co.uk/article/internet-of-things-what-is-explained-iot).
 
-The built-in `datetime` library is Python's standard, with expanded methods in the `dateutil` library. Thankfully, `pandas` has excellent functionality for working with dates when the index is set to datetime, meaning you can stay in `pandas` for most types of data analysis in Python. Similarly, `matplotlib` lets you pass in a list of `dt.datetime` values as if they were normal numbers.
+The built-in `datetime` library is Python's standard, with expanded methods in the `dateutil` library. Thankfully, `pandas` has excellent functionality for working with dates when the index is set to datetime, meaning you can stay in `pandas` for analyses both with and without dates. Similarly, `matplotlib` lets you pass in `dt.datetime` values as if they were normal numbers.
 
 ```python
 import pandas as pd
@@ -343,19 +347,19 @@ Finally, we have machine learning. Of all the things a data scientist does, mach
 
 If you only care about the drill instead of the whole machine, you'll likely find yourself disillusioned by many data science jobs. But if you find enjoyment in the *entire process of building the machine* and creating something that truly helps people break that ground, then you'll love your work.
 
-At any rate, you *will* need some knowledge of machine learning. While you need to understand what any algorithm you use is doing $-$ and whether it's the right tool for the question you're asking $-$ <strong>you might be surprised how little business mileage you get from learning how exactly similar algorithms differ</strong> (e.g. [random forests](https://en.wikipedia.org/wiki/Random_forest) vs. [support vector machines](https://en.wikipedia.org/wiki/Support_vector_machine) vs. [XGBoost](https://xgboost.readthedocs.io/en/latest/)) unless your role is in research, education, or machine learning consulting.<sup>[[5]](#5-machine-learning)</sup> Rather, you'll get a lot farther if you have a good understanding of the necessary steps *before and after* you use a machine learning algorithm.
+At any rate, you *will* need some knowledge of machine learning. While you need to understand what any algorithm you use is doing $-$ and whether it's the right tool for the question you're asking $-$ <strong>you might be surprised how little business mileage you get from studying how exactly similar algorithms differ</strong> (e.g. [random forests](https://en.wikipedia.org/wiki/Random_forest) vs. [support vector machines](https://en.wikipedia.org/wiki/Support_vector_machine) vs. [XGBoost](https://xgboost.readthedocs.io/en/latest/)) unless your role is in research, education, or machine learning consulting.<sup>[[5]](#5-machine-learning)</sup> Rather, you'll get a lot farther if you have a good understanding of the necessary steps *before and after* you use a machine learning algorithm.
 
 I'll therefore spend this section on these "before and after" components to using machine learning effectively. The main concepts to know, I'd argue, are:
-1. Feature engineering
-2. Training data vs. testing data
-3. Evaluating model fit (and whether your model is overfit)
+1. [Feature engineering](#feature-engineering)
+2. [Training data vs. testing data](#training-data-vs-testing-data)
+3. [Evaluating model fit](#evaluating-model-fit)
 
 #### Feature engineering
 Our raw data alone is often not sufficient to build a strong model. Let's say, for example, that we're trying to predict the number of items sold each day in an online store. We already know that sales are higher on weekends than weekdays, so we want our model to incorporate a weekday/weekend distinction to be more accurate. A weekday/weekend distinction isn't explicitly present in our data, though $-$ we just have the date a sale occurred.
 
-A linear model will certainly have no idea what to do with raw dates. *Maybe* a complex deep learning model can pick up a cyclic pattern in sales related to dates, but it would likely need a lot of data to figure this out.
+A linear model will certainly have no idea what to do with raw dates. *Maybe* a complex deep learning model can pick up a cyclic pattern in sales related to dates, but it will likely need a lot of data to figure this out.
 
-A much simpler option is to **engineer** an `is_weekend` **feature** by asking whether each sale occurred on a Saturday or Sunday vs. the rest of the week. The `is_weekend` feature now serves as an unambiguous flag giving our model a heads up that something may be different between weekdays and weekends. Similarly, while the raw number of items in users' shopping carts is not an informative predictor, perhaps the square root or logarithm of those items actually is. (I actually have no idea. Send me a message if there's some transformation all the data scientists in e-commerce use!)
+A much simpler option is to **engineer** an `is_weekend` **feature** by asking whether each sale occurred on a Saturday or Sunday vs. the rest of the week. The `is_weekend` feature now serves as an unambiguous flag giving our model a heads up that something may be different between weekdays and weekends. Similarly, maybe the raw number of items in users' shopping carts isn't an informative predictor, but the square root or logarithm of those items actually is. (I actually have no idea. Send me a message if there's some transformation all the data scientists in e-commerce use!)
 
 ```python
 # Create a column for whether the date is Saturday/Sunday or not
@@ -404,14 +408,14 @@ A model is a simplified representation of the real world. If the model is *too s
 
 Think of a model as the underlying "rules" converting inputs to outputs. Going back to our ["sleep and study model"]({{  site.baseurl  }}/DS-transition-2/#regression) from the last post, let's say we have a model that converts the hours a student 1) studies and 2) sleeps into an exam score. We can make the model more accurate if we start including features like 3) whether the student ate breakfast and 4) if they like the teacher.
 
-But the more features we have, the more data we need to accurately calculate each feature's contribution to input vs. output, *especially if the features aren't perfectly uncorrelated.* In fact, [researchers have estimated](https://academic.oup.com/bioinformatics/article/21/8/1509/249540) that when we have correlated features, our model shouldn't have more than $$\sqrt{n}$$ features in our model (where *n* is the number of observations). Unless you have data on dozens or hundreds of students, this drastically cuts down on the number of features your model should have.
+But the more features we have, the more data we need to accurately calculate each feature's contribution to input vs. output, *especially if the features aren't perfectly independent.* In fact, [researchers have estimated](https://academic.oup.com/bioinformatics/article/21/8/1509/249540) that when we have correlated features, our model shouldn't have more than $$\sqrt{n}$$ features in our model (where *n* is the number of observations). Unless you have data on dozens or hundreds of students, this drastically cuts down on the number of features your model should have.
 
 When we pack our model with correlated features like *hours of sleep yesterday* and *hours of sleep two days ago*, we squeeze out some extra accuracy in describing our data, but we also steadily create a picture like the top right, where our model doesn't translate well to the real world. To combat this, we need to employ techniques like [feature selection](https://machinelearningmastery.com/feature-selection-with-real-and-categorical-data/), [k-fold cross validation](https://machinelearningmastery.com/k-fold-cross-validation/), [regularization](https://explained.ai/regularization/index.html), and [information criteria](https://www.sciencedirect.com/science/article/abs/pii/S0167947313002776). These techniques enable us to create the most parsimonious representation of the real world, based on only the most informative features.
 
 ## Concluding thoughts
-This post covered what I call the "analytics" side of data science $-$ the code you write when you're manipulating and analyzing data. These are skills that enable incredible precision and reproducibility with extracting insights from data. By leaving a trail of code, any analysis you write can be examined more closely and repeated by others $-$ or even yourself in the future.
+This post covered what I call the "analytics" side of data science $-$ the code you write when you're manipulating and analyzing data. These are skills that enable incredible precision, speed, and reproducibility with extracting insights from data. From rearranging data in `pandas`, to visualizing it in `matplotlib` and training a model in `sklearn`, we now have some core skills for crunching any data that comes our way. And by leaving a trail of code, any analysis we write can be examined more closely and repeated by others $-$ or even ourselves in the future.
 
-The next post will go into the software engineering side of data science, which involves code you write *outside* of actually working with the data. Consider this [everything but the drill](#machine-learning) in our drilling machine example. Together with the skills from this post, you'll be well-equipped to join teams of data scientists and start meaningfully contributing.
+The next post will go into the software engineering side of data science, which involves code you write *outside* of actually working with the data. Consider the engineering skills as [everything but the drill](#machine-learning) in our drilling machine example. Together with the skills from this post, you'll be well-equipped to join teams of data scientists and start contributing meaningfully. See you in the next post!
 
 Best,<br>
 Matt
