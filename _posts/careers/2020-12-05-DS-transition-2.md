@@ -7,13 +7,13 @@ image: "images/careers/two_models.png"
 ---
 In [the last post]({{ site.baseurl }}/DS-transition-1), we defined the key elements of data science as 1) deriving insights from data and 2) communicating those insights to others. Despite the huge diversity in how these elements are expressed in actual data scientist roles, **there is a core skill set** that will serve you well no matter where you go. The remaining posts in this series will define and explore these skills in detail.
 
-The next three posts will cover the _<u>technical</u>_ skills needed to be successful as a data scientist: the statistics (this post), the programming, and the engineering. The final post will cover the _<u>business</u>_, _<u>personal</u>_, and _<u>interpersonal</u>_ skills needed to succeed. Consider the distinction here as **knowing _how_ to do it** (technical) versus **knowing _what_ to do and _why_** (business, personal, and interpersonal). Let's get started!
+The next three posts will cover the _<u>technical</u>_ skills needed to be successful as a data scientist: the statistics (this post), the [analytics]({{  site.baseurl  }}/DS-transition-3), and the engineering. The final post will cover the _<u>business</u>_, _<u>personal</u>_, and _<u>interpersonal</u>_ skills needed to succeed. Consider the distinction here as **knowing _how_ to do it** (technical) versus **knowing _what_ to do and _why_** (business, personal, and interpersonal). Let's get started!
 
 ---
 **How to enter data science:**
 1. [The target]({{  site.baseurl  }}/DS-transition-1)
 2. **The statistics**
-3. The programming *(coming soon)*
+3. [The analytics]({{  site.baseurl  }}/DS-transition-3)
 4. The engineering *(coming soon)*
 5. The people *(coming soon)*
 
@@ -22,19 +22,20 @@ The next three posts will cover the _<u>technical</u>_ skills needed to be succe
 ## Becoming one with the machine
 Data science is a broad field that is still iterating towards a solid distinction from data analytics, data engineering, and software engineering, so it's hard to create a definitive skill set that's applicable for all data scientist roles. Someone working all day with building statistical models out of spreadsheets, for example, is going to need a different set of skills than someone improving autonomous vehicles!
 
-But consider this learning checklist as a set of fundamental skills that will get you started for your role, no matter where you go. We'll cover the **Inferential Statistics** section in this post, **Programming** in the next, and **Software Engineering** in the fourth.
+But consider this learning checklist as a set of fundamental skills that will get you started for your role, no matter where you go. We'll cover the **Inferential Statistics** section in this post, **Analytics** in the next, and **Software Engineering** in the fourth.
 
 * **Inferential Statistics**
 - [ ] [Experimental design](#experimental-design)
 - [ ] [Comparisons between groups](#comparisons-between-groups)
 - [ ] [Predictive modeling](#predictive-modeling)
 - [ ] [Model internals](#model-internals) <br><br>
-* **Programming**
-- [ ] Dataframes
-- [ ] Visualizations
-- [ ] Descriptive statistics
-- [ ] Working with dates
-- [ ] Machine learning <br><br>
+* **Analytics**
+- [ ] [Dataframes]({{  site.baseurl  }}/DS-transition-3/#dataframes)
+- [ ] [Arrays]({{  site.baseurl  }}/DS-transition-3/#arrays)
+- [ ] [Visualizations]({{  site.baseurl  }}/DS-transition-3/#visualizations)
+- [ ] [Descriptive statistics]({{  site.baseurl  }}/DS-transition-3/#descriptive-statistics)
+- [ ] [Working with dates and time]({{  site.baseurl  }}/DS-transition-3/#working-with-dates-and-time)
+- [ ] [Machine learning]({{  site.baseurl  }}/DS-transition-3/#machine-learning) <br><br>
 * **Software engineering**
 - [ ] SQL
 - [ ] Interacting with APIs
@@ -57,7 +58,7 @@ As data scientists, **a core part of our job is to generate models that help us 
 
 **A model is a simplified representation of reality.** If that representation is flawed, the picture it paints can very easily be nonsensical or misleading. The reason people dedicate their lives to researching statistics is that **condensing reality down to models is incredibly challenging, yet necessary.**
 
-<img src="{{  site.baseurl  }}/images/careers/clothes_model.png" align="right" height="40%" width="40%" style="padding-left: 30px" alt="A positive relationship between how cold it is outside and how many layers of clothes I should wear."> It's usually impossible or impractical to process every detail before making a decision; our brains, for example, constantly use [processing short-cuts](https://jamesclear.com/schemas) to interpret the world faster. You don't need to memorize what clothes to wear for every possible temperature outside; you know that, in general, as the temperature goes down, you put on more layers. This mental model isn't perfect $-$ sometimes it's windy or humid, and a different number of layers feels more comfortable $-$ but it's a great rule of thumb.
+<img src="{{  site.baseurl  }}/images/careers/DS-2/clothes_model.png" align="right" height="40%" width="40%" style="padding-left: 30px" alt="A positive relationship between how cold it is outside and how many layers of clothes I should wear."> It's usually impossible or impractical to process every detail before making a decision; our brains, for example, constantly use [processing short-cuts](https://jamesclear.com/schemas) to interpret the world faster. You don't need to memorize what clothes to wear for every possible temperature outside; you know that, in general, as the temperature goes down, you put on more layers. This mental model isn't perfect $-$ sometimes it's windy or humid, and a different number of layers feels more comfortable $-$ but it's a great rule of thumb.
 
 When we build a model, **the question isn't how to make a model that isn't flawed; it's how to ensure the flaws don't affect the conclusions.** The fact that wind or humidity sometimes alters the best number of layers doesn't change the fact that "the colder it is, the more clothes I should put on" is a good model. As statistician George Box ([allegedly](https://en.wikipedia.org/wiki/All_models_are_wrong)) said:
 
@@ -99,7 +100,7 @@ If we're aware of these discrepancies, we can try to implement fixes such as [di
 ### Control groups
 Another key concept to know for experimental design is **control groups.** Typically when we run an experiment, we're looking to quantify the effect of some **treatment.** Does the antidepressant reduce depression? Did the new website layout increase sales? To understand whatever number we get for our effect size, we need a *baseline* to compare it to. This is where control groups come in.
 
-![]({{  site.baseurl  }}/images/careers/control_group.png)
+![]({{  site.baseurl  }}/images/careers/DS-2/control_group.png)
 <span style="font-size: 12px"><i>Images adapted from [Kumar et al. 2013](https://www.semanticscholar.org/paper/Background-subtraction-based-on-threshold-detection-Kumar-Sureshkumar/39ad370de4a39ca868e0b8d91ceba120d48612b3)</i></span>
 
 In the real world, innumerable factors affect every process we observe. We need a way to *control* as many of those factors as possible so we can zone in on the one factor $-$ our treatment $-$ that we're interested in. **Think of a good control group as a (nearly) identical twin of our treatment group, differing only in our treatment.** "Subtracting out" the control, like in the background subtraction above, lets the effect of our treatment pop out. (Or not, if our treatment actually doesn't have an effect.)
@@ -191,7 +192,7 @@ $$ P(y) = \frac{1}{1+1} = 0.5 $$
 When $h(x)$ equals zero, $P(y)$ equals 0.5. If we're using 0.5 as the probability cutoff, that means **we'll predict the student passed if $h(x)$ is positive. If $h(x)$ is negative, we'll predict the student failed.** This leads us nicely into the next section...
 
 #### Making sense of $h(x)$
-<img src="{{  site.baseurl  }}/images/careers/decision_boundary.png" height="55%" width="55%" align="right">
+<img src="{{  site.baseurl  }}/images/careers/DS-2/decision_boundary.png" height="55%" width="55%" align="right">
 So what's up with $h(x)$? In short, when $h(x)$ = 0, we get **a line that best separates our data into classes.** Training a logistic regression model is all about identifying *where to put this line* to best separate the classes in the data.
 
 In the figure on the right, we've plotted some fake training data of students who passed vs. failed the exam. The blue line is the model's **decision boundary**, where it determined the best separation of the "passed" vs. "failed" classes falls, based on $x_1$ and $x_2$. It's not perfect $-$ there are some "passed" students on the left and "failed" students on the right $-$ but this is the best separation the model could come up with. For any new data falling to the left of the decision boundary, our model will predict the student failed. For any new data falling on the right, our model will predict the student passed.  
@@ -213,24 +214,24 @@ Model coefficients help us understand the trends in our data, such as whether st
 Finally, we should always look at the **confidence interval** for our coefficient before accepting it. If the interval crosses zero, for example, our model is saying it can't determine the direction our feature affects the target variable. Unless you have good reason to keep that feature (e.g. to specifically show its lack of impact), you should drop it from the model. Similarly, if the interval doesn't cross zero but is still large relative to the size of the coefficient, our model is indicating it can't pinpoint the specific effect our feature has on the target variable, so we perhaps need more data or a different model formulation to understand the relationship.
 
 ### Residuals
-<img src="{{  site.baseurl  }}/images/careers/residual.png" align='right' height='55%' width='55%'>
+<img src="{{  site.baseurl  }}/images/careers/DS-2/residual.png" align='right' height='55%' width='55%'>
 Once we've built a model, how do we tell if it's any good? One way is to compare *<u>the model's predictions</u>* to *<u>the actual values</u>* in our data. In other words, given some sample inputs, what does the model *think the output is*, versus *what the output actually is*? For regression models, the **residual** is the distance between the predicted versus actual values.<sup>[[9]](#9-residuals)</sup>
 
 You can see this illustrated in the graphic on the right. The distance between the predictions (red line) and the actual values (black points) are the residuals. The goal with building a model is to get the predicted and actual values as similar as possible $-$ to *minimize the residuals*, in other words.<sup>[[10]](#10-residuals)</sup> A more accurate model will have tend to generate predictions closer to the actual values than an inaccurate one.
 
 Especially for linear models, **the residuals should be normally distributed around zero**, meaning our predictions are usually pretty good but sometimes a little too high or too low, and rarely way too high or way too low.
 
-![]({{  site.baseurl  }}/images/careers/residuals_good.png)
+![]({{  site.baseurl  }}/images/careers/DS-2/residuals_good.png)
 
 As a third reminder in this section alone, **it's important to plot your data!** R and Python won't stop you from fitting a model that doesn't make sense, and stakeholders will quickly lose faith in your recommendations if they find logical holes in your models that you didn't catch. (It's often already hard enough to convince stakeholders to trust a model with airtight logic... don't make it harder!)
 
 For example, let's say you build a model predicting *how happy a person is* as a function of *the size of their Pokémon card collection.* You plot the data on top of the model's predictions, plot the residuals, and see something like this:
 
-![]({{  site.baseurl  }}/images/careers/residuals_bad.png)
+![]({{  site.baseurl  }}/images/careers/DS-2/residuals_bad.png)
 
 The double sets of points and the bimodal residuals clearly indicate there's some unaccounted factor affecting our data... maybe whether the person is a child or an adult! A simple fix for this would be to add a "child vs. adult" feature in our model, or to split the model into one for children and one for adults.
 
-![]({{  site.baseurl  }}/images/careers/two_models.png)
+![]({{  site.baseurl  }}/images/careers/DS-2/two_models.png)
 
 Much better!<img src="{{  site.baseurl  }}/images/thumbs-up.png" height="6%" width="6%" style="vertical-align:-55%">
 
@@ -238,7 +239,7 @@ Much better!<img src="{{  site.baseurl  }}/images/thumbs-up.png" height="6%" wid
 p-values are [a can of worms](https://www.nature.com/news/statisticians-issue-warning-over-misuse-of-p-values-1.19503). Given their status as the gatekeepers of significant results, there's tremendous pressure for researchers to "hack" analyses such that their models output a value below 0.05, the generally-accepted threshold. The below figure from [Perneger & Combescure 2017](https://www.researchgate.net/profile/Federico_Nave/post/What_is_your_opinion_on_a_new_p-value_threshold_P_0005_for_a_statistical_significance/attachment/59d658cb79197b80779ae8f4/AS:539943584124928@1505743990519/download/The+distribution+of+P-values+in+medical+research+articles+suggested+selective+reporting.pdf), for example, is a distribution of 667 reported p-values from four medical journals. Note the fascinating difference between p-values below 0.05 and those above...
 
 <center>
-<img src="{{  site.baseurl  }}/images/careers/p-value-hacking.jpg" height="70%" width="70%">
+<img src="{{  site.baseurl  }}/images/careers/DS-2/p-value-hacking.jpg" height="70%" width="70%">
 </center>
 
 But until everyone switches to [Bayesian statistics](http://www.scholarpedia.org/article/Bayesian_statistics), p-values are here to stay and you'll need to understand them. The formal definition of a p-value is **the probability of obtaining results *at least as extreme* as ours, assuming the null hypothesis is correct.** Our null hypothesis is typically that the true effect size, difference in means between populations, correlation between variables, etc. is **zero**. p-values are the commonly-accepted method by which we say that the differences we're observing are either:
@@ -268,7 +269,7 @@ Phew, that was a whirlwind! To reiterate from [earlier](#ok-so-how-much-stats-do
 
 Stats is a series of tools for parsing *signals* from *noise* in our data, and the more tools you have, the more types of problems you can handle. But of course, with so much stats out there, we need to choose what to learn first. This post has focused on giving you the fundamentals rather than the latest cutting-edge libraries, as the fundamentals tend not to change much, and the advanced topics *build* on the core concepts. Understand these really well, and the rest will come naturally.
 
-In the next post, we'll be covering programming skills. See you there!
+In the next post, we'll be covering skills for manipulating and analyzing data. See you there!
 
 Best,<br>
 Matt

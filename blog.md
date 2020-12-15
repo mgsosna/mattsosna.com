@@ -24,6 +24,7 @@ permalink: /blog/
 ### How to transition into data science
 1. [The target]({{ site.baseurl }}/DS-transition-1)
 2. [The statistics]({{  site.baseurl  }}/DS-transition-2)
+3. [The analytics]({{  site.baseurl  }}/DS-transition-3)
 
 ### Statistics
 1. [Visualizing the danger of multiple t-test comparisons]({{ site.baseurl }}/T-tests-vs-ANOVA)
