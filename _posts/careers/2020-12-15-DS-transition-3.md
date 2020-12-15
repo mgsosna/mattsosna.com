@@ -23,6 +23,8 @@ While Excel wizardry might cut it for many analytics tasks, **data science work 
 
 While plenty of data science roles rely solely on R, this post will demonstrate coding concepts with Python. Python's versatility makes it an "all-in-one" language for a huge range of data science applications, from [dataframe manipulations](#dataframes) to [speech recognition](https://pypi.org/project/SpeechRecognition/) and [computer vision](https://en.wikipedia.org/wiki/Computer_vision). Even if your role involves crunching numbers all day in R, consider learning a little Python for automating steps like [saving results to your company's Dropbox](https://stackoverflow.com/questions/23894221/upload-file-to-my-dropbox-from-python-script).
 
+This post assumes you're familiar with Python basics. If not, check out the great material at [Real Python](https://realpython.com/tutorials/basics/) and [Codecademy](https://www.codecademy.com/learn/learn-python).
+
 Here are the technical skills we're covering in this series. Inferential statistics is covered in [the last post]({{  site.baseurl  }}/DS-transition-2), analytics in this post, and software engineering in the next post.
 
 * **Inferential Statistics**
@@ -48,7 +50,7 @@ Here are the technical skills we're covering in this series. Inferential statist
 {: style='list-style-type: none'}
 
 ### Dataframes
-Dataframes are at the core of data science and analytics. They're essentially just a table of rows and columns, typically where each row is a _**record**_ and each column is an _**attribute**_ of that record. You can have a table of employees, for example, where each row is a person and the columns are their name, home address, and job title. Because dataframes will play a central role in data science, you'll need to master visualizing and manipulating the data within them. `pandas` is the key library here.
+Dataframes are at the core of data science and analytics. They're essentially just a table of rows and columns, typically where each row is a _**record**_ and each column is an _**attribute**_ of that record. You can have a table of employees, for example, where each row is a person and the columns are their name, home address, and job title. Because dataframes play a central role in data science, you'll need to master visualizing and manipulating the data within them. `pandas` is the key library here.
 
 The basics include being able to load, clean, and write out [CSV files](https://en.wikipedia.org/wiki/Comma-separated_values). Cleaning data can involve removing rows with missing values or duplicated information, correcting erroneous values, and reformatting columns into different [data types](https://realpython.com/python-data-types/).
 
@@ -72,11 +74,12 @@ df_filt = df_filt.astype({'price': float, 'age': int})
 df_filt.to_csv("cleaned.csv", index=False)
 ```
 
-Other important data manipulations include vectorized and iterative data transformations. For simple operations like adding every value in two columns together, `pandas` lets you simply add the two columns together like `df['col1'] + df['col2']`.
+Other important data manipulations include vectorized and iterative data transformations. For simple elementwise math on columns in our dataframe, `pandas` lets us treat the columns as if they were singular values.
 
 ```python
-# Simple vectorized transformation
+# Simple vectorized transformations
 df['added'] = df['col1'] + df['col2']
+df['multiplied'] = df['col1'] * df['col2']
 ```
 
 For more nuanced operations, such as handling missing values that would otherwise cause columnwise operations to fail, you can use `.apply`. Below, we use a [lambda](https://www.programiz.com/python-programming/anonymous-function) to apply a custom function, `safe_divide`, to the `col1` and `col2` fields of each row.<sup>[[1]](#1-dataframes)</sup>
@@ -115,17 +118,25 @@ for tup in df.itertuples():
     df_final = df_final.append(df_iter, ignore_index=True)
 ```
 
-Finally, we need the ability to combine data from multiple dataframes, as well as run aggregate commands on the data. In the code below we merge two dataframes, making sure not to drop any rows in `df1` by specifying that it's a [left merge](https://www.shanelynn.ie/merge-join-dataframes-python-pandas-index-1/). Then we create a new dataframe, `df_agg`, that has the sums of all the columns for each user. Since `user_id` is now our index, we can easily display a specific user's spending in a given category with `.loc`.
+Finally, we need the ability to combine data from multiple dataframes, as well as run aggregate commands on the data. In the code below we merge two dataframes, making sure not to drop any rows in `df1` by specifying that it's a [left merge](https://www.shanelynn.ie/merge-join-dataframes-python-pandas-index-1/). Then we create a new dataframe, `df_agg`, that sums each column for each user. Since `user_id` is now our index, we can easily display a specific user's spending in a given category with `.loc`.
 
 ```python
 # Merge data, avoiding dropping rows in df1
 df_merged = pd.merge(df1, df2, on='user_id', how='left')
 
+# Preview the data
+df_merged.head()
+# user_id   groceries   utilities   video_games
+#  123      100         100         5000
+#  123      200         0           9999
+#  456      0           1e6         0
+#  ...      ...          ...        ...
+
 # Sum all numerical columns by user
 df_agg = df_merged.groupby('user_id').sum()
 
 # Display user 123's grocery spending
-print(df_agg.loc[123, 'groceries'])
+print(df_agg.loc[123, 'groceries'])  # 300
 ```
 
 ### Arrays
@@ -406,14 +417,14 @@ The final machine learning theory we need to understand is evaluating how well y
 
 A model is a simplified representation of the real world. If the model is *too simple*, it will represent neither the training data nor the real world (underfit). If it's *too complex*, on the other hand, it will describe the data it's trained on but won't generalize to the real world (overfit).
 
-Think of a model as the underlying "rules" converting inputs to outputs. Going back to our ["sleep and study model"]({{  site.baseurl  }}/DS-transition-2/#regression) from the last post, let's say we have a model that converts the hours a student 1) studies and 2) sleeps into an exam score. We can make the model more accurate if we start including features like 3) whether the student ate breakfast and 4) if they like the teacher.
+Think of a model as the underlying "rules" converting inputs to outputs. Going back to our ["sleep and study" model]({{  site.baseurl  }}/DS-transition-2/#regression) from the last post, let's say we have a model that converts the hours a student 1) studies and 2) sleeps into an exam score. We can make the model more accurate if we start including features like 3) whether the student ate breakfast and 4) if they like the teacher.
 
 But the more features we have, the more data we need to accurately calculate each feature's contribution to input vs. output, *especially if the features aren't perfectly independent.* In fact, [researchers have estimated](https://academic.oup.com/bioinformatics/article/21/8/1509/249540) that when we have correlated features, our model shouldn't have more than $$\sqrt{n}$$ features in our model (where *n* is the number of observations). Unless you have data on dozens or hundreds of students, this drastically cuts down on the number of features your model should have.
 
 When we pack our model with correlated features like *hours of sleep yesterday* and *hours of sleep two days ago*, we squeeze out some extra accuracy in describing our data, but we also steadily create a picture like the top right, where our model doesn't translate well to the real world. To combat this, we need to employ techniques like [feature selection](https://machinelearningmastery.com/feature-selection-with-real-and-categorical-data/), [k-fold cross validation](https://machinelearningmastery.com/k-fold-cross-validation/), [regularization](https://explained.ai/regularization/index.html), and [information criteria](https://www.sciencedirect.com/science/article/abs/pii/S0167947313002776). These techniques enable us to create the most parsimonious representation of the real world, based on only the most informative features.
 
 ## Concluding thoughts
-This post covered what I call the "analytics" side of data science $-$ the code you write when you're manipulating and analyzing data. These are skills that enable incredible precision, speed, and reproducibility with extracting insights from data. From rearranging data in `pandas`, to visualizing it in `matplotlib` and training a model in `sklearn`, we now have some core skills for crunching any data that comes our way. And by leaving a trail of code, any analysis we write can be examined more closely and repeated by others $-$ or even ourselves in the future.
+This post covered what I call the "analytics" side of data science $-$ the code you write when you're manipulating and analyzing data. These are skills that enable precision, speed, and reproducibility with extracting insights from data. From rearranging data in `pandas`, to visualizing it in `matplotlib` and training a model in `sklearn`, we now have some core skills for crunching any data that comes our way. And by leaving a trail of code, any analysis we write can be examined more closely and repeated by others $-$ or even ourselves in the future.
 
 The next post will go into the software engineering side of data science, which involves code you write *outside* of actually working with the data. Consider the engineering skills as [everything but the drill](#machine-learning) in our drilling machine example. Together with the skills from this post, you'll be well-equipped to join teams of data scientists and start contributing meaningfully. See you in the next post!
 
