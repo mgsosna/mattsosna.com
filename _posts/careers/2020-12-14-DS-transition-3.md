@@ -402,7 +402,7 @@ accuracy_score(rf.predict(X_test), y_test)
 #### Evaluating model fit
 The final machine learning theory we need to understand is evaluating how well your model describes your data... as well as whether it describes the data *too* well. The graphic below visualizes this nicely. (Source: [Educative.io](https://www.educative.io/edpresso/overfitting-and-underfitting).)
 
-![]({{  site.baseurl  }}/images/careers/model_fit.png)
+![]({{  site.baseurl  }}/images/careers/DS-3/model_fit.png)
 
 A model is a simplified representation of the real world. If the model is *too simple*, it will represent neither the training data nor the real world (underfit). If it's *too complex*, on the other hand, it will describe the data it's trained on but won't generalize to the real world (overfit).
 

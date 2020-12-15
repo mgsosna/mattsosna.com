@@ -46,7 +46,7 @@ These two points sound straightforward, but there is *tremendous* variability in
 ### The scalpel versus the shovel
 Let's start with something I call the "analytics-engineering" spectrum. Note that I've purposely omitted several related occupations<sup>[[2]](#2-the-scalpel-versus-the-shovel)</sup> to narrow in on what most differentiates data science from analytics and engineering.
 
-![]({{ site.baseurl }}/images/careers/analytics-engineering.png)
+![]({{ site.baseurl }}/images/careers/DS-1/analytics-engineering.png)
 
 I think of this spectrum as **"the scalpel versus the shovel."** An analyst examines data to find insights (**_scalpel_**), while the engineer builds infrastructure to store and move data (**_shovel_**). An analyst needs access to data; an engineer can build databases and APIs to enable this. An engineer needs clear direction on what to build; an analyst's findings can identify the highest-value initiatives to pursue. An analytics team delivers the most value when their insights are accurate and acted upon by the organization. An engineering team is most valuable when there is a range of technical talent that [works well together](https://builtin.com/software-engineering-perspectives/software-development-team).
 
@@ -57,7 +57,7 @@ Expectations vary widely on where on this spectrum - _**as well as how much of t
 ### How many cores?
 Another spectrum we need to briefly mention is the _**amount**_ and _**complexity**_ of data being processed, which determines the methods needed to derive insights. Any analysis in the heatmap below can fall under the umbrella of "data science," though the sophistication of coding ability needed varies from relatively little, to years of experience with memory management and distributed computing. Below, **warmer colors indicate greater computational complexity.**
 
-<img src="{{ site.baseurl }}/images/careers/complexity_spectrum.png" height="55%" width="55%" align="left">
+<img src="{{ site.baseurl }}/images/careers/DS-1/complexity_spectrum.png" height="55%" width="55%" align="left">
 
 As you increase the **size of the dataset (x-axis)**, matrix operations like inverses and transposes in frequentist statistics become computationally heavy compared to the iterative methods of machine learning. Large datasets are also where we need to start thinking about [dividing our task among parallel computer cores](https://www.omnisci.com/technical-glossary/parallel-computing), renting [powerful servers in the cloud](https://en.wikipedia.org/wiki/Cloud_computing), and utilizing parts of the computer [normally reserved for rendering graphics](https://www.boston.co.uk/info/nvidia-kepler/what-is-gpu-computing.aspx). (Hopefully there are data engineers around to help!)
 
@@ -75,13 +75,13 @@ The point of the last two sections is to show the vast range in:
 
 Let's now use these spectrums to start making some sense of the variation in job posts titled "data scientist." We'll start with a sample job post from Yelp. The title is data scientist, and the position lies deep in the **analytics** side of the spectrum.
 
-<img src="{{ site.baseurl }}/images/careers/ds_job1.png" align="center" height="75%" width="75%" class="center">
+<img src="{{ site.baseurl }}/images/careers/DS-1/ds_job1.png" align="center" height="75%" width="75%" class="center">
 
 It's hard to tell where on the computational complexity heatmap this job falls without seeing specific data science techniques listed, but we can make some inferences. Yelp's data consists of tens of millions of numerical rankings and text reviews, meaning their data scientists are likely employing machine learning and [natural language processing](https://machinelearningmastery.com/natural-language-processing/). Yet, because the job post mentions running experiments that impact millions of users, the data science involved may be more focused on how users interact with the site and app itself. These analyses will likely involve [A/B testing](https://www.optimizely.com/optimization-glossary/ab-testing/), which is typically light on the computational complexity but requires careful statistical control of noise not relevant to the business questions. It's also clear that **Yelp expects the person in this role to provide guidance for business decisions**, meaning statistical nuance is important.
 
 Now let's look at the other end of the spectrum. Here's a sample job posting from Tesla. Again the title is data scientist, but this time the position is **heavy on the engineering.**
 
-<img src="{{ site.baseurl }}/images/careers/ds_job2.png" align="center" height="75%" width="75%" class="center">
+<img src="{{ site.baseurl }}/images/careers/DS-1/ds_job2.png" align="center" height="75%" width="75%" class="center">
 
 It's clear that this job falls in the red zone of computational complexity. [Tensorflow](https://www.tensorflow.org/) and [Keras](https://keras.io/) are tools for deep learning; you'll likely be working on improving how Tesla's autonomous driving algorithms process images dozens or even hundreds of times per second. [Continuous integration](https://codeship.com/continuous-integration-essentials), [REST APIs](https://restfulapi.net/), and JavaScript are clear signs that **the person for this role is expected to have software engineering chops.** The big-picture questions Tesla is trying to solve with data science are likely well-defined - now it's time to flex some muscle with state-of-the-art computation.
 
@@ -126,4 +126,4 @@ Here are a few pieces that I think are particularly insightful.
 
 #### 2. [The scalpel versus the shovel](#the-scalpel-versus-the-shovel)
 Machine learning engineers, computational social scientists, statisticians, deep learning researchers, business intelligence analysts... there's [a lot more](https://www.northeastern.edu/graduate/blog/data-science-careers-shaping-our-future/) we could add here, but our spectrum would start becoming two- or three-dimensional. For an alternate take, here are some interesting visuals I spliced together from a piece by [efinancialcareers](https://news.efinancialcareers.com/uk-en/3001517/data-science-careers-finance): <br>
-  ![]({{ site.baseurl }}/images/careers/efinance_figure.png)
+  ![]({{ site.baseurl }}/images/careers/DS-1/efinance_figure.png)
