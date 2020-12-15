@@ -19,12 +19,11 @@ Welcome to the third post in our series of how to enter data science! The [first
 ---
 
 ## Code for days
-While Excel wizardry might cut it for many analytics tasks, **data science work relies heavily on the _nuance_, _reproducibility_, and _scalability_ of programming.** From statistical tests only available in specialized R and Python libraries, to being able to show step-by-step how a model is formulated and generates predictions, to being able to go from processing one dataset to 1,000 with a few keystrokes, *fluency in programming is essential for being an effective data scientist*. We'll therefore focus on some key programming skills that will serve you well no matter your role is on the
-[analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel).
+While Excel wizardry might cut it for many analytics tasks, **data science work relies heavily on the _nuance_, _reproducibility_, and _scalability_ of programming.** From statistical tests only available in specialized R and Python libraries, to being able to show step-by-step how a model is formulated and generates predictions, to being able to go from processing one dataset to 1,000 with a few keystrokes, *fluency in programming is essential for being an effective data scientist*. We'll therefore focus on some key data manipulation and analytics skills that will serve you well no matter your role is on the [analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel).
 
 While plenty of data science roles rely solely on R, this post will demonstrate coding concepts with Python. Python's versatility makes it an "all-in-one" language for a huge range of data science applications, from [dataframe manipulations](#dataframes) to [speech recognition](https://pypi.org/project/SpeechRecognition/) and [computer vision](https://en.wikipedia.org/wiki/Computer_vision). Even if your role involves crunching numbers all day in R, consider learning a little Python for automating steps like [saving results to your company's Dropbox](https://stackoverflow.com/questions/23894221/upload-file-to-my-dropbox-from-python-script).
 
-Here are the technical skills we're covering in this series. Inferential statistics is covered in [the last post]({{  site.baseurl  }}/DS-transition-2), programming in this post, and software engineering in the next post.
+Here are the technical skills we're covering in this series. Inferential statistics is covered in [the last post]({{  site.baseurl  }}/DS-transition-2), analytics in this post, and software engineering in the next post.
 
 * **Inferential Statistics**
 - [ ] [Experimental design]({{  site.baseurl  }}/DS-transition-2/#experimental-design)
@@ -410,7 +409,12 @@ But the more features we have, the more data we need to accurately calculate eac
 When we pack our model with correlated features like *hours of sleep yesterday* and *hours of sleep two days ago*, we squeeze out some extra accuracy in describing our data, but we also steadily create a picture like the top right, where our model doesn't translate well to the real world. To combat this, we need to employ techniques like [feature selection](https://machinelearningmastery.com/feature-selection-with-real-and-categorical-data/), [k-fold cross validation](https://machinelearningmastery.com/k-fold-cross-validation/), [regularization](https://explained.ai/regularization/index.html), and [information criteria](https://www.sciencedirect.com/science/article/abs/pii/S0167947313002776). These techniques enable us to create the most parsimonious representation of the real world, based on only the most informative features.
 
 ## Concluding thoughts
-This post covered what I call the "programming" side of data science $-$ the code you write when you're manipulating and analyzing data. The next post will go into the software engineering side, which covers the code you write *outside* of actually working with the data.
+This post covered what I call the "analytics" side of data science $-$ the code you write when you're manipulating and analyzing data. These are skills that enable incredible precision and reproducibility with extracting insights from data. By leaving a trail of code, any analysis you write can be examined more closely and repeated by others $-$ or even yourself in the future.
+
+The next post will go into the software engineering side of data science, which involves code you write *outside* of actually working with the data. Consider this [everything but the drill](#machine-learning) in our drilling machine example. Together with the skills from this post, you'll be well-equipped to join teams of data scientists and start meaningfully contributing.
+
+Best,<br>
+Matt
 
 
 ## Footnotes
