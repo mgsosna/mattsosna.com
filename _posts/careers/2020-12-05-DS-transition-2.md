@@ -7,13 +7,13 @@ image: "images/careers/two_models.png"
 ---
 In [the last post]({{ site.baseurl }}/DS-transition-1), we defined the key elements of data science as 1) deriving insights from data and 2) communicating those insights to others. Despite the huge diversity in how these elements are expressed in actual data scientist roles, **there is a core skill set** that will serve you well no matter where you go. The remaining posts in this series will define and explore these skills in detail.
 
-The next three posts will cover the _<u>technical</u>_ skills needed to be successful as a data scientist: the statistics (this post), the [programming]({{  site.baseurl  }}/DS-transition-3), and the engineering. The final post will cover the _<u>business</u>_, _<u>personal</u>_, and _<u>interpersonal</u>_ skills needed to succeed. Consider the distinction here as **knowing _how_ to do it** (technical) versus **knowing _what_ to do and _why_** (business, personal, and interpersonal). Let's get started!
+The next three posts will cover the _<u>technical</u>_ skills needed to be successful as a data scientist: the statistics (this post), the [analytics]({{  site.baseurl  }}/DS-transition-3), and the engineering. The final post will cover the _<u>business</u>_, _<u>personal</u>_, and _<u>interpersonal</u>_ skills needed to succeed. Consider the distinction here as **knowing _how_ to do it** (technical) versus **knowing _what_ to do and _why_** (business, personal, and interpersonal). Let's get started!
 
 ---
 **How to enter data science:**
 1. [The target]({{  site.baseurl  }}/DS-transition-1)
 2. **The statistics**
-3. [The programming]({{  site.baseurl  }}/DS-transition-3)
+3. [The analytics]({{  site.baseurl  }}/DS-transition-3)
 4. The engineering *(coming soon)*
 5. The people *(coming soon)*
 
@@ -22,18 +22,19 @@ The next three posts will cover the _<u>technical</u>_ skills needed to be succe
 ## Becoming one with the machine
 Data science is a broad field that is still iterating towards a solid distinction from data analytics, data engineering, and software engineering, so it's hard to create a definitive skill set that's applicable for all data scientist roles. Someone working all day with building statistical models out of spreadsheets, for example, is going to need a different set of skills than someone improving autonomous vehicles!
 
-But consider this learning checklist as a set of fundamental skills that will get you started for your role, no matter where you go. We'll cover the **Inferential Statistics** section in this post, **Programming** in the next, and **Software Engineering** in the fourth.
+But consider this learning checklist as a set of fundamental skills that will get you started for your role, no matter where you go. We'll cover the **Inferential Statistics** section in this post, **Analytics** in the next, and **Software Engineering** in the fourth.
 
 * **Inferential Statistics**
 - [ ] [Experimental design](#experimental-design)
 - [ ] [Comparisons between groups](#comparisons-between-groups)
 - [ ] [Predictive modeling](#predictive-modeling)
 - [ ] [Model internals](#model-internals) <br><br>
-* **Programming**
+* **Analytics**
 - [ ] [Dataframes]({{  site.baseurl  }}/DS-transition-3/#dataframes)
+- [ ] [Arrays]({{  site.baseurl  }}/DS-transition-3/#arrays)
 - [ ] [Visualizations]({{  site.baseurl  }}/DS-transition-3/#visualizations)
 - [ ] [Descriptive statistics]({{  site.baseurl  }}/DS-transition-3/#descriptive-statistics)
-- [ ] [Working with dates]({{  site.baseurl  }}/DS-transition-3/#working-with-dates)
+- [ ] [Working with dates and time]({{  site.baseurl  }}/DS-transition-3/#working-with-dates-and-time)
 - [ ] [Machine learning]({{  site.baseurl  }}/DS-transition-3/#machine-learning) <br><br>
 * **Software engineering**
 - [ ] SQL
@@ -268,7 +269,7 @@ Phew, that was a whirlwind! To reiterate from [earlier](#ok-so-how-much-stats-do
 
 Stats is a series of tools for parsing *signals* from *noise* in our data, and the more tools you have, the more types of problems you can handle. But of course, with so much stats out there, we need to choose what to learn first. This post has focused on giving you the fundamentals rather than the latest cutting-edge libraries, as the fundamentals tend not to change much, and the advanced topics *build* on the core concepts. Understand these really well, and the rest will come naturally.
 
-In the next post, we'll be covering programming skills. See you there!
+In the next post, we'll be covering skills for manipulating and analyzing data. See you there!
 
 Best,<br>
 Matt

@@ -12,7 +12,7 @@ So far, we've covered [the range of data science roles]({{  site.baseurl  }}/DS-
 **How to enter data science:**
 1. [The target]({{  site.baseurl  }}/DS-transition-1)
 2. [The statistics]({{  site.baseurl  }}/DS-transition-2)
-3. [The programming]({{  site.baseurl  }}/DS-transition-3)
+3. [The analytics]({{  site.baseurl  }}/DS-transition-3)
 4. **The engineering**
 5. The people *(coming soon)*
 
@@ -29,11 +29,12 @@ You may be processing datasets that are too large to load onto your laptop's mem
 - [ ] [Comparisons between groups]({{  site.baseurl  }}/DS-transition-2/#comparisons-between-groups)
 - [ ] [Predictive modeling]({{  site.baseurl  }}/DS-transition-2/#predictive-modeling)
 - [ ] [Model internals]({{  site.baseurl  }}/DS-transition-2/#model-internals) <br><br>
-* **Programming**
+* **Analytics**
 - [ ] [Dataframes]({{  site.baseurl  }}/DS-transition-3/#programming)
+- [ ] [Arrays]({{  site.baseurl  }}/DS-transition-3/#arrays)
 - [ ] [Visualizations]({{  site.baseurl  }}/DS-transition-3/#visualizations)
 - [ ] [Descriptive statistics]({{  site.baseurl  }}/DS-transition-3/#descriptive-statistics)
-- [ ] [Working with dates]({{  site.baseurl  }}/DS-transition-3/#working-with-dates)
+- [ ] [Working with dates and time]({{  site.baseurl  }}/DS-transition-3/#working-with-dates-and-time)
 - [ ] [Machine learning]({{  site.baseurl  }}/DS-transition-3/#machine-learning) <br><br>
 * **Software engineering**
 - [ ] [SQL](#sql)
