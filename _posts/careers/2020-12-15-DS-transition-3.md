@@ -3,7 +3,7 @@ layout: post
 title: How to enter data science - <br>3. The analytics
 author: matt_sosna
 summary: The analytics needed to succeed in data science
-image: ""
+image: "images/careers/DS-3/matplotlib2.png"
 ---
 
 Welcome to the third post in our series of how to enter data science! The [first post]({{  site.baseurl  }}/DS-transition-1) covered how to navigate the broad diversity of data science roles in the industry, and [the second]({{  site.baseurl  }}/DS-transition-2) was a deep dive on (some!) statistics essential to being an effective data scientist. In this post, we'll cover skills you'll need when manipulating and analyzing data. Get ready for lots of syntax highlighting!
