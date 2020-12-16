@@ -37,8 +37,7 @@ But consider this learning checklist as a set of fundamental skills that will ge
 - [ ] [Working with dates and time]({{  site.baseurl  }}/DS-transition-3/#working-with-dates-and-time)
 - [ ] [Machine learning]({{  site.baseurl  }}/DS-transition-3/#machine-learning) <br><br>
 * **Software engineering**
-- [ ] [SQL]({{  site.baseurl  }}/DS-transition-4/#sql)
-- [ ] [Interacting with APIs]({{  site.baseurl  }}/DS-transition-4/#interacting-with-apis)
+- [ ] [Accessing data]({{  site.baseurl  }}/DS-transition-4/#accessing-data)
 - [ ] [Version control]({{  site.baseurl  }}/DS-transition-4/#version-control)
 - [ ] [Object-oriented programming]({{  site.baseurl  }}/DS-transition-4/#object-oriented-programming)
 - [ ] [Virtual environments]({{  site.baseurl  }}/DS-transition-4/#virtual-environments)

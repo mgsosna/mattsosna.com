@@ -6,7 +6,7 @@ summary: The software engineering skills needed to succeed in data science
 image: ""
 ---
 
-So far, we've covered [the range of data science roles]({{  site.baseurl  }}/DS-transition-1), some [inferential statistics fundamentals]({{  site.baseurl  }}/DS-transition-2), and [Python-based programming]({{  site.baseurl  }}/DS-transition-3). This post will shift from programming to broader software engineering concepts that are essential for data science.
+Welcome to the fourth post in our series on how to enter data science! So far, we've covered [the range of data science roles]({{  site.baseurl  }}/DS-transition-1), some [inferential statistics fundamentals]({{  site.baseurl  }}/DS-transition-2), and [Python-based programming]({{  site.baseurl  }}/DS-transition-3). This post will shift from programming to broader software engineering concepts that are essential for data science.
 
 ---
 **How to enter data science:**
@@ -19,10 +19,17 @@ So far, we've covered [the range of data science roles]({{  site.baseurl  }}/DS-
 ---
 
 ## Other types of coding for days
+The programming concepts in the [last post]({{  site.baseurl  }}/DS-transition-3) are all about manipulating and analyzing data. But unless your role is deep in the [analytics side of the analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel), you'll also need some software engineering chops to be effective at your job. In this section, we shift the focus from analytics to engineering.
+
+Returning to our [drilling machine example](#machine-learning) from earlier, this post is about building the machinery *around* the drill that is analytics. How do you securely and scalably pull data from a database? How does your code need to change when you're part of *a team of programmers* instead of a lone wolf? What best practices do you need to adopt *now* to avoid hours or days of wasted time *in a year*? These are the sorts of questions we'll answer in this section.
+
+
+
 It's important to be good at coding beyond just writing good code. Like... "meta-skills" at programming.
 You may be processing datasets that are too large to load onto your laptop's memory, for example, or you may need to dip into statistics that you can only access with specialized packages in Python or R. Similarly, while one-off scripts might have cut it during school<sup>[[1]](#1-code-for-days)</sup>, [you're living on borrowed time](https://en.wikipedia.org/wiki/Technical_debt) if you don't organize your code in a way that's easily read, reused, and modified by others.
 
 
+Here are the technical skills we're covering in this series. Inferential statistics was covered in [the second post]({{  site.baseurl  }}/DS-transition-2), analytics in [the last post]({{  site.baseurl  }}/DS-transition-3), and software engineering in this post.
 
 * **Inferential Statistics**
 - [ ] [Experimental design]({{  site.baseurl  }}/DS-transition-2/#experimental-design)
@@ -37,8 +44,7 @@ You may be processing datasets that are too large to load onto your laptop's mem
 - [ ] [Working with dates and time]({{  site.baseurl  }}/DS-transition-3/#working-with-dates-and-time)
 - [ ] [Machine learning]({{  site.baseurl  }}/DS-transition-3/#machine-learning) <br><br>
 * **Software engineering**
-- [ ] [SQL](#sql)
-- [ ] [Interacting with APIs](#interacting-with-apis)
+- [ ] [Accessing data](#accessing-data)
 - [ ] [Version control](#version-control)
 - [ ] [Object-oriented programming](#object-oriented-programming)
 - [ ] [Virtual environments](#virtual-environments)
@@ -46,14 +52,11 @@ You may be processing datasets that are too large to load onto your laptop's mem
 - [ ] [Servers and deployment](#servers-and-deployment) <br><br>
 {: style='list-style-type: none'}
 
-## Software engineering
-The skills in the previous section are all about extracting insights from the data. But unless your role is deep in the [analytics side of the analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel), you'll also need some software engineering chops to be effective at your job. In this section, we shift the focus from analytics to engineering.
-
-Returning to our [drilling machine example](#machine-learning) from earlier, this section is about building the machinery *around* the drill that is analytics. How do you securely and scalably pull data from a database? How does your code need to change when you're part of *a team of programmers* instead of a lone wolf? What best practices do you need to adopt now to avoid hours or days of wasted time a year from now? These are the sorts of questions we'll answer in this section.
 
 ### Accessing data
-#### SQL
 We'll start with a skill that spans the entire analytics-engineering spectrum, but I'd argue is more of an "engineering" skill than an analytical one. As a data scientist, you'll rarely access data through the familiar click-based graphical user interfaces of Google Drive or Dropbox. The majority of your time accessing data will be through SQL and **[APIs](#interacting-with-apis)**, which I'll talk about in a moment.
+
+#### SQL
 
 So far, all the skills we've covered have assumed you already have data loaded into memory on your laptop. But unless your company is tiny, it's going to have more data than can fit onto one laptop. Further, the data will need to be organized in a way that optimizes storage space and retrieval time, as well as lets multiple users read (and write) the data simultaneously. The main way to do this is with [relational databases](https://en.wikipedia.org/wiki/Relational_database), which you query with SQL (Structured Query Language).
 

@@ -6,7 +6,7 @@ summary: The analytics needed to succeed in data science
 image: "images/careers/DS-3/matplotlib2.png"
 ---
 
-Welcome to the third post in our series of how to enter data science! The [first post]({{  site.baseurl  }}/DS-transition-1) covered how to navigate the broad diversity of data science roles in the industry, and [the second]({{  site.baseurl  }}/DS-transition-2) was a deep dive on (some!) statistics essential to being an effective data scientist. In this post, we'll cover skills you'll need when manipulating and analyzing data. Get ready for lots of syntax highlighting!
+Welcome to the third post in our series on how to enter data science! The [first post]({{  site.baseurl  }}/DS-transition-1) covered how to navigate the broad diversity of data science roles in the industry, and [the second]({{  site.baseurl  }}/DS-transition-2) was a deep dive on (some!) statistics essential to being an effective data scientist. In this post, we'll cover skills you'll need when manipulating and analyzing data. Get ready for lots of syntax highlighting!
 
 ---
 **How to enter data science:**
@@ -40,8 +40,7 @@ Here are the technical skills we're covering in this series. Inferential statist
 - [ ] [Working with dates and time](#working-with-dates-and-time)
 - [ ] [Machine learning](#machine-learning) <br><br>
 * **Software engineering**
-- [ ] [SQL]({{  site.baseurl  }}/DS-transition-4/#sql)
-- [ ] [Interacting with APIs]({{  site.baseurl  }}/DS-transition-4/#interacting-with-apis)
+- [ ] [Accessing data]({{  site.baseurl  }}/DS-transition-4/#accessing-data)
 - [ ] [Version control]({{  site.baseurl  }}/DS-transition-4/#version-control)
 - [ ] [Object-oriented programming]({{  site.baseurl  }}/DS-transition-4/#object-oriented-programming)
 - [ ] [Virtual environments]({{  site.baseurl  }}/DS-transition-4/#virtual-environments)
