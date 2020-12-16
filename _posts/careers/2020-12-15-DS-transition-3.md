@@ -40,13 +40,13 @@ Here are the technical skills we're covering in this series. Inferential statist
 - [ ] [Working with dates and time](#working-with-dates-and-time)
 - [ ] [Machine learning](#machine-learning) <br><br>
 * **Software engineering**
-- [ ] SQL
-- [ ] Interacting with APIs
-- [ ] Version control
-- [ ] Object-oriented programming
-- [ ] Virtual environments
-- [ ] Writing tests
-- [ ] Servers and deployment <br><br>
+- [ ] [SQL]({{  site.baseurl  }}/DS-transition-4/#sql)
+- [ ] [Interacting with APIs]({{  site.baseurl  }}/DS-transition-4/#interacting-with-apis)
+- [ ] [Version control]({{  site.baseurl  }}/DS-transition-4/#version-control)
+- [ ] [Object-oriented programming]({{  site.baseurl  }}/DS-transition-4/#object-oriented-programming)
+- [ ] [Virtual environments]({{  site.baseurl  }}/DS-transition-4/#virtual-environments)
+- [ ] [Writing tests]({{  site.baseurl  }}/DS-transition-4/#writing-tests)
+- [ ] [Servers and deployment]({{  site.baseurl  }}/DS-transition-4/#servers-and-deployment) <br><br>
 {: style='list-style-type: none'}
 
 ### Dataframes
