@@ -33,7 +33,7 @@ Here are the technical skills we're covering in this series. Inferential statist
 - [ ] [Predictive modeling]({{  site.baseurl  }}/DS-transition-2/#predictive-modeling)
 - [ ] [Model internals]({{  site.baseurl  }}/DS-transition-2/#model-internals) <br><br>
 * **Analytics**
-- [ ] [Dataframes](#programming)
+- [ ] [Dataframes](#dataframes)
 - [ ] [Arrays](#arrays)
 - [ ] [Visualizations](#visualizations)
 - [ ] [Descriptive statistics](#descriptive-statistics)
@@ -441,7 +441,7 @@ Also, you might notice that we're passing a pre-defined function, `safe_divide`,
 #### 2. [Arrays](#arrays)
 One clear exception to the rule of using `numpy` arrays over lists is if you want your array to store values of different types. `numpy.array` and `pandas.Series` have type forcing, which means that [all elements must be the same type](https://numpy.org/doc/stable/user/quickstart.html#the-basics), and they'll be forced into the same type upon creation of the array.
 
-Below, the `numpy` version of `our_list1` converts `1` and `2` to floats to match `3.0`. (Integers are converted to floats to preserve the information after the decimal in floats.) For `our_list2`, there's no clear integer of float version of `'a'`, so instead `1` and `2.0` are converted to strings. If you want your array to store data of different types for some reason, you're therefore better off sticking with Python's `list` class.
+Below, the `numpy` version of `our_list1` converts `1` and `2` to floats to match `3.0`. (Integers are converted to floats to preserve the information after the decimal in floats.) For `our_list2`, there's no clear integer or float version of `'a'`, so instead `1` and `2.0` are converted to strings. If you want your array to store data of different types for some reason, you're therefore better off sticking with Python's `list` class.
 
 ```python
 import numpy as np
