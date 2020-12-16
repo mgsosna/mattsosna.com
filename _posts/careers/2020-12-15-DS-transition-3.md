@@ -13,7 +13,7 @@ Welcome to the third post in our series of how to enter data science! The [first
 1. [The target]({{  site.baseurl  }}/DS-transition-1)
 2. [The statistics]({{  site.baseurl  }}/DS-transition-2)
 3. **The analytics**
-4. The engineering *(coming soon)*
+4. [The engineering]({{  site.baseurl  }}/DS-transition-4)
 5. The people *(coming soon)*
 
 ---

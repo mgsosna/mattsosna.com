@@ -19,7 +19,7 @@ This post assumes you're interested in making the switch to data science. Welcom
 1. **The target**
 2. [The statistics]({{  site.baseurl  }}/DS-transition-2)
 3. [The analytics]({{  site.baseurl  }}/DS-transition-3)
-4. The engineering *(coming soon)*
+4. [The engineering]({{  site.baseurl  }}/DS-transition-4)
 5. The people *(coming soon)*
 
 ---
