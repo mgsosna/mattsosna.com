@@ -6,7 +6,7 @@ summary: The software engineering skills needed to succeed in data science
 image: ""
 ---
 
-Welcome to the fourth post in our series on how to enter data science! So far, we've covered [the range of data science roles]({{  site.baseurl  }}/DS-transition-1), some [inferential statistics fundamentals]({{  site.baseurl  }}/DS-transition-2), and [Python-based programming]({{  site.baseurl  }}/DS-transition-3). This post will shift from programming to broader software engineering concepts that are essential for data science.
+Welcome to the fourth post in our series on how to enter data science! So far, we've covered [the range of data science roles]({{  site.baseurl  }}/DS-transition-1), some [inferential statistics fundamentals]({{  site.baseurl  }}/DS-transition-2), and [manipulating and analyzing data]({{  site.baseurl  }}/DS-transition-3). This post will shift from programming to broader software engineering concepts that are essential for data science.
 
 ---
 **How to enter data science:**
@@ -18,7 +18,7 @@ Welcome to the fourth post in our series on how to enter data science! So far, w
 
 ---
 
-## Other types of coding for days
+## The code *around* your code
 The programming concepts in the [last post]({{  site.baseurl  }}/DS-transition-3) are all about manipulating and analyzing data. But unless your role is deep in the [analytics side of the analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel), you'll also need some software engineering chops to be effective at your job. In this section, we shift the focus from analytics to engineering.
 
 Returning to our [drilling machine example](#machine-learning) from earlier, this post is about building the machinery *around* the drill that is analytics. How do you securely and scalably pull data from a database? How does your code need to change when you're part of *a team of programmers* instead of a lone wolf? What best practices do you need to adopt *now* to avoid hours or days of wasted time *in a year*? These are the sorts of questions we'll answer in this section.
@@ -26,7 +26,7 @@ Returning to our [drilling machine example](#machine-learning) from earlier, thi
 
 
 It's important to be good at coding beyond just writing good code. Like... "meta-skills" at programming.
-You may be processing datasets that are too large to load onto your laptop's memory, for example, or you may need to dip into statistics that you can only access with specialized packages in Python or R. Similarly, while one-off scripts might have cut it during school<sup>[[1]](#1-code-for-days)</sup>, [you're living on borrowed time](https://en.wikipedia.org/wiki/Technical_debt) if you don't organize your code in a way that's easily read, reused, and modified by others.
+You may be processing datasets that are too large to load onto your laptop's memory, for example, or you may need to dip into statistics that you can only access with specialized packages in Python or R. Similarly, while one-off scripts might have cut it during school,<sup>[[1]](#1-the-code-around-your-code)</sup> [you're living on borrowed time](https://en.wikipedia.org/wiki/Technical_debt) if you don't organize your code in a way that's easily read, reused, and modified by others.
 
 
 Here are the technical skills we're covering in this series. Inferential statistics was covered in [the second post]({{  site.baseurl  }}/DS-transition-2), analytics in [the last post]({{  site.baseurl  }}/DS-transition-3), and software engineering in this post.
@@ -51,7 +51,6 @@ Here are the technical skills we're covering in this series. Inferential statist
 - [ ] [Writing tests](#writing-tests)
 - [ ] [Servers and deployment](#servers-and-deployment) <br><br>
 {: style='list-style-type: none'}
-
 
 ### Accessing data
 We'll start with a skill that spans the entire analytics-engineering spectrum, but I'd argue is more of an "engineering" skill than an analytical one. As a data scientist, you'll rarely access data through the familiar click-based graphical user interfaces of Google Drive or Dropbox. The majority of your time accessing data will be through SQL and **[APIs](#interacting-with-apis)**, which I'll talk about in a moment.
@@ -104,7 +103,7 @@ ON u.id = t.user_id;
 
 
 #### Interacting with APIs
-Aside from SQL, the other main way you'll access data is via **APIs**, or Application Programming Interfaces.<sup>[[1]](#footnotes)</sup>
+Aside from SQL, the other main way you'll access data is via **APIs**, or Application Programming Interfaces.<sup>[[2]](#2-interacting-with-apis)</sup>
 
 An API is like the entrance to a bank: it's (hopefully) the only way to access the contents of the bank, and you have to follow certain rules to enter: you can't bring in weapons, you have to enter on foot, you'll be turned away if you're not wearing pants, etc. Another way to think of it is like an electrical outlet - you can't access electricity unless your chord plug is in the correct shape.
 
@@ -268,9 +267,8 @@ This code block is quite a bit longer than the others, and it doesn't even inclu
 If you're interested in a deeper dive on these concepts and a step-by-step explanation of the (truncated) code above, check out [this post]({{ site.baseurl }}/Python-5-Writing-production-level-Python).
 
 ## Footnotes
-#### 1. NEED TO NAME
-XXX
+#### 1. [The code *around* your code](#the-code-around-your-code)
 This is aimed at me as much as at anyone else. In grad school, I had R scripts that were hundreds of lines long, and rerunning them to process data differently always felt like performing surgery. It shouldn't be that way! Looking back, it's amazing how much easier the Ph.D. would have been with some basic software engineering and project management best practices in place. Maybe next time...
 
-
-1. [[Interacting with APIs]](#interacting-with-apis) APIs and SQL go hand-in-hand, actually. When you request data from an API, your request is most likely converted to a SQL query that is then executed on a database.
+#### 2. [Interacting with APIs](#interacting-with-apis)
+APIs and SQL go hand-in-hand, actually. When you request data from an API, your request is most likely converted to a SQL query that is then executed on a database.
