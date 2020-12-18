@@ -19,11 +19,12 @@ Welcome to the fourth post in our series on how to enter data science! So far, w
 ---
 
 ## The code *around* your code
-The programming concepts in the [last post]({{  site.baseurl  }}/DS-transition-3) are all about manipulating and analyzing data. But unless your role is deep in the [analytics side of the analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1#the-scalpel-versus-the-shovel), you'll also need some software engineering chops to be effective at your job. In this section, we shift the focus from analytics to engineering.
+The programming concepts in the [last post]({{  site.baseurl  }}/DS-transition-3) covered how to work with data once it's sitting in front of you. If your role involves clicking and dragging a CSV from a shared Google Drive onto your desktop, analyzing it in a Jupyter Notebook, and typing up a report, then the last post is probably sufficient for your role. Yet, what happens when you start a project that requires combining data from hundreds of CSVs, or coding as part of a team, or running a script every night at 1am?
 
-Returning to our [drilling machine example](#machine-learning) from earlier, this post is about building the machinery *around* the drill that is analytics. How do you securely and scalably pull data from a database? How does your code need to change when you're part of *a team of programmers* instead of a lone wolf? What best practices do you need to adopt *now* to avoid hours or days of wasted time *in a year*? These are the sorts of questions we'll answer in this section.
-
-
+This is where programming skills *outside* of analyzing data come in. Returning to our [drilling machine example](#machine-learning) from earlier, this post is about building the machinery *around* the drill that is analytics. This post will answer questions like:
+* How do you pull data from a database?
+* How does your code need to change when you're part of *a team of programmers* instead of a lone wolf?
+* What best practices do you need to adopt *now* to avoid hours or days of wasted time *in a year*?
 
 It's important to be good at coding beyond just writing good code. Like... "meta-skills" at programming.
 You may be processing datasets that are too large to load onto your laptop's memory, for example, or you may need to dip into statistics that you can only access with specialized packages in Python or R. Similarly, while one-off scripts might have cut it during school,<sup>[[1]](#1-the-code-around-your-code)</sup> [you're living on borrowed time](https://en.wikipedia.org/wiki/Technical_debt) if you don't organize your code in a way that's easily read, reused, and modified by others.
@@ -62,44 +63,47 @@ So far, all the skills we've covered have assumed you already have data loaded i
 As a data scientist, you don't need to be a pro at SQL - that's more in the realm of a data engineer - but you definitely need to be able to join data from multiple tables, filter rows, and perform aggregations. The below query is a simple example in [Postgres](https://www.postgresql.org/), one of the major SQL dialects.
 
 ```sql
-SELECT
-    u.name AS user_name,
-    AVG(g.score) AS avg_score
-FROM users AS u
+    SELECT u.name AS user_name,
+           AVG(g.score) AS avg_score
+      FROM users AS u
 INNER JOIN grades AS g
-    ON u.id = g.user_id
-WHERE AVG(g.score) > 90
-GROUP BY u.id
-ORDER BY u.name;
+        ON u.id = g.user_id
+     WHERE AVG(g.score) > 90
+  GROUP BY u.id
+  ORDER BY u.name;
 ```
 
-For more complex queries, you'll want to bring in the `WITH {tab} AS` structure, which let you work with the output of nested queries. In the below query, we filter the table on the latest bill for each user.
+Make sure you're comfortable with the difference between an `INNER JOIN`, `LEFT JOIN` and `RIGHT JOIN`, and `OUTER JOIN`. The main thing to remember is which rows you want to make sure are present after the join: only the ones that are in both tables (`INNER`), all in the left (`LEFT`) or right (`RIGHT`), or all in both (`OUTER`).
 
 ```sql
-WITH latest_bill AS (
-    SELECT
-        user_id,
-        MAX(bill_date) AS max_date
-    FROM bills
-    GROUP BY user_id
+-- Don't drop any rows in 'users'
+   SELECT *
+     FROM users AS u
+LEFT JOIN transactions AS t  
+       ON u.id = t.user_id;
+
+-- Don't drop any rows in either table
+    SELECT *
+      FROM users AS u
+OUTER JOIN transactions AS t
+```
+
+For more complex queries, you'll want to bring in the `WITH {tab} AS` structure, which let you work with the output of nested queries. In the below query, we filter the table on the latest purchase for each user.
+
+```sql
+WITH latest_purchase AS (
+    SELECT user_id,
+           MAX(purchase_date) AS max_date
+      FROM purchases
+  GROUP BY user_id
 )
-SELECT
-    b.user_id,
-    b.bill_date
-FROM bills AS b
-INNER JOIN latest_bill AS lb  -- Filter on the latest bill for each ID
-ON b.user_id = lb.user_id AND b.bill_date = lb.max_date;
+    SELECT p.user_id,
+           p.purchase_date
+      FROM purchases AS p
+INNER JOIN latest_purchase AS lp  -- Filter on each ID's latest purchase
+        ON p.user_id = lp.user_id
+       AND p.purchase_date = lp.max_date;
 ```
-
-Make sure you're comfortable, too, with the difference between an `INNER JOIN`, `LEFT JOIN` and `RIGHT JOIN`, and `OUTER JOIN`. (The main thing to remember is which rows you want to make sure are present after the join: only the ones that are in both tables (`INNER`), all in the left (`LEFT`) or right (`RIGHT`), or all in both (`OUTER`).)
-
-```sql
-SELECT *
-FROM users AS u
-LEFT JOIN transactions AS t  -- Don't drop any rows in 'users'
-ON u.id = t.user_id;
-```
-
 
 
 #### Interacting with APIs
@@ -194,7 +198,7 @@ git push
 These steps
 
 #### Writing tests
-
+There are lots of testing frameworks out there, but a solid one (and the one I'm most familiar with) is `pytest`.
 
 #### Object-oriented programming
 Finally, object-oriented programming is a skill that's probably not strictly necessary but will
@@ -264,7 +268,7 @@ This code block is quite a bit longer than the others, and it doesn't even inclu
 2. Is modular enough to be used in pipelines and multiple contexts
 3. Doesn't grind those pipelines to a halt if it gets some unexpected input and breaks
 
-If you're interested in a deeper dive on these concepts and a step-by-step explanation of the (truncated) code above, check out [this post]({{ site.baseurl }}/Python-5-Writing-production-level-Python).
+If you're interested in a deeper dive on these concepts and a step-by-step explanation of the (truncated) code above, stay tuned for a longer post on writing production-level Python code.
 
 ## Footnotes
 #### 1. [The code *around* your code](#the-code-around-your-code)
