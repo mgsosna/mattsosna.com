@@ -19,18 +19,13 @@ Welcome to the fourth post in our series on how to enter data science! So far, w
 ---
 
 ## The code *around* your code
-The programming concepts in the [last post]({{  site.baseurl  }}/DS-transition-3) covered how to work with data once it's sitting in front of you. If your role involves clicking and dragging a CSV from a shared Google Drive onto your desktop, analyzing it in a Jupyter Notebook, and typing up a report, then the last post is probably sufficient for your role. Yet, what happens when you start a project that requires combining data from hundreds of CSVs, or coding as part of a team, or running a script every night at 1am?
+The programming concepts in the [last post]({{  site.baseurl  }}/DS-transition-3) covered how to work with data once it's sitting in front of you. If your role involves clicking and dragging a CSV from a shared Google Drive onto your desktop, analyzing it in a Jupyter Notebook, then typing up a report and sending an email, then the last post is probably sufficient for your role.
 
-This is where programming skills *outside* of analyzing data come in. Returning to our [drilling machine example](#machine-learning) from earlier, this post is about building the machinery *around* the drill that is analytics. This post will answer questions like:
-* How do you pull data from a database?
-* How does your code need to change when you're part of *a team of programmers* instead of a lone wolf?
-* What best practices do you need to adopt *now* to avoid hours or days of wasted time *in a year*?
+Yet, what happens when you start a project that requires combining data from *hundreds* of CSVs? Clicking and dragging can only get you so far $-$ even if you have the patience, your manager likely doesn't, and it's only a matter of time before you have to access data through an [API](#interacting-with-apis) that doesn't have a nice user interface.
 
-It's important to be good at coding beyond just writing good code. Like... "meta-skills" at programming.
-You may be processing datasets that are too large to load onto your laptop's memory, for example, or you may need to dip into statistics that you can only access with specialized packages in Python or R. Similarly, while one-off scripts might have cut it during school,<sup>[[1]](#1-the-code-around-your-code)</sup> [you're living on borrowed time](https://en.wikipedia.org/wiki/Technical_debt) if you don't organize your code in a way that's easily read, reused, and modified by others.
+Similarly, maybe you're assigned to a project with *an existing codebase*, with programmers that expect best practices when handling the code. While one-off scripts might have cut it during school,<sup>[[1]](#1-the-code-around-your-code)</sup> [you're living on borrowed time](https://en.wikipedia.org/wiki/Technical_debt) if you don't organize your code in a way that's easily read, reused, and modified by others.
 
-
-Here are the technical skills we're covering in this series. Inferential statistics was covered in [the second post]({{  site.baseurl  }}/DS-transition-2), analytics in [the last post]({{  site.baseurl  }}/DS-transition-3), and software engineering in this post.
+This is where programming skills *outside* of analyzing data come in. Returning to our [drilling machine example]({{  site.baseurl  }}/DS-transition-3/#machine-learning) from the last post, this post is about building the machinery *around* the drill that is analytics. We'll cover **Software Engineering** in this post; **Inferential Statistics** was [two posts ago]({{  site.baseurl  }}/DS-transition-2), and **Analytics** was [the last post]({{  site.baseurl  }}/DS-transition-3).
 
 * **Inferential Statistics**
 - [ ] [Experimental design]({{  site.baseurl  }}/DS-transition-2/#experimental-design)
@@ -54,11 +49,10 @@ Here are the technical skills we're covering in this series. Inferential statist
 {: style='list-style-type: none'}
 
 ### Accessing data
-We'll start with a skill that spans the entire analytics-engineering spectrum, but I'd argue is more of an "engineering" skill than an analytical one. As a data scientist, you'll rarely access data through the familiar click-based graphical user interfaces of Google Drive or Dropbox. The majority of your time accessing data will be through SQL and **[APIs](#interacting-with-apis)**, which I'll talk about in a moment.
+We'll start with a skill that spans the entire analytics-engineering spectrum, but I'd argue is more of an "engineering" skill than an analytical one. As a data scientist, you'll rarely access data through the familiar click-based graphical user interfaces of Google Drive or Dropbox. The majority of your time accessing data will be through SQL and APIs.
 
 #### SQL
-
-So far, all the skills we've covered have assumed you already have data loaded into memory on your laptop. But unless your company is tiny, it's going to have more data than can fit onto one laptop. Further, the data will need to be organized in a way that optimizes storage space and retrieval time, as well as lets multiple users read (and write) the data simultaneously. The main way to do this is with [relational databases](https://en.wikipedia.org/wiki/Relational_database), which you query with SQL (Structured Query Language).
+So far, all the skills we've covered have assumed you already have data loaded into memory on your laptop. But unless your company is tiny, it's going to have more data than can fit onto one laptop. Further, the data will need to be organized in a way that optimizes storage space and retrieval time, as well as lets multiple users read (and write) the data simultaneously. The main way to do this is with [relational databases](https://en.wikipedia.org/wiki/Relational_database), which you query with SQL (Structured Query Language).<sup>[[2]](#2-sql)</sup>
 
 As a data scientist, you don't need to be a pro at SQL - that's more in the realm of a data engineer - but you definitely need to be able to join data from multiple tables, filter rows, and perform aggregations. The below query is a simple example in [Postgres](https://www.postgresql.org/), one of the major SQL dialects.
 
@@ -105,9 +99,8 @@ INNER JOIN latest_purchase AS lp  -- Filter on each ID's latest purchase
        AND p.purchase_date = lp.max_date;
 ```
 
-
 #### Interacting with APIs
-Aside from SQL, the other main way you'll access data is via **APIs**, or Application Programming Interfaces.<sup>[[2]](#2-interacting-with-apis)</sup>
+Aside from SQL, the other main way you'll access data is via **APIs**, or Application Programming Interfaces.<sup>[[3]](#3-interacting-with-apis)</sup>
 
 An API is like the entrance to a bank: it's (hopefully) the only way to access the contents of the bank, and you have to follow certain rules to enter: you can't bring in weapons, you have to enter on foot, you'll be turned away if you're not wearing pants, etc. Another way to think of it is like an electrical outlet - you can't access electricity unless your chord plug is in the correct shape.
 
@@ -163,9 +156,7 @@ for heading in soup.findAll('h2'):
     # Contents, History[edit], Techniques[edit]...
 ```
 
-
-### Other stuff
-#### Version control
+### Version control
 When you work on a coding project that can't be finished in one sitting, you need checkpoints to save the progress you've made. Even once the project is seemingly complete, you might not want to modify the working version with a new idea you have, but rather a copy of the project where you can make changes and compare them to the original.
 
 This is where version control systems like [Git](https://git-scm.com/) come in. In contrast to having dozens of files called `my_project.py`, `my_project_final.py`, `my_project_final2.py`, `my_project_final2_REAL.py`, etc. floating in a folder on your computer, you instead have a tree-shaped **repository** of your project. There's one "master" (also called "main") version of the code, and you only ever modify _copies_ (**branches**) of it. All changes to the code are automatically labeled whenever you push a **commit** to a branch, and changes to the main branch require a review by at least one other person. (Technically they don't, but this is the case in virtually any professional setting.)
@@ -174,15 +165,15 @@ The structure of the repository might look something like this over time. (Sourc
 
 ![]({{ site.baseurl }}/images/careers/git.png)
 
-The gray line is the `master` branch, and the blue and yellow lines are copies (`develop` and `myfeature`) that branched off at different points, were modified, and then were merged back into `master`. You can have dozens of branches running simultaneously at larger companies, which is essential for letting teams of developers work on different aspects of the same codebase simultaneously.
+The gray line is the `master` branch (now called `main`<sup>[[4]](#4-version-control)</sup>), and the blue and yellow lines are copies (`develop` and `myfeature`) that branched off at different points, were modified, and then were merged back into `master`. You can have dozens of branches running simultaneously at larger companies, which is essential for letting teams of developers work on different aspects of the same codebase simultaneously.
 
 The actual code behind using Git is straightforward. Below are some commands in [bash](https://opensource.com/resources/what-bash) in the Mac Terminal, where we:
-1. Switch from whatever branch we were on onto the `master` branch
-2. Create a new branch, `DS-123-Add-outlier-check`<sup>[[5]](#footnotes)</sup>
+1. Switch from whatever branch we were on onto the `main` branch
+2. Create a new branch, `DS-123-Add-outlier-check`<sup>[[5]](#5-version-control)</sup>, that is a copy of `main`
 3. Push the branch from our local computer and into the cloud
 
 ```bash
-git checkout master
+git checkout main
 git checkout -b DS-123-Add-outlier-check
 git push --set-upstream origin DS-123-Add-outlier-check
 ```
@@ -195,12 +186,10 @@ git commit -m "Add outlier check"
 git push
 ```
 
-These steps
+These steps are only reflected on `DS-123-Add-outlier-check`, not `main`. This lets us prepare the code until it's ready to be pushed to `main`. This process is called a **pull request,** and usually it's required that other developers review your work. A pull request may also initiate automated tests that run on your code to verify that your changes didn't break anything. If they did, that's ok $-$ you can change them before updating `main`, which is often the customer-facing branch.  
 
-#### Writing tests
-There are lots of testing frameworks out there, but a solid one (and the one I'm most familiar with) is `pytest`.
 
-#### Object-oriented programming
+### Object-oriented programming
 Finally, object-oriented programming is a skill that's probably not strictly necessary but will
 
 ```python
@@ -270,9 +259,27 @@ This code block is quite a bit longer than the others, and it doesn't even inclu
 
 If you're interested in a deeper dive on these concepts and a step-by-step explanation of the (truncated) code above, stay tuned for a longer post on writing production-level Python code.
 
+### Virtual environments
+
+### Writing tests
+There are lots of testing frameworks out there, but a solid one (and the one I'm most familiar with) is `pytest`.
+
+### Servers and deployment
+
+
+
 ## Footnotes
 #### 1. [The code *around* your code](#the-code-around-your-code)
-This is aimed at me as much as at anyone else. In grad school, I had R scripts that were hundreds of lines long, and rerunning them to process data differently always felt like performing surgery. It shouldn't be that way! Looking back, it's amazing how much easier the Ph.D. would have been with some basic software engineering and project management best practices in place. Maybe next time...
+This is aimed at me as much as at anyone else. In grad school, I had R scripts that were hundreds of lines long, and rerunning them to process data differently always felt like performing surgery. It shouldn't be that way! Looking back, it's amazing how much easier the Ph.D. would have been with some basic software engineering and project management best practices in place. Maybe for the next doctorate...
 
-#### 2. [Interacting with APIs](#interacting-with-apis)
+#### 2. [SQL](#sql)
+A popular alternative to relational databases is [NoSQL](https://www.mongodb.com/nosql-explained), or non-relational databases (a.k.a. "Not Only SQL.") In contrast to tables with strictly defined relationships, NoSQL databases like [MongoDB](https://www.mongodb.com/) allow much more flexibility in how data are stored. You can store arrays or nested dictionaries, or even add fields to documents ("tables") in the database on the fly. [A major disadvantage](https://stackoverflow.com/questions/5244437/pros-and-cons-of-mongodb) to this flexibility, however, is that complex queries are less flexible, especially joining data from separate documents together. While NoSQL databases are popular, [traditional relational databases are still more common](https://scalegrid.io/blog/2019-database-trends-sql-vs-nosql-top-databases-single-vs-multiple-database-use/) so I'll focus on them here.
+
+#### 3. [Interacting with APIs](#interacting-with-apis)
 APIs and SQL go hand-in-hand, actually. When you request data from an API, your request is most likely converted to a SQL query that is then executed on a database.
+
+#### 4. [Version control](#version-control)
+In October 2020, [GitHub renamed the default branch](https://www.zdnet.com/article/github-to-replace-master-with-main-starting-next-month/) for new repositories from `master` to `main` to remove unnecessary references to slavery.
+
+#### 5. [Version control](#version-control)
+A best practice naming convention for Git branches is to refer to them by their [JIRA](https://www.atlassian.com/software/jira) ticket ID. If your company integrates Git with JIRA, other developers will see whether the branch is in development, has an active pull request, or has been merged into `main`. An even better ("best"-er?) practice is to include in the branch name whether it is a [hotfix](https://en.wikipedia.org/wiki/Hotfix), support request, part of the [roadmap](https://roadmunk.com/roadmap-templates/software-roadmap), etc.
