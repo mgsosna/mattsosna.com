@@ -6,7 +6,7 @@ summary: The software engineering skills needed to succeed in data science
 image: ""
 ---
 
-Welcome to the fourth post in our series on how to enter data science! So far, we've covered [the range of data science roles]({{  site.baseurl  }}/DS-transition-1), some [inferential statistics fundamentals]({{  site.baseurl  }}/DS-transition-2), and [manipulating and analyzing data]({{  site.baseurl  }}/DS-transition-3). This post will shift from programming to broader software engineering concepts that are essential for data science.
+Welcome to the fourth post in our series on how to enter data science! So far, we've covered [the range of data science roles]({{  site.baseurl  }}/DS-transition-1), some [inferential statistics fundamentals]({{  site.baseurl  }}/DS-transition-2), and [manipulating and analyzing data]({{  site.baseurl  }}/DS-transition-3). This post will focus on software engineering concepts that are essential for data science.
 
 ---
 **How to enter data science:**
@@ -49,12 +49,14 @@ This is where programming skills *outside* of analyzing data come in. Returning 
 {: style='list-style-type: none'}
 
 ### Accessing data
-We'll start with a skill that spans the entire analytics-engineering spectrum, but I'd argue is more of an "engineering" skill than an analytical one. As a data scientist, you'll rarely access data through the familiar click-based graphical user interfaces of Google Drive or Dropbox. The majority of your time accessing data will be through SQL and APIs.
+We'll start with a skill that spans the entire [analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1/#the-scalpel-versus-the-shovel), but I'd argue is more of an "engineering" skill than an analytical one. As a data scientist, you'll rarely access data through the click-based graphical user interfaces of Google Drive or Dropbox. Instead, the majority of the data you'll access will reside in SQL (Structured Query Language) databases or at APIs (Application Programming Interfaces).
 
 #### SQL
-So far, all the skills we've covered have assumed you already have data loaded into memory on your laptop. But unless your company is tiny, it's going to have more data than can fit onto one laptop. Further, the data will need to be organized in a way that optimizes storage space and retrieval time, as well as lets multiple users read (and write) the data simultaneously. The main way to do this is with [relational databases](https://en.wikipedia.org/wiki/Relational_database), which you query with SQL (Structured Query Language).<sup>[[2]](#2-sql)</sup>
+Unless your company is tiny, it's going to have more data than can fit onto one laptop. Further, the data will need to be organized in a way that optimizes storage space and retrieval time, as well as lets multiple users read (and write) the data simultaneously. The main way to do this is with [relational databases](https://en.wikipedia.org/wiki/Relational_database), which you query with SQL.<sup>[[2]](#2-sql)</sup>
 
-As a data scientist, you don't need to be a pro at SQL - that's more in the realm of a data engineer - but you definitely need to be able to join data from multiple tables, filter rows, and perform aggregations. The below query is a simple example in [Postgres](https://www.postgresql.org/), one of the major SQL dialects.
+There isn't a huge amount to SQL, and it's an area that you'll repeatedly use, so it's good to polish this skill. While you likely won't be *creating* databases or tables $-$ that's more in the realm of a [data engineer](https://www.xplenty.com/blog/data-engineering-what-does-a-data-engineer-do-how-do-i-become-one/) $-$ you'll definitely be querying data, and possibly writing to the database. We'll focus on how to query here: joining data from multiple tables, filtering rows, and performing aggregations.
+
+The below query is a simple example in [Postgres](https://www.postgresql.org/), one of the major SQL dialects.
 
 ```sql
     SELECT u.name AS user_name,
@@ -98,6 +100,8 @@ INNER JOIN latest_purchase AS lp  -- Filter on each ID's latest purchase
         ON p.user_id = lp.user_id
        AND p.purchase_date = lp.max_date;
 ```
+
+For writing to databases, maybe you'll use an ORM (e.g. `SQLAlchemy`) or just an API. But this is probably more of a software engineering thing than data science $-$ you'll want to have strict rules on what can be written and who has write permission to a database. (No one should have write permission to Prod!)
 
 #### Interacting with APIs
 Aside from SQL, the other main way you'll access data is via **APIs**, or Application Programming Interfaces.<sup>[[3]](#3-interacting-with-apis)</sup>
