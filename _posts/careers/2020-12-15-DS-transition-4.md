@@ -65,14 +65,14 @@ SELECT name AS student_name,
  WHERE animal = 'Walrus';
 ```
 
-We can use aliases for tables, too, which we do below for `users`, `sql_pros`, and `transactions`. We join the tables in two ways in this example; in the first query, we use a `LEFT JOIN`, which preserves all rows in `users` but drops rows in `sql_pros` that don't have an ID in `users`. In the second query, we perform an `OUTER JOIN`, which preserve all rows in both `users` and `transactions`.
+We can use aliases for tables, too, which we do below for `users` and `sql_pros`, and `transactions`. We join the tables in two ways in this example; in the first query, we use a `LEFT JOIN`, which preserves all rows in `users` but drops rows in `sql_pros` that don't have an ID in `users`. In the second query, we perform an `OUTER JOIN`, which preserve all rows in both `users` and `transactions`.
 
 ```sql
 -- Query 1: don't drop any rows in 'users'
    SELECT *
      FROM users AS u
 LEFT JOIN sql_pros AS sp
-    USING (id);
+    USING (id);  -- Same as "ON" if column exists in both tables
 
 -- Query 2: don't drop any rows in either table
     SELECT *
@@ -81,7 +81,7 @@ OUTER JOIN transactions AS t
         ON u.id = t.user_id;
 ```
 
-The main thing to remember with the different joins is which rows you want to preserve after the join: only those that match in both tables (`INNER`), all in the left (`LEFT`) or right (`RIGHT`), or all in both (`OUTER`).
+The main thing to remember with the various joins is which rows you want to preserve after the join: only those that match in both tables (`INNER`), all in the left (`LEFT`) or right (`RIGHT`), or all in both (`OUTER`).
 
 Aggregating data is another key SQL skill. Below, we create a table with students' names and their average grade. In this scenario, maybe data about students such as names and addresses exists only in the `students` table, while the `grades` table only has `student_id`. To be able to print the student's name next to their average grade, we need to join the tables.
 
@@ -116,11 +116,11 @@ WITH orders_lookup AS (
  INNER JOIN orders_lookup AS ol
       USING (user_id)
       WHERE price
-NOT BETWEEN ol.avg_cost - 3*ol.sd_cost
-        AND ol.avg_cost + 3*ol.sd_cost;
+NOT BETWEEN ol.avg_price - 3*ol.sd_price
+        AND ol.avg_price + 3*ol.sd_price;
 ```
 
-Finally, let's quickly mention *writing* to a database. Writing to a database, especially one in production, will most likely fall under the strict supervision of the software engineering team $-$ a good team will have procedures in place to [verify the data types for each column are correct](https://stackoverflow.com/questions/14051672/how-to-verify-datatype-before-entering-into-the-table/14051929), [prevent SQL injection attacks](https://www.acunetix.com/websitesecurity/sql-injection/), and [ensure all writes are logged](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html). But in case you *do* have full reign over a database you want to write to, here's the basic syntax:
+Finally, let's quickly mention *writing* to a database. Writing to a database, especially one in production, will most likely fall under the strict supervision of the software engineering team $-$ a good team will have procedures in place to [verify the data types for each column](https://stackoverflow.com/questions/14051672/how-to-verify-datatype-before-entering-into-the-table/14051929), [prevent SQL injection attacks](https://www.acunetix.com/websitesecurity/sql-injection/), and [ensure all writes are logged](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html). But in case you *do* have full reign over a database you want to write to, here's the basic syntax:
 
 ```sql
 INSERT INTO students (firstname, lastname, is_superhero)
