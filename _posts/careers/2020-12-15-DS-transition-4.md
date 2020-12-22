@@ -6,7 +6,7 @@ summary: The software engineering skills needed to succeed in data science
 image: ""
 ---
 
-Welcome to the fourth post in our series on how to enter data science! So far, we've covered [the range of data science roles]({{  site.baseurl  }}/DS-transition-1), some [inferential statistics fundamentals]({{  site.baseurl  }}/DS-transition-2), and [manipulating and analyzing data]({{  site.baseurl  }}/DS-transition-3). This post will focus on software engineering concepts that are essential for data science.
+Welcome to the fourth post in our series on how to enter data science! So far, we've covered [the range of data science roles]({{  site.baseurl  }}/DS-transition-1), some [inferential statistics fundamentals]({{  site.baseurl  }}/DS-transition-2), and [manipulating and analyzing data]({{  site.baseurl  }}/DS-transition-3). This post will focus on **software engineering** concepts that are essential for data science.
 
 ---
 **How to enter data science:**
@@ -19,9 +19,9 @@ Welcome to the fourth post in our series on how to enter data science! So far, w
 ---
 
 ## The code *around* your code
-The programming concepts in the [last post]({{  site.baseurl  }}/DS-transition-3) covered how to work with data once it's sitting in front of you. If your role involves clicking and dragging a CSV from a shared Google Drive onto your desktop, analyzing it in a Jupyter Notebook, then typing up a report and sending an email, then the last post is probably sufficient for your role.
+The programming concepts in the [last post]({{  site.baseurl  }}/DS-transition-3) covered how to work with data once it's sitting in front of you. These concepts are sufficient if your responsibilities *around the analyses* involve something like clicking and dragging a CSV from Google Drive onto your laptop, analyzing the data, then attaching a PDF to a report.
 
-Yet, what happens when you start a project that requires combining data from *hundreds* of CSVs? Clicking and dragging can only get you so far $-$ even if you have the patience, your manager likely doesn't, and it's only a matter of time before you have to access data through an [API](#interacting-with-apis) that doesn't have a nice user interface.
+Yet, what happens when you start a project that requires combining data from *hundreds* of CSVs? Clicking and dragging can only get you so far $-$ even if you have the patience, your manager likely doesn't! It's also only a matter of time before you have to access data through an [API](#interacting-with-apis) that doesn't have a nice user interface.
 
 Similarly, maybe you're assigned to a project with *an existing codebase*, with programmers that expect best practices when handling the code. While one-off scripts might have cut it during school,<sup>[[1]](#1-the-code-around-your-code)</sup> [you're living on borrowed time](https://en.wikipedia.org/wiki/Technical_debt) if you don't organize your code in a way that's easily read, reused, and modified by others.
 
@@ -49,62 +49,86 @@ This is where programming skills *outside* of analyzing data come in. Returning 
 {: style='list-style-type: none'}
 
 ### Accessing data
-We'll start with a skill that spans the entire [analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1/#the-scalpel-versus-the-shovel), but I'd argue is more of an "engineering" skill than an analytical one. As a data scientist, you'll rarely access data through the click-based graphical user interfaces of Google Drive or Dropbox. Instead, the majority of the data you'll access will reside in SQL (Structured Query Language) databases or at APIs (Application Programming Interfaces).
+We'll start with a skill that spans the entire [analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1/#the-scalpel-versus-the-shovel), but I'd argue is more of an "engineering" skill than an analytical one. As a data scientist, you'll rarely access data through the click-based graphical user interfaces of Google Drive or Dropbox. Instead, the majority of the data you'll access will reside in **SQL** (Structured Query Language) databases or at **APIs** (Application Programming Interfaces). In this section, we'll cover *how to use code* to access data.
 
 #### SQL
-Unless your company is tiny, it's going to have more data than can fit onto one laptop. Further, the data will need to be organized in a way that optimizes storage space and retrieval time, as well as lets multiple users read (and write) the data simultaneously. The main way to do this is with [relational databases](https://en.wikipedia.org/wiki/Relational_database), which you query with SQL.<sup>[[2]](#2-sql)</sup>
+Unless your company is tiny, it's going to have more data than can fit onto a hard drive or two. And as the amount of data grows, it's critical for the data to be organized in a way that minimizes [redundancy](http://www.databasedev.co.uk/data-redundancy.html) and [retrieval time](https://use-the-index-luke.com/sql/testing-scalability/data-volume) and optimizes [security and reliability](https://looker.com/definitions/database-security#exit-popup); clearly states [how different parts of the data are related to each other](https://www.ibm.com/cloud/learn/relational-databases); and lets [multiple users read (and write) data simultaneously](https://courses.lumenlearning.com/santaana-informationsystems/chapter/characteristics-and-benefits-of-a-database/). The main way to do this is with [relational databases](https://en.wikipedia.org/wiki/Relational_database), which you query with SQL.<sup>[[2]](#2-sql)</sup>
 
-There isn't a huge amount to SQL, and it's an area that you'll repeatedly use, so it's good to polish this skill. While you likely won't be *creating* databases or tables $-$ that's more in the realm of a [data engineer](https://www.xplenty.com/blog/data-engineering-what-does-a-data-engineer-do-how-do-i-become-one/) $-$ you'll definitely be querying data, and possibly writing to the database. We'll focus on how to query here: joining data from multiple tables, filtering rows, and performing aggregations.
+You're likely to use SQL very frequently in your role, potentially every day, so I highly recommend investing time into polishing this skill. Luckily, SQL isn't a massive language, and you will probably only need to *query* data from databases as opposed to *creating* databases or tables, which is more in the realm of a [data engineer](https://www.xplenty.com/blog/data-engineering-what-does-a-data-engineer-do-how-do-i-become-one/). We'll focus on simple to intermediate querying in this post.
 
-The below query is a simple example in [Postgres](https://www.postgresql.org/), one of the major SQL dialects.
+Below is a simple query written in [Postgres](https://www.postgresql.org/), one of the major SQL dialects.<sup>[[3]](#3-sql)</sup> We select the `name` and `animal` columns from the table `students`, using the `AS` keyword to create [aliases](https://www.tutorialspoint.com/sql/sql-alias-syntax.htm), or temporary names, for the columns in our returned table. The final result is filtered so the only rows returned are those where a student's favorite animal is a walrus.
 
 ```sql
-    SELECT u.name AS user_name,
-           AVG(g.score) AS avg_score
-      FROM users AS u
-INNER JOIN grades AS g
-        ON u.id = g.user_id
-     WHERE AVG(g.score) > 90
-  GROUP BY u.id
-  ORDER BY u.name;
+SELECT name AS student_name,
+       animal AS favorite_animal
+  FROM students
+ WHERE animal = 'Walrus';
 ```
 
-Make sure you're comfortable with the difference between an `INNER JOIN`, `LEFT JOIN` and `RIGHT JOIN`, and `OUTER JOIN`. The main thing to remember is which rows you want to make sure are present after the join: only the ones that are in both tables (`INNER`), all in the left (`LEFT`) or right (`RIGHT`), or all in both (`OUTER`).
+We can use aliases for tables, too, which makes joining convenient. Below, we use aliases for the `users`, `sql_pros`, and `transactions` tables. We join the tables in two ways; in the first query, we use a `LEFT JOIN`, which preserves all rows in `users` but drops rows in `sql_pros` that don't have an ID in `users`. In the second query, we perform an `OUTER JOIN`, which preserve all rows in both `users` and `transactions`.
 
 ```sql
--- Don't drop any rows in 'users'
+-- Query 1: don't drop any rows in 'users'
    SELECT *
      FROM users AS u
-LEFT JOIN transactions AS t  
-       ON u.id = t.user_id;
+LEFT JOIN sql_pros AS sp
+    USING (id);
 
--- Don't drop any rows in either table
+-- Query 2: don't drop any rows in either table
     SELECT *
       FROM users AS u
 OUTER JOIN transactions AS t
+        ON u.id = t.user_id;
 ```
 
-For more complex queries, you'll want to bring in the `WITH {tab} AS` structure, which let you work with the output of nested queries. In the below query, we filter the table on the latest purchase for each user.
+The main thing to remember with the different joins is which rows you want to preserve after the join: only those that match in both tables (`INNER`), all in the left (`LEFT`) or right (`RIGHT`), or all in both (`OUTER`).
+
+Aggregating data is another key SQL skill. Below, we create a table with students' names and their average grade. In this scenario, maybe data about students such as names and addresses exists only in the `students` table, while the `grades` table only has `student_id`. To be able to print the student's name next to their average grade, we need to join the tables.
 
 ```sql
-WITH latest_purchase AS (
-    SELECT user_id,
-           MAX(purchase_date) AS max_date
-      FROM purchases
-  GROUP BY user_id
-)
-    SELECT p.user_id,
-           p.purchase_date
-      FROM purchases AS p
-INNER JOIN latest_purchase AS lp  -- Filter on each ID's latest purchase
-        ON p.user_id = lp.user_id
-       AND p.purchase_date = lp.max_date;
+    SELECT s.name,
+           AVG(g.score) AS avg_score
+      FROM students AS s
+INNER JOIN grades AS g
+        ON s.id = g.student_id
+  GROUP BY s.id
+  ORDER BY s.name;
 ```
 
-For writing to databases, maybe you'll use an ORM (e.g. `SQLAlchemy`) or just an API. But this is probably more of a software engineering thing than data science $-$ you'll want to have strict rules on what can be written and who has write permission to a database. (No one should have write permission to Prod!)
+While it's possible to join `users` and `grades`, save the data as a CSV, and *then* perform aggregations with `pandas` in Python, it's much more efficient (in both time and storage) to perform these calculations in SQL first before saving the data.
+
+For more complex queries, you'll want to bring in the `WITH {tab} AS` structure, which lets you write queries that build on the outputs of other queries. In the below query, we first create a lookup table with the mean and standard deviation `price` *for each user.* We then join our lookup back into the original `orders` table, using our lookup to filter out any rows that don't fall within three standard deviations of each user's mean order price. This immediately flags outliers that we can examine more closely.
+
+```sql
+-- Create a lookup with info on each user
+WITH orders_lookup AS (
+    SELECT user_id,
+           AVG(price) AS avg_price
+           STDDEV(price) AS sd_price
+      FROM orders
+  GROUP BY user_id
+)
+
+-- Use the lookup to filter the original table
+     SELECT user_id,
+            price
+       FROM orders AS o
+ INNER JOIN orders_lookup AS ol
+      USING (user_id)
+      WHERE price
+NOT BETWEEN ol.avg_cost - 3*ol.sd_cost
+        AND ol.avg_cost + 3*ol.sd_cost;
+```
+
+Finally, let's quickly mention *writing* to a database. Writing to a database, especially one in production, will most likely fall under the strict supervision of the software engineering team $-$ a good team will have procedures in place to [verify the data types for each column are correct](https://stackoverflow.com/questions/14051672/how-to-verify-datatype-before-entering-into-the-table/14051929), [prevent SQL injection attacks](https://www.acunetix.com/websitesecurity/sql-injection/), and [ensure all writes are logged](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html). But in case you *do* have full reign over a database you want to write to, here's the basic syntax:
+
+```sql
+INSERT INTO students (firstname, lastname, is_superhero)
+VALUES ("Jane", "Reader", true);
+```
 
 #### Interacting with APIs
-Aside from SQL, the other main way you'll access data is via **APIs**, or Application Programming Interfaces.<sup>[[3]](#3-interacting-with-apis)</sup>
+Aside from SQL, the other main way you'll access data is via **APIs**, or Application Programming Interfaces.<sup>[[4]](#4-interacting-with-apis)</sup>
 
 An API is like the entrance to a bank: it's (hopefully) the only way to access the contents of the bank, and you have to follow certain rules to enter: you can't bring in weapons, you have to enter on foot, you'll be turned away if you're not wearing pants, etc. Another way to think of it is like an electrical outlet - you can't access electricity unless your chord plug is in the correct shape.
 
@@ -169,11 +193,11 @@ The structure of the repository might look something like this over time. (Sourc
 
 ![]({{ site.baseurl }}/images/careers/git.png)
 
-The gray line is the `master` branch (now called `main`<sup>[[4]](#4-version-control)</sup>), and the blue and yellow lines are copies (`develop` and `myfeature`) that branched off at different points, were modified, and then were merged back into `master`. You can have dozens of branches running simultaneously at larger companies, which is essential for letting teams of developers work on different aspects of the same codebase simultaneously.
+The gray line is the `master` branch (now called `main`<sup>[[5]](#5-version-control)</sup>), and the blue and yellow lines are copies (`develop` and `myfeature`) that branched off at different points, were modified, and then were merged back into `master`. You can have dozens of branches running simultaneously at larger companies, which is essential for letting teams of developers work on different aspects of the same codebase simultaneously.
 
 The actual code behind using Git is straightforward. Below are some commands in [bash](https://opensource.com/resources/what-bash) in the Mac Terminal, where we:
 1. Switch from whatever branch we were on onto the `main` branch
-2. Create a new branch, `DS-123-Add-outlier-check`<sup>[[5]](#5-version-control)</sup>, that is a copy of `main`
+2. Create a new branch, `DS-123-Add-outlier-check`<sup>[[6]](#6-version-control)</sup>, that is a copy of `main`
 3. Push the branch from our local computer and into the cloud
 
 ```bash
@@ -279,11 +303,14 @@ This is aimed at me as much as at anyone else. In grad school, I had R scripts t
 #### 2. [SQL](#sql)
 A popular alternative to relational databases is [NoSQL](https://www.mongodb.com/nosql-explained), or non-relational databases (a.k.a. "Not Only SQL.") In contrast to tables with strictly defined relationships, NoSQL databases like [MongoDB](https://www.mongodb.com/) allow much more flexibility in how data are stored. You can store arrays or nested dictionaries, or even add fields to documents ("tables") in the database on the fly. [A major disadvantage](https://stackoverflow.com/questions/5244437/pros-and-cons-of-mongodb) to this flexibility, however, is that complex queries are less flexible, especially joining data from separate documents together. While NoSQL databases are popular, [traditional relational databases are still more common](https://scalegrid.io/blog/2019-database-trends-sql-vs-nosql-top-databases-single-vs-multiple-database-use/) so I'll focus on them here.
 
-#### 3. [Interacting with APIs](#interacting-with-apis)
+#### 3. [SQL](#sql)
+In the research for this post, I stumbled across this (somewhat controversial) [SQL Style Guide](https://www.sqlstyle.guide/). It was an interesting read, and I decided to adopt some of the layout tips for the SQL examples in this post. The main thing I took away was having a blank "river" down the middle of your code, with SQL keywords on the left and the rest of the code on the right $-$ it makes it really easy to quickly scan what the query is doing. If I don't find an easy way to auto-format the code this way, though, I doubt I'll stick with it for quick analyses.
+
+#### 4. [Interacting with APIs](#interacting-with-apis)
 APIs and SQL go hand-in-hand, actually. When you request data from an API, your request is most likely converted to a SQL query that is then executed on a database.
 
-#### 4. [Version control](#version-control)
+#### 5. [Version control](#version-control)
 In October 2020, [GitHub renamed the default branch](https://www.zdnet.com/article/github-to-replace-master-with-main-starting-next-month/) for new repositories from `master` to `main` to remove unnecessary references to slavery.
 
-#### 5. [Version control](#version-control)
+#### 6. [Version control](#version-control)
 A best practice naming convention for Git branches is to refer to them by their [JIRA](https://www.atlassian.com/software/jira) ticket ID. If your company integrates Git with JIRA, other developers will see whether the branch is in development, has an active pull request, or has been merged into `main`. An even better ("best"-er?) practice is to include in the branch name whether it is a [hotfix](https://en.wikipedia.org/wiki/Hotfix), support request, part of the [roadmap](https://roadmunk.com/roadmap-templates/software-roadmap), etc.
