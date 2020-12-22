@@ -65,7 +65,7 @@ SELECT name AS student_name,
  WHERE animal = 'Walrus';
 ```
 
-We can use aliases for tables, too, which makes joining convenient. Below, we use aliases for the `users`, `sql_pros`, and `transactions` tables. We join the tables in two ways; in the first query, we use a `LEFT JOIN`, which preserves all rows in `users` but drops rows in `sql_pros` that don't have an ID in `users`. In the second query, we perform an `OUTER JOIN`, which preserve all rows in both `users` and `transactions`.
+We can use aliases for tables, too, which we do below for `users`, `sql_pros`, and `transactions`. We join the tables in two ways in this example; in the first query, we use a `LEFT JOIN`, which preserves all rows in `users` but drops rows in `sql_pros` that don't have an ID in `users`. In the second query, we perform an `OUTER JOIN`, which preserve all rows in both `users` and `transactions`.
 
 ```sql
 -- Query 1: don't drop any rows in 'users'
@@ -97,7 +97,7 @@ INNER JOIN grades AS g
 
 While it's possible to join `users` and `grades`, save the data as a CSV, and *then* perform aggregations with `pandas` in Python, it's much more efficient (in both time and storage) to perform these calculations in SQL first before saving the data.
 
-For more complex queries, you'll want to bring in the `WITH {tab} AS` structure, which lets you write queries that build on the outputs of other queries. In the below query, we first create a lookup table with the mean and standard deviation `price` *for each user.* We then join our lookup back into the original `orders` table, using our lookup to filter out any rows that don't fall within three standard deviations of each user's mean order price. This immediately flags outliers that we can examine more closely.
+For more complex queries, you'll want to bring in the `WITH {tab} AS` structure, which lets you write queries that build on the outputs of other queries. In the below query, we first create a lookup table with the mean and standard deviation `price` *for each user.* We then join our lookup back into the original `orders` table, using our lookup to filter out any rows that don't fall within three standard deviations of each user's mean order price. This immediately flags outliers that we can examine more closely. Note that this is all one query, but we can logically treat it as two thanks to the `WITH` syntax.
 
 ```sql
 -- Create a lookup with info on each user
