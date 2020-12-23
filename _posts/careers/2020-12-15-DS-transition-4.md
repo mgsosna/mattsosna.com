@@ -49,7 +49,9 @@ This is where programming skills *outside* of analyzing data come in. Returning 
 {: style='list-style-type: none'}
 
 ### Accessing data
-We'll start with a skill that spans the entire [analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1/#the-scalpel-versus-the-shovel), but I'd argue is more of an "engineering" skill than an analytical one. As a data scientist, you'll rarely access data through the click-based graphical user interfaces of Google Drive or Dropbox. Instead, the majority of the data you'll access will reside in **SQL** (Structured Query Language) databases or at **APIs** (Application Programming Interfaces). In this section, we'll cover *how to use code* to access data.
+In this section, we'll cover _**how to use code to access data.**_ This is a skill that spans the entire [analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1/#the-scalpel-versus-the-shovel), but I'd argue is more of an "engineering" skill than an analytical one.
+
+As a data scientist, you'll rarely access data through the click-based graphical user interfaces of Google Drive or Dropbox. Instead, the majority of the data you'll access will reside in **SQL** (Structured Query Language) databases or at **APIs** (Application Programming Interfaces). It's also possible you'll use **web scraping** to access data from websites that don't provide an API.
 
 #### SQL
 Unless your company is tiny, it's going to have more data than can fit onto a hard drive or two. And as the amount of data grows, it's critical for the data to be organized in a way that minimizes [redundancy](http://www.databasedev.co.uk/data-redundancy.html) and [retrieval time](https://use-the-index-luke.com/sql/testing-scalability/data-volume) and optimizes [security and reliability](https://looker.com/definitions/database-security#exit-popup); clearly states [how different parts of the data are related to each other](https://www.ibm.com/cloud/learn/relational-databases); and lets [multiple users read (and write) data simultaneously](https://courses.lumenlearning.com/santaana-informationsystems/chapter/characteristics-and-benefits-of-a-database/). The main way to do this is with [relational databases](https://en.wikipedia.org/wiki/Relational_database), which you query with SQL.<sup>[[2]](#2-sql)</sup>
@@ -120,17 +122,30 @@ NOT BETWEEN ol.avg_price - 3*ol.sd_price
         AND ol.avg_price + 3*ol.sd_price;
 ```
 
-Finally, let's quickly mention *writing* to a database. Writing to a database, especially one in production, will most likely fall under the strict supervision of the software engineering team $-$ a good team will have procedures in place to [verify the data types for each column](https://stackoverflow.com/questions/14051672/how-to-verify-datatype-before-entering-into-the-table/14051929), [prevent SQL injection attacks](https://www.acunetix.com/websitesecurity/sql-injection/), and [ensure all writes are logged](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html). But in case you *do* have full reign over a database you want to write to, here's the basic syntax:
+Finally, let's quickly mention *writing* to a database. Writing to a database, especially one in production, will most likely fall under the strict supervision of the software engineering team $-$ a good team will have procedures in place to [verify the data types for each column](https://stackoverflow.com/questions/14051672/how-to-verify-datatype-before-entering-into-the-table/14051929), [prevent SQL injection attacks](https://www.acunetix.com/websitesecurity/sql-injection/), and [ensure all writes are logged](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html). But in case you *do* have full reign over a database you want to write to, here's the basic syntax for adding a row:
 
 ```sql
+-- Add a row
 INSERT INTO students (firstname, lastname, is_superhero)
-VALUES ("Jane", "Reader", true);
+     VALUES ("Jane", "Reader", true);
+```
+
+And here is the syntax for updating and deleting. Be *very* sure you know what you're doing, since there's no "undo" command!<sup>[[4]](#4-sql)</sup>
+```sql
+-- Update all rows that match criteria
+UPDATE students
+   SET age = age + 1
+ WHERE name = 'Jimmy';
+
+-- Delete all rows that match criteria
+DELETE FROM students
+      WHERE id = 10;
 ```
 
 #### Interacting with APIs
-Aside from SQL, the other main way you'll access data is via **APIs**, or Application Programming Interfaces.<sup>[[4]](#4-interacting-with-apis)</sup>
+Aside from SQL, the other main way you'll access data is via **APIs**, or Application Programming Interfaces.<sup>[[5]](#5-interacting-with-apis)</sup>
 
-An API is like the entrance to a bank: it's (hopefully) the only way to access the contents of the bank, and you have to follow certain rules to enter: you can't bring in weapons, you have to enter on foot, you'll be turned away if you're not wearing pants, etc. Another way to think of it is like an electrical outlet - you can't access electricity unless your chord plug is in the correct shape.
+An API is like the entrance to a bank: it's (hopefully) the only way to access the contents of the bank, and you have to follow certain rules to enter: you can't bring in weapons, you have to enter on foot, you'll be turned away if you're not wearing a shirt, etc. Another way to think of it is like an electrical outlet - you can't access electricity unless your chord plug is in the correct shape.
 
 The `requests` library lets us query APIs straight from Python. The process is simple for APIs without any security requirements: you just need the API's location on the internet, i.e. their [URL](https://en.wikipedia.org/wiki/URL), or Universal Resource Locator. All we do is pose an HTTP `GET` request to the URL, then decode the JSON returned from the server servicing the API.
 
@@ -168,7 +183,10 @@ string = body.decode(encoding='utf-8')
 df = pd.DataFrame(json.load(StringIO(string)))
 ```
 
-What if you want to collect data from an external website that doesn't provide a convenient API? This is a job for [web scraping](https://www.scrapinghub.com/what-is-web-scraping/), and Python's [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) module is our answer.
+#### Web scraping
+What if you want to collect data from an external website that doesn't provide a convenient API? For this, we turn to [web scraping](https://www.scrapinghub.com/what-is-web-scraping/). The basic premise of web scraping is to write code that traverses the [HTML](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/HTML_basics) of a webpage, finding specified [tags](https://eastmanreference.com/complete-list-of-html-tags) (e.g. headers, tables, images, etc.) and recording their information. Scraping is ideal for automation because HTML has a highly regular, tree-based structure, with clear identifiers for all elements.
+
+While scraping might sound complicated, it's actually fairly straightforward. We essentially mimic a web browser (e.g. Firefox, Chrome) by *requesting* the HTML from a website with `requests.get`. Then, we use Python's [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) module to organize the HTML into essentially a large nested dictionary. We can then extract the information we want from this object by specifying the HTML tags we're interested in. Below, we print out all `<h2>` headings for Wikipedia's web scraping page.
 
 ```python
 import requests
@@ -176,13 +194,18 @@ from bs4 import BeautifulSoup
 
 url = "https://en.wikipedia.org/wiki/Web_scraping"
 
+# Get the HTML from the page
 response = requests.get(url)
+
+# Parse the HTML
 soup = BeautifulSoup(response.text, 'html')
 
+# Print out each <h2> element
 for heading in soup.findAll('h2'):
     print(heading.text)  
     # Contents, History[edit], Techniques[edit]...
 ```
+
 
 ### Version control
 When you work on a coding project that can't be finished in one sitting, you need checkpoints to save the progress you've made. Even once the project is seemingly complete, you might not want to modify the working version with a new idea you have, but rather a copy of the project where you can make changes and compare them to the original.
@@ -193,11 +216,11 @@ The structure of the repository might look something like this over time. (Sourc
 
 ![]({{ site.baseurl }}/images/careers/git.png)
 
-The gray line is the `master` branch (now called `main`<sup>[[5]](#5-version-control)</sup>), and the blue and yellow lines are copies (`develop` and `myfeature`) that branched off at different points, were modified, and then were merged back into `master`. You can have dozens of branches running simultaneously at larger companies, which is essential for letting teams of developers work on different aspects of the same codebase simultaneously.
+The gray line is the `master` branch (now called `main`<sup>[[6]](#6-version-control)</sup>), and the blue and yellow lines are copies (`develop` and `myfeature`) that branched off at different points, were modified, and then were merged back into `master`. You can have dozens of branches running simultaneously at larger companies, which is essential for letting teams of developers work on different aspects of the same codebase simultaneously.
 
 The actual code behind using Git is straightforward. Below are some commands in [bash](https://opensource.com/resources/what-bash) in the Mac Terminal, where we:
 1. Switch from whatever branch we were on onto the `main` branch
-2. Create a new branch, `DS-123-Add-outlier-check`<sup>[[6]](#6-version-control)</sup>, that is a copy of `main`
+2. Create a new branch, `DS-123-Add-outlier-check`<sup>[[7]](#7-version-control)</sup>, that is a copy of `main`
 3. Push the branch from our local computer and into the cloud
 
 ```bash
@@ -306,11 +329,14 @@ A popular alternative to relational databases is [NoSQL](https://www.mongodb.com
 #### 3. [SQL](#sql)
 In the research for this post, I stumbled across this (somewhat controversial) [SQL Style Guide](https://www.sqlstyle.guide/). It was an interesting read, and I decided to adopt some of the layout tips for the SQL examples in this post. The main thing I took away was having a blank "river" down the middle of your code, with SQL keywords on the left and the rest of the code on the right $-$ it makes it really easy to quickly scan what the query is doing. If I don't find an easy way to auto-format the code this way, though, I doubt I'll stick with it for quick analyses.
 
-#### 4. [Interacting with APIs](#interacting-with-apis)
+#### 4. [SQL](#sql)
+If this actually happens to you, hopefully your company's engineering team regularly backs up the databases and can [roll back to an earlier version](https://www.codeproject.com/Questions/389399/how-to-do-undo-a-sql-query). If they don't, and you accidentally delete all your company's data, then [Quora recommends you resign](https://www.quora.com/What-would-you-do-if-you-accidentally-deleted-all-data-of-a-production-MySQL-database-at-the-first-day-as-a-backend-developer) and find a company with better engineering practices!
+
+#### 5. [Interacting with APIs](#interacting-with-apis)
 APIs and SQL go hand-in-hand, actually. When you request data from an API, your request is most likely converted to a SQL query that is then executed on a database.
 
-#### 5. [Version control](#version-control)
+#### 6. [Version control](#version-control)
 In October 2020, [GitHub renamed the default branch](https://www.zdnet.com/article/github-to-replace-master-with-main-starting-next-month/) for new repositories from `master` to `main` to remove unnecessary references to slavery.
 
-#### 6. [Version control](#version-control)
+#### 7. [Version control](#version-control)
 A best practice naming convention for Git branches is to refer to them by their [JIRA](https://www.atlassian.com/software/jira) ticket ID. If your company integrates Git with JIRA, other developers will see whether the branch is in development, has an active pull request, or has been merged into `main`. An even better ("best"-er?) practice is to include in the branch name whether it is a [hotfix](https://en.wikipedia.org/wiki/Hotfix), support request, part of the [roadmap](https://roadmunk.com/roadmap-templates/software-roadmap), etc.
