@@ -255,7 +255,7 @@ As the amount of code in a project grows, it typically follows this pattern of i
 4. Functions within scripts grouped into [**classes**](https://www.programiz.com/python-programming/class)
 5. Classes grouped into [**modules**](https://www.learnpython.org/en/Modules_and_Packages)
 
-Production-level Python is best at the fifth level of organization, where code can easily be added, modified, and reused across contexts. A team's code will be organized into **classes**, which are templates of code with attributes and methods, that can be *instantiated*. Below is a brief example with a class called `Student`.
+Production-level Python is best at the fifth level of organization, where code can easily be added, modified, and reused across contexts. A team's code will typically be organized into **modules** based on company products (e.g. "data quality detectors," "price forecasters," "customer churn predictors"), which in turn contain **classes** with collections of functions that work together. Below is a brief example with a class called `Student`.
 
 ```python
 class Student:
@@ -273,7 +273,7 @@ john.introduce()  # 'John is in grade 3'
 mary.introduce()  # 'Mary is in grade 5'
 ```
 
-Classes may be stored in `.py` files with the same name, grouped into directories with similar classes. The **module** consists of all the directories. We can have a `data_processing` module, for example, with a directory structure like this<sup>[[9]](#9-object-oriented-programming)</sup>:
+Classes may be stored in `.py` files with the same name, grouped into directories with similar classes. The module consists of all the directories. We can have a `data_processing` module, for example, with a directory structure like this<sup>[[9]](#9-object-oriented-programming)</sup>:
 
 ```bash
 preprocessors
@@ -290,7 +290,7 @@ services
 init.py
 ```
 
-In the *preprocessors* directory, `datacleaner.py` contains a class, `DataCleaner`, with methods for cleaning data. The first 60 lines of `datacleaner.py` might look something like this:
+In the `preprocessors` directory, `data_cleaner.py` contains a class, `DataCleaner`, with methods for cleaning data. The first 60 lines of `data_cleaner.py` might look something like this:
 
 ```python
 import logging
@@ -343,9 +343,9 @@ class DataCleaner:
 
         bad_rows = set()
         for col in cols_to_check:
-            bad_rows.add(self._find_outliers(df[col], n_sd_thresh))
+            bad_rows.update(self._find_outliers(df[col], n_sd_thresh))
 
-        df_filt = df[~df.index.isin(bad_idx)].reset_index(drop=True)
+        df_filt = df[~df.index.isin(bad_rows)].reset_index(drop=True)
 
         if df_filt.empty:
             logging.warning("df has no rows without outliers")
@@ -357,7 +357,7 @@ This code block is quite a bit longer than the others, and it doesn't even inclu
 2. Is modular enough to be used in pipelines and multiple contexts
 3. Doesn't grind those pipelines to a halt if it gets some unexpected input and breaks
 
-If you're interested in a deeper dive on these concepts and a step-by-step explanation of the (truncated) code above, stay tuned for a longer post on writing production-level Python code.
+You also might notice that we have a detailed [docstring](https://www.programiz.com/python-programming/docstrings), [type hints](http://veekaybee.github.io/2019/07/08/python-type-hints/) for the parameters in `remove_outliers`, [argument defaults](https://www.geeksforgeeks.org/default-arguments-in-python/) set to labeled [global variables](https://www.programiz.com/python-programming/global-local-nonlocal-variables) at the top of the script, and a [warning log](https://www.toptal.com/python/in-depth-python-logging) for when the function removes all rows from the dataframe (which is probably not what we intend). These add-ons help explain what our code is doing to other developers $-$ as well as to ourselves! As a further precaution, we could incorporate [error-handling](https://wiki.python.org/moin/HandlingExceptions) for when an argument of the wrong datatype is passed in, which would otherwise cause our script to fail.
 
 ### Virtual environments
 
