@@ -249,13 +249,12 @@ git push             # update the branch
 
 ### Object-oriented programming
 As the amount of code in a project grows, it typically follows this pattern of increasing organization:
-1. A script with **raw commands** one after the other
-2. Code grouped into **functions**
-3. Functions grouped into **separate scripts**
-4. Functions within scripts grouped into [**classes**](https://www.programiz.com/python-programming/class)
-5. Classes grouped into [**modules**](https://www.learnpython.org/en/Modules_and_Packages)
+1. Scripts with **raw commands** one after the other
+2. Commands grouped into **functions**
+3. Functions grouped into [**classes**](https://www.programiz.com/python-programming/class)
+4. Classes grouped into [**modules**](https://www.learnpython.org/en/Modules_and_Packages)
 
-Production-level Python is best at the fifth level of organization, where code can easily be added, modified, and reused across contexts. A team's code will typically be organized into **modules** based on company products (e.g. "data quality detectors," "price forecasters," "customer churn predictors"), which in turn contain **classes** with collections of functions that work together. Below is a brief example with a class called `Student`.
+Production-level Python is best at the fourth level of organization, where code can easily be added, modified, and reused across contexts. A team's code will typically be organized into **modules** based on company products (e.g. "data quality detectors," "price forecasters," "customer churn predictors"), which in turn contain **classes** with collections of functions that work together. Below is a brief example with a class called `Student`.
 
 ```python
 class Student:
@@ -357,25 +356,74 @@ This code block is quite a bit longer than the others, and it doesn't even inclu
 2. Is modular enough to be used in pipelines and multiple contexts
 3. Doesn't grind those pipelines to a halt if it gets some unexpected input and breaks
 
-You also might notice that we have a detailed [docstring](https://www.programiz.com/python-programming/docstrings), [type hints](http://veekaybee.github.io/2019/07/08/python-type-hints/) for the parameters in `remove_outliers`, [argument defaults](https://www.geeksforgeeks.org/default-arguments-in-python/) set to labeled [global variables](https://www.programiz.com/python-programming/global-local-nonlocal-variables) at the top of the script, and a [warning log](https://www.toptal.com/python/in-depth-python-logging) for when the function removes all rows from the dataframe (which is probably not what we intend). These add-ons help explain what our code is doing to other developers $-$ as well as to ourselves! As a further precaution, we could incorporate [error-handling](https://wiki.python.org/moin/HandlingExceptions) for when an argument of the wrong datatype is passed in, which would otherwise cause our script to fail.
+The code above has a detailed [docstring](https://www.programiz.com/python-programming/docstrings), [type hints](http://veekaybee.github.io/2019/07/08/python-type-hints/), [argument defaults](https://www.geeksforgeeks.org/default-arguments-in-python/) set to [global variables](https://www.programiz.com/python-programming/global-local-nonlocal-variables) at the top of the script, and a [warning log](https://www.toptal.com/python/in-depth-python-logging) for unexpected behavior. These add-ons help explain what our code is doing to other developers $-$ as well as to ourselves! As a further precaution, we could incorporate [error-handling](https://wiki.python.org/moin/HandlingExceptions) for when an argument of the wrong datatype is passed in, which would otherwise cause our script to fail.
 
 ### Virtual environments
+Unless our code is very simple, we'll need to import external libraries.<sup>[[10]](#10-virtual-environments)</sup> These external dependencies, as Bill Sourour puts it, ["are the devil."](https://www.freecodecamp.org/news/code-dependencies-are-the-devil-35ed28b556d/) 
+
+```bash
+python -m virtualenv venv
+```
+
+Above, we use Python's built-in `virtualenv` module to create a virtual environment called `venv`. We can then enter this virtual environment by typing the code below:
+
+```bash
+source venv/bin/activate
+```
+
+Now in our environment, we're free to do whatever we want.
+
+```bash
+pip install scikit-learn
+pip install mongodb
+```
 
 ### Writing tests
 There are lots of testing frameworks out there, but a solid one (and the one I'm most familiar with) is `pytest`.
 
 ```python
 import pytest
-import Preprocessor
+import OurCustomClass
 
-class TestRemoveOutliers:
+occ = OurCustomClass()
+
+class TestAddNumbers:
     """
-    | Tests for Preprocessor.remove_outliers
+    | Tests for OurCustomClass.add_numbers
     """
 
-    def test_run(a, b):
-        assert a == b
+    @pytest.fixture
+    def good_inputs(self):
+        return {"int-int": {"a": 1, "b": 0},
+                "int-float": {"a": 1, "b": 0.0},
+                "float-int": {"a": 1.0, "b": 0},
+                "float-float": {"a": 1.0, "b": 0.0}
+                }
 
+    @pytest.fixture
+    def bad_inputs(self):
+        return {'list': {'a': [1, 2], 'b': 3},
+                'str': {'a': 1, 'b': 'abc'}}
+
+    @pytest.fixture
+    def expected_output(self):
+        return 1.0
+
+    def test_return_number(good_inputs, expected_output):
+        for arg_combo in good_inputs:
+            actual = occ.add_numbers(**good_inputs[arg_combo])
+            assert actual == expected_output,
+                f"Got {actual} for {arg_combo}; " +
+                f"expected {expected_output}"
+
+    def test_raise_error(bad_inputs):
+        with pytest.raises(AssertionError) as exception_info1:
+            occ.add_numbers(**bad_inputs['list'])
+        with pytest.raises(AssertionError) as exception_info2:
+            occ.add_numbers(**bad_inputs['str'])
+
+        assert exception_info1.match("All inputs must be int or float")
+        assert exception_info2.match("All inputs must be int or float")
 ```
 
 Then in bash, you would just navigate to the root directory of your project, then type `pytest tests`
@@ -430,3 +478,6 @@ from data_processing.services.data_loader import DataLoader
 ```
 
 Not only is this far less convenient, it also runs the risk of external scripts breaking if you decide to rearrange the directories inside the `data_processing` module. You can read more about init.py files [here](https://stackoverflow.com/questions/448271/what-is-init-py-for).
+
+#### 10. [Virtual environments](#virtual-environments)
+We could also be dead-set on doing everything by hand, but given that the code for a `pandas DataFrame` is [9,636 lines long](https://github.com/pandas-dev/pandas/blob/master/pandas/core/frame.py), we're better off dealing with virtual environments.
