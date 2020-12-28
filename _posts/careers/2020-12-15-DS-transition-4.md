@@ -254,7 +254,7 @@ As the amount of code in a project grows, it typically follows this pattern of i
 3. Functions grouped into [**classes**](https://www.programiz.com/python-programming/class)
 4. Classes grouped into [**modules**](https://www.learnpython.org/en/Modules_and_Packages)
 
-Production-level Python is best at the fourth level of organization, where code can easily be added, modified, and reused across contexts. A team's code will typically be organized into **modules** based on company products (e.g. "data quality detectors," "price forecasters," "customer churn predictors"), which in turn contain **classes** with collections of functions that work together. Below is a brief example with a class called `Student`.
+Production-level Python is best at the fourth level of organization, where code can easily be added, modified, and reused across contexts. A team's code will typically be organized into **modules** based on company products (e.g. "data quality alerts," "price forecasters," "customer churn predictors"), which in turn contain **classes** with collections of functions that work together. Below is a brief example of a class called `Student`.
 
 ```python
 class Student:
@@ -275,18 +275,22 @@ mary.introduce()  # 'Mary is in grade 5'
 Classes may be stored in `.py` files with the same name, grouped into directories with similar classes. The module consists of all the directories. We can have a `data_processing` module, for example, with a directory structure like this<sup>[[9]](#9-object-oriented-programming)</sup>:
 
 ```bash
-preprocessors
-| - init.py
-| - data_cleaner.py
-visualizers
-| - init.py
-| - error_logger.py
-| - dashboarder.py
-services
-| - init.py
-| - data_loader.py
-| - database_writer.py
-init.py
+data_processing
+|   init.py
+|   preprocessors
+|   |   init.py
+|   |   data_cleaner.py
+|   visualizers
+|   |   init.py
+|   |   error_logger.py
+|   |   dashboarder.py
+|   services
+|   |   init.py
+|   |   data_loader.py
+|   |   database_writer.py
+|   just_for_fun
+|   |   init.py
+|   |   student.py
 ```
 
 In the `preprocessors` directory, `data_cleaner.py` contains a class, `DataCleaner`, with methods for cleaning data. The first 60 lines of `data_cleaner.py` might look something like this:
@@ -359,7 +363,7 @@ This code block is quite a bit longer than the others, and it doesn't even inclu
 The code above has a detailed [docstring](https://www.programiz.com/python-programming/docstrings), [type hints](http://veekaybee.github.io/2019/07/08/python-type-hints/), [argument defaults](https://www.geeksforgeeks.org/default-arguments-in-python/) set to [global variables](https://www.programiz.com/python-programming/global-local-nonlocal-variables) at the top of the script, and a [warning log](https://www.toptal.com/python/in-depth-python-logging) for unexpected behavior. These add-ons help explain what our code is doing to other developers $-$ as well as to ourselves! As a further precaution, we could incorporate [error-handling](https://wiki.python.org/moin/HandlingExceptions) for when an argument of the wrong datatype is passed in, which would otherwise cause our script to fail.
 
 ### Virtual environments
-Unless our code is very simple, we'll need to import external libraries.<sup>[[10]](#10-virtual-environments)</sup> These external dependencies, as Bill Sourour puts it, ["are the devil."](https://www.freecodecamp.org/news/code-dependencies-are-the-devil-35ed28b556d/) 
+Unless our code is very simple, we'll need to import external libraries.<sup>[[10]](#10-virtual-environments)</sup> These external dependencies, as Bill Sourour puts it, ["are the devil."](https://www.freecodecamp.org/news/code-dependencies-are-the-devil-35ed28b556d/)
 
 ```bash
 python -m virtualenv venv
