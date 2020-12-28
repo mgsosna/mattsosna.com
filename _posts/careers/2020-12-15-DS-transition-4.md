@@ -360,27 +360,40 @@ This code block is quite a bit longer than the others, and it doesn't even inclu
 2. Is modular enough to be used in pipelines and multiple contexts
 3. Doesn't grind those pipelines to a halt if it gets some unexpected input and breaks
 
-The code above has a detailed [docstring](https://www.programiz.com/python-programming/docstrings), [type hints](http://veekaybee.github.io/2019/07/08/python-type-hints/), [argument defaults](https://www.geeksforgeeks.org/default-arguments-in-python/) set to [global variables](https://www.programiz.com/python-programming/global-local-nonlocal-variables) at the top of the script, and a [warning log](https://www.toptal.com/python/in-depth-python-logging) for unexpected behavior. These add-ons help explain what our code is doing to other developers $-$ as well as to ourselves! As a further precaution, we could incorporate [error-handling](https://wiki.python.org/moin/HandlingExceptions) for when an argument of the wrong datatype is passed in, which would otherwise cause our script to fail.
+The code above has a detailed [docstring](https://www.programiz.com/python-programming/docstrings), [type hints](http://veekaybee.github.io/2019/07/08/python-type-hints/), [argument defaults](https://www.geeksforgeeks.org/default-arguments-in-python/) set to [global variables](https://www.programiz.com/python-programming/global-local-nonlocal-variables) at the top of the file, and a [warning log](https://www.toptal.com/python/in-depth-python-logging) for unexpected behavior. These add-ons help explain what our code is doing to other developers $-$ as well as to ourselves! As a further precaution, we could incorporate [error-handling](https://wiki.python.org/moin/HandlingExceptions) for when an argument of the wrong datatype is passed in, which would otherwise cause our script to fail.
 
 ### Virtual environments
-Unless our code is very simple, we'll need to import external libraries.<sup>[[10]](#10-virtual-environments)</sup> These external dependencies, as Bill Sourour puts it, ["are the devil."](https://www.freecodecamp.org/news/code-dependencies-are-the-devil-35ed28b556d/)
+Unless our code is very simple, we'll need to import external libraries (like `pandas` and `numpy`). These external dependencies, as Bill Sourour puts it, ["are the devil."](https://www.freecodecamp.org/news/code-dependencies-are-the-devil-35ed28b556d/) Code is constantly evolving, and **sometimes a script you wrote a year ago no longer works when it uses the latest versions of its dependencies.** Python 3 is [famously backward incompatible with Python 2](https://docs.python.org/release/3.0.1/whatsnew/3.0.html), for example, and `pandas` v1.0 [deprecated or removed](https://www.infoworld.com/article/3513440/pandas-10-brings-big-breaking-changes.html) several `Series` and `DataFrame` operations.
+
+One way to protect against changing dependencies is to take a "snapshot" of your project's external libraries $-$ and their exact version numbers. We can then create a **virtual environment** that lets us recreate what the "external code world" looked like when you created your project and everything ran correctly.
+
+In the Terminal, we can use Python's built-in `virtualenv` module to create a virtual environment called `venv`.
 
 ```bash
 python -m virtualenv venv
 ```
 
-Above, we use Python's built-in `virtualenv` module to create a virtual environment called `venv`. We can then enter this virtual environment by typing the code below:
+We can then enter this virtual environment by typing the code below:
 
 ```bash
 source venv/bin/activate
 ```
 
-Now in our environment, we're free to do whatever we want.
+Our new environment has none of the libraries our *global* environment has. For example, even if you installed `scikit-learn` before creating the virtual environment, `scikit-learn` doesn't exist in `venv`. We're starting from a clean slate whenever we create a new environment! We'll therefore need to (re)install each library we need for our project inside `venv`. We can specify specific version numbers with the `<package>==<version>` syntax if needed.
 
 ```bash
-pip install scikit-learn
-pip install mongodb
+pip install pymongo
+pip install scikit-learn==0.24
 ```
+
+Once our virtual environment has all packages downloaded and you've verified it works, we can save all packages and their version numbers to a file, `requirements.txt`, with the following command. `pip freeze` returns all downloaded libraries, and the `>` operator pipes that output into a file instead of printing it on the screen.
+
+```bash
+pip freeze > requirements.txt
+```
+
+In the future, to ensure our project works as expected, we can then create a new virtual environment and install the exact versions of all dependencies with `pip install -r requirements.txt`. This works great for relatively small-scale work, but if you're deploying a package, e.g. [to PyPI itself](https://realpython.com/pypi-publish-python-package/) for others to download, [you'll want to dig into more advanced `setuptools` methods](https://setuptools.readthedocs.io/en/latest/setuptools.html#declaring-dependencies).
+
 
 ### Writing tests
 There are lots of testing frameworks out there, but a solid one (and the one I'm most familiar with) is `pytest`.
@@ -482,6 +495,3 @@ from data_processing.services.data_loader import DataLoader
 ```
 
 Not only is this far less convenient, it also runs the risk of external scripts breaking if you decide to rearrange the directories inside the `data_processing` module. You can read more about init.py files [here](https://stackoverflow.com/questions/448271/what-is-init-py-for).
-
-#### 10. [Virtual environments](#virtual-environments)
-We could also be dead-set on doing everything by hand, but given that the code for a `pandas DataFrame` is [9,636 lines long](https://github.com/pandas-dev/pandas/blob/master/pandas/core/frame.py), we're better off dealing with virtual environments.
