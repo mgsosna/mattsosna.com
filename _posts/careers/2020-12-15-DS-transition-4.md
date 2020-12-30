@@ -276,21 +276,24 @@ Classes may be stored in `.py` files with the same name, grouped into directorie
 
 ```bash
 data_processing
-|   init.py
-|   preprocessors
+|   .gitignore
+|   requirements.txt
+|   src
 |   |   init.py
-|   |   data_cleaner.py
-|   visualizers
-|   |   init.py
-|   |   error_logger.py
-|   |   dashboarder.py
-|   services
-|   |   init.py
-|   |   data_loader.py
-|   |   database_writer.py
-|   just_for_fun
-|   |   init.py
-|   |   student.py
+|   |   preprocessors
+|   |   |   init.py
+|   |   |   data_cleaner.py
+|   |   visualizers
+|   |   |   init.py
+|   |   |   error_logger.py
+|   |   |   dashboarder.py
+|   |   services
+|   |   |   init.py
+|   |   |   data_loader.py
+|   |   |   database_writer.py
+|   |   just_for_fun
+|   |   |   init.py
+|   |   |   student.py
 ```
 
 In the `preprocessors` directory, `data_cleaner.py` contains a class, `DataCleaner`, with methods for cleaning data. The first 60 lines of `data_cleaner.py` might look something like this:
@@ -394,61 +397,122 @@ pip freeze > requirements.txt
 
 In the future, to ensure our project works as expected, we can then create a new virtual environment and install the exact versions of all dependencies with `pip install -r requirements.txt`. This works great for relatively small-scale work, but if you're deploying a package, e.g. [to PyPI itself](https://realpython.com/pypi-publish-python-package/) for others to download, [you'll want to dig into more advanced `setuptools` methods](https://setuptools.readthedocs.io/en/latest/setuptools.html#declaring-dependencies).
 
-
 ### Writing tests
-There are lots of testing frameworks out there, but a solid one (and the one I'm most familiar with) is `pytest`.
+When we write a function, the code should do what we want it to do. But to take it a step further, **our code should also _not_ do what we _don't want it to do._** While this might seem obvious, that extra step requires a lot of additional architecture in our code. Here's a simple example:
+
+```python
+def multiply(a, b):
+    """Multiply two numbers!"""
+    return a * b
+
+# Expected behavior - great!
+multiply(1, 2)  # 2
+
+# Unexpected - uh oh...
+multiply([1], 2)  # [1, 1]
+multiply('1', 2)  # '11'
+```
+
+Our `multiply` function veers into string and list concatenation when it gets a non-number input. This probably isn't what we want!
+
+It's easy to dismiss these examples as irrelevant, but this could easily happen if `multiply` was deep in a pipeline, taking in the outputs of a previous function, which took in the outputs of a function before that. We could have a `find_anomalies` function, for example, that returned `0` if there were no anomalies, and a list of values if there *were* anomalies. *(Don't do this $-$ try to always have the same datatype returned from a function.)* If `multiply` took the outputs of `find_anomalies`, we'd get drastically different results based on what `find_anomalies` returns, which would likely break our pipeline.
+
+```python
+def find_anomalies(values):
+    above_5 = [val for val in values if val > 5]
+    if len(above_5) > 0:
+        return above_5
+    else:
+        return 0  # (don't do this)
+
+# Outcomes differ drastically
+multiply(find_anomalies([1, 2]), 2)    # 0
+multiply(find_anomalies([10, 20]), 2)  # [10, 20, 10, 20]
+```
+
+The way to catch these issues, and to learn how to write better code in general, is to write **tests.** A test is basically what it sounds like: there's a "right answer" output for some input, and you check whether your code produces that correct output. Tests vary in how much of the code they check: you can write tests for [the entire application](https://www.browserstack.com/guide/end-to-end-testing), [a subset of components](https://www.guru99.com/integration-testing.html), or [individual functions](https://en.wikipedia.org/wiki/Unit_testing). I'll briefly cover the last type, **unit tests**, below.
+
+**A good set of unit tests for a function will cover three types of inputs: *good*, *special*, and *bad*.** A *good* input is what it sounds like: the input this function is intended to receive, like integers or floats for our `multiply` function. A *special* input is an "edge case," perhaps something that triggers internal logic to deliver a different output. Finally, a *bad* input is one that our function can't handle whatsoever $-$ our function *should fail*. Let's rewrite `multiply` and then then write some tests for it below.
+
+*(We actually won't need to include tests for bad inputs for `multiply`, as our `isinstance` handles anything we throw at our function. Believe me, I've tried to break the code below.)*
+
+```python
+import logging
+from typing import Union
+
+def multiply(a: Union[int, float],
+             b: Union[int, float]) -> Union[int, float, type(None)]:
+    """Multiply two numbers. If non-numbers are passed in,
+        returns None."""
+    for arg in (("a", a), ("b", b)):
+        if not isinstance(arg[1], (int, float)):
+            logging.error(f"Non-numeric input received: " +
+                          f"{arg[0]} is type {type(arg[1])}. " +
+                           "Returning None.")
+            return None
+    return a * b
+```
+
+We can then use the `pytest` library to write our tests. The first step is to clearly define our types of inputs and their expected outputs. I like to use nested dictionaries, where the top layer is our test case (e.g. `int-int`, meaning both `a` and `b` are integers), and the inner layer is a dictionary of our argument names and their values. We can then use [**kwarg notation](https://www.geeksforgeeks.org/args-kwargs-python/) to unpack the dictionary into the function we're testing.<sup>[[10]](#10-writing-tests)</sup>
 
 ```python
 import pytest
-import OurCustomClass
+from src import multiply
 
-occ = OurCustomClass()
+class TestMultiply:
 
-class TestAddNumbers:
-    """
-    | Tests for OurCustomClass.add_numbers
-    """
+    GOOD_INPUTS = {"int-int": {"a": 1, "b": 0},
+                   "int-float": {"a": 1, "b": 0.0},
+                   "float-int": {"a": 1.0, "b": 0},
+                   "float-float": {"a": 1.0, "b": 0.0}
+                  }
 
-    @pytest.fixture
-    def good_inputs(self):
-        return {"int-int": {"a": 1, "b": 0},
-                "int-float": {"a": 1, "b": 0.0},
-                "float-int": {"a": 1.0, "b": 0},
-                "float-float": {"a": 1.0, "b": 0.0}
-                }
+    SPECIAL_INPUTS = {'list': {'a': [1, 2], 'b': 3},
+                      'str': {'a': 1, 'b': 'abc'}}
 
-    @pytest.fixture
-    def bad_inputs(self):
-        return {'list': {'a': [1, 2], 'b': 3},
-                'str': {'a': 1, 'b': 'abc'}}
+    GOOD_OUTPUT = 0.0
+    SPECIAL_OUTPUT = None
 
-    @pytest.fixture
-    def expected_output(self):
-        return 1.0
+    def test_return_number(self):
+        for name, kwargs in self.GOOD_INPUTS.items():
+            actual = multiply(**kwargs)
+            assert actual == self.GOOD_OUTPUT, (
+                f"Got {actual} for {name} case; " +
+                f"expected {self.GOOD_OUTPUT}")
 
-    def test_return_number(good_inputs, expected_output):
-        for arg_combo in good_inputs:
-            actual = occ.add_numbers(**good_inputs[arg_combo])
-            assert actual == expected_output,
-                f"Got {actual} for {arg_combo}; " +
-                f"expected {expected_output}"
-
-    def test_raise_error(bad_inputs):
-        with pytest.raises(AssertionError) as exception_info1:
-            occ.add_numbers(**bad_inputs['list'])
-        with pytest.raises(AssertionError) as exception_info2:
-            occ.add_numbers(**bad_inputs['str'])
-
-        assert exception_info1.match("All inputs must be int or float")
-        assert exception_info2.match("All inputs must be int or float")
+    def test_return_none(self):
+        for name, kwargs in self.SPECIAL_INPUTS.items():
+            actual = multiply(**kwargs)
+            assert actual == self.SPECIAL_OUTPUT, (
+                f"Got {actual} for {name} case; " +
+                f"expected {self.SPECIAL_OUTPUT}")
 ```
 
-Then in bash, you would just navigate to the root directory of your project, then type `pytest tests`
+The actual testing happens in the `assert` statements, which are silent if the first argument returns `True`, and raise an `AssertionError` with the text in the second argument if `False`. It's good to be detailed in the assertion string if your test fails, as that'll help you pinpoint the error.
+
+It's good to structure your tests in a directory that mirrors the structure of your repository, like below.
 
 ```bash
-cd my_project
-pytest tests   # assuming all the test files are in this folder
+src
+|   custom_math
+|   |   easy
+|   |   |   add.py
+|   |   |   subtract.py
+|   |   hard
+|   |   |   multiply.py
+|   |   |   divide.py
+|   tests
+|   |   test_easy
+|   |   |   test_add.py
+|   |   |   test_subtract.py
+|   |   test_hard
+|   |   |   test_multiply.py
+|   |   |   test_divide.py
 ```
+
+You can then navigate to the root folder of your project (`src` above), then just type `pytest tests` to run all tests. Note that the functions, classes, and filenames need to either start or end with `test` for `pytest` to recognize them as tests.
+
+Once you've got this down, take your tests to the next level by [mocking dependent functions](https://changhsinlee.com/pytest-mock/) and [asserting about exceptions](https://docs.pytest.org/en/reorganize-docs/new-docs/user/pytest_raises.html).
 
 ### Servers and deployment
 
@@ -495,3 +559,19 @@ from data_processing.services.data_loader import DataLoader
 ```
 
 Not only is this far less convenient, it also runs the risk of external scripts breaking if you decide to rearrange the directories inside the `data_processing` module. You can read more about init.py files [here](https://stackoverflow.com/questions/448271/what-is-init-py-for).
+
+#### 10. [Writing tests](#writing-tests)
+I find unpacking tuples and dictionaries makes writing tests a lot more fun. Here's the notation with and without unpacking.
+
+```python
+input_tuple = (1, 0)
+input_dict = {'a': 1, 'b': 0}
+
+# Without unpacking
+multiply(input_tuple[0], input_tuple[1])
+multiply(input_dict['a'], input_dict['b'])
+
+# With unpacking
+multiply(*input_tuple)
+multiply(**input_dict)
+```
