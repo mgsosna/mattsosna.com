@@ -25,6 +25,7 @@ permalink: /blog/
 1. [The target]({{ site.baseurl }}/DS-transition-1)
 2. [The statistics]({{  site.baseurl  }}/DS-transition-2)
 3. [The analytics]({{  site.baseurl  }}/DS-transition-3)
+4. [The engineering]({{  site.baseurl  }}/DS-transition-4)
 
 ### Statistics
 1. [Visualizing the danger of multiple t-test comparisons]({{ site.baseurl }}/T-tests-vs-ANOVA)

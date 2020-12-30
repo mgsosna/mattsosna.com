@@ -14,7 +14,7 @@ The next three posts will cover the _<u>technical</u>_ skills needed to be succe
 1. [The target]({{  site.baseurl  }}/DS-transition-1)
 2. **The statistics**
 3. [The analytics]({{  site.baseurl  }}/DS-transition-3)
-4. The engineering *(coming soon)*
+4. [The engineering]({{  site.baseurl  }}/DS-transition-4)
 5. The people *(coming soon)*
 
 ---
@@ -37,13 +37,11 @@ But consider this learning checklist as a set of fundamental skills that will ge
 - [ ] [Working with dates and time]({{  site.baseurl  }}/DS-transition-3/#working-with-dates-and-time)
 - [ ] [Machine learning]({{  site.baseurl  }}/DS-transition-3/#machine-learning) <br><br>
 * **Software engineering**
-- [ ] SQL
-- [ ] Interacting with APIs
-- [ ] Version control
-- [ ] Object-oriented programming
-- [ ] Virtual environments
-- [ ] Writing tests
-- [ ] Servers and deployment <br><br>
+- [ ] [Accessing data]({{  site.baseurl  }}/DS-transition-4/#accessing-data)
+- [ ] [Version control]({{  site.baseurl  }}/DS-transition-4/#version-control)
+- [ ] [Object-oriented programming]({{  site.baseurl  }}/DS-transition-4/#object-oriented-programming)
+- [ ] [Virtual environments]({{  site.baseurl  }}/DS-transition-4/#virtual-environments)
+- [ ] [Writing tests]({{  site.baseurl  }}/DS-transition-4/#writing-tests) <br><br>
 {: style='list-style-type: none'}
 
 ## Intro to Stats
