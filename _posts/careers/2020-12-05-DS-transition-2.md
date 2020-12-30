@@ -41,8 +41,7 @@ But consider this learning checklist as a set of fundamental skills that will ge
 - [ ] [Version control]({{  site.baseurl  }}/DS-transition-4/#version-control)
 - [ ] [Object-oriented programming]({{  site.baseurl  }}/DS-transition-4/#object-oriented-programming)
 - [ ] [Virtual environments]({{  site.baseurl  }}/DS-transition-4/#virtual-environments)
-- [ ] [Writing tests]({{  site.baseurl  }}/DS-transition-4/#writing-tests)
-- [ ] [Servers and deployment]({{  site.baseurl  }}/DS-transition-4/#servers-and-deployment) <br><br>
+- [ ] [Writing tests]({{  site.baseurl  }}/DS-transition-4/#writing-tests) <br><br>
 {: style='list-style-type: none'}
 
 ## Intro to Stats
