@@ -1,8 +1,8 @@
 ---
 layout: post
-title: How to enter data science - <br>5. The personal and interpersonal skills
+title: How to enter data science - <br>5. The people
 author: matt_sosna
-summary: The nontechnical skills needed to succeed in data science
+summary: The personal and interpersonal skills needed to succeed in data science
 image: ""
 ---
 No matter how technically skilled you are in statistics and programming, you're not that effective if you're chasing answers to questions that don't help the business. Similarly, getting people to actually adopt the results of your analyses will require significant interpersonal skills. This post will outline the _**business**_ and _**personal**_ skills needed to be successful as a data scientist.

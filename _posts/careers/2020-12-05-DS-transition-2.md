@@ -15,7 +15,7 @@ The next three posts will cover the _<u>technical</u>_ skills needed to be succe
 2. **The statistics**
 3. [The analytics]({{  site.baseurl  }}/DS-transition-3)
 4. [The engineering]({{  site.baseurl  }}/DS-transition-4)
-5. The people *(coming soon)*
+5. [The people]({{  site.baseurl  }}/DS-transition-5)
 
 ---
 

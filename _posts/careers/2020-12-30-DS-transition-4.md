@@ -14,7 +14,7 @@ Welcome to the fourth post in our series on how to enter data science! So far, w
 2. [The statistics]({{  site.baseurl  }}/DS-transition-2)
 3. [The analytics]({{  site.baseurl  }}/DS-transition-3)
 4. **The engineering**
-5. The people *(coming soon)*
+5. [The people]({{  site.baseurl  }}/DS-transition-5)
 
 ---
 
@@ -513,7 +513,7 @@ Once you've got this down, take your tests to the next level by [mocking depende
 ## Concluding thoughts
 As with the [statistics post]({{  site.baseurl }}/DS-transition-2), it's hard not to write a textbook when it comes to useful software engineering practices for data science. When I started transitioning into data science, my greatest knowledge gap was by far the engineering. There's just so much besides the actual analytics when it comes to [building the machine]({{  site.baseurl }}/DS-transition-3/#machine-learning). How do you create an *application* rather than a one-off script? How do you sustainably write *thousands* of lines of code, or work with others on a codebase of potentially *millions* of lines? The concepts in this post, from [managing dependencies](#virtual-environments) to [writing resilient code](#writing-tests), should help fill this knowledge gap. If you're itching for more, check out [Python decorators](https://realpython.com/primer-on-python-decorators/), [creating your own API endpoints](https://flask.palletsprojects.com/en/1.1.x/), [Docker containerization](https://docs.docker.com/get-started/overview/), and application hosting services like [Heroku](https://www.heroku.com/).
 
-In the next and final post in this series, we'll turn to the *people* in data science: stakeholders and yourself. It's great if you have the most cutting-edge analytics and an infinitely scalable application, but how do you get decision-makers to care? What questions deliver business value versus "nice to know" tidbits? At the other end, how do *you* stay motivated and relevant in a field that's constantly changing? Stay tuned to find out.
+In the [next and final post]({{  site.baseurl  }}/DS-transition-5) in this series, we'll turn to the *people* in data science: stakeholders and yourself. It's great if you have the most cutting-edge analytics and an infinitely scalable application, but how do you get decision-makers to care? What questions deliver business value versus "nice to know" tidbits? At the other end, how do *you* stay motivated and relevant in a field that's constantly changing? Stay tuned to find out.
 
 Best,<br>
 Matt
