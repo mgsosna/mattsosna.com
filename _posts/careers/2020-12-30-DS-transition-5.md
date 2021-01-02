@@ -14,12 +14,19 @@ No matter how technically skilled you are in statistics and programming, you're 
 3. [The programming]({{  site.baseurl  }}/DS-transition-3)
 4. [The engineering]({{  site.baseurl  }}/DS-transition-4)
 5. **The people**
+
 ---
 
+## Non-machine learning
+The last three posts were a deep dive on some technical skills for data science: [statistics]({{  site.baseurl  }}/DS-transition-2), [analytics]({{  site.baseurl  }}/DS-transition-3), and [software engineering]({{  site.baseurl  }}/DS-transition-4). With these under the belt, you should have a solid starting point for many data science roles.
+
+But in this post, we'll instead ask **what** tasks to focus on and **why**? What are the questions that actually help a business move forward?
+
+* Need to focus on what the business needs are
+ - e.g. customers feel like they're not getting enough value from your product. So you need to make that value more visible. e.g. Can you quantify the benefits, such as savings, or increased revenue for them, relative to the cost of your product? Can you do this in a way that controls for external factors like seasonality (e.g. more people buy stuff in November/December)?
+
+
 ## Table of contents
-* [**Technical skills:** knowing _**how**_ to do it](#technical-skills-knowing-how-to-do-it)
-  - [Programming](#programming)
-  - Architecture
 * [**Business skills:** knowing _**what**_ to do and _**why**_](#business-skills-knowing-what-to-do-and-why)
 * [**Personal skills:** knowing how to _**consistently deliver**_](#personal-skills-knowing-how-to-consistently-deliver)
 
@@ -32,6 +39,12 @@ Now let's say you've identified where on the analytics-engineering spectrum you 
 * **Business**
 - [ ] Strong ability to explain technical concepts
 - [ ] Focus on how to best deliver business value <br><br>
+
+
+Some thoughts:
+* Speed-accuracy tradeoff. **You need to operate with constraints in mind.** You likely don't have the time to deliver a perfect analysis. Diminishing returns.
+
+![]({{  site.baseurl  }}/images/careers/DS-5/diminishing_returns.jpg)
 
 
 ### Explainability
@@ -47,3 +60,8 @@ For it to be impactful, it needs to be relevant. There's a philosophy/lifestyle 
 
 * Need to constantly be learning and improving
 * New technologies and frameworks will come, and you'll need to learn them to stay relevant.
+
+## Concluding thoughts
+This series has covered a lot. We started by talking about [how to navigate the diversity of data science roles]({{  site.baseurl  }}/DS-transition-1) before going into detail on some useful technical skills: [statistics]({{  site.baseurl  }}/DS-transition-2), [analytics]({{  site.baseurl  }}/DS-transition-3), and [software engineering]({{  site.baseurl  }}/DS-transition-4). The last three posts covered **how** to accomplish a task as a data scientist.
+
+## Footnotes
