@@ -33,3 +33,5 @@ You don't have the luxury of a narrow skill set when you're a data scientist, *e
 I found it so easy to stay in the areas of R and statistics that I already knew well. I didn't want to get out of my comfort zone, because it would require me to face the scary concept that I _don't_ actually have that wide a grasp on stats and coding. And especially with a Ph.D., there are a lot of expectations on how much you're "supposed to" know or how smart you're supposed to be. But you need to remember that the Ph.D. is a very deep, narrow knowledge set, versus the broad knowledge needed for being a versatile data scientist.
 
 **Versatility** is key.
+
+"10 decimal places" accuracy versus operating within constraints. Check out the [business skills]({{  site.baseurl  }}/DS-transition-5) in the [transitioning into data science series]({{  site.baseurl  }}/blog/#how-to-transition-into-data-science) for more on this.
