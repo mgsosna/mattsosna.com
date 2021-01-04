@@ -12,6 +12,7 @@ Welcome to the first Random R post, where we ask random programming questions an
 
 If we want to know the average amount each person spent that week, we can take the mean of every column. If our matrix is called `our_matrix`, we could type out:
 
+{% include header-r.html %}
 ```r
 mean(our_matrix[, 1])
 mean(our_matrix[, 2])
@@ -22,6 +23,7 @@ mean(our_matrix[, 4])
 
 But a simpler way to do this, especially if you have a lot of columns, would be to iterate through the columns with a `for` loop, like this:
 
+{% include header-r.html %}
 ```r
 for(i in 1:ncol(our_matrix)){
    mean(our_matrix[, i])
@@ -32,6 +34,7 @@ Here, the value of `i` is being replaced with the number `1`, `2`, `3`, etc. up 
 
 Conceptually, this is pretty easy to understand. `for` loops are straightforward and for many applications, they're an excellent way to get stuff done. (We'll use nested loops in the next section, for example.) But one of the first things a beginning coder might hear about `for` loops is that as soon as you get the hang of them, it's a good idea to move onto more elegant functions that are simpler and faster. (This [DataCamp intro to loops post](https://www.datacamp.com/community/tutorials/tutorial-on-loops-in-r#gs.DrVUdXM), for example, mentions alternatives in the same sentence it introduces `for` loops!) One such "elegant" command is called `apply`.
 
+{% include header-r.html %}
 ```r
 apply(our_matrix, 2, mean)
 ```
@@ -103,6 +106,7 @@ Matt
 ## Code for this post
 *[Note: I'm just including the code for the complicated calculation. For the simple calculation, replace `mean(head(sort(data[, k])))` with `mean(data[,k])` in the nested for loop.]*
 
+{% include header-r.html %}
 ```r
 # Set N reps and range in matrix sizes
 replicates <- 10                 

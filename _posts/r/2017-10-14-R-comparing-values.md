@@ -8,6 +8,7 @@ Welcome to another episode of "Random R," where we'll ask random programming and
 ## Comparing scalars
 Let's say we have two **scalars**, which means they each hold only one value (as opposed to a vector or matrix), and we want to see which one is larger. We can use either the `max` function or `ifelse`.
 
+{% include header-r.html %}
 ```r
 # Create the variables
 a <- 5
@@ -22,8 +23,9 @@ ifelse(a > b, yes = a, no = b)  # 5
 
 The above code is pretty straightforward. `max(a, b)` finds the maximum value in the arguments `a` and `b`. `ifelse` reads like this: "Is a greater than b? If yes, return a. If no, return b."
 
-Note that `ifelse` gives us more flexibility because we can specify what happens when the logical statement `a > b` is either true or false. The below code is a small modification that prints a string of the name of the larger variable, instead of the value of that variable.<sup>[[1]](#footnotes)</sup>
+Note that `ifelse` gives us more flexibility because we can specify what happens when the logical statement `a > b` is either true or false. The below code is a small modification that prints a string of the name of the larger variable, instead of the value of that variable.<sup>[[1]](#1-comparing-scalars)</sup>
 
+{% include header-r.html %}
 ```r
 # Return the identity of the larger variable
 ifelse(a > b, yes = "a", no = "b")
@@ -31,6 +33,7 @@ ifelse(a > b, yes = "a", no = "b")
 
 While `ifelse` has this nice flexibility here, `max` excels when you have more than two variables (and for some reason you're determined to keep them all separate variables and not combine them into a vector, matrix or list... more on that later). Say that instead of just `a` and `b`, for example, we have a whole bunch of variables we want to find the maximum for.
 
+{% include header-r.html %}
 ```r
 # Find the maximum among 5 variables
 a <- 5 ; b <- 4 ; c <- 10 ; d <- 8 ; e <- 10
@@ -42,6 +45,7 @@ The above code lets us find the maximum of the five separate scalars, but identi
 ## Comparing vectors and matrices
 Finding the identity of the max value above when we're determined to keep the data as separate scalars is needlessly confusing and giving me a headache... it's much simpler if we let R know that these variables are related somehow (e.g. they're all height measurements, or time increments, or number of people moshing at a random moment in a metal show, etc.). We can do that by combining them into a vector. The elements of the vector are our variables.
 
+{% include header-r.html %}
 ```r
 # Combine the 5 variables into a vector called "data"
 a <- 5 ; b <- 4 ; c <- 10 ; d <- 8 ; e <- 10
@@ -50,6 +54,7 @@ data <- c(a, b, c, d, e)
 
 Now we can find the max and ask which position in our vector corresponds to that maximum value. Because our variables are just named after sequential letters in the alphabet, we can just index the built-in `letters` variable. (If your variables had other names, like `location1`, `location2`, etc., you'd need to define a separate vector of names that you'd then index.)
 
+{% include header-r.html %}
 ```r
 # Find the maximum and its position(s) in the vector
 max(data)  # 10
@@ -63,6 +68,7 @@ So far, we've just been comparing scalars to each other. Our last step involved 
 
 If we want to still just find the single maximum value among whatever we feed into the max function, we'll do exactly what we did before.
 
+{% include header-r.html %}
 ```r
 # Create the variables (letting R generate random numbers)
 vector1 <- runif(n = 10, min = 0, max = 100)
@@ -75,6 +81,7 @@ max(vector1, vector2, vector3)   # 99.78804
 
 But let's say that instead of wanting to find the _**single maximum value**_, we want to compare _**each element of the vectors**_ to each other and keep the largest value. So we want to look at the first element of `vector1`, `vector2`, and `vector3` and keep the biggest one, then compare their second elements and keep the largest one, then do the same for the third, etc. For this, we'll need to use the `pmax` function, which finds the **parallel maxima** of the vector inputs it receives. Basically, it performs the `max` function for each element of the set of vectors you give it.
 
+{% include header-r.html %}
 ```r
 # Find the parallel maxima of our vectors
 pmax(vector1, vector2, vector3)  # 99.78804 84.98018 48.77183...
@@ -84,6 +91,7 @@ The output of `pmax` is another vector, this one consisting of the largest value
 
 As a final example, we can extend this thinking from vectors to matrices and still use `pmax`.
 
+{% include header-r.html %}
 ```r
 # Create the matrices
 m1 <- round(matrix(rnorm(n = 100), ncol = 10), 1)
@@ -121,6 +129,7 @@ So far, we've compared scalars, vectors, and matrices to each other. But what if
 
 For this, we'll return to `ifelse`. Our external value will be zero. (For a different value, replace `abs(v1)` and `abs(v2)` with `abs(other_value - v1)` and `abs(other_value - v2)` below.) To keep things simple, we'll compare two vectors and find the distances that their elements are from zero.
 
+{% include header-r.html %}
 ```r
 # Create the vectors
 v1 <- round(rnorm(n = 10, mean = 5, sd = 1), 1)
@@ -137,6 +146,7 @@ new_v  # 6.6 4.2 5.6 ...  v2 v1 v1 ...
 
 The nice thing with `ifelse` is that it's a concise function for when you have one of two possible outcomes. The story gets more complicated if we want to compare more than two vectors: our "no" criterion for the `ifelse` becomes _**another**_ `ifelse` that evaluates the next vector.
 
+{% include header-r.html %}
 ```r
 # Generate three vectors
 v1 <- round(rnorm(3), 1)
@@ -162,6 +172,7 @@ new_v  #  0.6 -0.3  0.1  0.7   v3 v1 v2 v2
 ## Comparing vectors and matrices to a vector or matrix
 For our final comparison, let's say that instead of some constant, e.g. zero, we have a whole set of numbers that we want to compare our vectors or matrices to. The `ifelse` line is identical for vectors and matrices, so let's use matrices to be fancy.
 
+{% include header-r.html %}
 ```r
 # Create our matrices
 m1 <- round(matrix(rnorm(100), ncol = 10), 1)
@@ -199,6 +210,7 @@ new_m[1:2, 1:2]
 
 Last example, and it's a weird one. Let's say that instead of comparing vectors to vectors or matrices to matrices, we want to compare a vector and a matrix. We'll return to `pmax` to keep things simple and just ask which values are larger. With a bit of careful arranging, we can treat a matrix as a set of vectors arranged one after the other, and then we can just let `pmax` do its thing.
 
+{% include header-r.html %}
 ```r
 # Create the variables
 vec <- round(runif(n = 3, min = 0, max = 10), 1)
@@ -215,6 +227,7 @@ mat
 # Find the larger value
 pmax(vec, mat)  # 5.7 4.0 9.3 8.2 4.8 9.3
 ```
+
 `pmax` compares `vec` to each column in `mat`, doing an element-wise comparison and returning the larger element. `pmax`'s first three values (5.7, 4.0, 9.3) come from:
 1. `vec[1]`, which is larger than `mat[1,1]`
 2. `mat[2,1]`, which is larger than `vec[2]`
@@ -233,11 +246,15 @@ Best, <br>
 Matt
 
 ## Footnotes
-1. [[Scalars]](#scalars) [In contrast to Python]({{ site.baseurl }}/R-to-Python/#variables-can-be-linked), virtually all objects in R have unique addresses in memory, so we can be fancy with our `ifelse` like so:
-    ```r
-    ifelse(a > b,
-        deparse(substitute(a)),
-        deparse(substitute(b)))
-    # 'a'
-    ```
+#### 1. [Comparing scalars](#comparing-scalars)
+[In contrast to Python]({{ site.baseurl }}/R-to-Python/#variables-can-be-linked), virtually all objects in R have unique addresses in memory, so we can be fancy with our `ifelse` like so:
+
+{% include header-r.html %}
+```r
+ifelse(a > b,
+    deparse(substitute(a)),
+    deparse(substitute(b)))
+# 'a'
+```
+
 Check out [the footnotes in this blog post]({{ site.baseurl }}/R-to-Python/#footnotes) for an interesting comparison of R and Python on the relationship between variables and addresses in memory.
