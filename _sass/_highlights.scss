@@ -15,6 +15,55 @@
   box-shadow: none;
 }
 
+.mytable {
+    font-size: 0.95rem;
+    box-shadow: 4px 3px 3px rgba(0,0,0,0.1);
+    color: #fff;
+    display: block;
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 0;
+    text-indent: 1em;
+    background: #619ccd; // #ccc; nice gray
+    padding: 0;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    margin-bottom: 0;
+    border-radius: 0;
+}
+
+.mytable.python {
+    background: #619ccd54;
+    color: #619ccd;
+}
+
+.mytable.sql {
+    background: #e3b04e66;
+    color: #c69a47;
+}
+
+.mytable.r {
+    background: #e3b04e66;
+    color: #c69a47;
+}
+
+.mytable.bash {
+    background: #a8a7a769;
+    color: #8e8c8c;
+}
+
+.mytable.javascript {
+    background: #7dbf6542;
+    color: #7dbf65;
+}
+
+.mytable.c {
+    background: #bf658342;
+    color: #bf6583c9;
+}
+
 .lineno {
   color: #3e6e7d; // #ccc
   display:inline-block;

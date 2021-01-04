@@ -61,6 +61,7 @@ You're likely to use SQL very frequently in your role, potentially every day, so
 
 Below is a simple query written in [Postgres](https://www.postgresql.org/), one of the major SQL dialects. We select the `name` and `animal` columns from the table `students`, using the `AS` keyword to create [aliases](https://www.tutorialspoint.com/sql/sql-alias-syntax.htm), or temporary names, for the columns in our returned table. The final result is filtered so the only rows returned are those where a student's favorite animal is a walrus.<sup>[[4]](#4-sql)</sup>
 
+{% include header-sql.html %}
 ```sql
 SELECT name AS student_name,
        animal AS favorite_animal
@@ -70,6 +71,7 @@ SELECT name AS student_name,
 
 We can use aliases for tables, too, which we do below for `users`, `sql_pros`, and `transactions`. We join the tables in two ways in this example; in the first query, we use a `LEFT JOIN`, which preserves all rows in `users` but drops rows in `sql_pros` that don't have an ID in `users`. In the second query, we perform a `FULL JOIN`, which preserve all rows in both `users` and `transactions`.
 
+{% include header-sql.html %}
 ```sql
 -- Query 1: don't drop any rows in 'users'
    SELECT *
@@ -88,6 +90,7 @@ The main thing to remember with the various joins is the rows you want to preser
 
 Aggregating data is another key SQL skill. Below, we create a table with students' names and average grade. Since in this example the `name` column is in a separate table from `grades`, we join the tables after aggregating.
 
+{% include header-sql.html %}
 ```sql
     SELECT s.name,
            AVG(g.score) AS avg_score
@@ -105,6 +108,7 @@ For more complex queries, you'll want to bring in the `WITH {tab} AS` structure,
 
 This query conveniently returns outliers that we can examine more closely. Note that this is all one query, but we can logically treat it as two thanks to the `WITH` syntax.
 
+{% include header-sql.html %}
 ```sql
 -- Create a lookup with info on each user
 WITH orders_lookup AS (
@@ -128,6 +132,7 @@ NOT BETWEEN ol.avg_price - 3*ol.sd_price
 
 Finally, let's quickly mention *writing* to a database. Writing to a database, especially one in production, will most likely fall under the strict supervision of the software engineering team $-$ a good team will have procedures in place to [verify the written data matches the table schema](https://stackoverflow.com/questions/14051672/how-to-verify-datatype-before-entering-into-the-table/14051929), [prevent SQL injection attacks](https://www.acunetix.com/websitesecurity/sql-injection/), and [ensure all writes are logged](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html). But in case you *do* have full reign over a database you want to write to, here's the basic syntax for adding a row:
 
+{% include header-sql.html %}
 ```sql
 -- Add a row
 INSERT INTO students (firstname, lastname, is_superhero)
@@ -135,6 +140,8 @@ INSERT INTO students (firstname, lastname, is_superhero)
 ```
 
 And here is the syntax for updating and deleting. Be *very* sure you know what you're doing, since there's no "undo" command!<sup>[[5]](#5-sql)</sup>
+
+{% include header-sql.html %}
 ```sql
 -- Update all rows that match criteria
 UPDATE students
@@ -153,6 +160,7 @@ An API is like the entrance to a bank: it's (hopefully) the only way to access t
 
 The `requests` library lets us query APIs straight from Python. The process is simple for APIs without any security requirements: you just need the API's location on the internet, i.e. their [URL](https://en.wikipedia.org/wiki/URL), or Universal Resource Locator. All we do is pose an [HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP) `GET` request to the URL, then decode the [JSON](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON) returned from the server servicing the API.
 
+{% include header-python.html %}
 ```python
 import requests
 
@@ -163,6 +171,7 @@ print(data)  # {'userId': 1, 'id': 1, 'title'... 'delectus aut autem' ...}
 
 But sometimes we need some additional steps to access the data. When accessing a company's proprietary data, there are (or should be!) strict restrictions on who is authorized to interact with the data. In the example below, we use `boto3` to access a file in [Amazon Web Services S3](https://aws.amazon.com/s3/), the [cloud storage](https://aws.amazon.com/what-is-cloud-storage/) market leader. Notice how we need to pass in security credentials (stored in the `os.environ` object) when we establish a connection with S3.
 
+{% include header-python.html %}
 ```python
 import os
 import json
@@ -193,6 +202,7 @@ What if you want to collect data from an external website that doesn't provide a
 
 While scraping might sound complicated, it's actually fairly straightforward. We first mimic a web browser (e.g. Firefox, Chrome) by *requesting* the HTML from a website with `requests.get`. (Our browser then actually renders the content, but we'll stick with the HTML as a very long string.) We then use Python's [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) library to organize the HTML into essentially a large nested dictionary. We can then extract the information we want from this object by specifying the HTML tags we're interested in. Below, we print out all `<h2>` headings for Wikipedia's web scraping page.
 
+{% include header-python.html %}
 ```python
 import requests
 from bs4 import BeautifulSoup
@@ -227,6 +237,7 @@ The actual code behind using Git is straightforward. Below are some commands in 
 2. Create a new branch, `DS-123-Add-outlier-check`<sup>[[8]](#8-version-control)</sup>, that is a copy of `main`
 3. Push the branch from our local computer and onto [GitHub](https://techcrunch.com/2012/07/14/what-exactly-is-github-anyway/)
 
+{% include header-bash.html %}
 ```bash
 git checkout main
 git checkout -b DS-123-Add-outlier-check
@@ -235,6 +246,7 @@ git push --set-upstream origin DS-123-Add-outlier-check
 
 Now, on our new branch, we're free to make whatever changes to the code we'd like. Let's say we modify `preprocessor.py` by adding a step that removes outliers. When we want to save our changes, we type the following into the Terminal.
 
+{% include header-bash.html %}
 ```bash
 git add preprocessor.py
 git commit -m "Add outlier check"
@@ -244,6 +256,8 @@ git push
 These steps are only reflected on `DS-123-Add-outlier-check`, not `main`. This lets us prepare the code until it's ready to be pushed to `main`.
 
 And if we broke something and want to revert to an old commit? We checkout to that commit using its [hash](https://www.mikestreety.co.uk/blog/the-git-commit-hash), tell Git to ignore the commit with errors, then push our changes to the branch.
+
+{% include header-bash.html %}
 ```bash
 git checkout abc123  # go to old checkpoint
 git revert bad456    # "delete" the bad checkpoint
@@ -259,6 +273,7 @@ As the amount of code in a project grows, it typically follows this pattern of i
 
 Production-level Python is best at the fourth level of organization, where code can easily be added, modified, and reused across contexts. A team's code will typically be organized into **modules** based on company products (e.g. "data quality alerts," "price forecasters," "customer churn predictors"), which in turn contain **classes** with collections of functions that work together. Below is a brief example of a class called `Student`.
 
+{% include header-python.html %}
 ```python
 class Student:
     def __init__(self, name, grade):
@@ -295,6 +310,7 @@ data_processing
 
 In the `cleaners` subdirectory, `data_cleaner.py` contains a class, `DataCleaner`, with methods for cleaning data. The first 60 lines of `data_cleaner.py` might look something like this:
 
+{% include header-python.html %}
 ```python
 import logging
 import pandas as pd
@@ -369,18 +385,21 @@ One way to protect against changing dependencies is to take a "snapshot" of your
 
 In the Terminal, we can use Python's built-in `virtualenv` module to create a virtual environment. Here, we create one called `venv`.
 
+{% include header-bash.html %}
 ```bash
 python -m virtualenv venv
 ```
 
 We can then enter this virtual environment by typing the code below:
 
+{% include header-bash.html %}
 ```bash
 source venv/bin/activate
 ```
 
 Our new environment has none of the libraries our *global* environment has. For example, even if you installed `scikit-learn` before creating the virtual environment, `scikit-learn` doesn't exist in `venv`. We're starting from a clean slate whenever we create a new environment! We'll therefore need to (re)install each library we need for our project inside `venv`. We can specify version numbers with the `<package>==<version>` syntax if needed.
 
+{% include header-bash.html %}
 ```bash
 pip install pymongo
 pip install scikit-learn==0.24
@@ -388,6 +407,7 @@ pip install scikit-learn==0.24
 
 Once our virtual environment has all packages downloaded and you've verified your application works, we can save all packages and their version numbers to a file, `requirements.txt`, with the following command. `pip freeze` returns all downloaded libraries, and the `>` operator pipes that output into a file instead of printing it on the screen.
 
+{% include header-bash.html %}
 ```bash
 pip freeze > requirements.txt
 ```
@@ -397,6 +417,7 @@ In the future, to ensure our project works as expected, we can then create a new
 ### Writing tests
 When we write a function, the code should do *what we want it to do*. But to take it a step further, **our code should also _not do anything else_.** While this might seem obvious, that extra step requires a lot of additional architecture in our code. Here's a simple example:
 
+{% include header-python.html %}
 ```python
 def multiply(a, b):
     """Multiply two numbers!"""
@@ -414,6 +435,7 @@ Our `multiply` function veers into string and list concatenation when it gets a 
 
 It's easy to dismiss these examples as irrelevant, but this could easily happen if `multiply` was deep in a pipeline, taking in the outputs of a previous function, which took in the outputs of some function before that. We could have a `find_anomalies` function, for example, that returned `0` if there were no anomalies, and a list of values if there *were* anomalies. *(Don't do this $-$ try to always have the same datatype returned from a function.)* If `multiply` took the outputs of `find_anomalies`, we'd get drastically different results based on what `find_anomalies` returns, which would likely break our pipeline.
 
+{% include header-python.html %}
 ```python
 def find_anomalies(values):
     above_5 = [val for val in values if val > 5]
@@ -433,6 +455,7 @@ The way to catch these issues, and to learn how to write better code in general,
 
 Let's rewrite `multiply`<sup>[[10]](#10-writing-tests)</sup> and then then write some tests. Lines 8-12, about 83% of our function, are now purely devoted to making sure `multiply` doesn't break. These lines really do the trick $-$ we end up not needing to write tests for bad inputs, as we can't throw anything at `multiply` that causes it to break. Believe me, I've tried.
 
+{% include header-python.html %}
 ```python
 import logging
 from typing import Union
@@ -451,6 +474,7 @@ def multiply(a: Union[int, float],
 
 We can then use the `pytest` library to write our tests. The first step is to clearly define our types of inputs and their expected outputs. I like to use nested dictionaries, where the top layer is our test case (e.g. `int-int`, meaning both `a` and `b` are integers), and the inner layer is a dictionary of our argument names and their values. We can then use [**kwarg notation](https://www.geeksforgeeks.org/args-kwargs-python/) to unpack the dictionary into the function we're testing.<sup>[[11]](#11-writing-tests)</sup>
 
+{% include header-python.html %}
 ```python
 import pytest
 from src import multiply

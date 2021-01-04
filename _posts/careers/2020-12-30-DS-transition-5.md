@@ -25,6 +25,12 @@ But in this post, we'll instead ask **what** tasks to focus on and **why**? What
 * Need to focus on what the business needs are
  - e.g. customers feel like they're not getting enough value from your product. So you need to make that value more visible. e.g. Can you quantify the benefits, such as savings, or increased revenue for them, relative to the cost of your product? Can you do this in a way that controls for external factors like seasonality (e.g. more people buy stuff in November/December)?
 
+```python
+def func(a, b):
+    return "Hi!"
+```
+
+blah blah blah
 
 **Business skills:** knowing _**what**_ to do and _**why**_
 **Personal skills:** knowing how to _**consistently deliver**_

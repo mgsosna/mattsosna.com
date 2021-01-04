@@ -35,8 +35,8 @@ These days, I use Terminal to quickly check bits of Python code, Jupyter for exp
 ## The `.` suddenly has significance
 In R, you can treat the `.` like any other character. This means that `student_grade` and `student.grade` are both valid names for variables.
 
+{% include header-r.html %}
 ```r
-# R
 student_grade <- 1
 student.grade <- 2
 ```
@@ -45,8 +45,8 @@ In Python, though, the `.` has special significance. The reason for this touches
 
 When we type `student.grade`, we're telling Python we want _the attribute `grade` of the object `student`._ This is because everything in Python is an object, and objects have _attributes_ that are accessed with the `.` operator. In the example below, we'll create an object `kid` that's an instance of the `Student` class.
 
+{% include header-python.html %}
 ```python
-# Python
 class Student:
     def __init__(self, name):
         self.name = name
@@ -70,8 +70,8 @@ Regardless, the absence of classes is in sharp contrast to Python, where classes
 ## Where are all the built-in functions?
 Especially for a first programming language, I really appreciated how much functionality comes out of the box with R as soon as you start a session. Let's say you want to load a CSV and plot some data. Here's what it looks like in R:
 
+{% include header-r.html %}
 ```r
-# R
 setwd("/Users/matt/Desktop")
 df <- read.csv("data.csv")
 plot(df$date, df$n_cases)
@@ -79,8 +79,8 @@ plot(df$date, df$n_cases)
 
 And here's what it looks like in Python:
 
+{% include header-python.html %}
 ```python
-# Python
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -97,15 +97,16 @@ It took some learning about the broader programming context Python comes from fo
 
 ## Zero-indexing
 Something that drove me absolutely crazy when switching to Python was dealing with its zero-indexing. R is 1-indexed, _the way normal people think_. (I'm still bitter!) To explain, let's say you have a vector of numbers called `vector`, and you want to access the **2nd through 4th elements.** In R, this couldn't be easier:
+
+{% include header-r.html %}
 ```r
-# R
 vector[2:4]  # 2nd through 4th elements
 ```
 
 Python, however, is zero-indexed, meaning you have to start counting at zero. Ranges in Python are also **_exclusive_** on the right, meaning you don't count the last value in the range. So to get the 2nd through 4th elements, you need to write this:
 
+{% include header-python.html %}
 ```python
-# Python
 vector[1:4]  # 2nd through 4th elements
 ```
 
@@ -125,8 +126,8 @@ Then, whenever you type `x`, R or Python actually see a pointer that _points tow
 
 For example, let's say you have a string called `"hello"`. C treats this as an array of characters. If you assign `"hello"` to the variable `message`, `message` is really just a pointer to the first letter of the `"hello"`, plus the length of the string. You can see this below<sup>[[2]](#2-zero-indexing)</sup>: `*message` and `*(message+0)` are identical. (`*` accesses the value the pointer is pointing to.)
 
+{% include header-c.html %}
 ```c
-// C
 #include <stdio.h>
 
 int main()
@@ -139,6 +140,7 @@ int main()
   return 0;
 }
 ```
+
 To access the rest of the string, you just type `*(message+1)` to get `e`, `*(message+2)` to get `l`, `*(message+3)` to get the next `l`, and so on.
 
 In Python, despite the fact that the pointers in an iterable can point to addresses in memory that aren't next to one another, we still index the elements of an array as if they were indeed sitting next to each other. This zero-indexing is the norm for many languages, such as Java, JavaScript, Go, PHP, Ruby, Swift... but there are notable exceptions, like MATLAB, Julia, and of course R.
@@ -146,8 +148,8 @@ In Python, despite the fact that the pointers in an iterable can point to addres
 ## Variables can be linked!
 Whenever you create two variables, you have two independent variables, right? In the physical world, even identical twins are separate entities living independent lives. Well, that may be the case in the real world and in R, but it's not always the case in Python.
 
+{% include header-r.html %}
 ```r
-# R
 a <- c(1, 2, 3)
 b <- a
 
@@ -158,8 +160,8 @@ print(b)  # 1 2 3
 ```
 No qualms with this in R. We set `b` to whatever `a` is, `a` changes, but `b` stays the same. Great. But what happens if we try this in Python?
 
+{% include header-python.html %}
 ```python
-# Python
 a = [1, 2, 3]
 b = a
 
@@ -177,8 +179,8 @@ In contrast, other data types are **_immutable_**, meaning your variable changes
 
 To visualize this better, let's ask Python to return the memory address for objects as we update them. `id` returns the memory address of an object, and `is` returns whether two objects have the same address. Here it is for **immutable** strings:
 
+{% include header-python.html %}
 ```python
-# Python
 a = 'Hello'
 b = a
 
@@ -194,8 +196,9 @@ print(a is b)  # False
 ```
 
 And here it is for **mutable** lists:
+
+{% include header-python.html %}
 ```python
-# Python
 a = [1, 2]
 b = a
 
@@ -210,12 +213,12 @@ print(id(b))   # 140530885072448   <- didn't change
 print(a is b)  # True
 ```
 
-With mutable data types, you need to be really careful if multiple variables are pointing to the same location in memory. In line 3 above, `b` is **NOT** being set to a unique copy of `[1, 2]`... it's being set to the same list that `a` is pointing to! That means that whenever `a` makes a change to that list, you'll see the change reflected in `b`, too.
+With mutable data types, you need to be really careful if multiple variables are pointing to the same location in memory. In line 2 above, `b` is **NOT** being set to a unique copy of `[1, 2]`... it's being set to the same list that `a` is pointing to! That means that whenever `a` makes a change to that list, you'll see the change reflected in `b`, too.
 
 One solution to this is to use the `.copy` method Python provides for mutable data types<sup>[[5]](#5-variables-can-be-linked)</sup>.
 
+{% include header-python.html %}
 ```python
-# Python
 a = [1, 2]
 b = a.copy()   # <- sets aside new memory for b
 
@@ -236,6 +239,7 @@ So why on earth would we allow any language to have linked variables? Well, it's
 
 There are also some times when we actually may want to update multiple variables simultaneously. As a toy example, let's imagine we have some video game where a diamond, ruby, and sapphire are buried in different locations on a virtual island. To find the treasure, we have instances of a `TreasureFinder` class that search the island. The bots follow different rules for finding the different gems: sapphires tend to be by water, while volcanoes often hide rubies. If the sapphire is found, for example, we should stop searching the island coast. If we have multiple instances of `TreasureFinder`, whenever one instance finds a gem, it can alert all instances of `TreasureFinder` to stop searching for that gem. To do this, we'd use a class method that updates a shared list.
 
+{% include header-python.html %}
 ```python
 class TreasureFinder:
     chest = []
@@ -266,7 +270,6 @@ Ultimately, what really matters is what sort of task you're trying to accomplish
 Best, <br>
 Matt
 
-
 ## Footnotes
 #### 1. [How do I actually get started?](#how-do-i-actually-get-started)
 Python's "all-in-one" solution is arguably [Anaconda](https://www.anaconda.com/), and I probably would have saved myself many headaches by being more patient with Anaconda's documentation and user guide. In my defense, the number of additional programs needed to run Python is super confusing for a newcomer - and don't get me started on accidentally having some Python libraries saved via [pip](https://pip.pypa.io/en/stable/) versus the `conda` environment.
@@ -280,8 +283,8 @@ If you have a Mac, you can easily run C code yourself. Save the example code in 
 #### 4. [Variables can be linked](#variables-can-be-linked)
 Actually, _almost_ all objects in R are immutable. There are [some esoteric exceptions](https://win-vector.com/2014/04/01/you-dont-need-to-understand-pointers-to-program-using-r/) involving closures. But the vast majority of the time when you're programming in R, you don't have to worry about linked variables. This is because virtually all objects in R have unique addresses in memory, which means you can easily get a string of the variable name, like below:
 
+{% include header-r.html %}
 ```r
-# R
 a <- c(1, 2, 3)
 b <- a
 
@@ -291,8 +294,8 @@ deparse(substitute(b))  # 'b'
 
 This is [essentially impossible in Python](https://stackoverflow.com/questions/1534504/convert-variable-name-to-string/3683258) because objects can share addresses in memory. There's no built-in function for converting a variable into _the string of a variable name_, since when you give Python a variable, all Python sees is an address in memory, where multiple variables can point to. In other words, **Python fundamentally expects a many-to-one relationship between variables and addresses in memory. R, meanwhile, expects a one-to-one relationship.** In Python, the best we can do is scan the dictionary returned by `globals()` for keys that match the value of our variable.
 
+{% include header-python.html %}
 ```python
-# Python
 a = [1, 2, 3]
 b = a
 
@@ -303,6 +306,7 @@ b = a
 #### 5. [Variables can be linked](#variables-can-be-linked)
 There are a few other ways you can accidentally avoid updating `b` when `a` updates, making the variable linking even harder to catch:
 
+{% include header-python.html %}
 ```python
 a = [1, 2, 3]
 
@@ -327,27 +331,30 @@ print(b is a1)   # True
 #### 6. [Final thoughts](#final-thoughts)
 A few examples of how data manipulation is a little simpler in R:
 
-* Subset a dataframe
+**Subsetting a dataframe:**
+
+{% include header-r.html %}
 ```r
-# R
 df_filt <- subset(df, Sex == 'M' & Age > 50)
 ```
+{% include header-python.html %}
 ```python
-# Python
 df_filt = df[(df['Sex'] == 'M') & (df['Age'] > 50)]
 ```
 <br>
-* Create a vector where all values are NaNs except Nth values
+**Create a vector where all values are NaNs except Nth values**
+
+{% include header-r.html %}
 ```r
-# R
 vec <- c()
 for(i in seq(3, 9, by=3)){
     vec[i] <- 10
 }
 print(vec)  # NA NA 10 NA NA 10 NA NA 10
 ```
+
+{% include header-python.html %}
 ```python
-# Python
 import numpy as np
 vec = np.full(9, np.nan)  # <- need to pre-allocate
 for i in range(2, 9, 3):
