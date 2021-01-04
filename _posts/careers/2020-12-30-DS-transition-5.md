@@ -1,7 +1,7 @@
 ---
 layout: post
 title: How to enter data science - 5. The people
-title-clean: How to enter data science -<br>5. The people
+title-clean: How to enter data science <div class="a2">5. The people</div>
 author: matt_sosna
 summary: The personal and interpersonal skills needed to succeed in data science
 image: ""

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: How to enter data science - 3. The analytics
-title-clean: How to enter data science - <br>3. The analytics
+title-clean: How to enter data science <div class="a2">3. The analytics</div>
 author: matt_sosna
 summary: The analytics needed to succeed in data science
 image: "images/careers/DS-3/matplotlib2.png"

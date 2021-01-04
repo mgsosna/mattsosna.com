@@ -1,7 +1,7 @@
 ---
 layout: post
 title: How to enter data science - 4. The engineering
-title-clean: How to enter data science - <br>4. The engineering
+title-clean: How to enter data science <div class="a2">4. The engineering</div>
 author: matt_sosna
 summary: The software engineering skills needed to succeed in data science
 image: "images/careers/DS-4/git.png"

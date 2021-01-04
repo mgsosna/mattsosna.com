@@ -1,7 +1,7 @@
 ---
 layout: post
 title: How to enter data science - 2. The statistics
-title-clean: How to enter data science -<br>2. The statistics
+title-clean: How to enter data science <div class="a2">2. The statistics</div>
 author: matt_sosna
 summary: The statistics needed to succeed in data science
 image: "images/careers/DS-2/two_models.png"

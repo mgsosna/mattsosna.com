@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Learning R - 4. Functions and if statements
-title-clean: Learning R<br>4. Functions and if statements
+title-clean: Learning R <div class="a2">4. Functions and if statements</div>
 author: matt_sosna
 ---
 If you've been following this series from the [first post]({{ site.baseurl }}/R-1-Intro), you might recall this soapbox speech I gave:
