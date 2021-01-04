@@ -1,6 +1,7 @@
 ---
 layout: post
-title: How to enter data science - <br>2. The statistics
+title: How to enter data science - 2. The statistics
+title-clean: How to enter data science -<br>2. The statistics
 author: matt_sosna
 summary: The statistics needed to succeed in data science
 image: "images/careers/DS-2/two_models.png"
@@ -291,6 +292,7 @@ While writing this post, I kept imagining stats gurus criticizing an omission he
 #### 5. [Control groups](#control-groups)
 You can easily see this effect for yourself in R or Python. (I use R below.) Note: it's critical to set `g2` equal to `g1` shifted upward, rather than just another `rnorm` with a higher mean, since the paired t-test looks closely at the *pairwise differences* between each element in the vector. The paired t-test will likely return a *weaker* result than a two-sample test if `g1` and `g2` are unrelated samples, since the distribution of `g1 - g2` straddles zero. And an obligatory note after the [#pruittgate fiasco](https://www.nature.com/articles/d41586-020-00287-y)... *never fabricate data in scientific studies!!* The intention of these demos is strictly to better understand how statistical tests work, not to game a system.
 
+{% include header-r.html %}
 ```r
 # Generate sample data
 set.seed(0)

@@ -1,10 +1,12 @@
 ---
 layout: post
-title: How to enter data science - <br>5. The people
+title: How to enter data science - 5. The people
+title-clean: How to enter data science -<br>5. The people
 author: matt_sosna
 summary: The personal and interpersonal skills needed to succeed in data science
 image: ""
 ---
+
 No matter how technical skills you have, you're not that effective if you're chasing answers to questions that don't help the business. Similarly, getting people to actually adopt the results of your analyses will require significant interpersonal skills. This post will outline the _**business**_ and _**personal**_ skills needed to be successful as a data scientist.
 
 ---
@@ -21,6 +23,11 @@ No matter how technical skills you have, you're not that effective if you're cha
 The last three posts were a deep dive on some technical skills for data science: [statistics]({{  site.baseurl  }}/DS-transition-2), [analytics]({{  site.baseurl  }}/DS-transition-3), and [software engineering]({{  site.baseurl  }}/DS-transition-4). With these under the belt, you should have a solid starting point for many data science roles.
 
 But in this post, we'll instead ask **what** tasks to focus on and **why**? What are the questions that actually help a business move forward?
+
+### Table of contents
+1. Critical thinking
+  - Like with the statistics post, being able to identify the cause of trends. Parsing signals from noise
+
 
 * Need to focus on what the business needs are
  - e.g. customers feel like they're not getting enough value from your product. So you need to make that value more visible. e.g. Can you quantify the benefits, such as savings, or increased revenue for them, relative to the cost of your product? Can you do this in a way that controls for external factors like seasonality (e.g. more people buy stuff in November/December)?

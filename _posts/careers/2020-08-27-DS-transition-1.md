@@ -1,6 +1,7 @@
 ---
 layout: post
-title: How to enter data science - <br>1. The target
+title: How to enter data science - 1. The target
+title-clean: How to enter data science -<br>1. The target
 author: matt_sosna
 summary: Data science encompasses a huge range of occupations. This post will help you identify what role to aim for by introducing two spectrums that categorize data science roles - analytics-engineering, and computational complexity.
 image: "images/careers/DS-1/analytics-engineering.png"
