@@ -52,6 +52,7 @@ Dataframes are at the core of data science and analytics. They're essentially ju
 
 The basics include being able to load, clean, and write out [CSV files](https://en.wikipedia.org/wiki/Comma-separated_values). Cleaning data can involve removing rows with missing values or duplicated information, correcting erroneous values, and reformatting columns into different [data types](https://realpython.com/python-data-types/).
 
+{% include header-python.html %}
 ```python
 import os
 import pandas as pd
@@ -74,6 +75,7 @@ df_filt.to_csv("cleaned.csv", index=False)
 
 Other important data manipulations include vectorized and iterative data transformations. For simple elementwise math on columns in our dataframe, `pandas` lets us treat the columns as if they were singular values.
 
+{% include header-python.html %}
 ```python
 # Simple vectorized transformations
 df['added'] = df['col1'] + df['col2']
@@ -82,6 +84,7 @@ df['multiplied'] = df['col1'] * df['col2']
 
 For more nuanced operations, such as handling missing values that would otherwise cause columnwise operations to fail, you can use `.apply`. Below, we use a [lambda](https://www.programiz.com/python-programming/anonymous-function) to apply a custom function, `safe_divide`, to the `col1` and `col2` fields of each row.<sup>[[1]](#1-dataframes)</sup>
 
+{% include header-python.html %}
 ```python
 # Define a custom function
 def safe_divide(x, y):
@@ -100,6 +103,7 @@ df['divided'] = df.apply(lambda x: safe_divide(x['col1'], x['col2']),
 
 For logic that can't be easily passed into a lambda, we can iterate through the dataframe rows using `.itertuples`. ([Don't use `.iterrows` if you can avoid it!)](https://medium.com/swlh/why-pandas-itertuples-is-faster-than-iterrows-and-how-to-make-it-even-faster-bc50c0edd30d)
 
+{% include header-python.html %}
 ```python
 # Instantiate a df to append data to
 df_final = pd.DataFrame()
@@ -118,6 +122,7 @@ for tup in df.itertuples():
 
 Finally, we need the ability to combine data from multiple dataframes, as well as run aggregate commands on the data. In the code below we merge two dataframes, making sure not to drop any rows in `df1` by specifying that it's a [left merge](https://www.shanelynn.ie/merge-join-dataframes-python-pandas-index-1/). Then we create a new dataframe, `df_agg`, that sums each column for each user. Since `user_id` is now our index, we can easily display a specific user's spending in a given category with `.loc`.
 
+{% include header-python.html %}
 ```python
 # Merge data, avoiding dropping rows in df1
 df_merged = pd.merge(df1, df2, on='user_id', how='left')
@@ -144,6 +149,7 @@ print(df_agg.loc[123, 'groceries'])  # 300
 
 First, we have simple filtering of a vector. Python's built-in `list` requires either a list comprehension, or the `filter` function plus a lambda and unpacking (`[*...]`). `numpy`, meanwhile, just requires the array itself.
 
+{% include header-python.html %}
 ```python
 import numpy as np
 
@@ -162,6 +168,7 @@ array1[array1 > 3]   # array([4, 5])
 
 A second major distinction is mathematical operations. The `+` operator causes lists to concatenate. `numpy` arrays, meanwhile, interpret `+` as elementwise addition.
 
+{% include header-python.html %}
 ```python
 # Create the data
 list1 = [1, 2, 3]
@@ -179,6 +186,7 @@ array1 + array2 # array([5, 7, 9])
 
 To do elementwise math on Python lists, you need to use something like a list comprehension with `zip` on the two lists. For `numpy`, it's just the normal math operators. You can still get away with manually calculating simple aggregations like the mean on lists, but we're nearly at the point where it doesn't make sense to use lists.
 
+{% include header-python.html %}
 ```python
 # Elementwise multiplication
 ## Lists: list comprehension
@@ -194,6 +202,7 @@ array1.mean()          # 2.0
 
 Finally, if you're dealing with data in higher dimensions, don't bother with lists of lists - just use `numpy`. I'm still scratching my head trying to figure out how exactly `[*map(np.mean, zip(*l_2d))]` works, whereas `arr_2d.mean(axis=1)` clearly indicates we're taking the mean of each column (axis 1).
 
+{% include header-python.html %}
 ```python
 # List of lists vs. matrix
 list_2d = [[1, 2, 3],
@@ -214,6 +223,7 @@ If you end up working in computer vision, `numpy` multidimensional arrays will b
 ### Visualizations
 After dataframes and arrays, the next most crucial analytics skill is data visualization. **Visualizing the data is one of the first and last steps of an analysis:** when Python is communicating the data to you, and when you're communicating the data to stakeholders. The main Python data visualization libraries are `matplotlib` and `seaborn`. Here's how to create a simple two-panel plot in `matplotlib`.
 
+{% include header-python.html %}
 ```python
 import matplotlib.pyplot as plt
 
@@ -236,6 +246,7 @@ plt.show()
 
 And below is a simple way to plot data with multiple groups. The `label` keyword is incredibly handy, as you can then simply call `plt.legend` and auto-populate the legend with info on each group.
 
+{% include header-python.html %}
 ```python
 # Define dict for colors
 trt_dict = {'Trt1': 'red', 'Trt2': 'darkorange', 'Control': 'C0'}
@@ -273,6 +284,7 @@ Here are the main metrics I think are essential to know:
 * **Modality:** unimodal, bimodal, multimodal distributions
 * **Skew:** left, right
 
+{% include header-python.html %}
 ```python
 import numpy as np
 from scipy.stats import sem, normaltest
@@ -294,6 +306,7 @@ At least with data analytics, you most likely won't escape working with dates. D
 
 The built-in `datetime` library is Python's standard, with expanded methods in the `dateutil` library. Thankfully, `pandas` has excellent functionality for working with dates when the index is set to datetime, meaning you can stay in `pandas` for analyses both with and without dates. Similarly, `matplotlib` lets you pass in `dt.datetime` values as if they were normal numbers.
 
+{% include header-python.html %}
 ```python
 import pandas as pd
 import datetime as dt
@@ -319,6 +332,7 @@ Converting between `dt.datetime` and `str` formats will be important as well. Th
 
 (Note: I still can never remember whether the string or datetime value goes first! I just try it in a Jupyter notebook cell on the side and see which one works.)
 
+{% include header-python.html %}
 ```python
 # String to datetime
 date_str = "2020-01-01 12:00"
@@ -332,6 +346,7 @@ print(date_str_new)  # "2020-01-01 12:00"
 
 Finally, Python's `time` module is handy for timing how long steps in an analysis take. `time.time()` will return a float representing *the number of seconds since midnight on Jan 1, 1970.* (Also known as the [Unix Epoch time](https://en.wikipedia.org/wiki/Unix_time).) You can save this value before a block of code, then compare it to the Epoch time *after* the code.
 
+{% include header-python.html %}
 ```python
 import time
 import numpy as np
@@ -370,6 +385,7 @@ A linear model will certainly have no idea what to do with raw dates. *Maybe* a 
 
 A much simpler option is to **engineer** an `is_weekend` **feature** by asking whether each sale occurred on a Saturday or Sunday vs. the rest of the week. The `is_weekend` feature now serves as an unambiguous flag giving our model a heads up that something may be different between weekdays and weekends. Similarly, maybe the raw number of items in users' shopping carts isn't an informative predictor, but the square root or logarithm of those items actually is. (I actually have no idea. Send me a message if there's some transformation all the data scientists in e-commerce use!)
 
+{% include header-python.html %}
 ```python
 # Create a column for whether the date is Saturday/Sunday or not
 df['is_weekend'] = df['date'].dt.dayofweek.isin([5, 6])
@@ -385,6 +401,7 @@ When you're building a predictive model, it's critical to know how accurate it i
 
 [Scikit-learn](https://scikit-learn.org/stable/) (`sklearn`) is the go-to Python library for machine learning. It integrates seamlessly with `pandas` and `numpy` and has everything you can need for prepping, running, evaluating, and fine-tuning models.
 
+{% include header-python.html %}
 ```python
 import pandas as pd
 from sklearn.metrics import accuracy_score
@@ -441,6 +458,7 @@ One clear exception to the rule of using `numpy` arrays over lists is if you wan
 
 Below, the `numpy` version of `our_list1` converts `1` and `2` to floats to match `3.0`. (Integers are converted to floats to preserve the information after the decimal in floats.) For `our_list2`, there's no clear integer or float version of `'a'`, so instead `1` and `2.0` are converted to strings. If you want your array to store data of different types for some reason, you're therefore better off sticking with Python's `list` class.
 
+{% include header-python.html %}
 ```python
 import numpy as np
 
@@ -456,6 +474,7 @@ np.array(our_list2)  # array(['1', 'a', '2.0'])
 #### 3. [Visualizations](#visualizations)
 Here's the code to generate that Bokeh plot, if you're interested.
 
+{% include header-python.html %}
 ```python
 from bokeh.io import output_file, show
 from bokeh.plotting import figure

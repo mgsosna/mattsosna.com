@@ -17,6 +17,7 @@ We've reached the point in learning R where we can now afford to focus on effici
 
 The most important code from those posts is shown below:
 
+{% include header-r.html %}
 ```r
 c()             # Concatenate
 x <- c(5, 10)   # x is now a two-element vector
@@ -56,6 +57,7 @@ A random walk, if you remember, is a series of random steps. The walk can be in 
 
 In case you missed it, here's how we generated the data for the above figure. But this time, let's run 100 random walks instead of 10.
 
+{% include header-r.html %}
 ```r
 start <- 0
 mean.step <- 0
@@ -79,6 +81,7 @@ for(i in 2:n.steps){
 
 `WALKS` is a 100 x 100,000 matrix, where each row is a random walk and each column is a time point. To show how the variance of the walks changes over time, we want to take the variance of each column. One way to do this would be to create a `for` loop that iterates over each column:
 
+{% include header-r.html %}
 ```r
 walk.variance <- c()
 for(i in 1:ncol(WALKS)){
@@ -89,6 +92,7 @@ for(i in 1:ncol(WALKS)){
 
 This works, but there's a simpler way to do this. Let's use `apply`, which only requires one line of code.
 
+{% include header-r.html %}
 ```r
 walk.variance <- apply(WALKS, 2, var)
 ```
@@ -103,6 +107,7 @@ If we plot `walk.variance`, we see a nice linear relationship between the varian
 
 You can apply any function to each column or row, as long as it can take a vector input. Using what we learned in [post 4 of our R series]({{ site.baseurl }}/R-4-functions), let's apply a more complicated function to each row of the matrix. This function will find the mean of the six highest values of each random walk, then subtract it from the range. No real reason why. Just flexing a little R muscle!
 
+{% include header-r.html %}
 ```r
 # Find the mean of the six highest values of the input,
 # then subtract it from the range
@@ -118,6 +123,7 @@ lots.of.fun <- apply(WALKS, 1, fun.times)
 
 Here's a simple example that doesn't require `sweep`. You're subtracting one value from the entire matrix.
 
+{% include header-r.html %}
 ```r
 WALKS.adjusted <- WALKS - mean(WALKS)
 ```
@@ -126,6 +132,7 @@ Here, the new object (`WALKS.adjusted`) has been centered around the mean of `WA
 
 With `sweep`, we can be more nuanced. Let's create a new matrix, `WALKS.adjusted2`, where all of the walks are centered *around the mean of all the random walks for that particular time point.* Walks that are have particularly high values will have positive values, average walks will be around zero, and walks with low values will have negative values.
 
+{% include header-r.html %}
 ```r
 WALKS.adjusted2 <- sweep(WALKS, 2, colMeans(WALKS), "-")
 ```
@@ -133,10 +140,11 @@ WALKS.adjusted2 <- sweep(WALKS, 2, colMeans(WALKS), "-")
 In English, the code above says subtract (`"-"`) the mean of each column (`colMeans(WALKS)`) from each column (`2`) of `WALKS`.
 
 ## `sapply`
-`apply` works great on matrices, but it doesn't work if you want to perform a calculation on every element of a vector, or if you want to perform a calculation on only select columns of a matrix or data frame. In these cases, `sapply` is the answer. `sapply` takes in a vector, matrix, or list (a data type we'll cover [here](#lapply)) and returns a vector. In this post, we'll just focus on using `sapply` on vectors<sup>[[1]](#footnotes)</sup>.
+`apply` works great on matrices, but it doesn't work if you want to perform a calculation on every element of a vector, or if you want to perform a calculation on only select columns of a matrix or data frame. In these cases, `sapply` is the answer. `sapply` takes in a vector, matrix, or list (a data type we'll cover [here](#lapply)) and returns a vector. In this post, we'll just focus on using `sapply` on vectors<sup>[[1]](#1-sapply)</sup>.
 
-Let's say we have a list of probabilities, and we want to simulate outcomes based on those probabilities. Maybe we have 50 friends, each with some probability of wanting to marathon the eight _Harry Potter_ movies back to back in a massive sleepover party. We can simulate "rolling the dice" on a vector of those probabilities with `sapply`.<sup>[[2]](#footnotes)</sup>.
+Let's say we have a list of probabilities, and we want to simulate outcomes based on those probabilities. Maybe we have 50 friends, each with some probability of wanting to marathon the eight _Harry Potter_ movies back to back in a massive sleepover party. We can simulate "rolling the dice" on a vector of those probabilities with `sapply`.<sup>[[2]](#2-sapply)</sup>.
 
+{% include header-r.html %}
 ```r
 # 50 random values drawn from a uniform distribution between 0 and 1
 probs <- runif(50, 0, 1)
@@ -159,6 +167,7 @@ print(result)
 
 `prob_to_outcome` takes in a probability of wanting to marathon the _Harry Potter_ movies and simulates whether the person ended up choosing to marathon the series or not. In line 11, `sapply` runs `prob_to_outcome` on every probability in `probs`. We could do the same with a `for` loop, but it would be both more lines of code and [less efficient](http://clarkfitzg.github.io/2017/11/06/are-apply-functions-faster-than-for-loops/):
 
+{% include header-r.html %}
 ```r
 # Less efficient version of line 11 above
 result <- c()
@@ -172,6 +181,7 @@ While you can use `sapply` on data frames<sup>[[1]](#footnotes)</sup>, `tapply` 
 
 We'll start by defining some variables:
 
+{% include header-r.html %}
 ```r
 n_movies <- 8
 n_guests <- 10
@@ -184,6 +194,7 @@ titles <- c("Sorcerer's Stone", "Chamber of Secrets",
 
 Then we'll loop through our guests, generate a dataframe with each guest's info, and stacking the dataframes on top of one another. We could avoid using a `for` loop here, but given the fact that we're vertically stacking data and dealing with both single values (`guest_id`, being a fan of Twilight) and vectors (`titles`, `rankings`), it's a lot clearer to use a loop.
 
+{% include header-r.html %}
 ```r
 for(i in 1:n_guests){
 
@@ -206,6 +217,7 @@ for(i in 1:n_guests){
 
 Now we can actually analyze our data. Let's ask what the average rank is for each movie. With `tapply`, the first argument is the data to analyze, the second argument is how to group the data, and the third is the function to apply.
 
+{% include header-r.html %}
 ```r
 tapply(df$rank, df$movie, mean)
 #   Chamber of Secrets   Deathly Hallows p.2   Deathly Hallows p.1
@@ -218,6 +230,7 @@ tapply(df$rank, df$movie, mean)
 
 Looks like _Goblet of Fire_ wins! (Let's just ignore any semblance of statistical rigor.) But what about for people who like vs. dislike _Twilight_? For this extra nuance, we can just modify the second argument in `tapply` to include both `df$movie` and `df$twilight_fan`. As a step further to keep the code clean, I'll use the `with` command, which lets us avoid needing to type `df$` before any column in `df`.
 
+{% include header-r.html %}
 ```r
 with(df, tapply(rank, list(movie, twilight_fan), mean))
 #                       FALSE TRUE
@@ -236,6 +249,7 @@ In a shocking upset, turns out the best-ranked film is a tie between _Chamber of
 ## `lapply`
 Finally, we have `lapply`, a function that lets you apply a function to every element of a list. In R, lists are objects that contain other objects. We can create a sample list, `L`, that has the numbers 1 to 3, a string, and a dataframe.
 
+{% include header-r.html %}
 ```r
 L <- list(1:3, 'hello', data.frame('id'=1))
 L
@@ -250,8 +264,9 @@ L
 #  1  1
 ```
 
-With `lapply`, we can efficiently apply a function to each object in the list. It doesn't make a whole lot of sense, but we could, for example, apply `min` to each element. Note that `lapply` returns a list<sup>[[3]](#footnotes).
+With `lapply`, we can efficiently apply a function to each object in the list. It doesn't make a whole lot of sense, but we could, for example, apply `min` to each element. Note that `lapply` returns a list<sup>[[3]](#3-lapply).
 
+{% include header-r.html %}
 ```r
 lapply(L, min)
 # [[1]]
@@ -266,6 +281,7 @@ lapply(L, min)
 
 Let's finish this post with an example that is more sensible and has more _Harry Potter_ in it. In an effort to get on the front page of [/r/dataisbeautiful](https://reddit.com/r/dataisbeautiful), we decide to collect some data at our party. Every 30 minutes, we poll the audience on how much fun they're having. (It'd be solid 10/10's throughout the night, but play along and imagine there's some variation.) With these data, we build a matrix where each row is a party participant and each column is a time point (3:10am, 3:20am, etc.). The data are how much fun person `i` is having at time point `j`.
 
+{% include header-r.html %}
 ```r
 n_samples <- 100
 n_guests <- 10
@@ -288,6 +304,7 @@ What if we want to know what moments each person was having at least 9/10 fun?  
 
 This sounds like a job for `apply`, so we run this:
 
+{% include header-r.html %}
 ```r
 passed_threshold <- apply(fun_mat, 1, function(x){which(x >= 9)})
 print(passed_threshold)
@@ -303,6 +320,7 @@ print(passed_threshold)
 
 We now have a list, where each object is a person, and the values are the time points at which they scored at least a 9/10 on having fun. However, we can now use `lapply` to get more nuanced information from `passed_threshold`. Here is the _first_ time point at which someone passed the threshold of having fun:
 
+{% include header-r.html %}
 ```r
 # Find the first time point that passed the threshold
 lapply(passed_threshold, min)
@@ -315,6 +333,8 @@ lapply(passed_threshold, min)
 ```
 
 And here is a full summary of when having fun occurred:
+
+{% include header-r.html %}
 ```r
 # Get a summary of the time points for each person that
 # passed the threshold
@@ -330,6 +350,7 @@ lapply(passed_threshold, summary)
 
 Note that these commands return their contents as a list. If you'd prefer they were returned as a vector, we can use `sapply` instead.
 
+{% include header-r.html %}
 ```r
 sapply(passed_threshold, min)
 # person1  person2  person3  person4  person5  person6  ...
@@ -343,42 +364,50 @@ Cheers, <br>
 -Matt
 
 ## Footnotes
-1. [[sapply]](#sapply) We can also use `sapply` on dataframes and matrices when we only want to run our calculation on specific columns. Let's say we run a lab experiment and have the results in a dataframe that has columns for our data, as well as metadata like the date of the trial, the treatment name, etc. If we want to find the median of our data columns, we can't just do `apply` - R will complain about trying to find the median for the non-numeric columns. Instead, we can get the indices of the numerical columns and then use `sapply`.
+#### 1. [sapply](#sapply)
+We can also use `sapply` on dataframes and matrices when we only want to run our calculation on specific columns. Let's say we run a lab experiment and have the results in a dataframe that has columns for our data, as well as metadata like the date of the trial, the treatment name, etc. If we want to find the median of our data columns, we can't just do `apply` - R will complain about trying to find the median for the non-numeric columns. Instead, we can get the indices of the numerical columns and then use `sapply`.
 
-    ```r
-    # Generate sample data
-    height_gain <- rnorm(20)
-    weight_gain <- rnorm(20)
-    treatment <- sort(rep(c("medicine", "placebo"), 10))
-    trial <- factor(rep(1:5, 4))   # Indicate vals are factors, not ints
+{% include header-r.html %}
+```r
+# Generate sample data
+height_gain <- rnorm(20)
+weight_gain <- rnorm(20)
+treatment <- sort(rep(c("medicine", "placebo"), 10))
+trial <- factor(rep(1:5, 4))   # Indicate vals are factors, not ints
 
-    df <- data.frame(height_gain, weight_gain, treatment, trial)
+df <- data.frame(height_gain, weight_gain, treatment, trial)
 
-    numeric_cols <- sapply(df, is.numeric)
-    sapply(which(numeric_cols), function(x){median(df[, x])})
-    # > height_gain weight_gain
-    #   2.683714    -2.070083
-    ```
+numeric_cols <- sapply(df, is.numeric)
+sapply(which(numeric_cols), function(x){median(df[, x])})
+# > height_gain weight_gain
+#   2.683714    -2.070083
+```
+
 You'll notice we call `sapply` twice - first to get a vector of booleans (`TRUE` and `FALSE`) for whether each column in `df` is numeric, and then again to find the median of each numeric column. *[Because `numeric_cols` is a vector of `TRUE` and `FALSE` values, we don't have to specify `which(numeric_cols == T)`; `which` already only returns indices that are `TRUE`.]* <br><br> However, while it's possible to use `sapply` like this, I find it more convenient to use `tapply` so we can avoid using indices (and can instead use column names, which is easier to verify that we're doing what we think we're doing). We can even get away with using `apply` again, such as with `apply(df[, which(numeric_cols)], 2, median)`. So I usually stick with analyzing vectors with `sapply`, which is why this section is a footnote instead of in the main text.
 
-2. [[sapply]](#sapply) Note that when we simulate outcomes based on probabilities, the outcomes will differ between runs - if we have a probability of 0.5, for example, we can expect roughly half our runs to have a positive outcome and half to have a negative. If you want to control this randomness (e.g. for sharing a reproducible analysis), use `set.seed` to force the next random function to always return the same value.
+#### 2. [sapply](#sapply)
+Note that when we simulate outcomes based on probabilities, the outcomes will differ between runs - if we have a probability of 0.5, for example, we can expect roughly half our runs to have a positive outcome and half to have a negative. If you want to control this randomness (e.g. for sharing a reproducible analysis), use `set.seed` to force the next random function to always return the same value.
 
-    ```r
-    # Without seed
-    rnorm(3)  # 1.2724293  0.4146414 -1.5399500
-    rnorm(3)  # -1.1476570 -0.2894616 -0.2992151
+{% include header-r.html %}
+```r
+# Without seed
+rnorm(3)  # 1.2724293  0.4146414 -1.5399500
+rnorm(3)  # -1.1476570 -0.2894616 -0.2992151
 
-    # With seed
-    set.seed(1)
-    rnorm(3)  # -0.6264538  0.1836433 -0.8356286
+# With seed
+set.seed(1)
+rnorm(3)  # -0.6264538  0.1836433 -0.8356286
 
-    set.seed(1)
-    rnorm(3)  # -0.6264538  0.1836433 -0.8356286
-    ```
+set.seed(1)
+rnorm(3)  # -0.6264538  0.1836433 -0.8356286
+```
 
-3. [[lapply]](#lapply) We can actually run `sapply` on the list to get our result as a vector, though the response might seem confusing.
+#### 3. [lapply](#lapply)
+We can actually run `sapply` on the list to get our result as a vector, though the response might seem confusing.
 
-    ```r
-    sapply(L, min)   # "1"  "hello"  "1"
-    ```
+{% include header-r.html %}
+```r
+sapply(L, min)   # "1"  "hello"  "1"
+```
+
 Why are the first and third elements strings instead of integers? This is because vectors in R must have elements of the same type. Because we have both integers and strings when we apply `min` to each element of `L`, R needs to choose one of the two data types for our vector. The number `1` has a clear conversion to the string `"1"`, but there's no obvious integer to convert `"hello"` to. R therefore converts all elements to strings before returning the vector.
