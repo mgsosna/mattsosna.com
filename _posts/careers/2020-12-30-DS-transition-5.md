@@ -7,7 +7,9 @@ summary: The personal and interpersonal skills needed to succeed in data science
 image: ""
 ---
 
-No matter how technical skills you have, you're not that effective if you're chasing answers to questions that don't help the business. Similarly, getting people to actually adopt the results of your analyses will require significant interpersonal skills. This post will outline the _**business**_ and _**personal**_ skills needed to be successful as a data scientist.
+So far, we've covered some technical skills for data science: [statistics]({{  site.baseurl  }}/DS-transition-2), [analytics]({{  site.baseurl  }}/DS-transition-3), and [software engineering]({{  site.baseurl  }}/DS-transition-4). But no matter talented you are at crunching numbers of writing code, your *effectiveness* as a data scientist is limited if you spend your time chasing questions that don't actually help your company. Similarly, getting people to actually adopt the results of your analyses will require significant interpersonal skills. Finally, how do you stay motivated and relevant in a field that's constantly evolving?
+
+In this post, we'll outline the _**business**_ and _**personal**_ skills needed to translate your technical skills into impact. We'll first focus on [business skills](#making-sense-of-business-sense) before turning to personal skills.
 
 ---
 **How to enter data science:**
@@ -19,8 +21,68 @@ No matter how technical skills you have, you're not that effective if you're cha
 
 ---
 
-## Non-machine learning
-The last three posts were a deep dive on some technical skills for data science: [statistics]({{  site.baseurl  }}/DS-transition-2), [analytics]({{  site.baseurl  }}/DS-transition-3), and [software engineering]({{  site.baseurl  }}/DS-transition-4). With these under the belt, you should have a solid starting point for many data science roles.
+## Making sense of business sense
+Data science is full of tempting rabbit holes. Our code works fine, but what if we added a way to automate tuning model [hyperparameters](https://machinelearningmastery.com/difference-between-a-parameter-and-a-hyperparameter/)? Maybe the stakeholders would be more engaged if we built a better way to visualize the [high-dimensional vector space](https://towardsdatascience.com/lets-understand-the-vector-space-model-in-machine-learning-by-modelling-cars-b60a8df6684f) of our NLP model. Nobody asked for it, but what if we built a sleek dashboard for our data quality outputs so you could click buttons instead of needing to write SQL?
+
+The confusing thing is that **while there is usually _some_ business value at the end of the rabbit hole, it's often not worth pursuing.** Sure, a model that is more accurate or easy to understand will probably help your company in some way. The tricky thing, though, is being able to understand and identify **the highest-leverage use of your time for the business**. We'll explore this idea in the rest of this section.
+
+### Optimizing resource allocation
+Here's an example of a dilemma you may face as a data scientist. Your company wants to build a model to forecast sales in New York next quarter. After a month, you present what you have so far $-$ an [ARIMA model](https://www.machinelearningplus.com/time-series/arima-model-time-series-forecasting-python/) that is around 88% accurate. While this is pretty good, you've identified two additional [exogenous variables](https://towardsdatascience.com/time-series-forecasting-a-getting-started-guide-c435f9fa2216) that you believe can increase accuracy to 95%! You end your presentation with a plan of attack for exploring and incorporating these variables.
+
+To your surprise, your boss says no. 88% is an acceptable accuracy, they say, and it's not worth the time (and risk) of exploring further. You're given a week to productize your model, after which you start on a new project. You're confused and are sure your boss is making a mistake. How is it not worth just two weeks to potentially create a better model? There's a real cost your company will pay by using less accurate projections!
+
+**To understand your company's perspective, consider its ever-present need to optimally allocate resources.** Yes, a less accurate model means your company is making decisions on less accurate projections, which may mean worse sales. <u><i>However, the cost of this inaccuracy is likely lower than the <a href="https://www.investopedia.com/terms/o/opportunitycost.asp">opportunity cost</a> of you not working on another business need.</i></u>
+
+<center>
+<img src = "{{  site.baseurl  }}/images/careers/DS-5/diminishing_returns.jpg" height="70%" width="70%">
+</center>
+<span style="font-size: 12px"><i>Source: [The Peak Performance Center](https://thepeakperformancecenter.com/business/strategic-management/the-law-of-diminishing-returns/law-of-diminishing-returns/)</i></span>
+
+In other words, your company is willing to pay the cost of a worse model if it means avoiding *a larger cost*, such as [customer churn](https://blog.hubspot.com/service/what-is-customer-churn) due to delays in their online orders. To your company, it's more valuable to stop your work on forecasting and instead turn you to data quality.
+
+From your perspective, you might only be aware of the business costs of a less accurate model. And these costs are indeed legitimate $-$ it'd of course be better to have a more accurate model. But given a company's limited resources, how does it optimally coordinate workers to maximize its profit? Answering this question requires context from across departments within the company, as well as knowledge of what's happening in the market outside.
+
+Don't stress about being an expert in this. But to vastly improve the value you can bring to your company, seek to understand the context your company is in. Look at what competitors' data science teams are doing. What are [best team practices at top companies](https://docs.microsoft.com/en-us/azure/machine-learning/team-data-science-process/overview)?
+
+
+
+
+## The `self` parameter
+We'll shift now from talking about business sense to talking about self $-$ how to *consistently deliver.*
+
+There's not much I can say that people like Nir Eyal (Indistractable), James Clear (Atomic Habits), and plenty of others can do much better. But I can share, at least, some productivity tips that I think are applicable to data science.
+
+### CI: Continuous Improvement
+Data science is constantly evolving. You need to keep learning.
+
+[Julia](https://julialang.org/) in the future.
+
+Armin Ronacher, the creator of Python's [Flask](https://flask.palletsprojects.com/en/1.1.x/) library, has even [moved on to the language Rust](https://www.youtube.com/watch?v=saW18UvYLQg).
+
+
+It's tempting to follow the path of least resistance as a data scientist. It's enjoyable to keep analyzing data, so let's run some more analyses. I like writing tests, so it's easy to justify refactoring an old repo. Maybe we want to read just a few more articles before we can really start on our thing.
+
+The thing is, you gotta work hard. Managing yourself: aware of what you're spending time on. Humility. Continuous learning.
+- Sure, do whatever you need to do right then for the company
+- But also, continue expanding the toolbox so you have more tools to use for a wider range of problems.  
+
+
+
+
+In other words, *given the context the company is currently in, what's the best thing to do?*
+
+This varies by industry and over time. Perhaps a competitor has just come out with a product that gives them an advantage, and you need to build a similar product to avoid losing customers.
+
+
+### The data science vacuum
+
+fall into the "data science vacuum," as I like to think of it. In the vacuum, we can just focus on the analysis and the code.
+
+But the issue with the vacuum is that we lack the **context** for crunching our numbers.
+
+ignore the interpersonal aspect of data science. Our job is to crunch the numbers, to parse the signals from the noise and uncover the truth. The truth should speak for itself
+
+"Storytelling"
 
 But in this post, we'll instead ask **what** tasks to focus on and **why**? What are the questions that actually help a business move forward?
 
@@ -32,36 +94,9 @@ But in this post, we'll instead ask **what** tasks to focus on and **why**? What
 * Need to focus on what the business needs are
  - e.g. customers feel like they're not getting enough value from your product. So you need to make that value more visible. e.g. Can you quantify the benefits, such as savings, or increased revenue for them, relative to the cost of your product? Can you do this in a way that controls for external factors like seasonality (e.g. more people buy stuff in November/December)?
 
-```python
-def func(a, b):
-    return "Hi!"
-```
-
-blah blah blah
 
 **Business skills:** knowing _**what**_ to do and _**why**_
 **Personal skills:** knowing how to _**consistently deliver**_
-
-## Table of contents
-* [**Business sense**](#business-sense)
-  - [ ] [Optimizing resource allocation](#optimizing-resource-allocation)
-* [**Personal skills**](#personal-skills)
-
-
-## Business sense
-### Optimizing resource allocation
-Here's an example of a dilemma you may face as a data scientist. Your company wants to build a model to forecast sales in New York next quarter. After a month, you present what you have so far $-$ an [ARIMA model](https://www.machinelearningplus.com/time-series/arima-model-time-series-forecasting-python/) that is around 88% accurate. While this is pretty good, you've identified two additional [exogenous variables](https://towardsdatascience.com/time-series-forecasting-a-getting-started-guide-c435f9fa2216) that you believe can increase accuracy to 95%! You end your presentation with a plan of attack for exploring and incorporating these variables.
-
-To your surprise, your boss says no. 88% is an acceptable accuracy, they say, and it's not worth the time (and risk) of exploring further. You're given a week to productize your model, after which you start on a new project. You're confused and are sure your boss is making a mistake. How is it not worth just two weeks to potentially create a better model? There's a real cost your company will pay by using less accurate projections!
-
-**To understand your company's perspective, consider its ever-present need to optimally allocate resources.** Yes, a less accurate model means your company is making decisions on less accurate projections, which may mean worse sales. <u><i>However, the cost of this inaccuracy is likely lower than the <a href="https://www.investopedia.com/terms/o/opportunitycost.asp">opportunity cost</a> of not working on another business need.</i></u> In other words, your company is willing to pay the cost of a worse model if it means avoiding *a larger cost*, such as [customer churn](https://blog.hubspot.com/service/what-is-customer-churn) due to delays in their online orders. To your company, it's more valuable to stop your work on forecasting and instead turn you to data quality.
-
-From your perspective, you might only be aware of the cost of the model accuracy, and the legitimate business costs of a less accurate model. But one challenge is that **you often don't have the whole picture.**
-
-<center>
-<img src = "{{  site.baseurl  }}/images/careers/DS-5/diminishing_returns.jpg" height="75%" width="75%">
-</center>
-<span style="font-size: 12px"><i>Source: [The Peak Performance Center](https://thepeakperformancecenter.com/business/strategic-management/the-law-of-diminishing-returns/law-of-diminishing-returns/)</i></span>
 
 Some thoughts:
 * [Speed-accuracy tradeoff](https://link.springer.com/referenceworkentry/10.1007%2F978-0-387-79948-3_1247) from neuroscience. **You need to operate with constraints in mind.** You likely don't have the time to deliver a perfect analysis. Diminishing returns.
