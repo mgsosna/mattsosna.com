@@ -7,7 +7,7 @@ summary: The personal and interpersonal skills needed to succeed in data science
 image: ""
 ---
 
-So far, we've covered some technical skills for data science: [statistics]({{  site.baseurl  }}/DS-transition-2), [analytics]({{  site.baseurl  }}/DS-transition-3), and [software engineering]({{  site.baseurl  }}/DS-transition-4). But no matter talented you are at crunching numbers of writing code, your *effectiveness* as a data scientist is limited if you spend your time chasing questions that don't actually help your company. Similarly, getting people to actually adopt the results of your analyses will require significant interpersonal skills. Finally, how do you stay motivated and relevant in a field that's constantly evolving?
+So far, we've covered the technical side to data science: [statistics]({{  site.baseurl  }}/DS-transition-2), [analytics]({{  site.baseurl  }}/DS-transition-3), and [software engineering]({{  site.baseurl  }}/DS-transition-4). But no matter how talented you are at crunching numbers of writing code, your *effectiveness* as a data scientist is limited if you chase questions that don't actually help your company, or you can't get anyone to incorporate the results of your analyses. Similarly, how do you stay motivated and relevant in a field that's constantly evolving?
 
 In this post, we'll outline the _**business**_ and _**personal**_ skills needed to translate your technical skills into impact. We'll first focus on [business skills](#making-sense-of-business-sense) before turning to personal skills.
 
@@ -22,28 +22,41 @@ In this post, we'll outline the _**business**_ and _**personal**_ skills needed 
 ---
 
 ## Making sense of business sense
-Data science is full of tempting rabbit holes. Our code works fine, but what if we added a way to automate tuning model [hyperparameters](https://machinelearningmastery.com/difference-between-a-parameter-and-a-hyperparameter/)? Maybe the stakeholders would be more engaged if we built a better way to visualize the [high-dimensional vector space](https://towardsdatascience.com/lets-understand-the-vector-space-model-in-machine-learning-by-modelling-cars-b60a8df6684f) of our NLP model. Nobody asked for it, but what if we built a sleek dashboard for our data quality outputs so you could click buttons instead of needing to write SQL?
+Data science is full of tempting rabbit holes. Our code works fine, but what if we added a way to automate tuning model [hyperparameters](https://machinelearningmastery.com/difference-between-a-parameter-and-a-hyperparameter/)? Maybe the stakeholders would be more engaged if we built a better way to visualize the [high-dimensional vector space](https://towardsdatascience.com/lets-understand-the-vector-space-model-in-machine-learning-by-modelling-cars-b60a8df6684f) of our NLP model. Nobody asked for it, but what if we built a sleek dashboard for our data quality outputs so you could click buttons instead of needing to write [SQL]({{  site.baseurl  }}/DS-transition-4/#sql)?
 
-The confusing thing is that **while there is usually _some_ business value at the end of the rabbit hole, it's often not worth pursuing.** Sure, a model that is more accurate or easy to understand will probably help your company in some way. The tricky thing, though, is being able to understand and identify **the highest-leverage use of your time for the business**. We'll explore this idea in the rest of this section.
+The confusing thing is that **while there usually _is_ some business value at the end of the rabbit hole, it's often not worth pursuing.** Sure, a model that is more accurate or easy to understand will probably help your company in some way. But is this the [highest-leverage use of your time](#optimizing-resource-allocation)? Can you understand your coworkers' needs and [communicate how this project will empower them](#empowering-coworkers)? And is this project addressing [an unmet need in your company's market](#understanding-the-market), or is it a "nice to have"? We'll explore these ideas in the rest of this section.
 
 ### Optimizing resource allocation
-Here's an example of a dilemma you may face as a data scientist. Your company wants to build a model to forecast sales in New York next quarter. After a month, you present what you have so far $-$ an [ARIMA model](https://www.machinelearningplus.com/time-series/arima-model-time-series-forecasting-python/) that is around 88% accurate. While this is pretty good, you've identified two additional [exogenous variables](https://towardsdatascience.com/time-series-forecasting-a-getting-started-guide-c435f9fa2216) that you believe can increase accuracy to 95%! You end your presentation with a plan of attack for exploring and incorporating these variables.
+Here's an example of a dilemma you may face as a data scientist. Your company, a shoe retailer, asks you to build a model to forecast sales in New York next quarter. After a month, you present what you have so far $-$ an [ARIMA model](https://www.machinelearningplus.com/time-series/arima-model-time-series-forecasting-python/) with an [RMSE](https://www.statisticshowto.com/probability-and-statistics/regression-analysis/rmse-root-mean-square-error/) of about 5,000. While this is pretty good, you've identified two additional [exogenous variables](https://towardsdatascience.com/time-series-forecasting-a-getting-started-guide-c435f9fa2216) that you believe can decrease error to 2,000! You end your presentation with a plan of attack for exploring and incorporating these variables.
 
-To your surprise, your boss says no. 88% is an acceptable accuracy, they say, and it's not worth the time (and risk) of exploring further. You're given a week to productize your model, after which you start on a new project. You're confused and are sure your boss is making a mistake. How is it not worth just two weeks to potentially create a better model? There's a real cost your company will pay by using less accurate projections!
+To your surprise, your boss says no. The model's accuracy is acceptable, they say, and it's not worth the time (and risk) of exploring further. You're given a week to [productize](https://www.datapred.com/blog/productizing-machine-learning-models-what-is-required) your model, after which you'll start on a new project. You're confused and are sure your boss is making a mistake. How is it not worth just two weeks to potentially halve the model error? There's a real cost your company will pay by using less accurate projections!
 
-**To understand your company's perspective, consider its ever-present need to optimally allocate resources.** Yes, a less accurate model means your company is making decisions on less accurate projections, which may mean worse sales. <u><i>However, the cost of this inaccuracy is likely lower than the <a href="https://www.investopedia.com/terms/o/opportunitycost.asp">opportunity cost</a> of you not working on another business need.</i></u>
+**To understand your company's perspective, consider its ever-present need to optimally allocate resources.** Yes, a less accurate model means your company is making decisions on less accurate projections, which may mean worse sales. <u><i>However, the cost of this inaccuracy is likely lower than the <a href="https://www.investopedia.com/terms/o/opportunitycost.asp">opportunity cost</a> of you not working on a different business need.</i></u>
+
+In the context of the company's needs, perhaps a less accurate model represents the *point of maximum yield* in the graph below, or even just the *point of diminishing returns*. In other words, your company is willing to pay the cost of a worse model if it means avoiding *a larger cost*, such as [customer churn](https://blog.hubspot.com/service/what-is-customer-churn) due to errors in their orders. To your company, it's more valuable to stop your work on forecasting and instead turn you to data quality.
 
 <center>
 <img src = "{{  site.baseurl  }}/images/careers/DS-5/diminishing_returns.jpg" height="70%" width="70%">
 </center>
 <span style="font-size: 12px"><i>Source: [The Peak Performance Center](https://thepeakperformancecenter.com/business/strategic-management/the-law-of-diminishing-returns/law-of-diminishing-returns/)</i></span>
 
-In other words, your company is willing to pay the cost of a worse model if it means avoiding *a larger cost*, such as [customer churn](https://blog.hubspot.com/service/what-is-customer-churn) due to delays in their online orders. To your company, it's more valuable to stop your work on forecasting and instead turn you to data quality.
+It's easy to get frustrated by being cut short on a project, especially if you've been in the weeds a while. My recommendation is to do your best to separate your enjoyment of the project from your judgment on whether it's truly worth pursuing further. Especially if you've sunk some time into it, or maybe if you're feeling guilty from only really building steam at the end of the time you allotted for the project, it's tempting to let that emotion color your perspective.
 
-From your perspective, you might only be aware of the business costs of a less accurate model. And these costs are indeed legitimate $-$ it'd of course be better to have a more accurate model. But given a company's limited resources, how does it optimally coordinate workers to maximize its profit? Answering this question requires context from across departments within the company, as well as knowledge of what's happening in the market outside.
+But try to stay
+
+
+### Empowering coworkers
+
+#### Understanding coworker needs
+
+
+#### Explainability
+Being able to clearly and succinctly explain how models work is critical.
+
+
+### Understanding the market
 
 Don't stress about being an expert in this. But to vastly improve the value you can bring to your company, seek to understand the context your company is in. Look at what competitors' data science teams are doing. What are [best team practices at top companies](https://docs.microsoft.com/en-us/azure/machine-learning/team-data-science-process/overview)?
-
 
 
 
@@ -105,10 +118,6 @@ Some thoughts:
 * **Business**
 - [ ] Strong ability to explain technical concepts
 - [ ] Focus on how to best deliver business value <br><br>
-
-
-### Explainability
-Being able to clearly and succinctly explain how models work is critical.
 
 
 
