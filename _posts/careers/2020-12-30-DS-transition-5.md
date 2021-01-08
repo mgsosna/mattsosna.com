@@ -40,15 +40,11 @@ In the context of the company's needs, perhaps the effort invested in the model 
 </center>
 <span style="font-size: 12px"><i>Source: [The Peak Performance Center](https://thepeakperformancecenter.com/business/strategic-management/the-law-of-diminishing-returns/law-of-diminishing-returns/)</i></span>
 
-Identifying the highest-leverage use of your time is a highly valuable skill for a data scientist to have. Much of it is shaped by the context your company is in, such as its internal financial forecast, the actions of competitors, and what customers are asking for. It's understandable to not have a deep knowledge of this $-$ ideally, that's the role of senior leadership at the company. But avoiding the "data science vacuum" of pursuing ideas solely because they're interesting from a data science perspective without the broader context, will make you a more effective employee.
+It's easy to get frustrated by being cut short on a project, especially if you've been in the weeds a while. My recommendation is to do your best to **separate your enjoyment of the project from your judgment on whether it's truly worth pursuing further.** Especially if you've sunk some time into it or have finally built up steam, it's tempting to let that emotion color your perspective. But focusing on how you can best benefit your company, rather than just pursuing questions you alone find interesting, will make you a far more effective employee.<sup>[[1]](#1-optimizing-resource-allocation)</sup>
 
 We'll take this a step further in the next two sections: [empowering coworkers](#empowering-coworkers) and [understanding the market](#understanding-the-market). A solid understanding here will transition some of the burden off your boss, product manager, or other departments and enable you to apply DS to them that they might be unware of.
 
 
-
-It's easy to get frustrated by being cut short on a project, especially if you've been in the weeds a while. My recommendation is to do your best to separate your enjoyment of the project from your judgment on whether it's truly worth pursuing further. Especially if you've sunk some time into it, or maybe if you're feeling guilty from only really building steam at the end of the time you allotted for the project, it's tempting to let that emotion color your perspective.
-
-But try to stay
 
 
 ### Empowering coworkers
@@ -144,3 +140,9 @@ For it to be impactful, it needs to be relevant. There's a philosophy/lifestyle 
 This series has covered a lot. We started by talking about [how to navigate the diversity of data science roles]({{  site.baseurl  }}/DS-transition-1) before going into detail on some useful technical skills: [statistics]({{  site.baseurl  }}/DS-transition-2), [analytics]({{  site.baseurl  }}/DS-transition-3), and [software engineering]({{  site.baseurl  }}/DS-transition-4). The last three posts covered **how** to accomplish a task as a data scientist.
 
 ## Footnotes
+#### 1. [Optimizing resource allocation](#optimizing-resource-allocation)
+It may sound like this section is arguing that *the work you want to do* and *what's best for the company* are two separate and irreconcilable worlds, which isn't necessarily the case. But there is [a lot of work *around* the model-building]({{  site.baseurl  }}/DS-transition-3/#machine-learning) that needs to happen for data science to actually help a company, such as cleaning data, building pipelines, writing documentation, and training users. Similarly, the questions you might find most interesting aren't necessarily the ones that help the business.
+
+As I mentioned in previous posts, it's important to choose an employer carefully. Ultimately, you were hired by your company to do the work they ask you to do. You therefore want to be in a field you find interesting, as well as a supportive and engaging work environment. If you find yourself on a project you're not fascinated with, at least you still know you're contributing to empowering coworkers you care about, as well as your field more broadly.
+
+But you also shouldn't expect your job to completely fulfill you professionally, and definitely not personally. (Indeed, this article by Kabir Sehgal [in the *Harvard Business Review*](https://hbr.org/2017/04/why-you-should-have-at-least-two-careers) argues that everyone should have at least *two* careers!) When I wasn't getting as much teaching as I wanted after leaving academia, a former boss introduced me to the [Trilogy coding boot camp](https://www.trilogyed.com/programs/), where I'm now a tutor. The external outlet for teaching was exactly what I needed, and it let me better appreciate my job for what it *did* offer.
