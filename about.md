@@ -19,7 +19,7 @@ Success in a career is never independent, and I've been fortunate throughout my 
 * **2018 - 2019:** Worked as a machine learning engineer at [SoKat](https://sokat.co)
 * **2019:** Participated in the [Clean Energy Leadership Institute](https://cleanenergyleaders.org) Fellowship class of 2019
 * **2019 - present:** Work as a data scientist at [Aquicore](https://www.aquicore.com)
-
+* **2020 - present:** Tutor at the [Trilogy Data Viz coding boot camp](https://www.trilogyed.com/programs/)
 
 ## About this site
 This site is powered by [Jekyll](https://jekyllrb.com/) and is based on the [Jekyll Now](https://github.com/barryclark/jekyll-now) template. All blog posts are released under a [Creative Commons Attribution-ShareAlike 4.0](https://creativecommons.org/licenses/by-sa/4.0/) International License. All opinions and views are my own and do not represent my employer.
