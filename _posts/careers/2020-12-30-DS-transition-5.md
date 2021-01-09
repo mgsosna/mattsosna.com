@@ -11,6 +11,13 @@ So far, we've covered the technical side to data science: [statistics]({{  site.
 
 In this post, we'll outline the _**business**_ and _**personal**_ skills needed to translate your technical skills into impact. We'll first focus on [business skills](#making-sense-of-business-sense) before turning to personal skills.
 
+### Table of contents
+* Making sense of business sense
+  - Optimizing resource allocation
+  - Empowering coworkers
+  - Understanding the market
+* The `self` parameter
+
 ---
 **How to enter data science:**
 1. [The target]({{  site.baseurl  }}/DS-transition-1)
@@ -40,16 +47,18 @@ In the context of the company's needs, perhaps the effort invested in the model 
 </center>
 <span style="font-size: 12px"><i>Source: [The Peak Performance Center](https://thepeakperformancecenter.com/business/strategic-management/the-law-of-diminishing-returns/law-of-diminishing-returns/)</i></span>
 
-It's easy to get frustrated by being cut short on a project, especially if you've been in the weeds a while. My recommendation is to do your best to **separate your enjoyment of the project from your judgment on whether it's truly worth pursuing further.** Especially if you've sunk some time into it or have finally built up steam, it's tempting to let that emotion color your perspective. But focusing on how you can best benefit your company, rather than just pursuing questions you alone find interesting, will make you a far more effective employee.<sup>[[1]](#1-optimizing-resource-allocation)</sup>
+It's easy to get frustrated by being cut short on a project, especially if you've sunk time into it or have finally built up steam. It's important, though, to **separate your feelings about a project from your judgment on whether it's worth pursuing.** Focusing on how you can best benefit your company, rather than just pursuing questions you alone find interesting, will make you a far more effective employee.<sup>[[1]](#1-optimizing-resource-allocation)</sup>
 
-We'll take this a step further in the next two sections: [empowering coworkers](#empowering-coworkers) and [understanding the market](#understanding-the-market). A solid understanding here will transition some of the burden off your boss, product manager, or other departments and enable you to apply DS to them that they might be unware of.
-
-
-
+The next sections will cover how to best help your company through [empowering coworkers](#empowering-coworkers) and [understanding the market](#understanding-the-market). A solid understanding here will enable more productive conversations with your boss, product manager, or other internal departments. It will also help build trust in data science initiatives you may bring to the table, as you will be able to better communicate how they will help the company.
 
 ### Empowering coworkers
+People often don't need a slick machine learning model. Often, process automation is a huge deal.
+
+A user-first approach. Putting aside your thoughts, what do your coworkers need to more effectively do their jobs? Are they bogged down in manually creating reports for customers? Are they spending a lot of time searching through data to find anomalies? Addressing these needs will go much further than implementing the latest cutting-edge machine learning.
+
 
 #### Understanding coworker needs
+Think from their perspective: what do they need to make their jobs easier?
 
 
 #### Explainability
@@ -67,6 +76,13 @@ We'll shift now from talking about business sense to talking about self $-$ how 
 
 There's not much I can say that people like Nir Eyal (Indistractable), James Clear (Atomic Habits), and plenty of others can do much better. But I can share, at least, some productivity tips that I think are applicable to data science.
 
+For it to be impactful, it needs to be relevant. There's a philosophy/lifestyle for successful people in tech: you need to constantly be learning. There's a sort of humility in knowing that the in-demand tools of the day will keep changing. It's like resting on a slowly-moving treadmill... stop moving and you'll gradually slip away.
+
+
+* Need to constantly be learning and improving
+* New technologies and frameworks will come, and you'll need to learn them to stay relevant.
+
+
 ### CI: Continuous Improvement
 Data science is constantly evolving. You need to keep learning.
 
@@ -74,14 +90,12 @@ Data science is constantly evolving. You need to keep learning.
 
 Armin Ronacher, the creator of Python's [Flask](https://flask.palletsprojects.com/en/1.1.x/) library, has even [moved on to the language Rust](https://www.youtube.com/watch?v=saW18UvYLQg).
 
+* You need to love programming. For most of your day, for most of your days, you're going to be reading and writing code.
+* You need to love learning. There is a staggering amount to programming languages and frameworks out there. There's also a huge number of ways to get a job done, ranging from barely getting the job done to being computationally optimized and able to handle any attempt at forcing an error. Like the Red Queen in *Alice and Wonderland*, you can't stay still - you need to always be learning. (Or you'll eventually end up only able to write code in increasingly esoteric situations, like Maryland's recent call for COBOL programmers...)
+
+
 
 It's tempting to follow the path of least resistance as a data scientist. It's enjoyable to keep analyzing data, so let's run some more analyses. I like writing tests, so it's easy to justify refactoring an old repo. Maybe we want to read just a few more articles before we can really start on our thing.
-
-The thing is, you gotta work hard. Managing yourself: aware of what you're spending time on. Humility. Continuous learning.
-- Sure, do whatever you need to do right then for the company
-- But also, continue expanding the toolbox so you have more tools to use for a wider range of problems.  
-
-
 
 
 In other words, *given the context the company is currently in, what's the best thing to do?*
@@ -128,21 +142,13 @@ Some thoughts:
 A word to the wise, though... programming skills are often easier to pick up than domain knowledge. There are dozens of resources out there for learning coding. Not so many for getting hands-on experience with Building Automation Systems, or legal documentation, or whatever. Think about what you would need a professional to teach you vs. what you can learn on your own.
 
 ## Personal skills
-For it to be impactful, it needs to be relevant. There's a philosophy/lifestyle for successful people in tech: you need to constantly be learning. There's a sort of humility in knowing that the in-demand tools of the day will keep changing. It's like resting on a slowly-moving treadmill... stop moving and you'll gradually slip away.
 
-* You need to love programming. For most of your day, for most of your days, you're going to be reading and writing code.
-* You need to love learning. There is a staggering amount to programming languages and frameworks out there. There's also a huge number of ways to get a job done, ranging from barely getting the job done to being computationally optimized and able to handle any attempt at forcing an error. Like the Red Queen in *Alice and Wonderland*, you can't stay still - you need to always be learning. (Or you'll eventually end up only able to write code in increasingly esoteric situations, like Maryland's recent call for COBOL programmers...)
-
-* Need to constantly be learning and improving
-* New technologies and frameworks will come, and you'll need to learn them to stay relevant.
 
 ## Concluding thoughts
 This series has covered a lot. We started by talking about [how to navigate the diversity of data science roles]({{  site.baseurl  }}/DS-transition-1) before going into detail on some useful technical skills: [statistics]({{  site.baseurl  }}/DS-transition-2), [analytics]({{  site.baseurl  }}/DS-transition-3), and [software engineering]({{  site.baseurl  }}/DS-transition-4). The last three posts covered **how** to accomplish a task as a data scientist.
 
 ## Footnotes
 #### 1. [Optimizing resource allocation](#optimizing-resource-allocation)
-It may sound like this section is arguing that *the work you want to do* and *what's best for the company* are two separate and irreconcilable worlds, which isn't necessarily the case. But there is [a lot of work *around* the model-building]({{  site.baseurl  }}/DS-transition-3/#machine-learning) that needs to happen for data science to actually help a company, such as cleaning data, building pipelines, writing documentation, and training users. Similarly, the questions you might find most interesting aren't necessarily the ones that help the business.
+It may sound like this section is arguing that <u><i>the work you want to do</i></u> and <u><i>what's best for the company</i></u> are two separate and irreconcilable worlds, which isn't necessarily the case. **If you're focused on delivering business value, i.e. doing work that truly drives positive change at your company, then these two worlds will neatly overlap.** The issue is if you want to *only* build machine learning models and [none of the steps *around* the models]({{  site.baseurl  }}/DS-transition-3/#machine-learning), such as cleaning data, building pipelines, and soliciting and incorporating feedback from users. Shifting your goal from doing "cool data science" to doing "*impactful* data science" will help your goals align with your company's.
 
-As I mentioned in previous posts, it's important to choose an employer carefully. Ultimately, you were hired by your company to do the work they ask you to do. You therefore want to be in a field you find interesting, as well as a supportive and engaging work environment. If you find yourself on a project you're not fascinated with, at least you still know you're contributing to empowering coworkers you care about, as well as your field more broadly.
-
-But you also shouldn't expect your job to completely fulfill you professionally, and definitely not personally. (Indeed, this article by Kabir Sehgal [in the *Harvard Business Review*](https://hbr.org/2017/04/why-you-should-have-at-least-two-careers) argues that everyone should have at least *two* careers!) When I wasn't getting as much teaching as I wanted after leaving academia, a former boss introduced me to the [Trilogy coding boot camp](https://www.trilogyed.com/programs/), where I'm now a tutor. The external outlet for teaching was exactly what I needed, and it let me better appreciate my job for what it *did* offer.
+But you also shouldn't expect your job to completely fulfill you professionally, and definitely not personally. When I wasn't getting as much teaching as I wanted after leaving academia, a former boss introduced me to the [Trilogy coding boot camp](https://www.trilogyed.com/programs/), where I now happily tutor. Indeed, this article by Kabir Sehgal [in the *Harvard Business Review*](https://hbr.org/2017/04/why-you-should-have-at-least-two-careers) argues that everyone should have at least *two* careers (!), as that lets you enjoy different jobs for what they *do* offer.
