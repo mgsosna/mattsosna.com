@@ -52,7 +52,10 @@ It's easy to get frustrated by being cut short on a project, especially if you'v
 The next sections will cover how to best help your company through [empowering coworkers](#empowering-coworkers) and [understanding the market](#understanding-the-market). A solid understanding here will enable more productive conversations with your boss, product manager, or other internal departments. It will also help build trust in data science initiatives you may bring to the table, as you will be able to better communicate how they will help the company.
 
 ### Empowering coworkers
-People often don't need a slick machine learning model. Often, process automation is a huge deal.
+Let's get something out of the way upfront: the best way to empower your coworkers is to *ask them what they need.* It doesn't matter if a dashboard you build is sleek and informative *if it's asking a question your coworkers aren't actually asking.*
+
+Your non-technical coworkers usually don't need fancy machine learning to be more productive. For someone who doesn't code for a living, their major pain points are more likely to be the amount of time they spend clicking around to gather data from different sources, or a lack of visibility on issues they're responsible for (e.g. data quality). Luckily, these are areas that can be straightforward to automate and can dramatically help your coworkers.
+
 
 A user-first approach. Putting aside your thoughts, what do your coworkers need to more effectively do their jobs? Are they bogged down in manually creating reports for customers? Are they spending a lot of time searching through data to find anomalies? Addressing these needs will go much further than implementing the latest cutting-edge machine learning.
 
@@ -64,11 +67,16 @@ Think from their perspective: what do they need to make their jobs easier?
 #### Explainability
 Being able to clearly and succinctly explain how models work is critical.
 
+Need to be able to explain *how* and *why* a model works. Why does it work this way? But even more difficult: why does it *not* work *all the other ways*?
+
 
 ### Understanding the market
 
 Don't stress about being an expert in this. But to vastly improve the value you can bring to your company, seek to understand the context your company is in. Look at what competitors' data science teams are doing. What are [best team practices at top companies](https://docs.microsoft.com/en-us/azure/machine-learning/team-data-science-process/overview)?
 
+* [key performance indicators](https://www.investopedia.com/terms/k/kpi.asp)
+* Elite DS: https://www.cio.com/article/3263790/the-essential-skills-and-traits-of-an-expert-data-scientist.html
+  - Critical thinking, communication, DS intuition (right tool for right job), risk analysis, process improvement. Being able to explain *how* and *why* a model works is important.
 
 
 ## The `self` parameter
