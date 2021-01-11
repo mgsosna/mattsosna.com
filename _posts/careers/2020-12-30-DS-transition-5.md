@@ -9,14 +9,7 @@ image: ""
 
 So far, we've covered the technical side to data science: [statistics]({{  site.baseurl  }}/DS-transition-2), [analytics]({{  site.baseurl  }}/DS-transition-3), and [software engineering]({{  site.baseurl  }}/DS-transition-4). But no matter how talented you are at crunching numbers and writing code, your *effectiveness* as a data scientist is limited if you chase questions that don't actually help your company, or you can't get anyone to incorporate the results of your analyses. Similarly, how do you stay motivated and relevant in a field that's constantly evolving?
 
-In this post, we'll outline the _**business**_ and _**personal**_ skills needed to translate your technical skills into impact. We'll first focus on [business skills](#making-sense-of-business-sense) before turning to personal skills.
-
-### Table of contents
-* Making sense of business sense
-  - Optimizing resource allocation
-  - Empowering coworkers
-  - Understanding the market
-* The `self` parameter
+In this post, we'll outline the _**business**_ and _**personal**_ skills needed to translate your technical skills into impact. We'll first focus on [business skills](#making-sense-of-business-sense) before turning to [personal skills](#the-self-parameter).
 
 ---
 **How to enter data science:**
@@ -34,7 +27,7 @@ Data science is full of tempting rabbit holes. Our code works fine, but what if 
 The confusing thing is that **while there usually _is_ some business value at the end of the rabbit hole, it's often not worth pursuing.** Sure, a model that is more accurate or easy to understand will probably help your company in some way. But is this the [highest-leverage use of your time](#optimizing-resource-allocation)? Can you understand your coworkers' needs and [communicate how this project will empower them](#empowering-coworkers)? And is this project addressing [an unmet need in your company's market](#understanding-the-market), or is it a "nice to have"? We'll explore these ideas in the rest of this section.
 
 ### Optimizing resource allocation
-Here's an example of a dilemma you may face as a data scientist. Your company, a shoe retailer, asks you to forecast sales in New York next quarter. After a month, you present what you have so far $-$ an [ARIMA model](https://www.machinelearningplus.com/time-series/arima-model-time-series-forecasting-python/) with an [RMSE](https://www.statisticshowto.com/probability-and-statistics/regression-analysis/rmse-root-mean-square-error/) of about 5,000. While this is pretty good, you've identified two additional [exogenous variables](https://towardsdatascience.com/time-series-forecasting-a-getting-started-guide-c435f9fa2216) that you believe can decrease error to 2,000! You end your presentation with a plan of attack for exploring and incorporating these variables.
+Here's an example of a dilemma you may face as a data scientist. Your company asks you to forecast sales in New York next quarter. After a month, you present what you have so far $-$ an [ARIMA model](https://www.machinelearningplus.com/time-series/arima-model-time-series-forecasting-python/) with an [RMSE](https://www.statisticshowto.com/probability-and-statistics/regression-analysis/rmse-root-mean-square-error/) of about 5,000. While this is pretty good, you've identified two additional [exogenous variables](https://towardsdatascience.com/time-series-forecasting-a-getting-started-guide-c435f9fa2216) that you believe can decrease error to 2,000! You end your presentation with a plan of attack for exploring and incorporating these variables.
 
 To your surprise, your boss says no. The model's accuracy is acceptable, they say, and it's not worth the time (and risk) of exploring further. You're given a week to [productize](https://www.datapred.com/blog/productizing-machine-learning-models-what-is-required) your model, after which you'll start on a new project. You're confused and are sure your boss is making a mistake. How is it not worth just two weeks to potentially halve the model error? There's a real cost your company will pay by using less accurate projections!
 
@@ -52,12 +45,18 @@ It's easy to get frustrated by being cut short on a project, especially if you'v
 The next sections will cover how to best help your company through [empowering coworkers](#empowering-coworkers) and [understanding the market](#understanding-the-market). A solid understanding here will enable more productive conversations with your boss, product manager, or other internal departments. It will also help build trust in data science initiatives you may bring to the table, as you will be able to better communicate how they will help the company.
 
 ### Empowering coworkers
-Let's get something out of the way upfront: the best way to empower your coworkers is to *ask them what they need.* It doesn't matter if a dashboard you build is sleek and informative *if it's asking a question your coworkers aren't actually asking.*
+Let's get something out of the way upfront: **the best way to empower your coworkers is to _ask them what they need._** You'll save a lot of time and effort by getting your coworker needs from the source, rather than guessing at what they want. Your sleek and informative dashboard doesn't matter *if it's asking a question your coworkers aren't actually asking!*
 
-Your non-technical coworkers usually don't need fancy machine learning to be more productive. For someone who doesn't code for a living, their major pain points are more likely to be the amount of time they spend clicking around to gather data from different sources, or a lack of visibility on issues they're responsible for (e.g. data quality). Luckily, these are areas that can be straightforward to automate and can dramatically help your coworkers.
+Your non-technical coworkers usually don't need fancy machine learning to be more productive. For someone who doesn't code for a living, their major pain points are more likely to be:
+1. The amount of time they spend clicking around to gather or move data
+2. A lack of visibility on issues they're responsible for (e.g. data quality)
+
+Luckily, these are areas that can be straightforward to automate and can dramatically help your coworkers. You can get a ton of mileage, for example, with creating Python scripts that run nightly, pulling data from various sources and outputting a CSV that's automatically [pulled into Google Sheets](https://webapps.stackexchange.com/questions/40658/pull-csv-data-from-url-to-google-spreadsheet) or [sent as an email](https://github.com/sendgrid/sendgrid-python).<sup>[[2]](#2-empowering-coworkers)</sup> (If *every* request is about accessing data, though, this may be a bigger issue, and one for the software engineering or data engineering teams.)
+
+But let's say that the service you're providing *is* more technical, such as anomaly detection or sales forecasting. **Being able to communicate _how the model works_ is critical.**
 
 
-A user-first approach. Putting aside your thoughts, what do your coworkers need to more effectively do their jobs? Are they bogged down in manually creating reports for customers? Are they spending a lot of time searching through data to find anomalies? Addressing these needs will go much further than implementing the latest cutting-edge machine learning.
+Of course, there's the push back: coworkers might be wary of adopting a tool they don't understand will help them. There's always resistance to change.
 
 
 #### Understanding coworker needs
@@ -160,3 +159,6 @@ This series has covered a lot. We started by talking about [how to navigate the 
 It may sound like this section is arguing that <u><i>the work you want to do</i></u> and <u><i>what's best for the company</i></u> are two separate and irreconcilable worlds, which isn't necessarily the case. **If you're focused on delivering business value, i.e. doing work that truly drives positive change at your company, then these two worlds will neatly overlap.** The issue is if you want to *only* build machine learning models and [none of the steps *around* the models]({{  site.baseurl  }}/DS-transition-3/#machine-learning), such as cleaning data, building pipelines, and soliciting and incorporating feedback from users. Shifting your goal from doing "cool data science" to doing "*impactful* data science" will help your goals align with your company's.
 
 But you also shouldn't expect your job to completely fulfill you professionally, and definitely not personally. When I wasn't getting as much teaching as I wanted after leaving academia, a former boss introduced me to the [Trilogy coding boot camp](https://www.trilogyed.com/programs/), where I now happily tutor. Indeed, this article by Kabir Sehgal [in the *Harvard Business Review*](https://hbr.org/2017/04/why-you-should-have-at-least-two-careers) argues that everyone should have at least *two* careers (!), as that lets you enjoy different jobs for what they *do* offer.
+
+#### 2. [Empowering coworkers](#empowering-coworkers)
+An obligatory note of caution: it's easy to introduce a ton of [scope creep](https://en.wikipedia.org/wiki/Scope_creep) with one-off scripts as feedback from your coworkers comes in. As best you can, try to establish the scope upfront, defining the point after which feedback is be treated as a [feature request](https://craft.io/knowledge-center/7-useful-tips-to-manage-feature-requests) with a slower turnaround time. Similarly, to avoid taking on too much [tech debt](https://en.wikipedia.org/wiki/Technical_debt), at some point it will be important to [modularize the code]({{  site.baseurl  }}/DS-transition-4/#object-oriented-programming).
