@@ -4,7 +4,7 @@ title: How to enter data science - 5. The people
 title-clean: How to enter data science <div class="a2">5. The people</div>
 author: matt_sosna
 summary: The personal and interpersonal skills needed to succeed in data science
-image: ""
+image: "images/careers/DS-5/diminishing_returns.jpg"
 ---
 
 So far, we've covered the technical side to data science: [statistics]({{  site.baseurl  }}/DS-transition-2), [analytics]({{  site.baseurl  }}/DS-transition-3), and [software engineering]({{  site.baseurl  }}/DS-transition-4). But no matter how talented you are at crunching numbers and writing code, your *effectiveness* as a data scientist is limited if you chase questions that don't actually help your company, or you can't get anyone to incorporate the results of your analyses. Similarly, how do you stay motivated and relevant in a field that's constantly evolving?
@@ -45,28 +45,19 @@ It's easy to get frustrated by being cut short on a project, especially if you'v
 The next sections will cover how to best help your company through [empowering coworkers](#empowering-coworkers) and [understanding the market](#understanding-the-market). A solid understanding here will enable more productive conversations with your boss, product manager, or other internal departments. It will also help build trust in data science initiatives you may bring to the table, as you will be able to better communicate how they will help the company.
 
 ### Empowering coworkers
-Let's get something out of the way upfront: **the best way to empower your coworkers is to _ask them what they need._** You'll save a lot of time and effort by getting your coworker needs from the source, rather than guessing at what they want. Your sleek and informative dashboard doesn't matter *if it's asking a question your coworkers aren't actually asking!*
+Let's get something out of the way upfront: **the best way to empower your coworkers is to _ask them what they need._** You'll save a lot of time and effort by getting your coworker needs from the source, rather than guessing at what they want. Your sleek and informative dashboard doesn't matter *if it's answering a question your coworkers aren't actually asking!*
 
 Your non-technical coworkers usually don't need fancy machine learning to be more productive. For someone who doesn't code for a living, their major pain points are more likely to be:
 1. The amount of time they spend clicking around to gather or move data
 2. A lack of visibility on issues they're responsible for (e.g. data quality)
 
-Luckily, these are areas that can be straightforward to automate and can dramatically help your coworkers. You can get a ton of mileage, for example, with creating Python scripts that run nightly, pulling data from various sources and outputting a CSV that's automatically [pulled into Google Sheets](https://webapps.stackexchange.com/questions/40658/pull-csv-data-from-url-to-google-spreadsheet) or [sent as an email](https://github.com/sendgrid/sendgrid-python).<sup>[[2]](#2-empowering-coworkers)</sup> (If *every* request is about accessing data, though, this may be a bigger issue, and one for the software engineering or data engineering teams.)
+Luckily, these are areas that can be straightforward to automate and can dramatically help your coworkers. You can get a ton of mileage, for example, from creating Python scripts that run nightly, pulling data from various sources and outputting a CSV that's automatically [pulled into Google Sheets](https://webapps.stackexchange.com/questions/40658/pull-csv-data-from-url-to-google-spreadsheet) or [sent as an email](https://github.com/sendgrid/sendgrid-python).<sup>[[2]](#2-empowering-coworkers)</sup> (If *every* request you hear is about accessing data, though, this is a bigger issue, and one for the software engineering or data engineering teams.)
 
-But let's say that the service you're providing *is* more technical, such as anomaly detection or sales forecasting. **Being able to communicate _how the model works_ is critical.**
+But let's say that the need you're fulfilling *is* more technical, such as a model for anomaly detection or sales forecasting. For these more complicated offerings, **it is _essential_ that your product is <u>highly reliable</u> and <u>easy to understand</u>,** especially if your user is in a customer-facing role. Put yourself in your coworkers' shoes: imagine the nightmare of using some flaky Flask app for a meeting with an impatient customer, the app crashing while the customer is staring at you, and then not being able to figure out how to restart the app. Your impatient customer is now one who didn't get the services they paid for, and now you need to awkwardly and apologetically pick up the slack next time to convince them to remain a customer.
 
+Avoiding headaches like these, as well as the annoyance of being less productive while learning to use a new tool, can make coworkers hesitant to use your product. This is the case even if they in theory agree that your product should make them more productive! **The key here is to build trust in your product.** Expect to spend a good deal of time writing documentation, training coworkers, and answering their questions. If you can, [watch how your coworkers *actually* use your product](https://www.hotjar.com/usability-testing/) live $-$ this is the ultimate test of whether you're accomplishing your goal of enabling them.
 
-Of course, there's the push back: coworkers might be wary of adopting a tool they don't understand will help them. There's always resistance to change.
-
-
-#### Understanding coworker needs
-Think from their perspective: what do they need to make their jobs easier?
-
-
-#### Explainability
-Being able to clearly and succinctly explain how models work is critical.
-
-Need to be able to explain *how* and *why* a model works. Why does it work this way? But even more difficult: why does it *not* work *all the other ways*?
+Finally, what if despite all your efforts, you still encounter resistance to adopting a technical solution to something a coworker is determined to do more slowly by hand?
 
 
 ### Understanding the market
@@ -161,4 +152,4 @@ It may sound like this section is arguing that <u><i>the work you want to do</i>
 But you also shouldn't expect your job to completely fulfill you professionally, and definitely not personally. When I wasn't getting as much teaching as I wanted after leaving academia, a former boss introduced me to the [Trilogy coding boot camp](https://www.trilogyed.com/programs/), where I now happily tutor. Indeed, this article by Kabir Sehgal [in the *Harvard Business Review*](https://hbr.org/2017/04/why-you-should-have-at-least-two-careers) argues that everyone should have at least *two* careers (!), as that lets you enjoy different jobs for what they *do* offer.
 
 #### 2. [Empowering coworkers](#empowering-coworkers)
-An obligatory note of caution: it's easy to introduce a ton of [scope creep](https://en.wikipedia.org/wiki/Scope_creep) with one-off scripts as feedback from your coworkers comes in. As best you can, try to establish the scope upfront, defining the point after which feedback is be treated as a [feature request](https://craft.io/knowledge-center/7-useful-tips-to-manage-feature-requests) with a slower turnaround time. Similarly, to avoid taking on too much [tech debt](https://en.wikipedia.org/wiki/Technical_debt), at some point it will be important to [modularize the code]({{  site.baseurl  }}/DS-transition-4/#object-oriented-programming).
+An obligatory note of caution: it's easy to introduce a ton of [scope creep](https://en.wikipedia.org/wiki/Scope_creep) with one-off scripts as feedback from your coworkers comes in. As best you can, try to establish the scope upfront, defining the point after which feedback is be treated as a [feature request](https://craft.io/knowledge-center/7-useful-tips-to-manage-feature-requests) with a slower turnaround time. Similarly, to avoid taking on too much [tech debt](https://en.wikipedia.org/wiki/Technical_debt), at some point it will be important to [modularize the code]({{  site.baseurl  }}/DS-transition-4/#object-oriented-programming) to make it easier and safer to modify.
