@@ -57,10 +57,8 @@ But let's say that the need you're fulfilling *is* more technical, such as a mod
 
 Avoiding headaches like these, as well as the annoyance of being less productive while learning to use a new tool, can make coworkers hesitant to use your product. This is the case even if they in theory agree that your product should make them more productive! **The key here is to build trust in your product.** Expect to spend a good deal of time writing documentation, training coworkers, and answering their questions. If you can, [watch how your coworkers *actually* use your product](https://www.hotjar.com/usability-testing/) live $-$ this is the ultimate test of whether you're accomplishing your goal of enabling them.
 
-Finally, what if despite all your efforts, you still encounter resistance to adopting a technical solution to something a coworker is determined to do more slowly by hand?
-
-
 ### Understanding the market
+Your company doesn't exist in a vacuum. Beyond the walls of your office are **customers, competitors, investors,** and **regulators,** each affecting your business in a different way. What do they care about, and how is that changing over time? What is the core offering of your company, and what need in the market is it fulfilling?  
 
 Don't stress about being an expert in this. But to vastly improve the value you can bring to your company, seek to understand the context your company is in. Look at what competitors' data science teams are doing. What are [best team practices at top companies](https://docs.microsoft.com/en-us/azure/machine-learning/team-data-science-process/overview)?
 
@@ -129,17 +127,10 @@ Some thoughts:
 * [Speed-accuracy tradeoff](https://link.springer.com/referenceworkentry/10.1007%2F978-0-387-79948-3_1247) from neuroscience. **You need to operate with constraints in mind.** You likely don't have the time to deliver a perfect analysis. Diminishing returns.
 
 
-* **Business**
-- [ ] Strong ability to explain technical concepts
-- [ ] Focus on how to best deliver business value <br><br>
-
-
 
 
 ### Final business thoughts
 A word to the wise, though... programming skills are often easier to pick up than domain knowledge. There are dozens of resources out there for learning coding. Not so many for getting hands-on experience with Building Automation Systems, or legal documentation, or whatever. Think about what you would need a professional to teach you vs. what you can learn on your own.
-
-## Personal skills
 
 
 ## Concluding thoughts
