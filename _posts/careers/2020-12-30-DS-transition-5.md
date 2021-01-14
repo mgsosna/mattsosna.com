@@ -11,6 +11,8 @@ So far, we've covered the technical side to data science: [statistics]({{  site.
 
 In this post, we'll outline the _**business**_ and _**personal**_ skills needed to translate your technical skills into impact. We'll first focus on [business skills](#making-sense-of-business-sense) before turning to [personal skills](#the-self-parameter).
 
+And of course, an obligatory disclaimer: I've spent my data science career so far at companies with fewer than 100 employees. This post would likely look different if I'd spent the last ten years as one of [Oracle's 135,000 employees](https://www.oracle.com/corporate/corporate-facts.html)! Regardless, I've done my best to minimize this bias and write a post applicable to data scientists at companies of any size. 
+
 ---
 **How to enter data science:**
 1. [The target]({{  site.baseurl  }}/DS-transition-1)
@@ -53,14 +55,22 @@ Your non-technical coworkers usually don't need fancy machine learning to be mor
 
 Luckily, these are areas that can be straightforward to automate and can dramatically help your coworkers. You can get a ton of mileage, for example, from creating Python scripts that run nightly, pulling data from various sources and outputting a CSV that's automatically [pulled into Google Sheets](https://webapps.stackexchange.com/questions/40658/pull-csv-data-from-url-to-google-spreadsheet) or [sent as an email](https://github.com/sendgrid/sendgrid-python).<sup>[[2]](#2-empowering-coworkers)</sup> (If *every* request you hear is about accessing data, though, this is a bigger issue, and one for the software engineering or data engineering teams.)
 
-But let's say that the need you're fulfilling *is* more technical, such as a model for anomaly detection or sales forecasting. For these more complicated offerings, **it is _essential_ that your product is <u>highly reliable</u> and <u>easy to understand</u>,** especially if your user is in a customer-facing role. Put yourself in your coworkers' shoes: imagine the nightmare of using some flaky Flask app for a meeting with an impatient customer, the app crashing while the customer is staring at you, and then not being able to figure out how to restart the app. Your impatient customer is now one who didn't get the services they paid for, and now you need to awkwardly and apologetically pick up the slack next time to convince them to remain a customer.
+But let's say that the need you're fulfilling *is* more technical, such as a model for detecting anomalies or forecasting sales. For these more complicated offerings, **it is _essential_ that your product is <u>highly reliable</u> and <u>easy to understand</u>,** especially if your user is in a customer-facing role. Put yourself in your coworkers' shoes: imagine the nightmare of using some flaky Flask app for a meeting with an impatient customer, the app crashing while the customer is staring at you, and then not being able to figure out how to restart the app. Your impatient customer is now one who didn't get the services they paid for, and now you need to awkwardly and apologetically pick up the slack next time to convince them to remain a customer.
 
 Avoiding headaches like these, as well as the annoyance of being less productive while learning to use a new tool, can make coworkers hesitant to use your product. This is the case even if they in theory agree that your product should make them more productive! **The key here is to build trust in your product.** Expect to spend a good deal of time writing documentation, training coworkers, and answering their questions. If you can, [watch how your coworkers *actually* use your product](https://www.hotjar.com/usability-testing/) live $-$ this is the ultimate test of whether you're accomplishing your goal of enabling them.
 
 ### Understanding the market
-Your company doesn't exist in a vacuum. Beyond the walls of your office are **customers, competitors, investors,** and **regulators,** each affecting your business in a different way. What do they care about, and how is that changing over time? What is the core offering of your company, and what need in the market is it fulfilling?  
+Your company doesn't exist in a vacuum. Beyond the walls of your office are **customers, competitors, investors,** and **regulators,** each affecting your business in a different way. What do they care about, how is that changing over time, and what does it mean for you? What is the core offering of your company, and what need in the market is it fulfilling?
 
-Don't stress about being an expert in this. But to vastly improve the value you can bring to your company, seek to understand the context your company is in. Look at what competitors' data science teams are doing. What are [best team practices at top companies](https://docs.microsoft.com/en-us/azure/machine-learning/team-data-science-process/overview)?
+These are tough questions that your CEO and sales and marketing teams generally spend all day chewing on, so don't feel bad about not being an expert. But to vastly improve the value you can bring to your company, **seek to understand this _context_ your company is in.** The right answer to the question *"Is it worth the effort to build a spending forecaster for our customers?"*, for example, depends on a lot of factors outside of your company. Have the customers been asking about this when interacting with your company? Do competitors offer this service (and if they do, for how much)? Does your sales team overhear industry leaders grumbling about struggling to plan their finances? The answers to these questions differ between industries and over time, so you need to keep an eye on them to ensure you're delivering a product people will actually use.
+
+But what about *innovation*?
+
+The answer depends on whether your company's competitors offer this service, as well as whether your customers believe it will help them.
+
+creating an algorithm to cluster your customers worth the effort? Maybe if
+
+Look at what competitors' data science teams are doing. What are [best team practices at top companies](https://docs.microsoft.com/en-us/azure/machine-learning/team-data-science-process/overview)?
 
 * [key performance indicators](https://www.investopedia.com/terms/k/kpi.asp)
 * Elite DS: https://www.cio.com/article/3263790/the-essential-skills-and-traits-of-an-expert-data-scientist.html
