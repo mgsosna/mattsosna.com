@@ -11,7 +11,7 @@ So far, we've covered the technical side to data science: [statistics]({{  site.
 
 In this post, we'll outline the _**business**_ and _**personal**_ skills needed to translate your technical skills into impact. We'll first focus on [business skills](#making-sense-of-business-sense) before turning to [personal skills](#the-self-parameter).
 
-And of course, an obligatory disclaimer: I've spent my data science career so far at companies with fewer than 100 employees. This post would likely look different if I'd spent the last ten years as one of [Oracle's 135,000 employees](https://www.oracle.com/corporate/corporate-facts.html)! Regardless, I've done my best to minimize this bias and write a post applicable to data scientists at companies of any size. 
+And of course, an obligatory disclaimer: I've spent my data science career so far at companies with fewer than 100 employees. This post would likely look different if I'd spent the last ten years as one of [Oracle's 135,000 employees](https://www.oracle.com/corporate/corporate-facts.html)! Regardless, I've done my best to minimize this bias and write a post applicable to data scientists at companies of any size.
 
 ---
 **How to enter data science:**
@@ -62,20 +62,11 @@ Avoiding headaches like these, as well as the annoyance of being less productive
 ### Understanding the market
 Your company doesn't exist in a vacuum. Beyond the walls of your office are **customers, competitors, investors,** and **regulators,** each affecting your business in a different way. What do they care about, how is that changing over time, and what does it mean for you? What is the core offering of your company, and what need in the market is it fulfilling?
 
-These are tough questions that your CEO and sales and marketing teams generally spend all day chewing on, so don't feel bad about not being an expert. But to vastly improve the value you can bring to your company, **seek to understand this _context_ your company is in.** The right answer to the question *"Is it worth the effort to build a spending forecaster for our customers?"*, for example, depends on a lot of factors outside of your company. Have the customers been asking about this when interacting with your company? Do competitors offer this service (and if they do, for how much)? Does your sales team overhear industry leaders grumbling about struggling to plan their finances? The answers to these questions differ between industries and over time, so you need to keep an eye on them to ensure you're delivering a product people will actually use.
+These are tough questions that your CEO and sales and marketing teams generally spend all day chewing on, so don't feel bad about not being an expert. But to vastly improve the value you can bring to your company, **seek to understand this _context_ your company is in.** The right answer to the question *"Is it worth the effort to build a spending forecaster for our customers?"*, for example, depends on a lot of factors outside of your company. Have the customers been asking about this when interacting with your company? Do competitors offer this service (and if they do, can you do it cheaper)? Does your sales team overhear industry leaders grumbling about struggling to plan their finances? The answers to these questions differ between industries and over time, so you need to keep an eye on them to ensure you're delivering a product people will actually use.
 
-But what about *innovation*?
+But what about *innovation*? With the data science explosion of the last decade, [dozens of industries]({{  site.baseurl  }}/DS-transition-1) are being transformed with machine learning. Can't we just create a data science model or application that is *objectively useful*, one that drives market change instead of just following it?
 
-The answer depends on whether your company's competitors offer this service, as well as whether your customers believe it will help them.
-
-creating an algorithm to cluster your customers worth the effort? Maybe if
-
-Look at what competitors' data science teams are doing. What are [best team practices at top companies](https://docs.microsoft.com/en-us/azure/machine-learning/team-data-science-process/overview)?
-
-* [key performance indicators](https://www.investopedia.com/terms/k/kpi.asp)
-* Elite DS: https://www.cio.com/article/3263790/the-essential-skills-and-traits-of-an-expert-data-scientist.html
-  - Critical thinking, communication, DS intuition (right tool for right job), risk analysis, process improvement. Being able to explain *how* and *why* a model works is important.
-
+The issue here is that innovation is a *method* for answering questions, while it's *the questions themselves* that actually contain the business value. Pan Wu, a manager of data science at LinkedIn, [refers to two forms of innovation](https://towardsdatascience.com/how-to-innovate-in-data-science-2d166d64df31): 1) finding new solutions to existing problems, and 2) redefining existing problems into ones we can solve. These definitions by themselves don't contain business context $-$ you can easily "innovate" in either way on problems that aren't actually preventing business value! **To create an impactful product, you need to identify an issue that matters to a lot of people** (or that matters a lot to a few well-funded folks).
 
 ## The `self` parameter
 We'll shift now from talking about business sense to talking about self $-$ how to *consistently deliver.*
