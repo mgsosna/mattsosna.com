@@ -66,22 +66,39 @@ These are tough questions that your sales, marketing, and leadership teams gener
 
 But what about *innovation*? Innovation involves creating new solutions to existing problems, or redefining existing problems into ones we can solve.<sup>[[3]](#3-understanding-the-market)</sup> We've seen this happen in [dozens of industries]({{  site.baseurl  }}/DS-transition-1) over the last decade with the explosion of machine learning. Can't we just create a data science model or application that is *objectively useful*, one that drives market change instead of just following it?
 
-Unfortunately, it doesn't really work that way. The issue is that innovation is a *method* for answering questions, while it's *the questions themselves* that actually contain the business value. Innovation by itself doesn't contain business context $-$ you can easily "innovate" solutions to problems that nobody has! Machine learning transformed industries from agriculture to zoology **because it answered questions people cared about.** There was an underlying need that machine learning was able to address, but it didn't *create* that need. For your work to be impactful, you need to be able to identify these high-value needs. <sup>[[4]](#4-understanding-the-market)</sup>
+Unfortunately, it doesn't really work that way. The issue is that innovation is a *method* for answering questions, while it's *the questions themselves* that actually contain the business value. Innovation by itself doesn't contain business context $-$ you can easily "innovate" solutions to problems that nobody has! Machine learning transformed industries from agriculture to zoology **because it answered questions people cared about.** There was an underlying need that machine learning was able to address, but it didn't *create* that need. For your work to be impactful, you need to be able to identify these high-value needs.<sup>[[4]](#4-understanding-the-market)</sup>
 
 ## The `self` parameter
-We'll shift now from talking about business sense to talking about self $-$ how to *consistently deliver.*
-
-There's not much I can say that people like Nir Eyal (Indistractable), James Clear (Atomic Habits), and plenty of others can do much better. But I can share, at least, some productivity tips that I think are applicable to data science.
-
-For it to be impactful, it needs to be relevant. There's a philosophy/lifestyle for successful people in tech: you need to constantly be learning. There's a sort of humility in knowing that the in-demand tools of the day will keep changing. It's like resting on a slowly-moving treadmill... stop moving and you'll gradually slip away.
-
-
-* Need to constantly be learning and improving
-* New technologies and frameworks will come, and you'll need to learn them to stay relevant.
-
+The previous section covered the business aspects of data science: understanding your company and coworkers' perspectives, as well as the broader market context. We'll now shift inward and focus on the mentality and habits needed for *you* to maximize your potential and consistently deliver great work.
 
 ### CI: Continuous Improvement
-Data science is constantly evolving. You need to keep learning.
+As you begin to dive deep into a skill, it's easy to start feeling incredibly confident. Speaking from experience, it can be tempting to follow the path of least resistance with your learning, just sticking to projects that reinforce your existing knowledge, rather than truly challenging yourself by diving deep or branching out. This overinflated confidence has a name, the [Dunning-Kruger effect](https://www.psychologytoday.com/us/basics/dunning-kruger-effect), and being aware of its existence is crucial for truly becoming an expert in a topic.
+
+<center>
+<img src = "{{  site.baseurl  }}/images/careers/DS-5/dunning-kruger.jpg" height="75%" width="75%">
+</center>
+
+
+**Embrace not knowing everything.** Getting this out of the way makes it easier to really learn.
+
+As we've seen in this blog series, data science spans a wide range of fields, from [statistics]({{  site.baseurl  }}/DS-transition-2) to [analytics]({{  site.baseurl  }}/DS-transition-3), [software engineering]({{  site.baseurl  }}/DS-transition-4) and [business intelligence]({{  site.baseurl  }}/DS-transition-5). This range is so wide because the tasks of *extracting insights from data* and *communicating those insights to others* usually don't fall neatly into one category of skills $-$ the anomalies your model detects probably need to be saved in a database somewhere, and then they should populate a dashboard that's intuitive for stakeholders, and then you should pull in more advanced statistics to increase model accuracy, and so on. Unless you're at a large company with the resources to partition out each of these steps to a different specialist, you'll likely be expected to deliver on all of them.
+
+
+
+It can be deflating to look at the sheer amount of material to learn when it comes to data science.
+
+Being humble, and continuing to chip away. Identify a subset of skills you think will help you be in the role you want to be.
+
+* Identify the skills you're most excited about. Going back to DS-1. If you really care about renewable energy, forecasting is huge.
+
+
+
+Finally, data science is constantly evolving. Today's most popular languages and frameworks are likely different than those in ten years. Python reigns supreme now, but [Julia](https://julialang.org/) is gaining traction.
+
+
+we use today are likely not the tools we'll be using in ten years, or perhaps even five.
+
+You need to keep learning.
 
 [Julia](https://julialang.org/) in the future.
 
@@ -95,9 +112,14 @@ Armin Ronacher, the creator of Python's [Flask](https://flask.palletsprojects.co
 It's tempting to follow the path of least resistance as a data scientist. It's enjoyable to keep analyzing data, so let's run some more analyses. I like writing tests, so it's easy to justify refactoring an old repo. Maybe we want to read just a few more articles before we can really start on our thing.
 
 
-In other words, *given the context the company is currently in, what's the best thing to do?*
 
-This varies by industry and over time. Perhaps a competitor has just come out with a product that gives them an advantage, and you need to build a similar product to avoid losing customers.
+There's not much I can say that people like Nir Eyal (Indistractable), James Clear (Atomic Habits), and plenty of others can do much better. But I can share, at least, some productivity tips that I think are applicable to data science.
+
+For it to be impactful, it needs to be relevant. There's a philosophy/lifestyle for successful people in tech: you need to constantly be learning. There's a sort of humility in knowing that the in-demand tools of the day will keep changing. It's like resting on a slowly-moving treadmill... stop moving and you'll gradually slip away.
+
+
+* Need to constantly be learning and improving
+* New technologies and frameworks will come, and you'll need to learn them to stay relevant.
 
 
 ### The data science vacuum
@@ -117,20 +139,12 @@ But in this post, we'll instead ask **what** tasks to focus on and **why**? What
   - Like with the statistics post, being able to identify the cause of trends. Parsing signals from noise
 
 
-* Need to focus on what the business needs are
- - e.g. customers feel like they're not getting enough value from your product. So you need to make that value more visible. e.g. Can you quantify the benefits, such as savings, or increased revenue for them, relative to the cost of your product? Can you do this in a way that controls for external factors like seasonality (e.g. more people buy stuff in November/December)?
-
-
-**Business skills:** knowing _**what**_ to do and _**why**_
-**Personal skills:** knowing how to _**consistently deliver**_
-
-Some thoughts:
-* [Speed-accuracy tradeoff](https://link.springer.com/referenceworkentry/10.1007%2F978-0-387-79948-3_1247) from neuroscience. **You need to operate with constraints in mind.** You likely don't have the time to deliver a perfect analysis. Diminishing returns.
-
 
 
 
 ### Final business thoughts
+Look into [KPIs](https://www.investopedia.com/terms/k/kpi.asp)
+
 A word to the wise, though... programming skills are often easier to pick up than domain knowledge. There are dozens of resources out there for learning coding. Not so many for getting hands-on experience with Building Automation Systems, or legal documentation, or whatever. Think about what you would need a professional to teach you vs. what you can learn on your own.
 
 
