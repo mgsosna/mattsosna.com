@@ -35,3 +35,8 @@ I found it so easy to stay in the areas of R and statistics that I already knew 
 **Versatility** is key.
 
 "10 decimal places" accuracy versus operating within constraints. Check out the [business skills]({{  site.baseurl  }}/DS-transition-5) in the [transitioning into data science series]({{  site.baseurl  }}/blog/#how-to-transition-into-data-science) for more on this.
+
+
+* Front-load technical learning and classes. I regret not taking more stats and CS in grad school. There's this feeling of "ahh, I need to have data right now, and I can't waste time" but trust me... invest the time.
+* Start small. A lit review or small proof-of-concept. Get your hands on sample data ASAP, e.g. from an older student in the lab or your prof. Start with getting permissions for animal or field research immediately, like the first few months if you can.
+* If you can, get a mentor in your lab or department. Ask them the hard questions. 
