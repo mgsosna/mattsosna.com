@@ -72,18 +72,22 @@ Unfortunately, it doesn't really work that way. The issue is that innovation is 
 The previous section covered the business aspects of data science: understanding your company and coworkers' perspectives, as well as the broader market context. We'll now shift inward and focus on the mentality and habits needed for *you* to maximize your potential and consistently deliver great work.
 
 ### CI: Continuous Improvement
-As you begin to dive deep into a skill, it's easy to start feeling incredibly confident. Speaking from experience, it can be tempting to follow the path of least resistance with your learning, just sticking to projects that reinforce your existing knowledge, rather than truly challenging yourself by diving deep or branching out. This overinflated confidence has a name, the [Dunning-Kruger effect](https://www.psychologytoday.com/us/basics/dunning-kruger-effect), and being aware of its existence is crucial for truly becoming an expert in a topic.
+As you begin to learn a skill, it's easy to start feeling incredibly confident. Speaking from experience, it can be tempting to follow the path of least resistance with your learning, just sticking to projects that reinforce your existing knowledge, rather than truly challenging yourself by diving deep or branching out. This overinflated confidence has a name, the [Dunning-Kruger effect](https://www.psychologytoday.com/us/basics/dunning-kruger-effect), and it can lead to nasty surprises if you've talked up your knowledge in a topic and then can't actually deliver on it when others are relying on you. Understanding the Dunning-Kruger effect will help avoid this and make you a more mature learner.
 
 <center>
 <img src = "{{  site.baseurl  }}/images/careers/DS-5/dunning-kruger.jpg" height="75%" width="75%">
 </center>
 
+How do we actually become knowledgeable and avoid falling into the overconfidence trap? A mentality that works for me is to **embrace the climb.** I like to think of learning as climbing a mountain: it's slow and involves hard work, and it's easy to get discouraged looking up at how far there is to go. It's tempting to think that once you get to the top of the mountain, you'll have "made it" and can finally relax. But whenever I've reached one peak, I've always found that there's just more to climb.
 
-**Embrace not knowing everything.** Getting this out of the way makes it easier to really learn.
+If you want to be truly knowledgeable, **you just have to accept that there's always more to learn... and keep learning!**  I try to learn every day, at least a little. By making learning a habit, [I don't have to rely on intermittent bursts of willpower](https://jamesclear.com/willpower).<sup>[[5]](#5-ci-continuous-improvement)</sup> Those sparks are too infrequent, and advanced topics require repeated exposure to truly sink in anyway. It's also important to remember that there will always be someone who knows more about a topic than you... and that that's ok. The existence of smarter people doesn't devalue how much you *do* know.
 
-As we've seen in this blog series, data science spans a wide range of fields, from [statistics]({{  site.baseurl  }}/DS-transition-2) to [analytics]({{  site.baseurl  }}/DS-transition-3), [software engineering]({{  site.baseurl  }}/DS-transition-4) and [business intelligence]({{  site.baseurl  }}/DS-transition-5). This range is so wide because the tasks of *extracting insights from data* and *communicating those insights to others* usually don't fall neatly into one category of skills $-$ the anomalies your model detects probably need to be saved in a database somewhere, and then they should populate a dashboard that's intuitive for stakeholders, and then you should pull in more advanced statistics to increase model accuracy, and so on. Unless you're at a large company with the resources to partition out each of these steps to a different specialist, you'll likely be expected to deliver on all of them.
+Finally, data science is constantly evolving. Today's most popular languages and frameworks are likely different than those in ten years. Python reigns supreme now, but [Julia](https://julialang.org/) is gaining traction. [Tensorflow](https://www.tensorflow.org/) didn't exist six years ago but immediately dominated the machine learning space when it arrived. Continuous learning is essential to stay relevant. (Or, as with the [COBOL Cowboys](https://www.wypr.org/post/cobol-cowboys-aim-rescue-sluggish-state-unemployment-systems), wait long enough for the market to come back to you!)
 
+### The end-to-end
+As we've seen in this blog series, data science spans a wide range of fields, from [statistics]({{  site.baseurl  }}/DS-transition-2) to [analytics]({{  site.baseurl  }}/DS-transition-3), [software engineering]({{  site.baseurl  }}/DS-transition-4) and [business intelligence]({{  site.baseurl  }}/DS-transition-5). This range is so wide because the tasks of *extracting insights from data* and *communicating those insights to others* don't fall neatly into one skill category $-$ the anomalies your model detects probably need to be saved in a database somewhere, and then they should populate a dashboard that's intuitive for stakeholders, and then you should pull in more advanced statistics to increase model accuracy, and so on. Unless you're at a large company with the resources to partition out each of these steps to a different specialist, you'll likely be expected to deliver on all of them.
 
+Like with the section above, it's important to be willing to learn a wide range. Focus on "what's needed to get this task done?" This is why, I believe, the R vs. Python debates are pointless.
 
 It can be deflating to look at the sheer amount of material to learn when it comes to data science.
 
@@ -91,16 +95,14 @@ Being humble, and continuing to chip away. Identify a subset of skills you think
 
 * Identify the skills you're most excited about. Going back to DS-1. If you really care about renewable energy, forecasting is huge.
 
+It's tempting to follow the path of least resistance as a data scientist. It's enjoyable to keep analyzing data, so let's run some more analyses. I like writing tests, so it's easy to justify refactoring an old repo. Maybe we want to read just a few more articles before we can really start on our thing.
 
 
-Finally, data science is constantly evolving. Today's most popular languages and frameworks are likely different than those in ten years. Python reigns supreme now, but [Julia](https://julialang.org/) is gaining traction.
+
 
 
 we use today are likely not the tools we'll be using in ten years, or perhaps even five.
 
-You need to keep learning.
-
-[Julia](https://julialang.org/) in the future.
 
 Armin Ronacher, the creator of Python's [Flask](https://flask.palletsprojects.com/en/1.1.x/) library, has even [moved on to the language Rust](https://www.youtube.com/watch?v=saW18UvYLQg).
 
@@ -109,34 +111,9 @@ Armin Ronacher, the creator of Python's [Flask](https://flask.palletsprojects.co
 
 
 
-It's tempting to follow the path of least resistance as a data scientist. It's enjoyable to keep analyzing data, so let's run some more analyses. I like writing tests, so it's easy to justify refactoring an old repo. Maybe we want to read just a few more articles before we can really start on our thing.
 
-
-
-There's not much I can say that people like Nir Eyal (Indistractable), James Clear (Atomic Habits), and plenty of others can do much better. But I can share, at least, some productivity tips that I think are applicable to data science.
 
 For it to be impactful, it needs to be relevant. There's a philosophy/lifestyle for successful people in tech: you need to constantly be learning. There's a sort of humility in knowing that the in-demand tools of the day will keep changing. It's like resting on a slowly-moving treadmill... stop moving and you'll gradually slip away.
-
-
-* Need to constantly be learning and improving
-* New technologies and frameworks will come, and you'll need to learn them to stay relevant.
-
-
-### The data science vacuum
-
-fall into the "data science vacuum," as I like to think of it. In the vacuum, we can just focus on the analysis and the code.
-
-But the issue with the vacuum is that we lack the **context** for crunching our numbers.
-
-ignore the interpersonal aspect of data science. Our job is to crunch the numbers, to parse the signals from the noise and uncover the truth. The truth should speak for itself
-
-"Storytelling"
-
-But in this post, we'll instead ask **what** tasks to focus on and **why**? What are the questions that actually help a business move forward?
-
-### Table of contents
-1. Critical thinking
-  - Like with the statistics post, being able to identify the cause of trends. Parsing signals from noise
 
 
 
@@ -166,3 +143,6 @@ These two forms of innovation come from [this interesting article](https://towar
 
 #### 4. [Understanding the market](#understanding-the-market)
 When I was an undergrad, a mentor of mine said that she had pursued a Ph.D. to learn *how to ask better questions*. I found this focus on understanding *what* to ask, rather than *how* to answer any question, incredibly insightful.
+
+#### 5. [CI: Continuous Improvement](#ci-continuous-improvement)
+Habits researcher [James Clear](https://jamesclear.com) argues that the most productive people are those who struggle with self-control the *least.* It's a counterintuitive idea that changed my perspective. The key, he says, is to structure your environment such that you minimize the amount of self-control you have to exert. If you're trying to lose weight, bury the cookies in the back of a high shelf. If you want to read more, place a book on your pillow so you're reminded when you go to bed. Clear's book *Atomic Habits* is full of useful tips like these.
