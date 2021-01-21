@@ -42,7 +42,7 @@ In the context of the company's needs, perhaps the effort invested in the model 
 </center>
 <span style="font-size: 12px"><i>Source: [The Peak Performance Center](https://thepeakperformancecenter.com/business/strategic-management/the-law-of-diminishing-returns/law-of-diminishing-returns/)</i></span>
 
-It's easy to get frustrated by being cut short on a project, especially if you've sunk time into it or have finally built up steam. It's important, though, to **separate your feelings about a project from your judgment on whether it's worth pursuing.** Focusing on how you can best benefit your company, rather than just pursuing questions you alone find interesting, will make you a far more effective employee.<sup>[[1]](#1-optimizing-resource-allocation)</sup>
+It's easy to get frustrated by being cut short on a project, especially if you've sunk time into it or have finally built up steam. It's important, though, to **separate your feelings about a project from your judgment on whether it's worth pursuing.** Focusing on how you can best benefit your company, rather than just pursuing questions you alone find interesting, will make you a far more effective employee.<sup>[[1]](#1-optimizing-resource-allocation)</sup> Your company's [key performance indicators](https://www.investopedia.com/terms/k/kpi.asp) and [roadmap](https://www.productplan.com/learn/roadmap-basics/) will help you understand what leadership at your company finds valuable.
 
 The next sections will cover how to best help your company through [empowering coworkers](#empowering-coworkers) and [understanding the market](#understanding-the-market). A solid understanding here will enable more productive conversations with your boss, product manager, or other internal departments. It will also help build trust in data science initiatives you may bring to the table, as you will be able to better communicate how they will help the company.
 
@@ -72,7 +72,7 @@ Unfortunately, it doesn't really work that way. The issue is that innovation is 
 The previous section covered the business aspects of data science: understanding your company and coworkers' perspectives, as well as the broader market context. We'll now shift inward and focus on the mentality and habits needed for *you* to maximize your potential and consistently deliver great work.
 
 ### CI: Continuous Improvement
-As you begin to learn a skill, it's easy to start feeling incredibly confident. Speaking from experience, it can be tempting to follow the path of least resistance with your learning, just sticking to projects that reinforce your existing knowledge, rather than truly challenging yourself by diving deep or branching out. This overinflated confidence has a name, the [Dunning-Kruger effect](https://www.psychologytoday.com/us/basics/dunning-kruger-effect), and it can lead to nasty surprises if you've talked up your knowledge in a topic and then can't actually deliver on it when others are relying on you. Understanding the Dunning-Kruger effect will help avoid this and make you a more mature learner.
+As you begin to learn a skill, it's easy to start feeling incredibly confident. Speaking from experience, it can be tempting to follow the path of least resistance with your learning, just sticking to projects that reinforce your existing knowledge, rather than truly challenging yourself by diving deep or branching out. This overinflated confidence has a name, the [Dunning-Kruger effect](https://www.psychologytoday.com/us/basics/dunning-kruger-effect), and **it can lead to nasty surprises if you've talked up your knowledge in a topic and then can't actually deliver on it when others are relying on you.** Understanding the Dunning-Kruger effect will help avoid this and make you a more mature learner.
 
 <center>
 <img src = "{{  site.baseurl  }}/images/careers/DS-5/dunning-kruger.jpg" height="75%" width="75%">
@@ -82,51 +82,25 @@ How do we actually become knowledgeable and avoid falling into the overconfidenc
 
 If you want to be truly knowledgeable, **you just have to accept that there's always more to learn... and keep learning!**  I try to learn every day, at least a little. By making learning a habit, [I don't have to rely on intermittent bursts of willpower](https://jamesclear.com/willpower).<sup>[[5]](#5-ci-continuous-improvement)</sup> Those sparks are too infrequent, and advanced topics require repeated exposure to truly sink in anyway. It's also important to remember that there will always be someone who knows more about a topic than you... and that that's ok. The existence of smarter people doesn't devalue how much you *do* know.
 
-Finally, data science is constantly evolving. Today's most popular languages and frameworks are likely different than those in ten years. Python reigns supreme now, but [Julia](https://julialang.org/) is gaining traction. [Tensorflow](https://www.tensorflow.org/) didn't exist six years ago but immediately dominated the machine learning space when it arrived. Continuous learning is essential to stay relevant. (Or, as with the [COBOL Cowboys](https://www.wypr.org/post/cobol-cowboys-aim-rescue-sluggish-state-unemployment-systems), wait long enough for the market to come back to you!)
+Finally, data science is constantly evolving. Today's most popular languages and frameworks are likely different than those in ten years. Python reigns supreme now, but [Julia](https://julialang.org/) is gaining traction. [Tensorflow](https://www.tensorflow.org/) didn't exist six years ago but immediately dominated the machine learning space when it arrived. Continuous learning is essential to stay relevant. (Or, as with the [COBOL Cowboys](https://www.wypr.org/post/cobol-cowboys-aim-rescue-sluggish-state-unemployment-systems), wait a few decades and the market will come back to you!)
 
-### The end-to-end
-As we've seen in this blog series, data science spans a wide range of fields, from [statistics]({{  site.baseurl  }}/DS-transition-2) to [analytics]({{  site.baseurl  }}/DS-transition-3), [software engineering]({{  site.baseurl  }}/DS-transition-4) and [business intelligence]({{  site.baseurl  }}/DS-transition-5). This range is so wide because the tasks of *extracting insights from data* and *communicating those insights to others* don't fall neatly into one skill category $-$ the anomalies your model detects probably need to be saved in a database somewhere, and then they should populate a dashboard that's intuitive for stakeholders, and then you should pull in more advanced statistics to increase model accuracy, and so on. Unless you're at a large company with the resources to partition out each of these steps to a different specialist, you'll likely be expected to deliver on all of them.
+### Focus on the finish line
+As we've seen in this blog series, data science spans a wide range of fields, from [statistics]({{  site.baseurl  }}/DS-transition-2) to [analytics]({{  site.baseurl  }}/DS-transition-3), [software engineering]({{  site.baseurl  }}/DS-transition-4) and [business intelligence]({{  site.baseurl  }}/DS-transition-5). This range is so wide because the tasks of *extracting insights from data* and *communicating those insights to others* don't fall neatly into one skill category $-$ the anomalies your model detects probably need to be saved in a database somewhere, and then they should populate a dashboard that's intuitive for stakeholders, and then you should pull in more advanced statistics to increase model accuracy, and so on.
 
-Like with the section above, it's important to be willing to learn a wide range. Focus on "what's needed to get this task done?" This is why, I believe, the R vs. Python debates are pointless.
+Unless you're at a large company with the resources to partition out each of these steps to a different specialist, you'll likely be expected to deliver on all of them. This can feel like a mountain of work outside your job description $-$ are you really supposed to just pick up [Spark](https://spark.apache.org/docs/2.2.0/index.html) or [Terraform](https://www.terraform.io/intro/index.html), or stand up that database or create that dashboard when your recruiter only mentioned analyzing data in Python?
 
-It can be deflating to look at the sheer amount of material to learn when it comes to data science.
+I think humility and flexibility are important as a data scientist, especially early in your career. Providing actual business value from machine learning involves far more steps than it may seem before you begin! Key decision-makers probably want an easy way to inspect results themselves, not a Jupyter notebook; a software company probably wants your model integrated into the product, not a random R script in S3. **Focus on the deliverable: something that actually enables the consumer.** Do whatever it takes to make this happen, whether that means picking up additional skills, talking to the end user in person, or redoing work to incorporate feedback.
 
-Being humble, and continuing to chip away. Identify a subset of skills you think will help you be in the role you want to be.
-
-* Identify the skills you're most excited about. Going back to DS-1. If you really care about renewable energy, forecasting is huge.
-
-It's tempting to follow the path of least resistance as a data scientist. It's enjoyable to keep analyzing data, so let's run some more analyses. I like writing tests, so it's easy to justify refactoring an old repo. Maybe we want to read just a few more articles before we can really start on our thing.
-
-
-
-
-
-we use today are likely not the tools we'll be using in ten years, or perhaps even five.
-
-
-Armin Ronacher, the creator of Python's [Flask](https://flask.palletsprojects.com/en/1.1.x/) library, has even [moved on to the language Rust](https://www.youtube.com/watch?v=saW18UvYLQg).
-
-* You need to love programming. For most of your day, for most of your days, you're going to be reading and writing code.
-* You need to love learning. There is a staggering amount to programming languages and frameworks out there. There's also a huge number of ways to get a job done, ranging from barely getting the job done to being computationally optimized and able to handle any attempt at forcing an error. Like the Red Queen in *Alice and Wonderland*, you can't stay still - you need to always be learning. (Or you'll eventually end up only able to write code in increasingly esoteric situations, like Maryland's recent call for COBOL programmers...)
-
-
-
-
-
-For it to be impactful, it needs to be relevant. There's a philosophy/lifestyle for successful people in tech: you need to constantly be learning. There's a sort of humility in knowing that the in-demand tools of the day will keep changing. It's like resting on a slowly-moving treadmill... stop moving and you'll gradually slip away.
-
-
-
-
-
-### Final business thoughts
-Look into [KPIs](https://www.investopedia.com/terms/k/kpi.asp)
-
-A word to the wise, though... programming skills are often easier to pick up than domain knowledge. There are dozens of resources out there for learning coding. Not so many for getting hands-on experience with Building Automation Systems, or legal documentation, or whatever. Think about what you would need a professional to teach you vs. what you can learn on your own.
-
+By focusing on the finish line, you adopt a *solution-based* approach, not a *tool-based* one. The question becomes "what's needed to get this job done?" rather than "what can I do with Python?" This is why I find the R vs. Python debates silly $-$ learn both, then *use the tool that's right for the job.*
 
 ## Concluding thoughts
-This series has covered a lot. We started by talking about [how to navigate the diversity of data science roles]({{  site.baseurl  }}/DS-transition-1) before going into detail on some useful technical skills: [statistics]({{  site.baseurl  }}/DS-transition-2), [analytics]({{  site.baseurl  }}/DS-transition-3), and [software engineering]({{  site.baseurl  }}/DS-transition-4). The last three posts covered **how** to accomplish a task as a data scientist.
+When considering what skills to invest in, it's easy to jump to the latest shiny deep learning package, rather than tried-and-true personal and interpersonal skills. Similarly, you can only get so far without building up some field-specific [domain knowledge](https://en.wikipedia.org/wiki/Domain_knowledge), the *context* that helps you identify the right questions to pursue. Perhaps it's because these skills are harder to quantify, or they don't fit neatly on a resume. But understanding *how to best apply your technical skills* to truly deliver business value is essential for being an effective data scientist. Invest time here and you'll be surprised at how much more meaningful and enjoyable your work can become.
+
+This series has covered a lot. We started by talking about [how to navigate the diversity of data science roles]({{  site.baseurl  }}/DS-transition-1) before going into detail on [statistics]({{  site.baseurl  }}/DS-transition-2), [analytics]({{  site.baseurl  }}/DS-transition-3), and [software engineering]({{  site.baseurl  }}/DS-transition-4), and finally ending with [business skills]({{  site.baseurl  }}/DS-transition-5). To avoid writing a textbook for each post, I've focused on the essentials of each topic, the core skills that will let you hit the ground running in a new role. But of course, there's far more I didn't cover: natural language processing, time series analysis, deep learning, and cloud computing. This is where it's up to you to identify the additional, specialized skills for a role you're passionate about.
+
+Thanks for reading, and all the best. <br>
+Matt
+
 
 ## Footnotes
 #### 1. [Optimizing resource allocation](#optimizing-resource-allocation)
@@ -145,4 +119,4 @@ These two forms of innovation come from [this interesting article](https://towar
 When I was an undergrad, a mentor of mine said that she had pursued a Ph.D. to learn *how to ask better questions*. I found this focus on understanding *what* to ask, rather than *how* to answer any question, incredibly insightful.
 
 #### 5. [CI: Continuous Improvement](#ci-continuous-improvement)
-Habits researcher [James Clear](https://jamesclear.com) argues that the most productive people are those who struggle with self-control the *least.* It's a counterintuitive idea that changed my perspective. The key, he says, is to structure your environment such that you minimize the amount of self-control you have to exert. If you're trying to lose weight, bury the cookies in the back of a high shelf. If you want to read more, place a book on your pillow so you're reminded when you go to bed. Clear's book *Atomic Habits* is full of useful tips like these.
+Habits researcher [James Clear](https://jamesclear.com) argues that the most productive people are those who struggle with self-control the *least.* It's a counterintuitive idea that changed my perspective. The key, he says, is to structure your environment such that you minimize the amount of self-control you have to exert. If you're trying to lose weight, bury the cookies in the back of a high shelf. If you want to read more, place a book on your pillow so you're reminded when you go to bed. Clear's book [*Atomic Habits*](https://jamesclear.com/atomic-habits) is full of useful tips like these.
