@@ -82,6 +82,16 @@ a {
   }
 }
 
+// Custom class for title links
+.a2 {
+    color: #065995A1;
+}
+
+// Inherit
+a:hover .a2 {
+    color: $blue;
+}
+
 ul, ol {
   margin: 15px 0;
   padding-left: 30px;

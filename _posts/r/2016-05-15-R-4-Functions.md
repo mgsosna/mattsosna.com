@@ -1,6 +1,7 @@
 ---
 layout: post
-title: Learning R <br> 4. Functions and if statements
+title: Learning R - 4. Functions and if statements
+title-clean: Learning R <div class="a2">4. Functions and if statements</div>
 author: matt_sosna
 ---
 If you've been following this series from the [first post]({{ site.baseurl }}/R-1-Intro), you might recall this soapbox speech I gave:
@@ -21,6 +22,7 @@ I immediately contradicted that quote with three posts full of using R's built-i
 
 The most important code from those posts is shown below.
 
+{% include header-r.html %}
 ```r
 c()            # Concatenate
 x <- c(5, 10)  # Assign the vector (5, 10) to the variable "x"
@@ -61,6 +63,7 @@ $$f(5) = 6$$
 
 In R, we can give this function a name and then call it later.
 
+{% include header-r.html %}
 ```r
 add_one <- function(x){x + 1}
 ```
@@ -74,12 +77,14 @@ What's nice about writing a function is that now you can just say `add_one(5)` o
 ### Our own mean function
 Here's something slightly more complicated. R has a built-in function for finding the mean of a vector or matrix, but we can easily write our own version.
 
+{% include header-r.html %}
 ```r
 our_mean <- function(x){sum(x) / length(x)}
 ```
 
 We can check it by creating a vector with some values and comparing the outputs from R's mean and our own.
 
+{% include header-r.html %}
 ```r
 values <- seq(from = 4, to = 6, by = 0.5)
 our_mean(values)   # 5
@@ -89,6 +94,7 @@ mean(values)       # 5
 ### More advanced mechanics
 You are essentially unhindered in what you make into a function. You can have multiple inputs that interact with each other, you can specify default values, you can nest functions within each other... let your imagination go wild.
 
+{% include header-r.html %}
 ```r
 multiply <- function(x, y){x * y}
 multiply(5, 1:5)  # 5 10 15 20 25
@@ -104,6 +110,7 @@ In `super_duper`, the `x` and `y` inputs are required, but `z` is optional. If y
 ## `if` statements
 Let's say you want R to run a command only if a certain condition is met. You're curious if 1 + 1 is less than 5, for example, because you skipped that day of kindergarten and you're finally ready to address this gap in your knowledge... using R.
 
+{% include header-r.html %}
 ```r
 if(1 + 1 < 5){print("Yup, less than 5")}
 ```
@@ -112,6 +119,7 @@ R will print the statement only if 1+1 is less than 5. To avoid spoilers, I won'
 
 We can easily turn this `if` statement into a function that checks whether any input is less than 5:
 
+{% include header-r.html %}
 ```r
 less.than.five <- function(x){if(x < 5){return("Yup, less than 5")}}
 less.than.five(3)  # Yup, less than 5
@@ -122,6 +130,7 @@ Note that we include `return` in our function now. For functions with only one c
 
 Also note that nothing happens when the input to `less.than.five` is greater or equal to five. That's because we didn't tell R what to do if this situation occurs, so it does nothing. (This sort of logic flow - *not* doing something if a condition isn't met - is useful in a script, but we don't want our functions to sometimes return strings and sometimes return `NULL`. Here, a little extra code that handles cases where $$x == 5$$ or $$x > 5$$:
 
+{% include header-r.html %}
 ```r
 less.than.five <- function(x){
   if(x < 5){
@@ -173,6 +182,7 @@ There are a few steps to finding the median. Let's write them here to clarify th
 
 This is how the above would look like in R:
 
+{% include header-r.html %}
 ```r
 med <- function(x){
     if(length(x) %% 2 == 1){                
@@ -183,6 +193,7 @@ med <- function(x){
 ```
 A more detailed explanation:
 
+{% include header-r.html %}
 ```r
 # Define a function called med that takes one input
 med <- function(x){                
@@ -222,6 +233,7 @@ med <- function(x){
 ### Combining all that with a `for` loop
 Nice work! Finally, let's create a one-dimensional random walk that uses `if` statements and our median function. Let's say we want to impose boundaries on our random walk such that if it wanders too far from the origin, we restart it at the median of the walk so far.
 
+{% include header-r.html %}
 ```r
 # Set the parameters
 n.steps <- 1e5    # 100,000 steps (1.0 x 10^5)
