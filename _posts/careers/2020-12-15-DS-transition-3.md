@@ -416,7 +416,7 @@ X = df[['temp', 'humidity']]
 y = df['is_raining']
 
 # Split into training and testing data
-X_train, y_train, X_test, y_test = train_test_split(X, y)
+X_train, X_test, y_train, y_test = train_test_split(X, y)
 
 # Instantiate and fit random forest model
 rf = RandomForestClassifier(n_estimators=100)
