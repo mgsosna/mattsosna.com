@@ -406,8 +406,8 @@ When you're building a predictive model, it's critical to know how accurate it i
 ```python
 import pandas as pd
 from sklearn.metrics import accuracy_score
-from sklearn.processing import train_test_split
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
 
 df = pd.read_csv("data.csv")
 
