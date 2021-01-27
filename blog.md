@@ -21,7 +21,7 @@ permalink: /blog/
 
 ---
 ## Data science
-### How to transition into data science
+### How to enter data science
 1. [The target]({{ site.baseurl }}/DS-transition-1)
 2. [The statistics]({{  site.baseurl  }}/DS-transition-2)
 3. [The analytics]({{  site.baseurl  }}/DS-transition-3)
