@@ -15,18 +15,30 @@ This post will outline the skills needed to make the leap from the ivory tower t
 * Blah blah blah
 
 ## What are we working with?
-### What academics are good at
-Academics *are* highly sought-after for data science positions: if you're surviving the challenges of independent research, then you undoubtedly have the ability to _**distill interesting questions from large amounts of information**_, as well as _**the focus and analytical chops**_ to answer those questions.
+### Where academics excel
+If you're surviving the challenges of independent research, then you undoubtedly have:
+1. The ability to distill interesting questions from large amounts of information
+2. The analytical chops to answer those questions
+3. Extreme attention to detail
+4. Strong planning and organization
+5. Serious mental fortitude to push through constant failure
 
-Extremely detail-oriented.
-Can plan and execute projects with many moving pieces.
+Successful research involves dozens of moving pieces; to collect data for my final thesis chapter, for example, I needed to coordinate between laboratory resources, research groups, building facilities, animal ethics committees, suppliers, and funding sources. And that was for relatively simple in-house experiments with fish! For the academics doing research abroad, throw in permits, transport, and sometimes even political tension or natural disasters.
 
-### What they're not good at
+Working on problems no one in the world has answered yet means you need to be creative. You need to intelligently improvise when things take a turn, and persevere when your efforts end up failing. Understanding the existing literature on your topic, as well as the knowledge gap your work will fill, means mentally storing and processing a tremendous amount of information.
+
+
+### Where academics struggle
+The issue is that what's prioritized in academia is often actually a detriment in industry. These points of course don't apply to everyone in academia; if one of these don't relate to you, consider yourself ahead of the game. But for the rest of us, these are what I consider the biggest holes in academics' skill sets.
+1. Independence != coding as part of a team. Standards, etc.
+  - Yes, I get collaboration. But this is a step further. Literally editing the same code. Not necessarily different parts of the same project.
+2. Broad is preferred to deep
 * Speed-accuracy tradeoff. 10th-decimal place precision at the expense of timeliness.
 * Not just generating knowledge (unless deep in analytics side). Can be generating a product.
-* Coding as part of a team
 
 
+
+Broad preferred to deep:
 
 ## A shift in perspective
 Regardless of where you're aiming on the [analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1/#the-scalpel-versus-the-shovel), it's critical to have **the right mentality**. When you're doing projects on your own, you can find that you're really good at whatever you put your mind to. That's great. But more importantly, you need to think of it this way:
@@ -40,8 +52,6 @@ Especially in open-ended Ph.D. programs in the U.S., you have the flexibility to
 
 You don't have the luxury of a narrow skill set when you're a data scientist, *especially* if you're at a smaller company. There's a term called ["full-stack"](https://www.w3schools.com/whatis/whatis_fullstack.asp) in software engineering - it refers to programmers who can code professionally in both the front-end and back-end environments, which require entirely different languages, perspectives, and skill sets. Data science is like being a full-stack engineer: you need to be comfortable rotating between different skill sets. It's a generalist position between data analyst and data engineer.
 
-<span style='color:red'> Think about mentioning boot camps, like the [Insight Fellowship](https://insightfellows.com/data-science) </span>
-
 I found it so easy to stay in the areas of R and statistics that I already knew well. I didn't want to get out of my comfort zone, because it would require me to face the scary concept that I _don't_ actually have that wide a grasp on stats and coding. And especially with a Ph.D., there are a lot of expectations on how much you're "supposed to" know or how smart you're supposed to be. But you need to remember that the Ph.D. is a very deep, narrow knowledge set, versus the broad knowledge needed for being a versatile data scientist.
 
 **Versatility** is key.
@@ -49,7 +59,8 @@ I found it so easy to stay in the areas of R and statistics that I already knew 
 "10 decimal places" accuracy versus operating within constraints. Check out the [business skills]({{  site.baseurl  }}/DS-transition-5) in the [transitioning into data science series]({{  site.baseurl  }}/blog/#how-to-transition-into-data-science) for more on this.
 
 
-* Front-load technical learning and classes. I regret not taking more stats and CS in grad school. There's this feeling of "ahh, I need to have data right now, and I can't waste time" but trust me... invest the time.
-* Start small. A lit review or small proof-of-concept. Get your hands on sample data ASAP, e.g. from an older student in the lab or your prof. Start with getting permissions for animal or field research immediately, like the first few months if you can.
-* If you can, get a mentor in your lab or department. Ask them the hard questions.
-* Pros: strong attention to detail
+* Getting used to speed-accuracy tradeoff
+* Not just generating a recommendation, but implementing it too
+* Cutting publications from the CV is painful.  
+
+<span style='color:red'> Think about mentioning boot camps, like the [Insight Fellowship](https://insightfellows.com/data-science) </span>
