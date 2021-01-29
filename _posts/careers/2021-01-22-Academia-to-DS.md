@@ -16,19 +16,22 @@ This post will outline the skills needed to make the leap from the ivory tower t
 
 ## What are we working with?
 ### Where academics excel
-If you're surviving the challenges of independent research, then you undoubtedly have:
+Successful research is incredibly challenging. Making it through a Ph.D. (and beyond) requires significant mental and emotional growth. If you're surviving the challenges of independent research, then you undoubtedly have:
 1. The ability to distill interesting questions from large amounts of information
 2. The analytical chops to answer those questions
 3. Extreme attention to detail
 4. Strong planning and organization
-5. Serious mental fortitude to push through constant failure
+5. Serious mental fortitude to push through (and learn from) failure
 
-Successful research involves dozens of moving pieces; to collect data for my final thesis chapter, for example, I needed to coordinate between laboratory resources, research groups, building facilities, animal ethics committees, suppliers, and funding sources. And that was for relatively simple in-house experiments with fish! For the academics doing research abroad, throw in permits, transport, and sometimes even political tension or natural disasters.
+Many of the skills you gain in graduate school align nicely with what makes for a strong data scientist. In both cases, you need to think critically about what questions to ask, how to get the data, and how to extract meaningful insights from that data. Both professions need to communicate and coordinate with stakeholders of varying backgrounds. Finally, both are expected to continually learn, and to find innovative solutions to tough problems.
 
-Working on problems no one in the world has answered yet means you need to be creative. You need to intelligently improvise when things take a turn, and persevere when your efforts end up failing. Understanding the existing literature on your topic, as well as the knowledge gap your work will fill, means mentally storing and processing a tremendous amount of information.
+It's hard to overstate how valuable these skills are. **Many senior- or director-level data science positions *require* a Ph.D.** because of the rigor academic research brings to critically analyzing problems and identifying paths of attack. Below are a few roles I found with five minutes of searching on Google, along with their minimum required education level. Maybe these requirements will loosen over the years as non-academic data science career paths become more defined, but for now, having a Ph.D. is a *major* asset for your career progression as a data scientist.
 
+![]({{  site.baseurl  }}/images/careers/Academia/lead_ds_roles.png)
 
 ### Where academics struggle
+The attractive jobs above, however, assume that you *unlearn* much of the mentality from grad school. 
+
 The issue is that what's prioritized in academia is often actually a detriment in industry. These points of course don't apply to everyone in academia; if one of these don't relate to you, consider yourself ahead of the game. But for the rest of us, these are what I consider the biggest holes in academics' skill sets.
 1. Independence != coding as part of a team. Standards, etc.
   - Yes, I get collaboration. But this is a step further. Literally editing the same code. Not necessarily different parts of the same project.
