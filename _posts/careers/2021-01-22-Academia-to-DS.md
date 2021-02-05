@@ -59,7 +59,8 @@ Check out Kaggle. Work on practice problems. Kind of like being an athlete.
 During my Ph.D., I found it incredibly easy to stay in the areas of R and statistics that I already knew well. I didn't want to get out of my comfort zone, because it would require me to face the scary concept that I _didn't_ actually have that wide a grasp on stats and coding. Especially with a Ph.D., there are a lot of expectations on how much you're "supposed to" know or how smart you're supposed to be. But you need to remember that the Ph.D. is a very deep, narrow knowledge set, versus the broad knowledge needed for being a versatile data scientist.
 
 ### Applications
-* Cutting publications from the CV is painful.  
+* Cutting publications from the CV is painful.
+* Having a portfolio is important. It's easy to say "I know Python," but can you demonstrate that? Pick a few projects and then have fun building something.  
 
 ## Conclusions
-Finally, you don't have to do this alone. There are several coding boot camps aimed specifically at Ph.Ds looking to enter industry, such as the [Insight Fellowship](https://insightfellows.com/data-science) and [Data Incubator](https://www.thedataincubator.com/fellowship.html). While you likely have the discipline to teach yourself the skills you need, it can be challenging to *identify* what these skills exactly are, and it's *far* more time-efficient to have professionals teach you. 
+Finally, you don't have to do this alone. There are several coding boot camps aimed specifically at Ph.Ds looking to enter industry, such as the [Insight Fellowship](https://insightfellows.com/data-science) and [Data Incubator](https://www.thedataincubator.com/fellowship.html). While you likely have the discipline to teach yourself the skills you need, it can be challenging to *identify* what these skills exactly are, and it's *far* more time-efficient to have professionals teach you.
