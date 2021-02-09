@@ -14,6 +14,9 @@ This post will outline the skills needed to make the leap from the ivory tower t
   - [Where academics excel](#where-academics-excel)
   - [Where academics struggle](#where-academics-struggle)
 * [**Tips for the transition**](#tips-for-the-transition)
+  - [The mentality](#the-mentality)
+  - [The targets](#the-targets)
+  - [The applications](#the-applications)
 
 ## What are we working with?
 ### Where academics excel
@@ -54,17 +57,35 @@ If you love your research, want to continue it, and there are non-academic emplo
 
 When you have the flexibility to choose the research questions you pursue, as well as how you go about answering those questions, it's easy to gravitate towards questions and methods you're comfortable with. In a way, a Ph.D. is all about getting _really good_ at a narrow set of skills: you choose a very precise question to answer, and you work until you know more about this sliver of knowledge than anyone else in the world.
 
-**You (usually) don't have the luxury of a narrow skill set when you're a data scientist,** *especially* if you're at a smaller company. There's a term called ["full-stack"](https://www.w3schools.com/whatis/whatis_fullstack.asp) in software engineering $-$ it refers to programmers who can code professionally in both the [front-end and back-end environments](https://en.wikipedia.org/wiki/Front_end_and_back_end), which require entirely different languages and perspectives. Data science is like being a full-stack analyst: you need to be comfortable rotating between *extracting insights from data* and then *building the infrastructure to communicate those insights* (such as dashboards and automated scripts).
+**You don't have the luxury of a narrow skill set when you're a data scientist,** *especially* if you're at a smaller company. There's a term called ["full-stack"](https://www.w3schools.com/whatis/whatis_fullstack.asp) in software engineering $-$ it refers to programmers who can code professionally in both the [front-end and back-end environments](https://en.wikipedia.org/wiki/Front_end_and_back_end), which require entirely different languages and perspectives. Data science is like being a full-stack analyst: you need to be comfortable rotating between *extracting insights from data* and then *building the infrastructure to communicate those insights* (such as dashboards and automated scripts).
 
-During my Ph.D., I found it incredibly easy to stay in the areas of R and statistics that I already knew well. **I didn't want to get out of my comfort zone, because it would require me to face the scary concept that I _didn't_ actually have that wide a grasp on stats and coding.** I felt like since I was using R and stats in my thesis, others expected me to be an expert. Taking formal stats or R classes would therefore violate these expectations and expose me as *not* being an expert. Ironically, all this fear did is stop me from actually developing a solid, well-rounded understanding of R and stats. I also doubt anyone truly cared about how much I knew anyway.
+During my Ph.D., I found it incredibly easy to stay in the areas of R and statistics that I already knew well. **I didn't want to get out of my comfort zone, because it would require me to face the scary concept that I _didn't_ actually have that strong a grasp on stats and coding.** I felt like since I was using R and stats in my thesis, others expected me to be an expert. Taking formal stats or R classes would therefore violate these expectations and expose me as *not* being an expert. Ironically, all this fear did is stop me from actually developing a solid, well-rounded understanding of R and stats. I also doubt anyone cared about how much I knew anyway.
 
-Don't make the same mistake I did $-$ embrace not knowing everything, and get started on filling in the knowledge gaps. You need [a wide range of skills]({{  site.baseurl  }}/DS-transition-2) to be an effective data scientist, and those skills need to be maintained and polished. I recommend checking out the datasets and challenges on [Kaggle](https://www.kaggle.com/), [HackerRank](https://www.hackerrank.com/dashboard), and [Reddit](https://www.reddit.com/r/dailyprogrammer/). But most importantly, **create a coding portfolio on GitHub** and work through some projects on your own.
+Don't make the same mistake I did $-$ embrace not knowing everything, and get started on filling in the knowledge gaps. You need [a wide range of skills]({{  site.baseurl  }}/DS-transition-2/#becoming-one-with-the-machine) to be an effective data scientist, and those skills need to be maintained and polished. I recommend checking out the datasets and challenges on [Kaggle](https://www.kaggle.com/), [HackerRank](https://www.hackerrank.com/dashboard), and [Reddit](https://www.reddit.com/r/dailyprogrammer/). Make sure to **work through some projects** rather than just taking notes on online classes $-$ this will give you a much stronger understanding of the topic, and you'll have something to show potential employers afterwards.
 
-### Applications
-Tailor your application to each company you apply to. Always include a cover letter.
+### The targets
+Unless you truly don't care where you work when you leave academia, **you're probably trying to perform two transitions at once: 1) entering data science, and 2) entering a new field.** My recommendation is to *first* transition to data science, build up some skills in a professional environment where you can learn from your peers, *then* transition to your preferred field. Even with a Ph.D., it can be hard enough to land your first job, so cast a wide net! Ideally, try to land at a company with established teams of data scientists, analysts, and engineers, somewhere you can soak up knowledge from everyone around you. This is especially important if the field you want to eventually work in doesn't necessarily have dozens of data scientists and engineers you can learn from when you arrive.
 
-* Cutting publications from the CV is painful.
-* Having a portfolio is important. It's easy to say "I know Python," but can you demonstrate that? Pick a few projects and then have fun building something.  
+Once you've put in your time at your first role and feel ready to make your second transition, start *really* thinking about what you're looking for. For me, I wanted to contribute to fighting climate change in some way, but I had no experience in this area besides having a bio degree. Once I started searching for jobs, I realized I'd need to be much more specific. Did I want to work at a nonprofit or think tank? What about government $-$ and if so, was that municipal, state, or federal? Did I want to join a sustainability company, a sustainability *department* within a larger company, or a sustainability consulting firm? And even within sustainability, did this mean electric vehicles, renewable energy, batteries, aviation, heavy industry, building retrofits, waste reduction, or something else?
+
+You don't need an exact answer to these questions for your own search, but thinking carefully will help narrow down what you're looking for. For me, I realized I wanted to hone in on tech for sustainability, so I stopped looking at the think tank, nonprofit, and government positions.
+
+### The applications
+Cut your publications from your resume.
+
+Yes, you need to cut them. It's one of the most painful parts of the transition. The central currency in academia has very little value outside the ivory tower, unless you're applying to join a team of Ph.D's at some think tank. Otherwise, add a link to your Google Scholar profile, hit save, then go for a walk and have some ice cream.
+
+While cutting the publications is painful, with a little effort you can fill out a *projects* section that employers will find much more interesting. For better or worse, writing code is something you can do anytime, anywhere... including outside your normal job. [It's controversial and problematic](https://softwareengineering.stackexchange.com/questions/48698/i-dont-program-in-my-spare-time-does-that-make-me-a-bad-developer) to expect coding side projects in a resume, but I think it's well worth the extra effort when you're trying to break into the field.<sup>[[1]](#1-the-applications)</sup> If you can afford the time to create a GitHub repo with some examples of simple projects, you can greatly strengthen your resume by having concrete examples of what your code looks like and how you solve problems. Think of a hiring manager as someone deciding whether to hire an artist $-$ it'd be good to know what the artist's work looks like, no?
+
+Finally, when you're submitting applications, *always* include a tailored cover letter explaining why you want to work at the company, why you'd be a good fit, and your biggest contributions in earlier roles. There's not much I can add that hasn't already been extensively covered elsewhere; check out [this cover letter example](https://resumegenius.com/cover-letter-examples/data-scientist-cover-letter-sample) and [these resume tips](https://www.dataquest.io/blog/how-data-science-resume-cv/). Don't bother with any fancy resume builder $-$ Google Doc's free one-page templates are great.
 
 ## Conclusions
+
+Transitioning is hard. There was a day a few months into the process when I got rejected from two jobs on the same day, one deep in analytics and one deep in engineering.
+
+
 Finally, you don't have to do this alone. There are several coding boot camps aimed specifically at Ph.Ds looking to enter industry, such as the [Insight Fellowship](https://insightfellows.com/data-science) and [Data Incubator](https://www.thedataincubator.com/fellowship.html). While you likely have the discipline to teach yourself the skills you need, it can be challenging to *identify* what these skills exactly are, and it's *far* more time-efficient to have professionals teach you.
+
+## Footnotes
+#### 1. [The applications](#the-applications)
+The key word here is "expect." I don't think anyone should *expect* an applicant to have coding side projects in their resume. The tangible examples definitely help, especially when the applicant is first entering data science. But a career is just one slice of someone's life, and that needs to be respected.
