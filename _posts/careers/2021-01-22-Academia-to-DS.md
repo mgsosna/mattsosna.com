@@ -3,7 +3,6 @@ layout: post
 title: Transitioning to data science from academia
 author: matt_sosna
 summary: Academics have many valuable skills to succeed in data science, but some need to be cultivated. This post outlines the soft and hard skills needed for success.
-image: "images/careers/Academia/lead_ds_roles.png"
 ---
 **"I could always do data science if academia doesn't work out."** It's a recurring thought many graduate students and postdocs experience, especially if their work involves hearty servings of [programming]({{  site.baseurl  }}/DS-transition-3) and [statistics]({{  site.baseurl  }}/DS-transition-2), the core elements of data science. Data science can be a rewarding alternative to academia, and academics *do* have many qualities that make them attractive candidates for data science roles. However, there are *also* often large holes in academics' skill sets that can deter them from being hired straight off the bat.
 
@@ -80,18 +79,18 @@ While cutting the publications is painful, with a little effort you can fill out
 Finally, when you're submitting applications, *always* include a tailored cover letter explaining why you want to work at the company, why you'd be a good fit, and your biggest contributions in earlier roles. There's not much I can add that hasn't already been extensively covered elsewhere; check out [this cover letter example](https://resumegenius.com/cover-letter-examples/data-scientist-cover-letter-sample) and [these resume tips](https://www.dataquest.io/blog/how-data-science-resume-cv/). Don't bother with a fancy resume builder $-$ Google Doc's free one-page templates are great.
 
 ## Conclusions
-There can be a lot of conflicting feelings when you're considering leaving academia. I personally loved the idealism of it $-$ bringing together passionate, dedicated people to work together on problems no one in the world knows the answer to. But a successful career in academia requires a *lot* of dedication: it's like being an athlete. You need to be truly dedicated to your topic, willing to chew on the same tough problems for years and read every bit of relevant literature that comes your way. There are plenty of sacrifices you need to make even if you have a consistent publishing record: funding is always a challenge, and you need to be willing to move every few years to a location you can't really predict in advance. Personally, I realized I could switch to an industry where I kept my favorite parts of my job $-$ coding and analyzing data $-$ while having geographic stability and not having to make such a dedicated commitment to a research topic.
+There can be a lot of conflicting feelings when you're considering leaving academia. I loved the idealism of it $-$ bringing together passionate, sharp people to work on problems no one in the world knows the answer to. Teaching students every week was a privilege. And it's hard to beat being paid to travel to conferences and exciting field sites $-$ I've been lucky enough to visit Africa twice, and I almost went to Antarctica.
 
-Even knowing all this, the transition is hard. Changing your identity can leave you vulnerable, and it's hard not to feel embarrassed or frustrated by the amount of effort you put in that your new industry doesn't value.
+But a successful career in academia requires a *lot* of dedication: it's like being an athlete. You need to be truly dedicated to your topic, willing to chew on the same tough problems for years, constantly justify your work to funders, and read every bit of relevant literature that comes your way. Even with a consistent publishing record, unless you're at the top of your field, you need to be willing to move every few years to a location you can't really predict in advance. Despite being a field consisting of people who spend all day thinking, there is plenty of institutional inertia around problems like how manuscripts are vetted, how scientific contributions are evaluated for tenure, and how to address systemic inequities. Academia is an amazing career for some people; for me, I slowly realized data science was what I was looking for.
 
+Even knowing all this, the transition is hard. Changing your identity can leave you vulnerable, and it's hard not to feel embarrassed or frustrated at how many steps backward you have to take when you start a new career. There was a day a few months into applying to jobs where I got rejected from two the same day, both consisting of teams of Ph.Ds. To be fair, one team was Ph.D. economists and the other was Ph.D. computer scientists (my degree was biology), but it was hard to be rejected even among my "peers." I'd spent all that time in grad school becoming a well-rounded experimentalist and theorist, someone who could set up a laboratory fish study system, run experiments, extract the data, analyze it, and communicate it, but the feedback I was getting was that none of that mattered. I either didn't know enough advanced stats, or I didn't know enough engineering, or I wasn't given a reason at all.
 
+As demoralizing as it can be, just keep applying, and just keep learning. I wrote the ["how to enter data science"]({{  site.baseurl  }}/DS-transition-1) series in part because I remember how hard I found it to identify what skills I actually needed when I was entering the field. But you also don't have to go through the transition alone. There are several coding boot camps aimed specifically at Ph.Ds looking to enter industry, such as the [**Insight Fellowship**](https://insightfellows.com/data-science) and [**Data Incubator**](https://www.thedataincubator.com/fellowship.html). While you undoubtedly have the discipline to teach yourself the skills you need, it can be far more efficient to have professionals help you.
 
+Don't hesitate to reach out if you'd like to chat. Good luck!
 
-
-Transitioning is hard. There was a day a few months into the process when I got rejected from two jobs on the same day, one deep in analytics and one deep in engineering.
-
-
-Finally, you don't have to do this alone. There are several coding boot camps aimed specifically at Ph.Ds looking to enter industry, such as the [Insight Fellowship](https://insightfellows.com/data-science) and [Data Incubator](https://www.thedataincubator.com/fellowship.html). While you likely have the discipline to teach yourself the skills you need, it can be challenging to *identify* what these skills exactly are, and it's *far* more time-efficient to have professionals teach you.
+Best,<br>
+Matt
 
 ## Footnotes
 #### 1. [The applications](#the-applications)
