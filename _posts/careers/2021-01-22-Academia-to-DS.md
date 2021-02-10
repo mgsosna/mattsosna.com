@@ -3,9 +3,9 @@ layout: post
 title: Transitioning to data science from academia
 author: matt_sosna
 summary: Academics have many valuable skills to succeed in data science, but some need to be cultivated. This post outlines the soft and hard skills needed for success.
-image: "images/complexity_spectrum2.png"
+image: "images/careers/Academia/lead_ds_roles.png"
 ---
-**"I could always do data science if academia doesn't work out."** It's a recurring thought many graduate students and postdocs experience, especially if their work involves hearty servings of [programming]({{  site.baseurl  }}/DS-transition-3) and [statistics]({{  site.baseurl  }}/DS-transition-2), the core elements of data science. Academics *do* have many qualities that make them attractive candidates for data science positions, but there are *also* large holes in their skills that can deter them from being hired straight off the bat.
+**"I could always do data science if academia doesn't work out."** It's a recurring thought many graduate students and postdocs experience, especially if their work involves hearty servings of [programming]({{  site.baseurl  }}/DS-transition-3) and [statistics]({{  site.baseurl  }}/DS-transition-2), the core elements of data science. Data science can be a rewarding alternative to academia, and academics *do* have many qualities that make them attractive candidates for data science roles. However, there are *also* often large holes in academics' skill sets that can deter them from being hired straight off the bat.
 
 This post will outline the skills needed to make the leap from the ivory tower to industry. We'll go light on the technical details or business acumen; for a deep dive on those skills, check out my five-part [how to enter data science series]({{  site.baseurl  }}/DS-transition-1). Especially if you're just starting to consider data science as a career, I highly recommend thinking about where your ideal role falls on the [analytics-engineering spectrum]({{  site.baseurl  }}/DS-transition-1/#the-scalpel-versus-the-shovel), which will help you identify which skills to prioritize learning.
 
@@ -77,9 +77,16 @@ Yes, you need to cut them. It's one of the most painful parts of the transition.
 
 While cutting the publications is painful, with a little effort you can fill out a *projects* section that employers will find much more interesting. For better or worse, writing code is something you can do anytime, anywhere... including outside your normal job. [It's controversial and problematic](https://softwareengineering.stackexchange.com/questions/48698/i-dont-program-in-my-spare-time-does-that-make-me-a-bad-developer) to expect coding side projects in a resume, but I think it's well worth the extra effort when you're trying to break into the field.<sup>[[1]](#1-the-applications)</sup> If you can afford the time to create a GitHub repo with some examples of simple projects, you can greatly strengthen your resume by having concrete examples of what your code looks like and how you solve problems. Think of a hiring manager as someone deciding whether to hire an artist $-$ it'd be good to know what the artist's work looks like, no?
 
-Finally, when you're submitting applications, *always* include a tailored cover letter explaining why you want to work at the company, why you'd be a good fit, and your biggest contributions in earlier roles. There's not much I can add that hasn't already been extensively covered elsewhere; check out [this cover letter example](https://resumegenius.com/cover-letter-examples/data-scientist-cover-letter-sample) and [these resume tips](https://www.dataquest.io/blog/how-data-science-resume-cv/). Don't bother with any fancy resume builder $-$ Google Doc's free one-page templates are great.
+Finally, when you're submitting applications, *always* include a tailored cover letter explaining why you want to work at the company, why you'd be a good fit, and your biggest contributions in earlier roles. There's not much I can add that hasn't already been extensively covered elsewhere; check out [this cover letter example](https://resumegenius.com/cover-letter-examples/data-scientist-cover-letter-sample) and [these resume tips](https://www.dataquest.io/blog/how-data-science-resume-cv/). Don't bother with a fancy resume builder $-$ Google Doc's free one-page templates are great.
 
 ## Conclusions
+There can be a lot of conflicting feelings when you're considering leaving academia. I personally loved the idealism of it $-$ bringing together passionate, dedicated people to work together on problems no one in the world knows the answer to. But a successful career in academia requires a *lot* of dedication: it's like being an athlete. You need to be truly dedicated to your topic, willing to chew on the same tough problems for years and read every bit of relevant literature that comes your way. There are plenty of sacrifices you need to make even if you have a consistent publishing record: funding is always a challenge, and you need to be willing to move every few years to a location you can't really predict in advance. Personally, I realized I could switch to an industry where I kept my favorite parts of my job $-$ coding and analyzing data $-$ while having geographic stability and not having to make such a dedicated commitment to a research topic.
+
+Even knowing all this, the transition is hard. Changing your identity can leave you vulnerable, and it's hard not to feel embarrassed or frustrated by the amount of effort you put in that your new industry doesn't value.
+
+
+
+
 
 Transitioning is hard. There was a day a few months into the process when I got rejected from two jobs on the same day, one deep in analytics and one deep in engineering.
 
