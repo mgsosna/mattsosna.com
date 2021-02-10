@@ -406,8 +406,8 @@ When you're building a predictive model, it's critical to know how accurate it i
 ```python
 import pandas as pd
 from sklearn.metrics import accuracy_score
-from sklearn.processing import train_test_split
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
 
 df = pd.read_csv("data.csv")
 
@@ -416,7 +416,7 @@ X = df[['temp', 'humidity']]
 y = df['is_raining']
 
 # Split into training and testing data
-X_train, y_train, X_test, y_test = train_test_split(X, y)
+X_train, X_test, y_train, y_test = train_test_split(X, y)
 
 # Instantiate and fit random forest model
 rf = RandomForestClassifier(n_estimators=100)

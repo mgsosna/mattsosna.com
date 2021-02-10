@@ -17,10 +17,12 @@ Here is information about my academic life. For blog posts with advice for under
 4. **Grobis MM**, Pearish SP, Bell AM. 2013. [Avoidance or escape? Discriminating between two hypotheses for the function of schooling in threespine sticklebacks.](https://www.sciencedirect.com/science/article/pii/S000334721200485X) _**Animal Behaviour.**_ 85(1): 187-194.
 
 ## In progress
-1. Davidson JD\*, **Sosna MMG**\*, Twomey CR, Sridhar VH, Couzin ID. Collective detection based on visual information in fish schools. _**in prep.**_
+1. Jolles JW\*, **Sosna MMG**\*, Mazué GPF, Twomey CR, Bak-Coleman J, Rubenstein DI, Couzin ID. Predator attack strategy and prey behaviour drive individual predation risk in schooling prey. _**submitted.**_
 
-2. Jolles JW\*, **Sosna MMG**\*, Jolles JW, Mazué GPF, Twomey CR, Bak-Coleman J, Rubenstein DI, Couzin ID. Quantifying the spatial distribution of risk in animal groups. _**in prep.**_
+2. Davidson JD\*, **Sosna MMG**, Twomey CR, Sridhar VH, Couzin ID. Collective detection based on visual information in fish schools. _**in prep.**_
 
-3. Twomey CR, **Sosna MMG**, Ragazzo G, Bak-Coleman J, Couzin ID. Between-group dynamics and emergent social forces at the limits of sensory perception. _**in prep.**_
+3. Poel W, Daniels BC, **Sosna MMG**, Twomey CR, Leblanc SP, Couzin ID, Romanczuk P. Suppression of false alarms favored over maximizing sensitivity in escape waves in fish. _**in prep.**_
+
+4. Twomey CR, **Sosna MMG**, Ragazzo G, Bak-Coleman J, Couzin ID. Between-group dynamics and emergent social forces at the limits of sensory perception. _**in prep.**_
 
 <span style="font-size: 12px"><i>\* denotes joint first authorship</i></span>
