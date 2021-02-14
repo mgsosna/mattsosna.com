@@ -6,8 +6,17 @@ author: matt_sosna
 
 ![]({{  site.baseurl  }}/images/projects/demo.png)
 
-## Background
-SpamCatch is a fun side project I did to bring together [NLP](https://en.wikipedia.org/wiki/Natural_language_processing), [Flask](https://flask.palletsprojects.com/en/1.1.x/), and the front-end. Classifying spam text messages is a classic machine learning problem, but I'd never seen people test their classifier on raw strings of text. After building the classifier, I connected it to a JavaScript front-end to let users input their own text, with the webpage updating with the model's predicted probability of spam.
+[**SpamCatch**](https://spam-catcher.herokuapp.com) is a fun side project I did to bring together [natural language processing](https://en.wikipedia.org/wiki/Natural_language_processing), [Flask](https://flask.palletsprojects.com/en/1.1.x/), and [the front-end](https://blog.udacity.com/2014/12/front-end-vs-back-end-vs-full-stack-web-developers.html). Classifying spam text messages is a classic machine learning problem, but I'd never seen people test their classifier on raw strings of text. I'd also never seen a spam classifier hooked up to frontend, where people could use the classifier without needing to know Python or Git.
+
+This blog post will go through how to build a spam classifier with a sleek frontend. In short, here are the steps:
+1. Create a [TF-IDF](https://monkeylearn.com/blog/what-is-tf-idf/) vectorizer on a corpus of ham and spam text messages
+2. Train a random forest classifier on the TF-IDF vectors
+3. Build a simple Flask app with endpoints for webpages and the random forest classifier
+4. Write the HTML and CSS for the user-facing pages
+5. Write the JavaScript to communicate between the user-facing pages and the spam classifier
+6. Deploy to Heroku so others can see your app
+
+**Make sure to [check out the actual app](https://spam-catcher.herokuapp.com)!** (If it takes a minute to load, that's because the dyno went to sleep. The free plan only gets you so far!) You can also view the source code [here](https://github.com/mgsosna/spamCatch).
 
 ## Table of contents
 * [**Python**](#python)
@@ -21,7 +30,13 @@ SpamCatch is a fun side project I did to bring together [NLP](https://en.wikiped
 ## How it works
 ### Python
 #### The classifier
-We start with the actual classifier, [SpamCatcher](https://github.com/mgsosna/spamCatch/tree/main/static/python/spam_catcher.py). One of the key methods here is `extract_features`, which uses Scikit-learn's `TfIdfVectorizer` to convert an iterable of documents into TF-IDF values. (TF-IDF, or term frequency - inverse document frequency, is a way to categorize each term in a document by its frequency of occurrence *within the document*, while reducing the importance of terms frequent *across all documents*). If `SpamCatcher` doesn't already have a `tfidf_vectorizer` attribute, it trains one on these documents.
+The core of the app is the actual classifier, a Python class called [SpamCatcher](https://github.com/mgsosna/spamCatch/tree/main/static/python/spam_catcher.py). The class has methods for accomplishing a few key tasks:
+* Training a TF-IDF vectorizer
+* Converting strings to TF-IDF vectors
+* Training a random forest classifier on TF-IDF vectors
+* Passing a string to the classifier and returning the probability that a string is spam
+
+One of the key methods here is `extract_features`, which uses Scikit-learn's `TfIdfVectorizer` to convert an iterable of documents into TF-IDF values. (TF-IDF, or term frequency - inverse document frequency, is a way to categorize each term in a document by its frequency of occurrence *within the document*, while reducing the importance of terms frequent *across all documents*). If `SpamCatcher` doesn't already have a `tfidf_vectorizer` attribute, it trains one on these documents.
 
 {% include header-python.html %}
 ```python
