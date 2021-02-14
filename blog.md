@@ -6,6 +6,7 @@ permalink: /blog/
 
 ## Topics
 - [**Data science**](#data-science)
+  - [How to enter data science](#how-to-enter-data-science)
   - [Statistics](#statistics)
   - [External](#external)
 - [**Python**](#python)
