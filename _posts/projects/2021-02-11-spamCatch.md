@@ -19,13 +19,32 @@ This blog post will go through how to build a spam classifier with a sleek front
 **Make sure to [check out the actual app](https://spam-catcher.herokuapp.com)!** (If it takes a minute to load, that's because the dyno went to sleep. The free plan only gets you so far!) You can also view the source code [here](https://github.com/mgsosna/spamCatch).
 
 ## Table of contents
-* [**Python**](#python)
-  - [The classifier](#the-spam-classifier)
-  - [Flask](#flask)
-* [**The front-end**](#the-front-end)
-  - [HTML](#html)
-  - [JavaScript](#javascript)
-* [**Deployment**](#deployment)
+* [**Background**](#background)
+* [**How it works**](#how-it-works)
+  - [**Python**](#python)
+    - [The classifier](#the-spam-classifier)
+    - [Flask](#flask)
+  - [**The front-end**](#the-front-end)
+    - [HTML](#html)
+    - [JavaScript](#javascript)
+  - [**Deployment**](#deployment)
+
+## Background
+Spam messages are at best a nuisance and [at worst dangerous](https://www.consumer.ftc.gov/articles/how-recognize-and-avoid-phishing-scams). While malicious spam can be carefully tailored to the recipient to sound credible, the vast majority of spam out there is easily identifiable crap. You usually don't need to even read the entire message to identify it as spam $-$ there's a sense of urgency, money needed or offered, a sketchy link to click.
+
+If spam is so predictable, let's just write some code to automatically identify it, throwing it in the trash before we even need to see it. Our first guess might be to write a bunch of rules, a series of `if` statements that get triggered when our classifier sees certain words in the message. Accepting the risk of losing out on a once in a lifetime, all-expenses-paid vacation, I could configure my classifier to automatically delete any message with the word `free` in it.
+
+But that's not quite right... yes, the word `free` pops up a lot in spam, but it also appears in normal speech all the time, too. (*"Hey, are you free tonight?"*, for example.) We need more rules... lots more rules. As we tried building something that works ok, our classifier would quickly become incredibly complicated. We'd need dozens or hundreds of `if` statements, and we'd want their logic to be informed by research on how frequently certain words appear in spam versus normal messages (also called "ham"), and then we'd probably want some kind of scoring system based on all our rules. And perhaps most challenging of all... **we'd need to write all of this ourselves!**
+
+**Quick! Click on [this link](https://en.wikipedia.org/wiki/Natural_language_processing) to find a better way!**
+
+Just kidding. But that link *does* point us to a tempting alternative $-$ the field of NLP, or [natural language processing](https://en.wikipedia.org/wiki/Natural_language_processing). NLP is a subfield of artificial intelligence that uses computational techniques to understand human language.
+
+
+to begin with, how often does someone you don't know reach out to you with
+
+* Spam is a problem, but we usually don't need to read the whole message to know that it's spam. There's something about the urgency, money randomly being offered, a link to click, etc. We can build a rule-based engine to look for certain words or phrases.
+* But NLP can do this for us, more quickly and more accurately. NLP is the field of converting words to numbers, and then doing math on them. We can convert a bunch of text messages into vectors using NLP, then feed those vectors (and the ham/spam labels) into a classifier that learns to distinguish the two.
 
 ## How it works
 ### Python
