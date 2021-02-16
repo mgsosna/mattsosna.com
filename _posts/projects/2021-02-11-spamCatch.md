@@ -2,11 +2,12 @@
 layout: post
 title: Building a full-stack spam catching app
 author: matt_sosna
+image: "images/projects/spamcatch-demo.png"
 ---
 
-![]({{  site.baseurl  }}/images/projects/demo.png)
+![]({{  site.baseurl  }}/images/projects/spamcatch-demo.png)
 
-[**SpamCatch**](https://spam-catcher.herokuapp.com) is a fun side project I did to bring together [natural language processing](https://en.wikipedia.org/wiki/Natural_language_processing), [Flask](https://flask.palletsprojects.com/en/1.1.x/), and [the front-end](https://blog.udacity.com/2014/12/front-end-vs-back-end-vs-full-stack-web-developers.html). Classifying spam text messages is a classic machine learning problem, but I'd never seen people test their classifier on raw strings of text. I'd also never seen a spam classifier hooked up to frontend, where people could use the classifier without needing to know Python or Git.
+[**SpamCatch**](https://spam-catcher.herokuapp.com) is a fun side project I did to bring together [natural language processing](https://en.wikipedia.org/wiki/Natural_language_processing), [Flask](https://flask.palletsprojects.com/en/1.1.x/), and [the front-end](https://blog.udacity.com/2014/12/front-end-vs-back-end-vs-full-stack-web-developers.html). Classifying spam text messages is a classic machine learning problem, but I'd never seen people test their classifier on raw strings of text. I'd also never seen a spam classifier hooked up to a nice user interface, where people could use the classifier without needing to know Python or Git.
 
 This blog post will go through how to build a spam classifier with a sleek frontend. In short, here are the steps:
 1. Create a [TF-IDF](https://monkeylearn.com/blog/what-is-tf-idf/) vectorizer on a corpus of ham and spam text messages
@@ -19,8 +20,10 @@ This blog post will go through how to build a spam classifier with a sleek front
 **Make sure to [check out the actual app](https://spam-catcher.herokuapp.com)!** (If it takes a minute to load, that's because the dyno went to sleep. The free plan only gets you so far!) You can also view the source code [here](https://github.com/mgsosna/spamCatch).
 
 ## Table of contents
-* [**Background**](#background)
-* [**How it works**](#how-it-works)
+* [<span style="font-size:20px">**Background**</span>](#background)
+  - [**Intro**](#intro)
+  - [**Strings to vectors**](#strings-to-vectors)
+* [<span style="font-size:20px">**How it works**</span>](#how-it-works)
   - [**Python**](#python)
     - [The classifier](#the-spam-classifier)
     - [Flask](#flask)
@@ -30,21 +33,28 @@ This blog post will go through how to build a spam classifier with a sleek front
   - [**Deployment**](#deployment)
 
 ## Background
+### Intro
 Spam messages are at best a nuisance and [at worst dangerous](https://www.consumer.ftc.gov/articles/how-recognize-and-avoid-phishing-scams). While malicious spam can be carefully tailored to the recipient to sound credible, the vast majority of spam out there is easily identifiable crap. You usually don't need to even read the entire message to identify it as spam $-$ there's a sense of urgency, money needed or offered, a sketchy link to click.
 
 If spam is so predictable, let's just write some code to automatically identify it, throwing it in the trash before we even need to see it. Our first guess might be to write a bunch of rules, a series of `if` statements that get triggered when our classifier sees certain words in the message. Accepting the risk of losing out on a once in a lifetime, all-expenses-paid vacation, I could configure my classifier to automatically delete any message with the word `free` in it.
 
-But that's not quite right... yes, the word `free` pops up a lot in spam, but it also appears in normal speech all the time, too. (*"Hey, are you free tonight?"*, for example.) We need more rules... lots more rules. As we tried building something that works ok, our classifier would quickly become incredibly complicated. We'd need dozens or hundreds of `if` statements, and we'd want their logic to be informed by research on how frequently certain words appear in spam versus normal messages (also called "ham"), and then we'd probably want some kind of scoring system based on all our rules. And perhaps most challenging of all... **we'd need to write all of this ourselves!**
+But that's not quite right... yes, the word `free` pops up a lot in spam, but it also appears in normal speech all the time, too. (*"Hey, are you free tonight?"*, for example.) We need more rules... lots more rules. As we added more and more rules, our classifier would quickly become incredibly complicated. We'd need dozens or hundreds of `if` statements, and we'd want their logic to be informed by research on how frequently certain words appear in spam versus normal messages (also called "ham"), and then we'd probably want some kind of scoring system based on all our rules. And perhaps most challenging of all... **we'd need to write all of this ourselves!**
 
 **Quick! Click on [this link](https://en.wikipedia.org/wiki/Natural_language_processing) to find a better way!**
 
-Just kidding. But that link *does* point us to a tempting alternative $-$ the field of NLP, or [natural language processing](https://en.wikipedia.org/wiki/Natural_language_processing). NLP is a subfield of artificial intelligence that uses computational techniques to understand human language.
+Just kidding. But that link *does* point us to a tempting alternative $-$ the field of NLP, or [natural language processing](https://en.wikipedia.org/wiki/Natural_language_processing). NLP is a subfield of artificial intelligence that uses computational techniques to understand human language. In essence, **NLP converts words to *numbers* so we can do math on them.** With NLP, we can *reinterpret our messages as vectors*, then train a machine learning classifier to identify patterns in the vectors that distinguish spam from normal messages.
+
+### Strings to vectors
+We first need to decide what kind of vector to turn each text message into. The simplest approach would be to create a [**bag of words**](https://towardsdatascience.com/a-simple-explanation-of-the-bag-of-words-model-b88fc4f4971) from our *documents* (a more general term for our text samples). In a bag of words approach, we first identify the unique words in our set of documents, then create a vector of word frequencies for each document. If our training set consisted of the three documents below, for example, our vocabulary would be `the`, `cat`, `sat`, `in`, `hat`, and `with`, and we could categorize each document by how frequently each word appears.
+
+![]({{  site.baseurl  }}/images/projects/bag_of_words.png)
+<span style="font-size:12px"><i>Source: [Victor Zhou](https://towardsdatascience.com/a-simple-explanation-of-the-bag-of-words-model-b88fc4f4971)</i></span>
 
 
-to begin with, how often does someone you don't know reach out to you with
+But bag of words has these issues: XXX.
+There's a better way: TF-IDF.
 
-* Spam is a problem, but we usually don't need to read the whole message to know that it's spam. There's something about the urgency, money randomly being offered, a link to click, etc. We can build a rule-based engine to look for certain words or phrases.
-* But NLP can do this for us, more quickly and more accurately. NLP is the field of converting words to numbers, and then doing math on them. We can convert a bunch of text messages into vectors using NLP, then feed those vectors (and the ham/spam labels) into a classifier that learns to distinguish the two.
+
 
 ## How it works
 ### Python
@@ -412,3 +422,8 @@ We can serve our app locally with `python app.py` and then navigating to `localh
 4. Link the GitHub repo for your app to your Heroku account, then manually deploy your app.
 5. Repeat steps 1-4 a dozen times, puzzling over the error logs and making small changes. The final bug for me was needing to have `scikit-learn==0.21.3` in my requirements file, not `sklearn`.
 6. Once you make it through, celebrate! You've deployed a web app!
+
+## Conclusions
+Ways to make it better:
+* Looking for patterns in the URLs themselves. `www.google.com` is fine, but `u7x0apmw.com` isn't.
+* Add features like number of letters that are capitalized, number of exclamation marks
