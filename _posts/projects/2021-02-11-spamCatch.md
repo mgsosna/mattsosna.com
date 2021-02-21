@@ -50,9 +50,10 @@ We first need to decide what kind of vector to turn each text message into. The 
 ![]({{  site.baseurl  }}/images/projects/bag_of_words.png)
 <span style="font-size:12px"><i>Source: [Victor Zhou](https://towardsdatascience.com/a-simple-explanation-of-the-bag-of-words-model-b88fc4f4971)</i></span>
 
+But these "term frequency" vectors created by a bag of words aren't *that* informative. Yes, they tell us how many times the word `cat` appears, for example. **But the word `cat` appears once in *every* document in our training set.** Knowing how many times `cat` appears is therefore completely uninformative.
 
-But bag of words has these issues: XXX.
-There's a better way: TF-IDF.
+It'd be better to weight our term frequency vectors by how frequently the terms occur across all documents, in other words to create **term frequency - inverse document frequency** vectors. If a new document came along that had the word `cat` fifty times in it, then, this would be a much bigger flag that something is up.
+
 
 
 
