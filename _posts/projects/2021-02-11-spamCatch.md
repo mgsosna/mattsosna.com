@@ -10,7 +10,7 @@ image: "images/projects/spamcatch-demo.png"
 [**SpamCatch**](https://spam-catcher.herokuapp.com) is a fun side project I did to bring together [natural language processing](https://en.wikipedia.org/wiki/Natural_language_processing), [Flask](https://flask.palletsprojects.com/en/1.1.x/), and [the front-end](https://blog.udacity.com/2014/12/front-end-vs-back-end-vs-full-stack-web-developers.html). Classifying spam text messages is a classic machine learning problem, but I'd never seen people test their classifier on raw strings of text. I'd also never seen a spam classifier hooked up to a nice user interface, where people could use the classifier without needing to know Python or Git.
 
 This blog post will go through how to build a spam classifier with a sleek frontend. In short, here are the steps:
-1. Create a [TF-IDF](https://monkeylearn.com/blog/what-is-tf-idf/) vectorizer on a corpus of ham and spam text messages
+1. Create a [TF-IDF](https://monkeylearn.com/blog/what-is-tf-idf/) vectorizer on a corpus of [ham and spam text messages](https://www.kaggle.com/uciml/sms-spam-collection-dataset)
 2. Train a random forest classifier on the TF-IDF vectors
 3. Build a simple Flask app with endpoints for webpages and the random forest classifier
 4. Write the HTML and CSS for the user-facing pages
@@ -25,6 +25,7 @@ This blog post will go through how to build a spam classifier with a sleek front
   - [**Strings to vectors**](#strings-to-vectors)
 * [<span style="font-size:20px">**How it works**</span>](#how-it-works)
   - [**Python**](#python)
+    - [The TF-IDF vectorizer](#the-tf-idf-vectorizer)
     - [The classifier](#the-spam-classifier)
     - [Flask](#flask)
   - [**The front-end**](#the-front-end)
@@ -47,28 +48,42 @@ Quick! Click on <a src="https://en.wikipedia.org/wiki/Natural_language_processin
 Just kidding. But that link *does* point us to a tempting alternative $-$ the field of NLP, or [natural language processing](https://en.wikipedia.org/wiki/Natural_language_processing). NLP is a subfield of artificial intelligence that uses computational techniques to understand human language. In essence, **NLP converts words to *numbers* so we can do math on them.** With NLP, we can reinterpret our messages as *vectors of numbers*, then train a machine learning classifier to identify patterns in the vectors that distinguish spam from normal messages.
 
 ### Strings to vectors
-We first need to decide what kind of vector to turn each text message into. The simplest approach would be to create a [**bag of words**](https://towardsdatascience.com/a-simple-explanation-of-the-bag-of-words-model-b88fc4f4971) from our *documents* (a more general term for our text samples). In a bag of words approach, we first identify the *vocabulary* of unique words in our set of documents, then create a vector of word frequencies for each document. If our training set consisted of the three documents below, for example, our vocabulary would be `the`, `cat`, `sat`, `in`, `hat`, and `with`, and we could categorize each document by how frequently each word appears.
+We first need to decide what kind of vector to turn each text message into. The simplest approach would be to create a [**bag of words**](https://towardsdatascience.com/a-simple-explanation-of-the-bag-of-words-model-b88fc4f4971) from our *documents* (a more general term for our text samples). In a bag of words approach, we first identify the *vocabulary* of unique words in our set of documents, then create a vector of word frequencies for each document. If our training set consisted of the three documents below, for example, our vocabulary would be `the`, `cat`, `sits`, `is`, and `black`, and we could categorize each document by how frequently each word appears.
 
-![]({{  site.baseurl  }}/images/projects/bag_of_words.png)
-<span style="font-size:12px"><i>Source: [Victor Zhou](https://towardsdatascience.com/a-simple-explanation-of-the-bag-of-words-model-b88fc4f4971)</i></span>
+| **Document**                     |&nbsp;**the**&nbsp;|&nbsp;**cat**&nbsp;|&nbsp;**sits**&nbsp;|&nbsp;**is**&nbsp;| &nbsp; **black**&nbsp;   |
+|----------------------------------|--------------|-------------|-------------|-------------|-------------|
+| &nbsp;*the cat sits*&nbsp;       | &nbsp;1&nbsp;|&nbsp;1&nbsp;|&nbsp;1&nbsp;|&nbsp;0&nbsp;|&nbsp;0&nbsp;|
+| &nbsp;*the cat is black* &nbsp;  | &nbsp;1&nbsp;|&nbsp;1&nbsp;|&nbsp;0&nbsp;|&nbsp;1&nbsp;|&nbsp;1&nbsp;|
+| &nbsp;*the black cat sits*&nbsp; | &nbsp;1&nbsp;|&nbsp;1&nbsp;|&nbsp;1&nbsp;|&nbsp;0&nbsp;|&nbsp;1&nbsp;|
+{:.mbtablestyle}
 
-But these "term frequency" vectors created by a bag of words aren't *that* informative. Yes, they tell us how many times the word `cat` appears in a document, for example. But knowing that `cat` appears once in *"the cat sat"* becomes meaningless when you realize `cat` appears once in *every* document! In fact, unless we looked at all the other documents, we wouldn't know whether `cat` appearing 100 or 1,000 times in a document is informative at all.<sup>[[1]](#1-strings-to-vectors)</sup>
+<span style="font-size:12px"><i>Inspired by [Victor Zhou](https://towardsdatascience.com/a-simple-explanation-of-the-bag-of-words-model-b88fc4f4971)</i></span>
+
+But these "term frequency" vectors created by a bag of words aren't *that* informative. Yes, they tell us how many times the word `cat` appears in a document, for example. But knowing that `cat` appears once in *"the cat sits"* becomes meaningless when you realize `cat` appears once in *every* document! In fact, unless we looked at all the other documents, we wouldn't know whether `cat` appearing 100 or 1,000 times in a document is informative at all.<sup>[[1]](#1-strings-to-vectors)</sup>
 
 It's therefore better to weight our term frequency vectors by **how frequently the terms occur across *all* documents**. If every document says the word `cat` 100 times, it's no big deal $-$ but if your document is the *only* one to mention `cat`, that's incredibly informative! These weighted vectors are called **term frequency - inverse document frequency (TF-IDF)** vectors.
 
+Finally, we'll also want to remove **stop words** and perform **lemmatization.** Stop words are words like `the`, `and`, `if`, etc. whose main purpose is linguistic logic. Stop words don't contain information about the *content* of the document, so they just make it harder for a model to discriminate between documents. Similarly, the words `eating`, `eats`, and `ate` look like entirely different terms to an NLP model when they're really just different ways of saying `eat`. Lemmatization is the process of stripping that linguistic layer off the root of each word.
 
+When we remove stop words, perform lemmatization, and weight the above term frequency vectors by their document frequencies, we get these TF-IDF vectors:
 
+| **Document**                    | **black**  | **cat**   | **sit**   |
+|---------------------------------|-----------|-----------|-------|
+| &nbsp;*the cat sits*&nbsp;      | &nbsp;0.000&nbsp;  |&nbsp; 0.613  &nbsp;   | &nbsp;0.790&nbsp; |
+| &nbsp;*the cat is black* &nbsp; | 0.790     | 0.613     | 0.000 |
+| &nbsp;*the black cat sits*&nbsp;| 0.620     | 0.481     | 0.620 |
+{:.mbtablestyle}
+
+The values are now a lot less intuitive for us, but they're much more informative to an algorithm trying to discern between the documents. We'll now apply these steps to the classic [spam text message dataset](https://www.kaggle.com/uciml/sms-spam-collection-dataset) and see if we can build a model to predict spam.
 
 ## How it works
 ### Python
-#### The classifier
-The core of the app is the actual classifier, a Python class called [SpamCatcher](https://github.com/mgsosna/spamCatch/tree/main/static/python/spam_catcher.py). The class has methods for accomplishing a few key tasks:
-* Training a TF-IDF vectorizer
-* Converting strings to TF-IDF vectors
-* Training a random forest classifier on TF-IDF vectors
-* Passing a string to the classifier and returning the probability that a string is spam
+The core of the app is a Python class called [SpamCatcher](https://github.com/mgsosna/spamCatch/tree/main/static/python/spam_catcher.py) which has two main components: a **TF-IDF vectorizer** that converts strings to TF-IDF vectors, and a **random forest classifier** that outputs the probability that a TF-IDF vector is spam. Both components must first be *trained* before they can output vectors or spam probabilities. We'll go into more detail below.
 
-One of the key methods here is `extract_features`, which uses Scikit-learn's `TfIdfVectorizer` to convert an iterable of documents into TF-IDF values. (TF-IDF, or term frequency - inverse document frequency, is a way to categorize each term in a document by its frequency of occurrence *within the document*, while reducing the importance of terms frequent *across all documents*). If `SpamCatcher` doesn't already have a `tfidf_vectorizer` attribute, it trains one on these documents.
+#### The TF-IDF vectorizer
+We'll let Scikit-learn's `TfIdfVectorizer` do all the hard work for us. There are essentially only two steps we need to worry about: training our vectorizer on the sample text messages (so it learns the vector space of term frequencies and can weight each by the frequency across all documents), and generating TF-IDF vectors once the vectorizer is trained.
+
+The method `extract_features` accomplishes the first goal for us.
 
 {% include header-python.html %}
 ```python
@@ -108,6 +123,13 @@ def extract_features(self,
 
     return feature_df
 ```
+
+#### The classifier
+The core of the app is the actual classifier, a Python class called [SpamCatcher](https://github.com/mgsosna/spamCatch/tree/main/static/python/spam_catcher.py). The class has methods for accomplishing a few key tasks:
+* Using training documents to create a TF-IDF vectorizer
+* Using that vectorizer to convert strings to TF-IDF vectors
+* Training a random forest classifier on TF-IDF vectors
+* Passing a string to the classifier and returning the probability that a string is spam
 
 The output of this function is a dataframe where each row is a document, the first column is the ham/spam label, and the remaining several thousand columns are the TF-IDF values for each term. We use this dataframe to then train a random forest classifier. We set this classifier to `self.model`, as well as save its accuracy and most informative features for easier retrieval later.
 
@@ -289,17 +311,6 @@ Our HTML is stored in the `templates` directory, as Flask expects. We start with
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="../static/css/reset.css">
     <link rel="stylesheet" href="../static/css/styles.css">
-    <style>
-            #footer {
-                position: fixed;
-                padding: 10px 10px 0px 10px;
-                bottom: 0;
-                width: 100%;
-                height: 40px;
-                font-size: 16px;
-                text-align: center;
-            }
-    </style>
 </head>
 ```
 
