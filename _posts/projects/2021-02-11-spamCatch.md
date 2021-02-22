@@ -40,19 +40,21 @@ If spam is so predictable, let's just write some code to automatically identify 
 
 But that's not quite right... yes, the word `free` pops up a lot in spam, but it also appears in normal speech all the time, too. (*"Hey, are you free tonight?"*, for example.) We need more rules... lots more rules. As we added more and more rules, our classifier would quickly become incredibly complicated. We'd need dozens or hundreds of `if` statements, and we'd want their logic to be informed by research on how frequently certain words appear in spam versus normal messages (also called "ham"), and then we'd probably want some kind of scoring system based on all our rules. And perhaps most challenging of all... **we'd need to write all of this ourselves!**
 
-**Quick! Click on [this link](https://en.wikipedia.org/wiki/Natural_language_processing) to find a better way!**
+<div style="text-align: center; font-weight: bold">
+Quick! Click on <a src="https://en.wikipedia.org/wiki/Natural_language_processing">this link</a> to find a better way!
+</div>
 
-Just kidding. But that link *does* point us to a tempting alternative $-$ the field of NLP, or [natural language processing](https://en.wikipedia.org/wiki/Natural_language_processing). NLP is a subfield of artificial intelligence that uses computational techniques to understand human language. In essence, **NLP converts words to *numbers* so we can do math on them.** With NLP, we can *reinterpret our messages as vectors*, then train a machine learning classifier to identify patterns in the vectors that distinguish spam from normal messages.
+Just kidding. But that link *does* point us to a tempting alternative $-$ the field of NLP, or [natural language processing](https://en.wikipedia.org/wiki/Natural_language_processing). NLP is a subfield of artificial intelligence that uses computational techniques to understand human language. In essence, **NLP converts words to *numbers* so we can do math on them.** With NLP, we can reinterpret our messages as *vectors of numbers*, then train a machine learning classifier to identify patterns in the vectors that distinguish spam from normal messages.
 
 ### Strings to vectors
-We first need to decide what kind of vector to turn each text message into. The simplest approach would be to create a [**bag of words**](https://towardsdatascience.com/a-simple-explanation-of-the-bag-of-words-model-b88fc4f4971) from our *documents* (a more general term for our text samples). In a bag of words approach, we first identify the unique words in our set of documents, then create a vector of word frequencies for each document. If our training set consisted of the three documents below, for example, our vocabulary would be `the`, `cat`, `sat`, `in`, `hat`, and `with`, and we could categorize each document by how frequently each word appears.
+We first need to decide what kind of vector to turn each text message into. The simplest approach would be to create a [**bag of words**](https://towardsdatascience.com/a-simple-explanation-of-the-bag-of-words-model-b88fc4f4971) from our *documents* (a more general term for our text samples). In a bag of words approach, we first identify the *vocabulary* of unique words in our set of documents, then create a vector of word frequencies for each document. If our training set consisted of the three documents below, for example, our vocabulary would be `the`, `cat`, `sat`, `in`, `hat`, and `with`, and we could categorize each document by how frequently each word appears.
 
 ![]({{  site.baseurl  }}/images/projects/bag_of_words.png)
 <span style="font-size:12px"><i>Source: [Victor Zhou](https://towardsdatascience.com/a-simple-explanation-of-the-bag-of-words-model-b88fc4f4971)</i></span>
 
-But these "term frequency" vectors created by a bag of words aren't *that* informative. Yes, they tell us how many times the word `cat` appears, for example. **But the word `cat` appears once in *every* document in our training set.** Knowing how many times `cat` appears is therefore completely uninformative.
+But these "term frequency" vectors created by a bag of words aren't *that* informative. Yes, they tell us how many times the word `cat` appears in a document, for example. But knowing that `cat` appears once in *"the cat sat"* becomes meaningless when you realize `cat` appears once in *every* document! In fact, unless we looked at all the other documents, we wouldn't know whether `cat` appearing 100 or 1,000 times in a document is informative at all.<sup>[[1]](#1-strings-to-vectors)</sup>
 
-It'd be better to weight our term frequency vectors by how frequently the terms occur across all documents, in other words to create **term frequency - inverse document frequency** vectors. If a new document came along that had the word `cat` fifty times in it, then, this would be a much bigger flag that something is up.
+It's therefore better to weight our term frequency vectors by **how frequently the terms occur across *all* documents**. If every document says the word `cat` 100 times, it's no big deal $-$ but if your document is the *only* one to mention `cat`, that's incredibly informative! These weighted vectors are called **term frequency - inverse document frequency (TF-IDF)** vectors.
 
 
 
@@ -428,3 +430,7 @@ We can serve our app locally with `python app.py` and then navigating to `localh
 Ways to make it better:
 * Looking for patterns in the URLs themselves. `www.google.com` is fine, but `u7x0apmw.com` isn't.
 * Add features like number of letters that are capitalized, number of exclamation marks
+
+## Footnotes
+#### 1. [Strings to vectors](#strings-to-vectors)
+Some would consider the word `cat` appearing 100 times in a document to be... *catastrophic.*
