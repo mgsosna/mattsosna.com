@@ -23,6 +23,7 @@ This blog post will go through how to build a spam classifier with a sleek front
 * [<span style="font-size:20px">**Background**</span>](#background)
   - [**Intro**](#intro)
   - [**Strings to vectors**](#strings-to-vectors)
+  - [**What is Flask?**](#what-is-flask)
 * [<span style="font-size:20px">**How it works**</span>](#how-it-works)
   - [**Python**](#python)
     - [The TF-IDF vectorizer](#the-tf-idf-vectorizer)
@@ -75,6 +76,9 @@ When we remove stop words, perform lemmatization, and weight the above term freq
 {:.mbtablestyle}
 
 The values are now a lot less intuitive for us, but they're much more informative to an algorithm trying to discern between the documents. We'll now apply these steps to the classic [spam text message dataset](https://www.kaggle.com/uciml/sms-spam-collection-dataset) and see if we can build a model to predict spam.
+
+### What is Flask?
+One more concept before we start building our app. It's one thing to have an amazing model tucked away in a Jupyter notebook hidden in your computer, and entirely another to have that model accessible to the world. **[Flask](https://flask.palletsprojects.com/en/1.1.x/) is a Python library that lets you make code *globally available* by *turning it into an app.*** In essence, you create a server with *API endpoints* that perform actions. Think of these endpoints as Python functions that return data... but you can use them in other Python scripts without needing to import a library. Even more exciting, and what we'll demonstrate here, is that you can use these Python functions *without even using Python*. We'll end up actually using JavaScript to interact with our Python spam prediction model, which lets us have a nice user interface (in HTML and CSS), using JavaScript to communicate between the user and our model.
 
 ## How it works
 ### Python
