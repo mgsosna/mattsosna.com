@@ -21,9 +21,10 @@ This blog post will go through how to build a spam classifier with a sleek front
 
 ## Table of contents
 * [<span style="font-size:20px">**Background**</span>](#background)
-  - [**Intro**](#intro)
-  - [**Strings to vectors**](#strings-to-vectors)
-  - [**What is Flask?**](#what-is-flask)
+  - [Intro](#intro)
+  - [Strings to vectors](#strings-to-vectors)
+  - [Why random forest?](#why-random-forest)
+  - [What is Flask?](#what-is-flask)
 * [<span style="font-size:20px">**How it works**</span>](#how-it-works)
   - [**Python**](#python)
     - [The TF-IDF vectorizer](#the-tf-idf-vectorizer)
@@ -64,7 +65,7 @@ But these "term frequency" vectors created by a bag of words aren't *that* infor
 
 It's therefore better to weight our term frequency vectors by **how frequently the terms occur across *all* documents**. If every document says the word `cat` 100 times, it's no big deal $-$ but if your document is the *only* one to mention `cat`, that's incredibly informative! These weighted vectors are called **term frequency - inverse document frequency (TF-IDF)** vectors.
 
-Finally, we'll also want to remove **stop words** and perform **lemmatization.** Stop words are words like `the`, `and`, `if`, etc. whose main purpose is linguistic logic. Stop words don't contain information about the *content* of the document, so they just make it harder for a model to discriminate between documents. Similarly, the words `eating`, `eats`, and `ate` look like entirely different terms to an NLP model when they're really just different ways of saying `eat`. Lemmatization is the process of stripping that linguistic layer off the root of each word.
+Finally, we'll also want to remove **stop words** and perform **lemmatization.** Stop words are words like `the`, `and`, `if`, etc. whose main purpose is linguistic logic. Stop words don't contain information about the *content* of the document, so they just make it harder for a model to discriminate between documents.<sup>[[2]](#2-strings-to-vectors)</sup> Similarly, the words `eating`, `eats`, and `ate` look like entirely different terms to an NLP model when they're really just different ways of saying `eat`. [Lemmatization](https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html) is the process of stripping that linguistic layer off the root of each word.
 
 When we remove stop words, perform lemmatization, and weight the above term frequency vectors by their document frequencies, we get these TF-IDF vectors:
 
@@ -75,12 +76,21 @@ When we remove stop words, perform lemmatization, and weight the above term freq
 | &nbsp;*the black cat sits*&nbsp;| 0.620     | 0.481     | 0.620 |
 {:.mbtablestyle}
 
-The values are now a lot less intuitive for us, but they're much more informative to an algorithm trying to discern between the documents. We'll now apply these steps to the classic [spam text message dataset](https://www.kaggle.com/uciml/sms-spam-collection-dataset) and see if we can build a model to predict spam.
+The values are now a lot less intuitive for us, but they're much more informative to an algorithm trying to discern between the documents.
+
+### Why random forest?
+The TF-IDF vectors in the table above are only three elements long, since our slimmed-down vocabulary only consists of the words `black`, `cat`, and `sit`. On an actual dataset with thousands of examples, our vectors will be thousands of elements long, and most of the values will be zero.
+
+It's really hard for classical statistical predictors to deal with such _sparse_ vectors, but machine learning algorithms are ideally suited for it. Of ML algorithms, [random forest](https://stackabuse.com/random-forest-algorithm-with-python-and-scikit-learn/) is a great general-purpose one. It consists of a series of decision trees fit to bootstrapped subsets of the data. Individual trees tend to become overfit to their training data, but these errors average out across all trees, resulting in an [ensemble](https://en.wikipedia.org/wiki/Ensemble_learning) that can generate surprisingly accurate predictions.<sup>[[3]](#3-why-random-forest)</sup>
+
+
 
 ### What is Flask?
 One more concept before we start building our app. It's one thing to have an amazing model tucked away in a Jupyter notebook hidden in your computer, and entirely another to have that model accessible to the world. **[Flask](https://flask.palletsprojects.com/en/1.1.x/) is a Python library that lets you make code *globally available* by *turning it into an app.*** In essence, you create a server with *API endpoints* that perform actions. Think of these endpoints as Python functions that return data... but you can use them in other Python scripts without needing to import a library. Even more exciting, and what we'll demonstrate here, is that you can use these Python functions *without even using Python*. We'll end up actually using JavaScript to interact with our Python spam prediction model, which lets us have a nice user interface (in HTML and CSS), using JavaScript to communicate between the user and our model.
 
 ## How it works
+The last section set the stage for how our spam classifier should look. We'll want to convert each document in the classic [spam text message dataset](https://www.kaggle.com/uciml/sms-spam-collection-dataset) into a [TF-IDF vector](https://monkeylearn.com/blog/what-is-tf-idf/), removing stop words and performing [lemmatization](https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html) to make it easier for a model to understand the content of each document. We'll then train a [random forest](https://stackabuse.com/random-forest-algorithm-with-python-and-scikit-learn/) model to distinguish between "spam" and "ham" TF-IDF vectors. Finally, we'll use [Flask](https://flask.palletsprojects.com/en/1.1.x/) to put it all together into a nice user interface. 
+
 ### Python
 The core of the app is a Python class called [SpamCatcher](https://github.com/mgsosna/spamCatch/tree/main/static/python/spam_catcher.py) which has two main components: a **TF-IDF vectorizer** that converts strings to TF-IDF vectors, and a **random forest classifier** that outputs the probability that a TF-IDF vector is spam. Both components must first be *trained* before they can output vectors or spam probabilities. We'll go into more detail below.
 
@@ -449,3 +459,14 @@ Ways to make it better:
 ## Footnotes
 #### 1. [Strings to vectors](#strings-to-vectors)
 Some would consider the word `cat` appearing 100 times in a document to be... *catastrophic.*
+
+#### 2. [Strings to vectors](#strings-to-vectors)
+While grammar like stop words and punctuation distract our model from the _content_ of a document, they do still hold valuable information a more advanced model will want to incorporate. Consider [these two sentences](https://algorithmia.com/blog/advanced-grammar-and-natural-language-processing-with-syntaxnet):
+
+> "Most of the time, travelers worry about their luggage." <br>
+  "Most of the time travelers worry about their luggage."
+
+That comma is pretty important for knowing what kind of travelers we're talking about!
+
+#### 3. [Why random forest?](#why-random-forest)
+The fact that ensemble methods generate predictions more accurate than individual models reminds me a lot of [collective animal behavior](https://en.wikipedia.org/wiki/Collective_animal_behavior), which my Ph.D. was on. I'll need to write a blog post nerding out on the comparisons sometime.
