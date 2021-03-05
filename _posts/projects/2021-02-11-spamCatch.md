@@ -83,13 +83,19 @@ The TF-IDF vectors in the table above are only three elements long, since our sl
 
 It's really hard for classical statistical predictors to deal with such _sparse_ vectors, but machine learning algorithms are ideally suited for it. Of ML algorithms, [random forest](https://stackabuse.com/random-forest-algorithm-with-python-and-scikit-learn/) is a great general-purpose one. It consists of a series of decision trees fit to bootstrapped subsets of the data. Individual trees tend to become overfit to their training data, but these errors average out across all trees, resulting in an [ensemble](https://en.wikipedia.org/wiki/Ensemble_learning) that can generate surprisingly accurate predictions.<sup>[[3]](#3-why-random-forest)</sup>
 
+![]({{  site.baseurl  }}/images/projects/random_forest.png)
+<span style="font-size:12px"><i>Source: [Kaggle](https://www.kaggle.com/getting-started/176257)</i></span>
+
 
 
 ### What is Flask?
 One more concept before we start building our app. It's one thing to have an amazing model tucked away in a Jupyter notebook hidden in your computer, and entirely another to have that model accessible to the world. **[Flask](https://flask.palletsprojects.com/en/1.1.x/) is a Python library that lets you make code *globally available* by *turning it into an app.*** In essence, you create a server with *API endpoints* that perform actions. Think of these endpoints as Python functions that return data... but you can use them in other Python scripts without needing to import a library. Even more exciting, and what we'll demonstrate here, is that you can use these Python functions *without even using Python*. We'll end up actually using JavaScript to interact with our Python spam prediction model, which lets us have a nice user interface (in HTML and CSS), using JavaScript to communicate between the user and our model.
 
+![]({{  site.baseurl  }}/images/projects/api-model.png)
+<span style="font-size:12px"><i>Source: [ServiceObjects](https://www.serviceobjects.com/blog/what-is-an-api/)</i></span>
+
 ## How it works
-The last section set the stage for how our spam classifier should look. We'll want to convert each document in the classic [spam text message dataset](https://www.kaggle.com/uciml/sms-spam-collection-dataset) into a [TF-IDF vector](https://monkeylearn.com/blog/what-is-tf-idf/), removing stop words and performing [lemmatization](https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html) to make it easier for a model to understand the content of each document. We'll then train a [random forest](https://stackabuse.com/random-forest-algorithm-with-python-and-scikit-learn/) model to distinguish between "spam" and "ham" TF-IDF vectors. Finally, we'll use [Flask](https://flask.palletsprojects.com/en/1.1.x/) to put it all together into a nice user interface. 
+The last section set the stage for how our spam classifier should look. We'll want to convert each document in the classic [spam text message dataset](https://www.kaggle.com/uciml/sms-spam-collection-dataset) into a [TF-IDF vector](https://monkeylearn.com/blog/what-is-tf-idf/), removing stop words and performing [lemmatization](https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html) to make it easier for a model to understand the content of each document. We'll then train a [random forest](https://stackabuse.com/random-forest-algorithm-with-python-and-scikit-learn/) model to distinguish between "spam" and "ham" TF-IDF vectors. Finally, we'll use [Flask](https://flask.palletsprojects.com/en/1.1.x/) to put it all together into a nice user interface.
 
 ### Python
 The core of the app is a Python class called [SpamCatcher](https://github.com/mgsosna/spamCatch/tree/main/static/python/spam_catcher.py) which has two main components: a **TF-IDF vectorizer** that converts strings to TF-IDF vectors, and a **random forest classifier** that outputs the probability that a TF-IDF vector is spam. Both components must first be *trained* before they can output vectors or spam probabilities. We'll go into more detail below.
