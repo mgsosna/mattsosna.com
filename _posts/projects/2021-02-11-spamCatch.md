@@ -39,9 +39,19 @@ This blog post will go through how to build a spam classifier with a sleek front
 ### Intro
 Spam messages are at best a nuisance and [at worst dangerous](https://www.consumer.ftc.gov/articles/how-recognize-and-avoid-phishing-scams). While malicious spam can be carefully tailored to the recipient to sound credible, the vast majority of spam out there is easily identifiable crap. You usually don't need to even read the entire message to identify it as spam $-$ there's a sense of urgency, money needed or offered, a sketchy link to click.
 
-If spam is so predictable, let's just write some code to automatically identify it, throwing it in the trash before we even need to see it. Our first guess might be to write a bunch of rules, a series of `if` statements that get triggered when our classifier sees certain words in the message. Accepting the risk of losing out on a once in a lifetime, all-expenses-paid vacation, I could configure my classifier to automatically delete any message with the word `free` in it.
+If spam is so predictable, let's just write some code to automatically distinguish it from normal messages (also called "ham") and toss it in the trash. Our first guess might be to write a bunch of rules, a series of `if` statements that get triggered when our classifier sees certain words in the message. Accepting the risk of losing out on a once in a lifetime, all-expenses-paid vacation, I could configure my classifier to automatically delete any message with the word `free` in it.
 
-But that's not quite right... yes, the word `free` pops up a lot in spam, but it also appears in normal speech all the time, too. (*"Hey, are you free tonight?"*, for example.) We need more rules... lots more rules. As we added more and more rules, our classifier would quickly become incredibly complicated. We'd need dozens or hundreds of `if` statements, and we'd want their logic to be informed by research on how frequently certain words appear in spam versus normal messages (also called "ham"), and then we'd probably want some kind of scoring system based on all our rules. And perhaps most challenging of all... **we'd need to write all of this ourselves!**
+<center>
+<img src="{{  site.baseurl  }}/images/projects/classifier1.png" height="70%" width="70%" style="margin-top: -20px">
+</center>
+
+But that's not quite right... yes, the word `free` pops up a lot in spam, but it also appears in normal speech all the time, too. (*"Hey, are you free tonight?"*, for example.) We need more rules... lots more rules.
+
+<center>
+<img src="{{  site.baseurl  }}/images/projects/classifier2.png">
+</center>
+
+Our classifier is much more complicated and barely more accurate. In fact, it would take hundreds of hours of manually writing such a decision tree to make our classifier actually worthwhile. We'd need hundreds or thousands of `if` statements to be able to distinguish more subtle spam messages. We'd want the `if` statement logic to be informed by research on *how frequently* certain words appear in spam versus ham. Finally, we'd probably want our branches to increase or decrease a *probability of spam* rather than needing to hard-code "spam" vs. "ham" outcomes into certain branch trajectories. But most challenging of all... **we'd need to write all of this ourselves!**
 
 <div style="text-align: center; font-weight: bold">
 Quick! Click on <a src="https://en.wikipedia.org/wiki/Natural_language_processing">this link</a> to find a better way!
@@ -79,17 +89,19 @@ When we remove stop words, perform lemmatization, and weight the above term freq
 The values are now a lot less intuitive for us, but they're much more informative to an algorithm trying to discern between the documents.
 
 ### Why random forest?
-The TF-IDF vectors in the table above are only three elements long, since our slimmed-down vocabulary only consists of the words `black`, `cat`, and `sit`. On an actual dataset with thousands of examples, our vectors will be thousands of elements long, and most of the values will be zero.
+The TF-IDF vectors in the table above are only three elements long, since our slimmed-down vocabulary only consists of the words `black`, `cat`, and `sit`. There are also few zeros in the vectors $-$ all vectors have at least 2/3 of all words in the vocabulary.
 
-It's really hard for classical statistical predictors to deal with such _sparse_ vectors, but machine learning algorithms are ideally suited for it. Of ML algorithms, [random forest](https://stackabuse.com/random-forest-algorithm-with-python-and-scikit-learn/) is a great general-purpose one. It consists of a series of decision trees fit to bootstrapped subsets of the data. Individual trees tend to become overfit to their training data, but these errors average out across all trees, resulting in an [ensemble](https://en.wikipedia.org/wiki/Ensemble_learning) that can generate surprisingly accurate predictions.<sup>[[3]](#3-why-random-forest)</sup>
+To actually catch spam, we'll want a vocabulary with thousands of words. TF-IDF vectors trained on this vocabulary will mostly consist of zeros, since not every document will include every word in our training set. Such high-dimensional and sparse (mostly-zero) vectors are difficult for classical statistics approaches.<sup>[[3]](#3-why-random-forest)</sup> We also care less about understanding exactly *how* our model catches spam $-$ we just want the most accurate predictor possible.
+
+We'll therefore want to use machine learning. My first choice is usually a [random forest](https://stackabuse.com/random-forest-algorithm-with-python-and-scikit-learn/) algorithm unless I need something more specialized. A random forest consists of a series of decision trees fit to [bootstrapped](https://en.wikipedia.org/wiki/Bootstrapping_(statistics)) subsets of your data. Individual trees tend to become overfit to their training data, but these errors average out across all trees, resulting in an [ensemble](https://en.wikipedia.org/wiki/Ensemble_learning) that can generate surprisingly accurate predictions.<sup>[[4]](#4-why-random-forest)</sup>
 
 ![]({{  site.baseurl  }}/images/projects/random_forest.png)
 <span style="font-size:12px"><i>Source: [Kaggle](https://www.kaggle.com/getting-started/176257)</i></span>
 
-
-
 ### What is Flask?
-One more concept before we start building our app. It's one thing to have an amazing model tucked away in a Jupyter notebook hidden in your computer, and entirely another to have that model accessible to the world. **[Flask](https://flask.palletsprojects.com/en/1.1.x/) is a Python library that lets you make code *globally available* by *turning it into an app.*** In essence, you create a server with *API endpoints* that perform actions. Think of these endpoints as Python functions that return data... but you can use them in other Python scripts without needing to import a library. Even more exciting, and what we'll demonstrate here, is that you can use these Python functions *without even using Python*. We'll end up actually using JavaScript to interact with our Python spam prediction model, which lets us have a nice user interface (in HTML and CSS), using JavaScript to communicate between the user and our model.
+One more concept before we start building our app. It's one thing to have an amazing model tucked away in a Jupyter notebook hidden in your computer, and entirely another to have that model accessible to the world. **[Flask](https://flask.palletsprojects.com/en/1.1.x/) is a Python library that lets you make code _available outside of Python_.** With Flask, you can create a [*server*](https://techterms.com/definition/server) with functions at [*API endpoints*](https://www.mulesoft.com/resources/api/what-is-an-api).
+
+These endpoints are the interface between your code and the outside world. They will let you access your Python code while you're in another Python script... or even *when you're not using Python, but your browser.* We'll build our app so we actually interact with our Python spam prediction model on an HTML page, using JavaScript to communicate between the user and our model. Our app will mimic the flow chart below, minus the database.
 
 ![]({{  site.baseurl  }}/images/projects/api-model.png)
 <span style="font-size:12px"><i>Source: [ServiceObjects](https://www.serviceobjects.com/blog/what-is-an-api/)</i></span>
@@ -475,4 +487,7 @@ While grammar like stop words and punctuation distract our model from the _conte
 That comma is pretty important for knowing what kind of travelers we're talking about!
 
 #### 3. [Why random forest?](#why-random-forest)
+[This article](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2865881/) from *Philosophical Transactions of the Royal Society A: Mathematical, Physical, and Engineering Sciences* goes into great detail on approaches for dealing with sparse vectors. One of the issues they mention is that when the number of features is greater than the number of samples, $X^TX$ becomes singular and cannot be used to estimate model parameters.
+
+#### 4. [Why random forest?](#why-random-forest)
 The fact that ensemble methods generate predictions more accurate than individual models reminds me a lot of [collective animal behavior](https://en.wikipedia.org/wiki/Collective_animal_behavior), which my Ph.D. was on. I'll need to write a blog post nerding out on the comparisons sometime.
