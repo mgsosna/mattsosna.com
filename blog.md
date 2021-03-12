@@ -6,8 +6,10 @@ permalink: /blog/
 
 ## Topics
 - [**Data science**](#data-science)
+  - [How to enter data science](#how-to-enter-data-science)
   - [Statistics](#statistics)
   - [External](#external)
+  - [Projects](#projects)
 - [**Python**](#python)
   - [Random Python](#random-python)
 - [**R**](#r)
@@ -37,6 +39,8 @@ permalink: /blog/
 1. [Data quality at Aquicore](https://aquicore.com/blog/how-aquicore-built-the-ultimate-data-quality-safeguard/)
 2. [How we created the morning overshoot detector](https://aquicore.com/blog/peak-a-boo-aq-ai-makes-peak-demand-surprises-disappear/)
 
+### Projects
+1. [Building a full-stack spam catching app]({{  site.baseurl  }}/spamCatch-1)
 
 ## Python
 ### Random Python

@@ -3,7 +3,7 @@
   <head>
     <link rel="shortcut icon" type="image/png" href="/images/ds_circle.png">
     <meta charset="UTF-8">
-    <title>{% if page.title %}{{  page.title  }}{% endif %} - {{ site.name }}</title>
+    <title>{% if page.title %}{{  page.title  }}{% else %}Home{% endif %} - {{ site.name }}</title>
 
     {% include meta.html %}
 
@@ -56,7 +56,7 @@
 
     <div id="copyright" class="container">
         <br>
-        <center>&copy; 2020 Matt Sosna</center>
+        <center>&copy; 2021 Matt Sosna</center>
     </div>
 
     <div class="wrapper-footer">

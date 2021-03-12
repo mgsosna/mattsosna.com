@@ -19,9 +19,9 @@ Here is information about my academic life. For blog posts with advice for under
 ## In progress
 1. Jolles JW\*, **Sosna MMG**\*, Mazué GPF, Twomey CR, Bak-Coleman J, Rubenstein DI, Couzin ID. Predator attack strategy and prey behaviour drive individual predation risk in schooling prey. _**submitted.**_
 
-2. Davidson JD\*, **Sosna MMG**, Twomey CR, Sridhar VH, Couzin ID. Collective detection based on visual information in fish schools. _**in prep.**_
+2. Davidson JD, **Sosna MMG**, Twomey CR, Sridhar VH, Leblanc S, Couzin ID. Collective detection based on visual information in fish schools. _**submitted.**_
 
-3. Poel W, Daniels BC, **Sosna MMG**, Twomey CR, Leblanc SP, Couzin ID, Romanczuk P. Suppression of false alarms favored over maximizing sensitivity in escape waves in fish. _**in prep.**_
+3. Poel W, Daniels BC, **Sosna MMG**, Twomey CR, Leblanc S, Couzin ID, Romanczuk P. Suppression of false alarms favored over maximizing sensitivity in escape waves in fish. _**in prep.**_
 
 4. Twomey CR, **Sosna MMG**, Ragazzo G, Bak-Coleman J, Couzin ID. Between-group dynamics and emergent social forces at the limits of sensory perception. _**in prep.**_
 
