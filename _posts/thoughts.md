@@ -1,2 +1,0 @@
-
-* Separation of concerns

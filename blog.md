@@ -40,7 +40,9 @@ permalink: /blog/
 2. [How we created the morning overshoot detector](https://aquicore.com/blog/peak-a-boo-aq-ai-makes-peak-demand-surprises-disappear/)
 
 ### Projects
-1. [Building a full-stack spam catching app]({{  site.baseurl  }}/spamCatch-1)
+#### Building a full-stack spam catching app
+1. [Context]({{  site.baseurl  }}/spamCatch-1)
+2. [Backend]({{  site.baseurl  }}/spamCatch-2)
 
 ## Python
 ### Random Python

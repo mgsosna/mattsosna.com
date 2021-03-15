@@ -8,6 +8,13 @@ image: "images/projects/spamcatch-demo.png"
 
 ![]({{  site.baseurl  }}/images/projects/spamcatch-demo.png)
 
+In short, here are the steps:
+1. Train a [TF-IDF](https://monkeylearn.com/blog/what-is-tf-idf/) vectorizer on a corpus of [ham and spam text messages](https://www.kaggle.com/uciml/sms-spam-collection-dataset), removing stop words and performing [lemmatization](https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html) to make it easier for a model to understand the content of each document
+2. Train a [random forest](https://stackabuse.com/random-forest-algorithm-with-python-and-scikit-learn/) classifier to distinguish between "spam" and "ham" TF-IDF vectors
+3. Build a simple [Flask](https://flask.palletsprojects.com/en/1.1.x/) app with endpoints for webpages and the random forest classifier
+4. Write the HTML and CSS for the user-facing pages
+5. Write the JavaScript to communicate between the user-facing pages and the spam classifier
+6. Deploy to [Heroku](https://www.heroku.com/about) so others can use your app
 
 
 ---
