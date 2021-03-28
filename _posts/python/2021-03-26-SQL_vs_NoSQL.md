@@ -4,12 +4,24 @@ title: SQL vs. NoSQL in Python
 author: matt_sosna
 ---
 
-## SQL
+How do you store data when it's too large too fit on a hard drive? How can you make it possible for multiple people to view *and modify* the data simultaneously? Databases are the answer here.
+
+But there are a few flavors of databases, i.e. SQL vs. NoSQL. They're different takes on the question of how to best store data. This post will first cover the theory before going through some code for you to create and play with databases in Python.
+
+While all this makes sense, I find it's useful to play around with it to get a feel.
+
+## Theory
+Nope
+
+## Playtime
+
+### SQL
 We start by loading in the necessary stuff.
 
 {% include header-python.html %}
 ```python
 from sqlalchemy import create_engine, Column, String
+from sqlalchemy.orm import Session
 
 # Methods for abstracting classes to tables
 from sqlalchemy.ext.declarative import declarative_base
@@ -34,9 +46,37 @@ matt = Student(name='Matt', hobby='eating')
 john = Student(name='John', hobby='running')
 ```
 
-## NoSQL
+Now we do this other thing.
+
+{% include header-python.html %}
+```python
+session = Session(bind=engine)
+
+session.add(matt)
+session.add(john)
+session.commit()
+```
+
+We can view it like this.
+
+{% include header-python.html %}
+```python
+student_list = session.query(Student)
+print("id\tName\tAge\tHobby")
+print("-"*30)
+for s in student_list:
+    print(f"{s._id}\t{s.name}\t{s.age}\t{s.hobby}")
+
+# id    Name	Age    Hobby
+# ----------------------------
+# 1     Matt    abc    eating
+# 2     John	15     running
+```
+
+### NoSQL
 Now let's work with MongoDB.
 
+{% include header-python.html %}
 ```python
 import pymongo
 
@@ -55,6 +95,7 @@ for student in classroom:
 
 Now what's up.
 
+{% include header-python.html %}
 ```python
 db.classroom.insert_one(
   {
@@ -73,6 +114,7 @@ db.classroom.insert_one(
   })
 ```
 
+{% include header-python.html %}
 ```python
 classroom = db.classroom.find()
 
@@ -84,6 +126,7 @@ for student in classroom:
 
 Now we can do some cool nested querying.
 
+{% include header-python.html %}
 ```python
 for student in db.classroom.find({'hobbies.exercise': 'running'}):
     print(student)
@@ -92,6 +135,7 @@ for student in db.classroom.find({'hobbies.exercise': 'running'}):
 
 Check out new fields being added dynamically.
 
+{% include header-python.html %}
 ```python
 db.classroom.insert_one(
   {
@@ -103,6 +147,7 @@ db.classroom.insert_one(
 
 Now when we look at the data
 
+{% include header-python.html %}
 ```python
 classroom = db.classroom.find()
 
@@ -114,6 +159,9 @@ for student in classroom:
 # {'_id': ObjectId('605e36a2df0f9a3c4d8a3ffc'), 'name': 'Wonder Woman', 'age': 'infinite', 'favorite_food': 'pizza'}
 ```
 
+## Conclusions
+In conclusion, databases are *fantastic.* 10/10.
+
 
 ## Footnotes
 #### 1. [SQL](#sql)
@@ -121,8 +169,8 @@ SQLAlchemy [doesn't do type validation or coercion](https://stackoverflow.com/qu
 
 {% include header-python.html %}
 ```python
-fake = Student(name=123)  # name wrong, no hobby
-session.add(fake)
+bad_student = Student(name=123)  # name wrong, no hobby
+session.add(bad_student)
 session.commit()  # no problem!
 
 for student in session.query(Student):
@@ -130,6 +178,8 @@ for student in session.query(Student):
 # > normal student
 # > student with messed up attributes
 ```
+
+Not really an issue, at least for SQLite. But stuff won't show up in filtering.
 
 One way to ensure things are good is to do type checking when the instance of `Student` is first created. We can do this with the `__init__` method.
 
@@ -146,6 +196,9 @@ class Student(Base):
             f"name is type {type(name)}; must be str"
         assert isinstance(hobby, (str, type(None))),
             f"hobby is type {type(hobby)}; must be str or None"
+
+        self.name = name
+        self.hobby = hobby
 ```
 Now if you try to create the thing, it stops you in your tracks.
 
