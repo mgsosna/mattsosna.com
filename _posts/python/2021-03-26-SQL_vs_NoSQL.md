@@ -4,14 +4,25 @@ title: SQL vs. NoSQL in Python
 author: matt_sosna
 ---
 
-How do you store data when it's too large too fit on a hard drive? How can you make it possible for multiple people to view *and modify* the data simultaneously? Databases are the answer here.
+From ancient government, library, and medical records to present-day video and [IoT streams](https://en.wikipedia.org/wiki/Internet_of_things), we have always needed ways to efficiently store and retrieve data. Today, we have two major paradigms for how to optimally organize data in [**databases**](https://www.oracle.com/database/what-is-database/): the *structured* (SQL) model and the *unstructured* (NoSQL) model.
 
-But there are a few flavors of databases, i.e. SQL vs. NoSQL. They're different takes on the question of how to best store data. This post will first cover the theory before going through some code for you to create and play with databases in Python.
+The right approach depends on your problem, and you'll see databases everywhere. So let's build an intuition for what's right, and then have Python examples. We'll cover a bit of the history and theory for SQL and NoSQL, then do some stuff ourselves.
 
-While all this makes sense, I find it's useful to play around with it to get a feel.
+## History
+Computer databases arrived shortly after computers began being [adopted by businesses in the 1950s]((https://www.dataversity.net/brief-history-database-management/)), but it wasn't until 1970 that relational databases appeared. The main idea with a relational database
+The relational model: store data *only once*, and organize data into tables with *relations*.
 
-## Theory
-Nope
+
+NoSQL apparently only since 2009?
+> Johan Oskarsson had organised a meetup to discuss distributed non-relational databases. To popularise this meetup, he used a hashtag #NoSQL on twitter and this gave birth to NoSQL databases.
+
+How do you store data when it's too large too fit on a hard drive? How can you make it possible for multiple people to view *and modify* the data simultaneously, securely, and scalably? These are questions that were answered decades ago with
+
+Databases are the answer here.
+
+However, relational databases operate on the [assumption of a single server](https://www.cockroachlabs.com/blog/history-of-databases-distributed-sql/). Painful to scale.
+
+
 
 ## Playtime
 
