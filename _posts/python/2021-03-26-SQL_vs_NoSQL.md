@@ -1,16 +1,27 @@
 ---
 layout: post
-title: SQL vs. NoSQL in Python
+title: SQL vs. NoSQL databases in Python
 author: matt_sosna
 ---
 
-From ancient government, library, and medical records to present-day video and [IoT streams](https://en.wikipedia.org/wiki/Internet_of_things), we have always needed ways to efficiently store and retrieve data. Today, we have two major paradigms for how to optimally organize data in [**databases**](https://www.oracle.com/database/what-is-database/): the *structured* (SQL) model and the *unstructured* (NoSQL) model.
+From ancient government, library, and medical records to present-day video and [IoT streams](https://en.wikipedia.org/wiki/Internet_of_things), we have always needed ways to efficiently store and retrieve data. Yesterday's filing cabinets have become today's computer [**databases**](https://www.oracle.com/database/what-is-database/), with two major paradigms for how to best organize data: the *structured* (SQL) versus *unstructured* (NoSQL) approach.
 
-The right approach depends on your problem, and you'll see databases everywhere. So let's build an intuition for what's right, and then have Python examples. We'll cover a bit of the history and theory for SQL and NoSQL, then do some stuff ourselves.
+Databases are essential for any organization, so it's useful to wrap your head around where each type is useful. We'll start with a brief primer on the history and theory behind SQL and NoSQL. But memorizing abstract facts can only get you so far $-$ we'll then actually create each type of database in Python to get a hands-on intuition for how they work. Let's do it!
 
-## History
-Computer databases arrived shortly after computers began being [adopted by businesses in the 1950s]((https://www.dataversity.net/brief-history-database-management/)), but it wasn't until 1970 that relational databases appeared. The main idea with a relational database
-The relational model: store data *only once*, and organize data into tables with *relations*.
+## A time series of databases
+Databases arrived shortly after businesses [began adopting computers in the 1950s](https://www.dataversity.net/brief-history-database-management/), but it wasn't until 1970 that **relational** databases appeared. The main idea with a relational database is to avoid duplicating data by storing it *only once*, with different aspects of that data stored in tables with formal *relationships.*
+
+Say we're a school and are organizing our data. We have data on the students themselves, their grades, and their classrooms. We *could* have one giant table that looks something like this:
+
+<img src="{{  site.baseurl  }}/images/projects/sql_v_nosql/data_table.png" loading="lazy" alt="Table of data">
+
+But notice how most of the cells are duplicated info. Because students have multiple exam scores, storing all the data in one table results in duplicating all the other info that we only need to list once. (Unless you really want to see four copies of Jerry's favorite color, his classroom ID, and his classroom teacher.)
+
+If you only have a handful of students, it's no big deal. But as the amount of data grows, all those duplicated values will end up costing storage space and making it harder to extract the data you actually want from your table.
+
+Instead, it'd be far more efficient to break out this information into separate *tables*, then *relate* the info in the tables to one another. Here is an [entity-relationship diagram](https://www.visual-paradigm.com/guide/data-modeling/what-is-entity-relationship-diagram/) for a simple relational database with our data in separate tables.
+
+<img src="{{  site.baseurl  }}/images/projects/sql_v_nosql/erd.png" loading="lazy" alt="Entity-Relationship Diagram">
 
 
 NoSQL apparently only since 2009?
