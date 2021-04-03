@@ -4,34 +4,40 @@ title: SQL vs. NoSQL databases in Python
 author: matt_sosna
 ---
 
-From ancient government, library, and medical records to present-day video and [IoT streams](https://en.wikipedia.org/wiki/Internet_of_things), we have always needed ways to efficiently store and retrieve data. Yesterday's filing cabinets have become today's computer [**databases**](https://www.oracle.com/database/what-is-database/), with two major paradigms for how to best organize data: the *structured* (SQL) versus *unstructured* (NoSQL) approach.
+From ancient government, library, and medical records to present-day video and [IoT streams](https://en.wikipedia.org/wiki/Internet_of_things), we have always needed ways to efficiently store and retrieve data. Yesterday's filing cabinets have become today's computer [**databases**](https://www.oracle.com/database/what-is-database/), with two major paradigms for how to best organize data: the *structured* (relational) versus *unstructured* (non-relational) approach.
 
 Databases are essential for any organization, so it's useful to wrap your head around where each type is useful. We'll start with a brief primer on the history and theory behind SQL and NoSQL. But memorizing abstract facts can only get you so far $-$ we'll then actually create each type of database in Python to get a hands-on intuition for how they work. Let's do it!
 
 ## A time series of databases
-Databases arrived shortly after businesses [began adopting computers in the 1950s](https://www.dataversity.net/brief-history-database-management/), but it wasn't until 1970 that **relational** databases appeared. The main idea with a relational database is to avoid duplicating data by storing it *only once*, with different aspects of that data stored in tables with formal *relationships.*
+### Relational databases
+Databases arrived shortly after businesses [began adopting computers in the 1950s](https://www.dataversity.net/brief-history-database-management/), but it wasn't until 1970 that **relational** databases appeared. The main idea with a relational database is to avoid duplicating data by storing it *only once*, with different aspects of that data stored in *tables* with formal *relationships.* The relevant data can then be extracted from different tables, filtered, and rearranged with queries in SQL, or [Structured Query Language](https://en.wikipedia.org/wiki/SQL).
 
-Say we're a school and are organizing our data. We have data on the students themselves, their grades, and their classrooms. We *could* have one giant table that looks something like this:
+Say we're a school and are organizing our data on the students, their grades, and their classrooms. We *could* have one giant table that looks like this:
 
-<img src="{{  site.baseurl  }}/images/projects/sql_v_nosql/data_table.png" loading="lazy" alt="Table of data">
+<img src="{{  site.baseurl  }}/images/projects/sql_v_nosql/main_table.png" loading="lazy" alt="Table of data">
 
-But notice how most of the cells are duplicated info. Because students have multiple exam scores, storing all the data in one table results in duplicating all the other info that we only need to list once. (Unless you really want to see four copies of Jerry's favorite color, his classroom ID, and his classroom teacher.)
+This is a pretty inefficient way to store data, though. Because students have multiple exam scores, **storing all the data in one table requires duplicating info we only need to list once,** like Jerry's hobby, classroom ID, and teacher. If you only have a handful of students, it's no big deal. But as the amount of data grows, all those duplicated values end up costing storage space and making it harder to extract the data you actually want from your table.
 
-If you only have a handful of students, it's no big deal. But as the amount of data grows, all those duplicated values will end up costing storage space and making it harder to extract the data you actually want from your table.
+Instead, it'd be far more efficient to break out this information into separate *tables*, then *relate* the info in the tables to one another. This is what our tables would look like:
 
-Instead, it'd be far more efficient to break out this information into separate *tables*, then *relate* the info in the tables to one another. Here is an [entity-relationship diagram](https://www.visual-paradigm.com/guide/data-modeling/what-is-entity-relationship-diagram/) for a simple relational database with our data in separate tables.
+<img src="{{  site.baseurl  }}/images/projects/sql_v_nosql/multi_table.png" loading="lazy" alt="Multiple tables">
+
+That's only 30 cells compared to 42 in the main table $-$ **a 28.5% improvement!** For this particular set of fields and tables, as we increase the number of students, say to 100 or 1,000 or 1,000,000, the improvement actually stabilizes at **38%.** That's more than a third less storage space just by rearranging the data!
+
+But it's not enough to just store the data in separate tables; we still need to model their relationships. We can show this with an [entity-relationship diagram](https://www.visual-paradigm.com/guide/data-modeling/what-is-entity-relationship-diagram/) like the one below. This diagram shows that one classroom consists of multiple students, and each student has multiple grades.
 
 <img src="{{  site.baseurl  }}/images/projects/sql_v_nosql/erd.png" loading="lazy" alt="Entity-Relationship Diagram">
+
+### Nonrelational databases
+SQL databases are great. However, relational databases operate on the [assumption of a single server](https://www.cockroachlabs.com/blog/history-of-databases-distributed-sql/). Painful to scale.
+
+Relational = vertical scaling (add more compute to the server). Nonrelational scaling = horizontal.
 
 
 NoSQL apparently only since 2009?
 > Johan Oskarsson had organised a meetup to discuss distributed non-relational databases. To popularise this meetup, he used a hashtag #NoSQL on twitter and this gave birth to NoSQL databases.
 
-How do you store data when it's too large too fit on a hard drive? How can you make it possible for multiple people to view *and modify* the data simultaneously, securely, and scalably? These are questions that were answered decades ago with
 
-Databases are the answer here.
-
-However, relational databases operate on the [assumption of a single server](https://www.cockroachlabs.com/blog/history-of-databases-distributed-sql/). Painful to scale.
 
 
 
