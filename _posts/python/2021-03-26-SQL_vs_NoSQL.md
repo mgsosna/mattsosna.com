@@ -10,9 +10,9 @@ Databases are essential for any organization, so it's useful to wrap your head a
 
 ## A time series of databases
 ### Relational databases
-Databases arrived shortly after businesses [began adopting computers in the 1950s](https://www.dataversity.net/brief-history-database-management/), but it wasn't until 1970 that **relational** databases appeared. The main idea with a relational database is to avoid duplicating data by storing it *only once*, with different aspects of that data stored in *tables* with formal *relationships.* The relevant data can then be extracted from different tables, filtered, and rearranged with queries in SQL, or [Structured Query Language](https://en.wikipedia.org/wiki/SQL).
+Databases arrived shortly after businesses [began adopting computers in the 1950s](https://www.dataversity.net/brief-history-database-management/), but it wasn't until 1970 that **relational** databases appeared. The main idea with a relational database is to avoid duplicating data by storing it *only once*, with different aspects of that data stored in *tables* with formal *relationships.* The relevant data can then be extracted from different tables, filtered, and rearranged with queries in **SQL**, or [Structured Query Language](https://en.wikipedia.org/wiki/SQL).
 
-Say we're a school and are organizing our data on the students, their grades, and their classrooms. We *could* have one giant table that looks like this:
+Say we're a school and are organizing our data on students, grades, and classrooms. We *could* have one giant table that looks like this:
 
 <img src="{{  site.baseurl  }}/images/projects/sql_v_nosql/main_table.png" loading="lazy" alt="Table of data">
 
@@ -24,11 +24,26 @@ Instead, it'd be far more efficient to break out this information into separate 
 
 That's only 30 cells compared to 42 in the main table $-$ **a 28.5% improvement!** For this particular set of fields and tables, as we increase the number of students, say to 100 or 1,000 or 1,000,000, the improvement actually stabilizes at **38%.** That's more than a third less storage space just by rearranging the data!
 
-But it's not enough to just store the data in separate tables; we still need to model their relationships. We can show this with an [entity-relationship diagram](https://www.visual-paradigm.com/guide/data-modeling/what-is-entity-relationship-diagram/) like the one below. This diagram shows that one classroom consists of multiple students, and each student has multiple grades.
+But it's not enough to just store the data in separate tables; we still need to model their relationships. We can visualize our database [schema](https://en.wikipedia.org/wiki/Database_schema) with an [entity-relationship diagram](https://www.visual-paradigm.com/guide/data-modeling/what-is-entity-relationship-diagram/) like the one below.
 
 <img src="{{  site.baseurl  }}/images/projects/sql_v_nosql/erd.png" loading="lazy" alt="Entity-Relationship Diagram">
 
+This diagram shows that one classroom consists of multiple students, and each student has multiple grades. We can use this schema to create a relational database in a [relational database management system (RDBMS)](https://www.codecademy.com/articles/what-is-rdbms-sql), such as [MySQL](https://en.wikipedia.org/wiki/MySQL) or [PostgreSQL](https://en.wikipedia.org/wiki/PostgreSQL), and then be on our merry, storage-efficient way.
+
 ### Nonrelational databases
+So we've figured how to solve all data storage problems, right? Well, not quite. Relational databases are great for data that can easily be stored in tables, such as strings, numbers, booleans, and dates. In our database above, for example, each student's hobby can easily be stored in one cell as a string.
+
+But what if a student has more than one hobby? Or what if we want to keep track of *subcategories* of hobbies, like exercise, art, or games? In other words, what if we want to store values like these:
+
+```
+hobby_list = ['gardening', 'reading']
+hobby_dict = {'exercise': ['swimming', 'running'],
+              'games': ['chess']}
+```
+
+To allow for *lists* of hobbies, we could create an intermediary [many-to-many table](https://fmhelp.filemaker.com/help/18/fmp/en/index.html#page/FMP_Help/many-to-many-relationships.html) to allow students to have multiple hobbies (and for multiple students to have the same hobby). But it starts getting complicated for the hobby dictionary... we'd need to consider several many-to-many tables, or [storing our dictionary as a JSON string](https://stackoverflow.com/questions/31796332/psycopg2-insert-python-dictionary-as-json).
+
+
 SQL databases are great. However, relational databases operate on the [assumption of a single server](https://www.cockroachlabs.com/blog/history-of-databases-distributed-sql/). Painful to scale.
 
 Relational = vertical scaling (add more compute to the server). Nonrelational scaling = horizontal.
