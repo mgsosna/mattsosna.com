@@ -4,7 +4,7 @@ title: SQL vs. NoSQL databases in Python
 author: matt_sosna
 ---
 
-From ancient government, library, and medical records to present-day video and [IoT streams](https://en.wikipedia.org/wiki/Internet_of_things), we have always needed ways to efficiently store and retrieve data. Yesterday's filing cabinets have become today's computer [**databases**](https://www.oracle.com/database/what-is-database/), with two major paradigms for how to best organize data: the *structured* (relational) versus *unstructured* (non-relational) approach.
+From ancient government, library, and medical records to present-day video and [IoT streams](https://en.wikipedia.org/wiki/Internet_of_things), we have always needed ways to efficiently store and retrieve data. Yesterday's filing cabinets have become today's computer [**databases**](https://www.oracle.com/database/what-is-database/), with two major paradigms for how to best organize data: the *structured* (SQL / relational) versus *unstructured* (NoSQL / non-relational) approach.
 
 Databases are essential for any organization, so it's useful to wrap your head around where each type is useful. We'll start with a brief primer on the history and theory behind SQL and NoSQL. But memorizing abstract facts can only get you so far $-$ we'll then actually create each type of database in Python to get a hands-on intuition for how they work. Let's do it!
 
@@ -52,47 +52,92 @@ NoSQL databases address these needs by **sacrificing structure for flexibility**
 But of course, this design also has its drawbacks, or we'd have all switched over. The lack of a database schema means it's difficult to join data between different collections of data, and having distributed servers means queries can return stale data before updates are synchronized.<sup>[[2]](#2-nosql-databases)</sup> The right choice between a SQL and NoSQL database, then, depends on which of the drawbacks you're willing to deal with.
 
 ## Playtime
-Enough theory; let's actually create each type of database in Python.
+Enough theory; let's actually create each type of database in Python. We'll use the `sqlalchemy` library to create a simple [SQLite](https://en.wikipedia.org/wiki/SQLite) database, and we'll use `pymongo` to create a [MongoDB](https://en.wikipedia.org/wiki/MongoDB) NoSQL database.
 
 ### SQL
-We start by loading in the necessary stuff.
+In professional contexts, we'll probably want to create a database via a dedicated RDBMS with actual SQL code. But for our simple proof of concept here, we'll use [SQLAlchemy](https://www.sqlalchemy.org/).
+
+SQLAlchemy lets you create, modify, and interact with relational databases in Python via an [**object relational mapper**](https://www.fullstackpython.com/object-relational-mappers-orms.html). The main idea to wrap your head around is that **SQLAlchemy uses <i><u>Python classes</u></i> to represent <i><u>database tables</u></i>.** <i><u>Instances of a Python class</u></i> can be considered <i><u>rows of a table</u></i>.
+
+We start by loading in the necessary `sqlalchemy` classes. The imports in line 1 are for establishing a connection to the database (`create_engine`) and defining the schema of our tables (`Column`, `String`, `Integer`, `ForeignKey`). The next import, `Session`, lets us read and write to our database. Finally, we use `declarative_base` to actually map our Python classes to SQLAlchemy tables.
 
 {% include header-python.html %}
 ```python
-from sqlalchemy import create_engine, Column, String
+from sqlalchemy import create_engine, Column, String, Integer, ForeignKey
 from sqlalchemy.orm import Session
 
-# Methods for abstracting classes to tables
+# Use the default method for abstracting classes to tables
 from sqlalchemy.ext.declarative import declarative_base
-
-# Use default declarative base
 Base = declarative_base()
 ```
 
-We then create our class, which is also a table. Then we create instances of that class... which serve as rows. It's a little weird to wrap your head around.
+We now create our `classroom`, `student`, and `grade` tables as the Python classes `Classroom`, `Student`, and `Grade`. Note that they all inherit from the `Base` SQLALchemy class. Our classes are straightforward: they only define their corresponding table name and its columns.
 
 {% include header-python.html %}
 ```python
-# Create Student class / Student table
+class Classroom(Base):
+    __tablename__ = 'classroom'
+    id = Column(Integer, primary_key=True)
+    teacher_name = Column(String(255))
+
 class Student(Base):
     __tablename__ = 'student'
-    _id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
     hobby = Column(String(255))
+    classroom_id = Column(Integer, ForeignKey(Classroom.id))
 
-# Create instances of Student / rows for database
-matt = Student(name='Matt', hobby='eating')
-john = Student(name='John', hobby='running')
+class Grade(Base):
+    __tablename__ = 'grade'
+    id = Column(Integer, primary_key=True)
+    exam_id = Column(Integer)
+    student_id = Column(Integer, ForeignKey(Student.id))
+    exam_score = Column(Integer)
 ```
 
-Now we do this other thing.
+Now we create our database and tables. `create_engine` launches a SQLite database.<sup>[[3]](#3-sql)</sup>
 
 {% include header-python.html %}
 ```python
+# Create DB connection
+engine = create_engine("sqlite:///students.sqlite")
+conn = engine.connect()
 session = Session(bind=engine)
 
-session.add(matt)
-session.add(john)
+# Create metadata layer that abstracts our SQL DB
+Base.metadata.create_all(engine)
+```
+
+Now we make our rows as instances of the Python classes.
+
+{% include header-python.html %}
+```python
+classroom1 = Classroom(teacher_name="Jerry's Dad")
+classroom2 = Classroom(teacher_name="Jerry")
+
+jerry = Student(name='Jerry', hobby='gardening', classroom_id=1)
+muhammed = Student(name='Muhammed', hobby='swimming', classroom_id=2)
+
+exam_j1 = Grade(exam_id=1, student_id=1, exam_score=1)
+exam_j2 = Grade(exam_id=2, student_id=1, exam_score=0)
+exam_j3 = Grade(exam_id=3, student_id=1, exam_score=-25)
+
+exam_m1 = Grade(exam_id=1, student_id=2, exam_score=100)
+exam_m2 = Grade(exam_id=2, student_id=2, exam_score=100)
+exam_m3 = Grade(exam_id=3, student_id=2, exam_score=100)
+```
+
+Now we actually write our data to the DB.
+
+{% include header-python.html %}
+```python
+objects = [classroom1, classroom2, jerry, muhammed,
+           exam_j1, exam_j2, exam_j3, exam_m1, exam_m2, exam_m3]:
+
+for obj in objects:
+    session.add(obj)
+
+# Commit changes to database
 session.commit()
 ```
 
@@ -100,6 +145,27 @@ We can view it like this.
 
 {% include header-python.html %}
 ```python
+import pandas as pd
+
+query = """
+    SELECT s.id,
+           s.name,
+           s.hobby,
+           c.teacher_name,
+           g.exam_id,
+           g.exam_score
+      FROM student AS s
+INNER JOIN grade as g
+        ON s.id = g.student_id
+INNER JOIN classroom as c
+        ON c.id = s.classroom_id;"""
+
+pd.read_sql_query(query, session.bind)
+```
+<center>
+<img src="{{  site.baseurl  }}/images/projects/sql_v_nosql/pandas_example.png" height="70%" width="70%">
+</center>
+<!-- ```python
 student_list = session.query(Student)
 print("id\tName\tAge\tHobby")
 print("-"*30)
@@ -110,7 +176,7 @@ for s in student_list:
 # ----------------------------
 # 1     Matt    abc    eating
 # 2     John	15     running
-```
+``` -->
 
 ### NoSQL
 Now let's work with MongoDB.
@@ -211,3 +277,6 @@ This [great answer on Stack Overflow](https://stackoverflow.com/questions/153676
 
 #### 2. [NoSQL databases](#nosql-databases)
 Because a NoSQL database is distributed on multiple servers, there is a slight delay before a change in the database on one server is reflected in all other servers. This is usually not an issue, but you can imagine a scenario where someone is able to withdraw money from a bank account twice before all servers are aware of the first withdrawal.
+
+#### 3. [SQL](#sql)
+One really nice feature of SQLAlchemy is how it handles differences in SQL syntax for you. We use a SQLite database in this post, but we can switch to a MySQL or Postgres database just by changing the string we pass into `create_engine`. All other code remains exactly the same. A nice strategy for writing a Python app that uses SQLAlchemy is to start with SQLite while you're writing and debugging, and then just switch to something production-ready like Postgres when you deploy.
