@@ -52,7 +52,7 @@ NoSQL databases address these needs by **sacrificing structure for flexibility**
 But of course, this design also has its drawbacks, or we'd have all switched over. The lack of a database schema means it's difficult to join data between different collections of data, and having distributed servers means queries can return stale data before updates are synchronized.<sup>[[2]](#2-nosql-databases)</sup> The right choice between a SQL and NoSQL database, then, depends on which of the drawbacks you're willing to deal with.
 
 ## Playtime
-Enough theory; let's actually create each type of database in Python. We'll use the `sqlalchemy` library to create a simple [SQLite](https://en.wikipedia.org/wiki/SQLite) database, and we'll use `pymongo` to create a [MongoDB](https://en.wikipedia.org/wiki/MongoDB) NoSQL database.
+Enough theory; let's actually create each type of database in Python. We'll use the `sqlalchemy` library to create a simple [SQLite](https://en.wikipedia.org/wiki/SQLite) database, and we'll use `pymongo` to create a [MongoDB](https://en.wikipedia.org/wiki/MongoDB) NoSQL database. Make sure to install `sqlalchemy` and `pymongo` to run the code below, as well as [start a MongoDB server](https://docs.mongodb.com/manual/tutorial/manage-mongodb-processes/).
 
 ### SQL
 In professional contexts, we'll probably want to create a database via a dedicated RDBMS with actual SQL code. But for our simple proof of concept here, we'll use [SQLAlchemy](https://www.sqlalchemy.org/).
@@ -71,7 +71,7 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 ```
 
-We now create our `classroom`, `student`, and `grade` tables as the Python classes `Classroom`, `Student`, and `Grade`. Note that they all inherit from the `Base` SQLALchemy class. Our classes are straightforward: they only define their corresponding table name and its columns.
+We now create our classroom, student, and grade tables as the Python classes `Classroom`, `Student`, and `Grade`. Note that they all inherit from the `Base` SQLALchemy class. Our classes are straightforward: they only define their corresponding table name and its columns.
 
 {% include header-python.html %}
 ```python
@@ -95,7 +95,7 @@ class Grade(Base):
     exam_score = Column(Integer)
 ```
 
-Now we create our database and tables. `create_engine` launches a SQLite database.<sup>[[3]](#3-sql)</sup>
+Now we create our database and tables. `create_engine` launches a SQLite database,<sup>[[3]](#3-sql)</sup> which we then turn on. Line 4 starts our session and line 7 creates database tables from our Python classes.
 
 {% include header-python.html %}
 ```python
@@ -108,7 +108,7 @@ session = Session(bind=engine)
 Base.metadata.create_all(engine)
 ```
 
-Now we make our rows as instances of the Python classes.
+We now generate our data. Instances of `Classroom`, `Student`, and `Grade` serve as rows in each table.
 
 {% include header-python.html %}
 ```python
@@ -127,7 +127,7 @@ exam_m2 = Grade(exam_id=2, student_id=2, exam_score=100)
 exam_m3 = Grade(exam_id=3, student_id=2, exam_score=100)
 ```
 
-Now we actually write our data to the DB.
+Now we finally write our data to the database. Similarly to Git, we use `session.add` to add each row to the staging area and `session.commit` to actually write the data.
 
 {% include header-python.html %}
 ```python
@@ -141,7 +141,7 @@ for obj in objects:
 session.commit()
 ```
 
-We can view it like this.
+Nice work! Let's recreate the first table in this post.
 
 {% include header-python.html %}
 ```python
@@ -151,6 +151,7 @@ query = """
     SELECT s.id,
            s.name,
            s.hobby,
+           c.id AS classroom_id,
            c.teacher_name,
            g.exam_id,
            g.exam_score
@@ -162,24 +163,13 @@ INNER JOIN classroom as c
 
 pd.read_sql_query(query, session.bind)
 ```
-<center>
-<img src="{{  site.baseurl  }}/images/projects/sql_v_nosql/pandas_example.png" height="70%" width="70%">
-</center>
-<!-- ```python
-student_list = session.query(Student)
-print("id\tName\tAge\tHobby")
-print("-"*30)
-for s in student_list:
-    print(f"{s._id}\t{s.name}\t{s.age}\t{s.hobby}")
 
-# id    Name	Age    Hobby
-# ----------------------------
-# 1     Matt    abc    eating
-# 2     John	15     running
-``` -->
+<center>
+<img src="{{  site.baseurl  }}/images/projects/sql_v_nosql/pandas_example.png" height="80%" width="80%" style="margin-top:15px">
+</center>
 
 ### NoSQL
-Now let's work with MongoDB.
+Now let's switch to MongoDB. Make sure to install MongoDB and [launch a local server](https://docs.mongodb.com/manual/tutorial/manage-mongodb-processes/).
 
 {% include header-python.html %}
 ```python
