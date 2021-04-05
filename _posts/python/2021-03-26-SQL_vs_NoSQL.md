@@ -4,7 +4,7 @@ title: SQL vs. NoSQL databases in Python
 author: matt_sosna
 ---
 
-From ancient government, library, and medical records to present-day video and [IoT streams](https://en.wikipedia.org/wiki/Internet_of_things), we have always needed ways to efficiently store and retrieve data. Yesterday's filing cabinets have become today's computer [**databases**](https://www.oracle.com/database/what-is-database/), with two major paradigms for how to best organize data: the *structured* (SQL / relational) versus *unstructured* (NoSQL / non-relational) approach.
+From ancient government, library, and medical records to present-day video and [IoT streams](https://en.wikipedia.org/wiki/Internet_of_things), we have always needed ways to efficiently store and retrieve data. Yesterday's filing cabinets have become today's computer [**databases**](https://www.oracle.com/database/what-is-database/), with two major paradigms for how to best organize data: the _**relational**_ (SQL) versus _**non-relational**_ (NoSQL) approach.
 
 Databases are essential for any organization, so it's useful to wrap your head around where each type is useful. We'll start with a brief primer on the history and theory behind SQL and NoSQL. But memorizing abstract facts can only get you so far $-$ we'll then actually create each type of database in Python to get a hands-on intuition for how they work. Let's do it!
 
@@ -47,9 +47,11 @@ Another issue with relational databases appeared in the 90's as the internet gre
 
 But there comes a point where even the most expensive machine can't handle a database. A better approach may be scale **horizontally:** to <u><i>add more machines</i></u> rather than try to <u><i>make your one machine stronger</i></u>. This is not only cheaper $-$ it bakes in resilience in case your one machine fails. (Indeed, distributed computing with cheap hardware is the strategy [Google used from the start](https://podcasts.apple.com/us/podcast/two-inside-the-walls/id1541394865?i=1000501909699).)
 
-NoSQL databases address these needs by **sacrificing structure for flexibility** and running on **distributed clusters of machines.** This design enables them to easily store and query large amounts of unstructured data (i.e. non-tabular), even when records are shaped completely differently from one another. Muhammed have a 50-page JSON of neatly-organized hobbies and sub-hobbies while Jerry only enjoy gardening? No problem.
+<img src="{{  site.baseurl  }}/images/projects/sql_v_nosql/scaling.png" loading="lazy">
 
-But of course, this design also has its drawbacks, or we'd have all switched over. The lack of a database schema means it's difficult to join data between different collections of data, and having distributed servers means queries can return stale data before updates are synchronized.<sup>[[2]](#2-nosql-databases)</sup> The right choice between a SQL and NoSQL database, then, depends on which of the drawbacks you're willing to deal with.
+NoSQL databases address these needs by **allowing for nested or variable-type data** and running on **distributed clusters of machines.**<sup>[[2]](#2-nosql-databases)</sup> This design enables them to easily store and query large amounts of unstructured data (i.e. non-tabular), even when records are shaped completely differently from one another. Muhammed have a 50-page JSON of neatly-organized hobbies and sub-hobbies while Jerry only enjoy gardening? No problem.
+
+But of course, this design also has its drawbacks, or we'd have all switched over. The lack of a database schema means there's nothing stopping a user from writing in garbage (e.g. accidentally writing a "name" string to the "grade" field), and it can be difficult to join data between different collections in the database. Using distributed servers also means queries can return stale data before updates are synchronized.<sup>[[3]](#3-nosql-databases)</sup> The right choice between a SQL and NoSQL database, then, depends on which of the drawbacks you're willing to deal with.
 
 ## Playtime
 Enough theory; let's actually create each type of database in Python. We'll use the `sqlalchemy` library to create a simple [SQLite](https://en.wikipedia.org/wiki/SQLite) database, and we'll use `pymongo` to create a [MongoDB](https://en.wikipedia.org/wiki/MongoDB) NoSQL database. Make sure to install `sqlalchemy` and `pymongo` to run the code below, as well as [start a MongoDB server](https://docs.mongodb.com/manual/tutorial/manage-mongodb-processes/).
@@ -95,7 +97,7 @@ class Grade(Base):
     exam_score = Column(Integer)
 ```
 
-Now we create our database and tables. `create_engine` launches a SQLite database,<sup>[[3]](#3-sql)</sup> which we then turn on. Line 4 starts our session and line 7 creates database tables from our Python classes.
+Now we create our database and tables. `create_engine` launches a SQLite database,<sup>[[4]](#4-sql)</sup> which we then turn on. Line 4 starts our session and line 7 creates database tables from our Python classes.
 
 {% include header-python.html %}
 ```python
@@ -141,16 +143,16 @@ for obj in objects:
 session.commit()
 ```
 
-Nice work! Let's recreate the first table in this post.
+Nice work! Let's wrap up this section by recreating the first table in this post.
 
 {% include header-python.html %}
 ```python
 import pandas as pd
 
 query = """
-    SELECT s.id,
-           s.name,
-           s.hobby,
+    SELECT s.id AS student_id,
+           s.name AS student_name,
+           s.hobby AS student_hobby,
            c.id AS classroom_id,
            c.teacher_name,
            g.exam_id,
@@ -165,11 +167,11 @@ pd.read_sql_query(query, session.bind)
 ```
 
 <center>
-<img src="{{  site.baseurl  }}/images/projects/sql_v_nosql/pandas_example.png" height="80%" width="80%" style="margin-top:15px">
+<img src="{{  site.baseurl  }}/images/projects/sql_v_nosql/pandas_example.png" loading="lazy">
 </center>
 
 ### NoSQL
-Now let's switch to MongoDB. Make sure to install MongoDB and [launch a local server](https://docs.mongodb.com/manual/tutorial/manage-mongodb-processes/).
+Now let's switch to MongoDB. Make sure to install MongoDB and [launch a local server](https://docs.mongodb.com/manual/tutorial/manage-mongodb-processes/). Below, we import `pymongo`, connect to our local server, and then create a database called `classDB`.
 
 {% include header-python.html %}
 ```python
@@ -179,79 +181,92 @@ import pymongo
 conn = "mongodb://localhost:27017"
 client = pymongo.MongoClient(conn)
 
-# Create a DB and collection
+# Create a database
 db = client.classDB
+```
+
+In a relational database, we create <u><i>tables</i></u> with <u><i>records</i></u>. In a NoSQL database, we create a <u><i>collection</i></u> with <u><i>documents</i></u>. Below, we create a collection called `classroom` and insert dictionaries with each student's info.
+
+{% include header-python.html %}
+```python
+db.classroom.insert_many(
+    [
+      {
+        'name': 'Jerry',
+        'hobbies': 'gardening',
+        'classroom_teacher': "Jerry's Dad",
+        'exam_scores': [1, 0, -25]
+      },
+      {
+        'name': 'Muhammed',
+        'hobbies': {'exercise': ['swimming', 'running'],
+                    'games': 'chess'},
+        'classroom_teacher': 'Jerry',
+        'exam_scores': [100, 100, 100]
+      }
+    ])
+```
+Notice how the datatypes in the `classroom_teacher` are different: it's a string for Jerry and a dictionary for Muhammed. (And even within the `hobbies` dictionary, the values are both lists and strings.) MongoDB doesn't care $-$ there's no schema to enforce datatypes or structure on the data.
+
+We can view our data by iterating through the objects returned from `db.classroom.find`. We use `pprint` to make it easier to read the output. Notice how MongoDB adds a unique object ID to each document.
+
+{% include header-python.html %}
+```python
+import pprint
+
 classroom = db.classroom.find()
 
-# Confirm nothing there
 for student in classroom:
-    print(student)  # nothing
+    pprint.pprint(student)
+    print()
+
+# {'_id': ObjectId('606b608f07fe3f5be3d00efd'),
+#  'name': 'Jerry',
+#  'hobbies': 'gardening',
+#  'classroom_teacher': "Jerry's Dad",
+#  'exam_scores': [1, 0, -25]}
+
+# {'_id': ObjectId('606b608f07fe3f5be3d00efe'),
+#  'name': 'Muhammed',
+#  'hobbies': {'exercise': ['swimming', 'running'], 'games': 'chess'},
+#  'classroom_teacher': 'Jerry',
+#  'exam_scores': [100, 100, 100]}
 ```
 
-Now what's up.
+We can easily add a document with new fields.
 
-{% include header-python.html %}
 ```python
+import datetime as dt
+
 db.classroom.insert_one(
-  {
-    'name': 'John',
-    'age': 15,
-    'hobbies': {'exercise': 'running',
-                'reading': 'comedy'}
-  })
-
-db.classroom.insert_one(
-  {
-    'name': 'Matt',
-    'age': 30,
-    'hobbies': {'exercise': 'swimming',
-                'reading': 'comedy'}
-  })
+    {
+        'name': 'Samantha',
+        'birthday': dt.datetime(2012, 2, 29),
+        'favorite_color': None
+    }
+)
 ```
+
+Finally, let's perform two queries that really highlight how our MongoDB database differs from SQLite. The first query embraces the lack of a database schema by finding all documents that contain a `birthday` field. The second query searches for documents that have `running` in the nested field `exercise` within `hobbies`.
 
 {% include header-python.html %}
 ```python
-classroom = db.classroom.find()
+for student in db.classroom.find({'birthday': {'$exists': True}}):
+    pprint.pprint(student)
 
-for student in classroom:
-    print(student)
-# {'_id': ObjectId('605e3627df0f9a3c4d8a3ffa'), 'name': 'John', 'age': 15, 'hobbies': {'exercise': 'running', 'reading': 'comedy'}}
-# {'_id': ObjectId('605e3627df0f9a3c4d8a3ffb'), 'name': 'Matt', 'age': 30, 'hobbies': {'exercise': 'swimming', 'reading': 'comedy'}}
-```
+# {'_id': ObjectId('606b893307fe3f5be3d00f04'),
+#  'birthday': datetime.datetime(2012, 2, 29, 0, 0),
+#  'favorite_color': None,
+#  'name': 'Samantha'}
 
-Now we can do some cool nested querying.
-
-{% include header-python.html %}
-```python
 for student in db.classroom.find({'hobbies.exercise': 'running'}):
-    print(student)
-# {'_id': ObjectId('605e3627df0f9a3c4d8a3ffa'), 'name': 'John', 'age': 15, 'hobbies': {'exercise': 'running', 'reading': 'comedy'}}
-```
+    pprint.pprint(student)
 
-Check out new fields being added dynamically.
-
-{% include header-python.html %}
-```python
-db.classroom.insert_one(
-  {
-    'name': 'Wonder Woman',
-    'age': 'infinite',
-    'favorite_food': 'pizza'
-  })
-```
-
-Now when we look at the data
-
-{% include header-python.html %}
-```python
-classroom = db.classroom.find()
-
-for student in classroom:
-    print(student)
-
-# {'_id': ObjectId('605e3627df0f9a3c4d8a3ffa'), 'name': 'John', 'age': 15, 'hobbies': {'exercise': 'running', 'reading': 'comedy'}}
-# {'_id': ObjectId('605e3627df0f9a3c4d8a3ffb'), 'name': 'Matt', 'age': 30, 'hobbies': {'exercise': 'swimming', 'reading': 'comedy'}}
-# {'_id': ObjectId('605e36a2df0f9a3c4d8a3ffc'), 'name': 'Wonder Woman', 'age': 'infinite', 'favorite_food': 'pizza'}
+# {'_id': ObjectId('606b891107fe3f5be3d00f03'),
+#  'classroom_teacher': 'Jerry',
+#  'exam_scores': [100, 100, 100],
+#  'hobbies': {'exercise': ['swimming', 'running'], 'games': 'chess'},
+#  'name': 'Muhammed'}
 ```
 
 ## Conclusions
@@ -266,7 +281,10 @@ This [great answer on Stack Overflow](https://stackoverflow.com/questions/153676
 2. **Foreign keys between tables can't be created on JSON keys.** To relate two tables, you have to use values in a column, which here would be the entire JSON in the row, rather than keys within the JSON.
 
 #### 2. [NoSQL databases](#nosql-databases)
-Because a NoSQL database is distributed on multiple servers, there is a slight delay before a change in the database on one server is reflected in all other servers. This is usually not an issue, but you can imagine a scenario where someone is able to withdraw money from a bank account twice before all servers are aware of the first withdrawal.
+I found it hard to have a short, snappy description for how NoSQL databases store data, since [there are multiple NoSQL database types](https://www.mongodb.com/scale/types-of-nosql-databases). A key-value database can have virtually no restrictions on its data, a document database has basic assumptions on the format of its contents (e.g. XML vs. JSON), while a graph database may be strict on how nodes and edges are stored. A column-oriented database, meanwhile, are effectively tables but with data organized by columns rather than by rows.
 
-#### 3. [SQL](#sql)
+#### 3. [NoSQL databases](#nosql-databases)
+Because a NoSQL database is distributed on multiple servers, there is a slight delay before a change in the database on one server is reflected in all other servers. This usually isn't an issue, but you can imagine a scenario where someone is able to withdraw money from a bank account twice before all servers are aware of the first withdrawal.
+
+#### 4. [SQL](#sql)
 One really nice feature of SQLAlchemy is how it handles differences in SQL syntax for you. We use a SQLite database in this post, but we can switch to a MySQL or Postgres database just by changing the string we pass into `create_engine`. All other code remains exactly the same. A nice strategy for writing a Python app that uses SQLAlchemy is to start with SQLite while you're writing and debugging, and then just switch to something production-ready like Postgres when you deploy.
