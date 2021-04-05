@@ -48,7 +48,7 @@ permalink: /blog/
 ## Python
 ### Random Python
 1. [Perspectives on Python after R]({{ site.baseurl }}/R-to-Python)
-
+2. [SQL vs. NoSQL databases in Python]({{  site.baseurl  }}/SQL_vs_NoSQL/)
 
 ## R
 ### Introduction to R
