@@ -6,7 +6,7 @@ author: matt_sosna
 
 From ancient government, library, and medical records to present-day video and [IoT streams](https://en.wikipedia.org/wiki/Internet_of_things), we have always needed ways to efficiently store and retrieve data. Yesterday's filing cabinets have become today's computer [**databases**](https://www.oracle.com/database/what-is-database/), with two major paradigms for how to best organize data: the _**relational**_ (SQL) versus _**non-relational**_ (NoSQL) approach.
 
-Databases are essential for any organization, so it's useful to wrap your head around where each type is useful. We'll start with a brief primer on the history and theory behind SQL and NoSQL. But memorizing abstract facts can only get you so far $-$ we'll then actually create each type of database in Python to get a hands-on intuition for how they work. Let's do it!
+Databases are essential for any organization, so it's useful to wrap your head around where each type is useful. We'll start with a brief primer on the history and theory behind SQL and NoSQL. But memorizing abstract facts can only get you so far $-$ we'll then actually create each type of database in Python to build an intuition for how they work. Let's do it!
 
 ## A time series of databases
 ### SQL databases
@@ -61,7 +61,7 @@ In professional contexts, we'll probably want to create a database via a dedicat
 
 SQLAlchemy lets you create, modify, and interact with relational databases in Python via an [**object relational mapper**](https://www.fullstackpython.com/object-relational-mappers-orms.html). The main idea to wrap your head around is that **SQLAlchemy uses <i><u>Python classes</u></i> to represent <i><u>database tables</u></i>.** <i><u>Instances of a Python class</u></i> can be considered <i><u>rows of a table</u></i>.
 
-We start by loading in the necessary `sqlalchemy` classes. The imports in line 1 are for establishing a connection to the database (`create_engine`) and defining the schema of our tables (`Column`, `String`, `Integer`, `ForeignKey`). The next import, `Session`, lets us read and write to our database. Finally, we use `declarative_base` to actually map our Python classes to SQLAlchemy tables.
+We start by loading in the necessary `sqlalchemy` classes. The imports in line 1 are for establishing a connection to the database (`create_engine`) and defining the schema of our tables (`Column`, `String`, `Integer`, `ForeignKey`). The next import, `Session`, lets us read and write to our database. Finally, we use `declarative_base` to create a template Python class whose children will be mapped to SQLAlchemy tables.
 
 {% include header-python.html %}
 ```python
@@ -270,7 +270,10 @@ for student in db.classroom.find({'hobbies.exercise': 'running'}):
 ```
 
 ## Conclusions
-In conclusion, databases are *fantastic.* 10/10.
+This post covered the history of [SQL](https://en.wikipedia.org/wiki/SQL) and [NoSQL](https://en.wikipedia.org/wiki/NoSQL) databases and their relative advantages and disadvantages. We then made things more concrete by creating databases of each type in Python with [SQLAlchemy](https://www.sqlalchemy.org/) and [MongoDB](https://www.mongodb.com/). I highly recommend getting your hands dirty with concepts that are fairly theoretical like the SQL vs. NoSQL battle $-$ I learned a lot from writing the code for this post! Look out for a future post with some coding bloopers, where I'll explore some limits of SQLite and MongoDB.
+
+Best,<br>
+Matt
 
 
 ## Footnotes
