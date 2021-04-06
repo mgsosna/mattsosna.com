@@ -185,7 +185,7 @@ client = pymongo.MongoClient(conn)
 db = client.classDB
 ```
 
-In a relational database, we create <u><i>tables</i></u> with <u><i>records</i></u>. In a NoSQL database, we create a <u><i>collection</i></u> with <u><i>documents</i></u>. Below, we create a collection called `classroom` and insert dictionaries with each student's info.
+In a relational database, we create <u><i>tables</i></u> with <u><i>records</i></u>. In a NoSQL database, we create <u><i>collections</i></u> with <u><i>documents</i></u>. Below, we create a collection called `classroom` and insert dictionaries with each student's info.
 
 {% include header-python.html %}
 ```python
@@ -206,7 +206,7 @@ db.classroom.insert_many(
       }
     ])
 ```
-Notice how the datatypes in the `classroom_teacher` are different: it's a string for Jerry and a dictionary for Muhammed. (And even within the `hobbies` dictionary, the values are both lists and strings.) MongoDB doesn't care $-$ there's no schema to enforce datatypes or structure on the data.
+Notice how the datatypes in `hobbies` are different: it's a string for Jerry and a dictionary for Muhammed. (And even within the `hobbies` dictionary, the values are both lists and strings.) MongoDB doesn't care $-$ there's no schema to enforce datatypes or structure on the data.
 
 We can view our data by iterating through the objects returned from `db.classroom.find`. We use `pprint` to make it easier to read the output. Notice how MongoDB adds a unique object ID to each document.
 
