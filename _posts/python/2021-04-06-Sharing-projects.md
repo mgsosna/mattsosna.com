@@ -32,10 +32,9 @@ But even detailed instructions and a `requirements.txt` file may fall short if y
 ### Level 2: Docker
 _**What your recipient needs to do:** have Docker installed, pull the relevant image(s), and run a Docker Compose._
 
-[**Docker**](https://docs.docker.com/get-started/overview/) is a containerization service. A **container** is an isolated software environment, where your libraries, programs, *and even operating system* are completely independent from the rest of your computer. Think of a Docker container as a miniature computer inside your computer<sup>[[1]](#level-2-docker)</sup> $-$ an isolated universe.
+[**Docker**](https://docs.docker.com/get-started/overview/) is a containerization service. A **container** is an isolated software environment, where its libraries, programs, *and even operating system* are completely independent from the rest of your computer. Think of a Docker container as a miniature computer inside your computer<sup>[[1]](#1-level-2-docker)</sup>.
 
-
-
+When your project involves multiple services, each with their own libraries and dependencies, it's worth considering Docker. With Docker, you can create an *image* of a service like a Python Flask app, a snapshot of a computer environment where your app works, and then *share that image* with someone else. Here's what the code looks like for creating an image like this:
 
 {% include header-dockerfile.html %}
 ```dockerfile
@@ -58,6 +57,36 @@ EXPOSE 80
 # Run this code on starting the container
 ENTRYPOINT python3 /opt/app.py
 ```
+
+You'd then want to create images for multiple services. But you can then do a Docker-Compose to bundle them all together.
+
+{% include header-yaml.html %}
+```yaml
+version: "3"
+services:
+  redis:
+    image: redis
+
+  db:
+    image: postgres:9.4
+    environment:
+    	POSTGRES_USER: "postgres"
+    	POSTGRES_PASSWORD: "postgres"
+
+  vote:
+    image: voting-app
+    ports:
+      - 5000:80
+
+  worker:
+    image: worker-app
+
+  result:
+    image: result-app
+    ports:
+      - 5001:80
+```
+
 
 
 
@@ -83,4 +112,8 @@ Technical requirements of user: medium
 
 ## Footnotes
 #### 1. [Level 2: Docker](#level-2-docker)
-Any time you talk about Docker, you probably need the obligatory disambiguation from virtual machines (VMs).
+Any time you talk about Docker, you probably need the obligatory disambiguation from virtual machines (VMs). While a Docker container is isolated from the rest of your computer (and other Docker containers unless you explicitly link them), containers *do* share host resources such as RAM and CPU, as well as the host [kernel](https://en.wikipedia.org/wiki/Kernel_(operating_system)). If one container starts sucking up CPU, it'll happily slow down all containers around it unless you impose a limit.
+
+A virtual machine, on the other hand, has its own RAM and CPU and is *truly* isolated. Docker containers are a lot "lighter" than virtual machines in that they don't require an independent operating system and resources.
+
+When you run a Docker container with a Linux operating system on your Windows or Mac computer, Docker actually runs the container [on a Linux virtual machine](https://www.docker.com/blog/docker-for-mac-windows-beta/).
