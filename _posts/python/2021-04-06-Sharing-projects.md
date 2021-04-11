@@ -19,22 +19,35 @@ _**What your recipient needs to do:** ensure their computer has the appropriate 
 
 Sharing code via GitHub is the least abstract of our three options $-$ **your recipient gets the raw code itself.** While this is great for getting another pair of eyes on the inner workings of your project, a GitHub repo by itself is actually pretty bare-bones for *using* your code. Without detailed instructions, your recipient may have no idea what your code is supposed to do or how to actually run it!
 
-For example, take a look at [the GitHub repo for Python](https://github.com/python/cpython) (yes, *the* Python). From just looking at the files and folders, do you have any idea what commands to type to install Python? (Thankfully, their README has detailed installation instructions!)
+For example, take a look at [the GitHub repo for Python](https://github.com/python/cpython) (yes, *the* Python). Just looking at the files and folders, do you have any idea what commands to type to install Python? (Thankfully, their README has detailed instructions!)
 
 ![]({{ site.baseurl }}/images/projects/sharing/cpython_repo.png)
 
 Aside from instructions on how to launch the project, it's also critical to list the *external dependencies* (e.g. Python libraries) and their versions. Even though you're sharing the raw code when you send someone a GitHub repo, your project *likely still won't work* on their computer if your code references libraries your recipient doesn't have installed.
 
-That's why **it's critical to give instructions for how to recreate the environment on your computer.** In fact, Python-based projects almost invariably start with the user creating a [virtual environment](https://realpython.com/python-virtual-environments-a-primer/) and installing the libraries provided in a `requirements.txt` file.
+That's why **it's critical to provide instructions for how to recreate the environment on your computer.** In fact, Python-based projects almost invariably start with the user creating a [virtual environment](https://realpython.com/python-virtual-environments-a-primer/) and installing the libraries provided in a `requirements.txt` file.
 
 But even detailed instructions and a `requirements.txt` file may fall short if your project involves multiple languages and a database. This sample repo for a [vote tallying app](https://github.com/dockersamples/example-voting-app), for example, involves Python, [Node.js](https://nodejs.org/en/about/), [Redis](https://aws.amazon.com/redis/), [Postgres](https://www.postgresql.org/), and [.NET](https://dotnet.microsoft.com/learn/dotnet/what-is-dotnet). If you're willing to hide some of the code to make it easier to download your app, it may be worth moving to the next level of abstraction: Docker.
 
 ### Level 2: Docker
-_**What your recipient needs to do:** have Docker installed, pull the relevant image(s), and run a Docker Compose._
+_**What your recipient needs to do:** have Docker installed, pull the relevant images, and run a [Docker Compose](https://docs.docker.com/compose/)._
 
-[**Docker**](https://docs.docker.com/get-started/overview/) is a containerization service. A **container** is an isolated software environment, where its libraries, programs, *and even operating system* are completely independent from the rest of your computer. Think of a Docker container as a miniature computer inside your computer<sup>[[1]](#1-level-2-docker)</sup>.
+[Docker](https://docs.docker.com/get-started/overview/) is a containerization service. A **container** is an isolated software environment, where its libraries, programs, *and even operating system* are independent from the rest of your computer. Think of a Docker container as a miniature computer inside your computer<sup>[[1]](#1-level-2-docker)</sup>.
 
-When your project involves multiple services, each with their own libraries and dependencies, it's worth considering Docker. With Docker, you can create an *image* of a service like a Python Flask app, a snapshot of a computer environment where your app works, and then *share that image* with someone else. Here's what the code looks like for creating an image like this:
+When your project involves multiple services, each with its own dependencies, it's worth considering Docker. With Docker, you can download publicly-available software "snapshots," or **images**, from which you can create containers. If your app only runs on Python2, rather than go through the headache of convincing your recipient to downgrade their Python from v3 to v2, *just have them download the Python2.7 Docker image.*
+
+As of April 2021, there are *over 5.8 million images* on Docker Hub that you can download for free. And there's no cost to experimentation: any images you download are quietly hidden from your computer's global environment until you call on them to create a container.
+
+<img src = "{{ site.baseurl }}/images/projects/sharing/dockerhub.png" loading="lazy">
+
+Even better, though, you can *create your own* images.
+
+
+reate an **image** of a service like a Python Flask app, a snapshot of a computer environment where your app works, and then *share that image* with someone else. For an app with multiple components, you'd simply create images for each component, then write instructions for pulling them together with a [Docker Compose](https://docs.docker.com/compose/) file.
+
+
+
+Here's what the code looks like for creating a Docker image for a simple Flask app:
 
 {% include header-dockerfile.html %}
 ```dockerfile
@@ -58,33 +71,22 @@ EXPOSE 80
 ENTRYPOINT python3 /opt/app.py
 ```
 
-You'd then want to create images for multiple services. But you can then do a Docker-Compose to bundle them all together.
+And here's what a Docker Compose file looks like for bundling that image with another one you create for a Postgres database. Notice how we're passing in environmental variables and specifying ports in this configuration file.
 
 {% include header-yaml.html %}
 ```yaml
 version: "3"
 services:
-  redis:
-    image: redis
-
   db:
     image: postgres:9.4
     environment:
     	POSTGRES_USER: "postgres"
     	POSTGRES_PASSWORD: "postgres"
 
-  vote:
-    image: voting-app
+  flask:
+    image: my-flask-app
     ports:
       - 5000:80
-
-  worker:
-    image: worker-app
-
-  result:
-    image: result-app
-    ports:
-      - 5001:80
 ```
 
 
@@ -112,7 +114,7 @@ Technical requirements of user: medium
 
 ## Footnotes
 #### 1. [Level 2: Docker](#level-2-docker)
-Any time you talk about Docker, you probably need the obligatory disambiguation from virtual machines (VMs). While a Docker container is isolated from the rest of your computer (and other Docker containers unless you explicitly link them), containers *do* share host resources such as RAM and CPU, as well as the host [kernel](https://en.wikipedia.org/wiki/Kernel_(operating_system)). If one container starts sucking up CPU, it'll happily slow down all containers around it unless you impose a limit.
+Any time you talk about Docker, you probably need the obligatory disambiguation from [virtual machines](https://www.vmware.com/topics/glossary/content/virtual-machine). While a Docker container is isolated from the rest of your computer (and other Docker containers unless you explicitly link them), containers *do* share host resources such as RAM and CPU, as well as use the same host [kernel](https://en.wikipedia.org/wiki/Kernel_(operating_system)). If you don't specify limits, a container can happily suck up CPU and slow down all containers around it.
 
 A virtual machine, on the other hand, has its own RAM and CPU and is *truly* isolated. Docker containers are a lot "lighter" than virtual machines in that they don't require an independent operating system and resources.
 
