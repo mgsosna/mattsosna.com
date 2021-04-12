@@ -34,20 +34,13 @@ _**What your recipient needs to do:** have Docker installed, pull the relevant i
 
 [Docker](https://docs.docker.com/get-started/overview/) is a containerization service. A **container** is an isolated software environment, where its libraries, programs, *and even operating system* are independent from the rest of your computer. Think of a Docker container as a miniature computer inside your computer<sup>[[1]](#1-level-2-docker)</sup>.
 
-When your project involves multiple services, each with its own dependencies, it's worth considering Docker. With Docker, you can download publicly-available software "snapshots," or **images**, from which you can create containers. If your app only runs on Python2, rather than go through the headache of convincing your recipient to downgrade their Python from v3 to v2, *just have them download the Python2.7 Docker image.*
+When your project involves multiple services, each with its own dependencies, it's worth considering Docker. With Docker, you can download publicly-available software "snapshots," or **images**, from which you can create containers. If your app only runs on Python2, rather than go through the headache of convincing your recipient to downgrade their Python, *just have them download the Python2.7 Docker image.*
 
 As of April 2021, there are *over 5.8 million images* on Docker Hub that you can download for free. And there's no cost to experimentation: any images you download are quietly hidden from your computer's global environment until you call on them to create a container.
 
 <img src = "{{ site.baseurl }}/images/projects/sharing/dockerhub.png" loading="lazy">
 
-Even better, though, you can *create your own* images.
-
-
-reate an **image** of a service like a Python Flask app, a snapshot of a computer environment where your app works, and then *share that image* with someone else. For an app with multiple components, you'd simply create images for each component, then write instructions for pulling them together with a [Docker Compose](https://docs.docker.com/compose/) file.
-
-
-
-Here's what the code looks like for creating a Docker image for a simple Flask app:
+Even better, though, you can *create your own* images. The code below is all you'd need to create a Docker image for a simple Flask app:
 
 {% include header-dockerfile.html %}
 ```dockerfile
@@ -67,11 +60,11 @@ COPY app.py /opt/app.py
 # Expose port 80 from the Docker container to the host
 EXPOSE 80
 
-# Run this code on starting the container
+# Run this code when container starts
 ENTRYPOINT python3 /opt/app.py
 ```
 
-And here's what a Docker Compose file looks like for bundling that image with another one you create for a Postgres database. Notice how we're passing in environmental variables and specifying ports in this configuration file.
+To bundle multiple images together, you run a [Docker Compose](https://docs.docker.com/compose/). Here's what a Compose file looks like for bundling your Flask app with a Postgres database. Notice how we're passing in environmental variables and specifying ports in this configuration file.
 
 {% include header-yaml.html %}
 ```yaml
@@ -89,14 +82,12 @@ services:
       - 5000:80
 ```
 
-
-
-
+By providing our user with Docker images, we're able to hide many of the details of our code, and there's a clear path forward for using our app: run a Docker Compose. The user still knows all the images that go into the app $-$ and therefore the various services your app uses $-$ but they don't need to look at the details of the code if they don't want to.
 
 ### Level 3: Heroku
 _**What your recipient needs to do:** click on a URL._
 
-
+For our final level of abstraction, we can remove the ability to see any code at all. Indeed, this is how most apps work $-$ you don't see the source code when you open Google Maps or Zillow $-$ you just see the user interface. 
 
 
 
