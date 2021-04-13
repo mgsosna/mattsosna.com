@@ -14,19 +14,19 @@ Databases arrived shortly after businesses [began adopting computers in the 1950
 
 Say we're a school and are organizing our data on students, grades, and classrooms. We *could* have one giant table that looks like this:
 
-<img src="{{  site.baseurl  }}/images/projects/sql_v_nosql/main_table.png" loading="lazy" alt="Table of data">
+<img src="{{  site.baseurl  }}/images/data_engineering/sql_v_nosql/main_table.png" loading="lazy" alt="Table of data">
 
 This is a pretty inefficient way to store data, though. Because students have multiple exam scores, **storing all the data in one table requires duplicating info we only need to list once,** like Jerry's hobby, classroom ID, and teacher. If you only have a handful of students, it's no big deal. But as the amount of data grows, all those duplicated values end up costing storage space and making it harder to extract the data you actually want from your table.
 
 Instead, it'd be far more efficient to break out this information into separate *tables*, then *relate* the info in the tables to one another. This is what our tables would look like:
 
-<img src="{{  site.baseurl  }}/images/projects/sql_v_nosql/multi_table.png" loading="lazy" alt="Multiple tables">
+<img src="{{  site.baseurl  }}/images/data_engineering/sql_v_nosql/multi_table.png" loading="lazy" alt="Multiple tables">
 
 That's only 30 cells compared to 42 in the main table $-$ **a 28.5% improvement!** For this particular set of fields and tables, as we increase the number of students, say to 100 or 1,000 or 1,000,000, the improvement actually stabilizes at **38%.** That's more than a third less storage space just by rearranging the data!
 
 But it's not enough to just store the data in separate tables; we still need to model their relationships. We can visualize our database [schema](https://en.wikipedia.org/wiki/Database_schema) with an [entity-relationship diagram](https://www.visual-paradigm.com/guide/data-modeling/what-is-entity-relationship-diagram/) like the one below.
 
-<img src="{{  site.baseurl  }}/images/projects/sql_v_nosql/erd.png" loading="lazy" alt="Entity-Relationship Diagram">
+<img src="{{  site.baseurl  }}/images/data_engineering/sql_v_nosql/erd.png" loading="lazy" alt="Entity-Relationship Diagram">
 
 This diagram shows that one classroom consists of multiple students, and each student has multiple grades. We can use this schema to create a relational database in a [relational database management system (RDBMS)](https://www.codecademy.com/articles/what-is-rdbms-sql), such as [MySQL](https://en.wikipedia.org/wiki/MySQL) or [PostgreSQL](https://en.wikipedia.org/wiki/PostgreSQL), and then be on our merry, storage-efficient way.
 
@@ -47,7 +47,7 @@ Another issue with relational databases appeared in the 90's as the internet gre
 
 But there comes a point where even the most expensive machine can't handle a database. A better approach may be scale **horizontally:** to <u><i>add more machines</i></u> rather than try to <u><i>make your one machine stronger</i></u>. This is not only cheaper $-$ it bakes in resilience in case your one machine fails. (Indeed, distributed computing with cheap hardware is the strategy [Google used from the start](https://podcasts.apple.com/us/podcast/two-inside-the-walls/id1541394865?i=1000501909699).)
 
-<img src="{{  site.baseurl  }}/images/projects/sql_v_nosql/scaling.png" loading="lazy">
+<img src="{{  site.baseurl  }}/images/data_engineering/sql_v_nosql/scaling.png" loading="lazy">
 
 NoSQL databases address these needs by **allowing for nested or variable-type data** and running on **distributed clusters of machines.**<sup>[[2]](#2-nosql-databases)</sup> This design enables them to easily store and query large amounts of unstructured data (i.e. non-tabular), even when records are shaped completely differently from one another. Muhammed have a 50-page JSON of neatly-organized hobbies and sub-hobbies while Jerry only enjoy gardening? No problem.
 
@@ -167,7 +167,7 @@ pd.read_sql_query(query, session.bind)
 ```
 
 <center>
-<img src="{{  site.baseurl  }}/images/projects/sql_v_nosql/pandas_example.png" loading="lazy">
+<img src="{{  site.baseurl  }}/images/data_engineering/sql_v_nosql/pandas_example.png" loading="lazy">
 </center>
 
 ### NoSQL
