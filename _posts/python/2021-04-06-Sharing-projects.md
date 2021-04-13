@@ -34,13 +34,13 @@ _**What your recipient needs to do:** have Docker installed, pull the relevant i
 
 [Docker](https://docs.docker.com/get-started/overview/) is a containerization service. A **container** is an isolated software environment, where its libraries, programs, *and even operating system* are independent from the rest of your computer. Think of a Docker container as a miniature computer inside your computer<sup>[[1]](#1-level-2-docker)</sup>.
 
-When your project involves multiple services, each with its own dependencies, it's worth considering Docker. With Docker, you can download publicly-available software "snapshots," or **images**, from which you can create containers. If your app only runs on Python2, rather than go through the headache of convincing your recipient to downgrade their Python, *just have them download the Python2.7 Docker image.*
+When your project involves multiple services, each with its own dependencies, it's worth considering Docker. With Docker, you can download publicly-available software "snapshots," or **images**, from which you can create containers. If your app only runs on Python2, for example, rather than go through the headache of convincing your recipient to downgrade their Python, *just have them download the Python2.7 Docker image.*
 
 As of April 2021, there are *over 5.8 million images* on Docker Hub that you can download for free. And there's no cost to experimentation: any images you download are quietly hidden from your computer's global environment until you call on them to create a container.
 
 <img src = "{{ site.baseurl }}/images/projects/sharing/dockerhub.png" loading="lazy">
 
-Even better, though, you can *create your own* images. The code below is all you'd need to create a Docker image for a simple Flask app:
+Even better, though, you can *create your own* images. The code below is all you'd need to create a Docker image for a simple Flask app. The steps involve downloading the Docker image for the [Ubuntu](https://en.wikipedia.org/wiki/Ubuntu) operating system, installing Python and Flask, copying your `app.py` Python into the container, and making the container accessible to your computer.
 
 {% include header-dockerfile.html %}
 ```dockerfile
@@ -64,7 +64,7 @@ EXPOSE 80
 ENTRYPOINT python3 /opt/app.py
 ```
 
-To bundle multiple images together, you run a [Docker Compose](https://docs.docker.com/compose/). Here's what a Compose file looks like for bundling your Flask app with a Postgres database. Notice how we're passing in environmental variables and specifying ports in this configuration file.
+To bundle multiple images together, you run a [Docker Compose](https://docs.docker.com/compose/). Here's what a Compose file looks like for bundling your Flask app with a Postgres database.
 
 {% include header-yaml.html %}
 ```yaml
@@ -82,12 +82,19 @@ services:
       - 5000:80
 ```
 
-By providing our user with Docker images, we're able to hide many of the details of our code, and there's a clear path forward for using our app: run a Docker Compose. The user still knows all the images that go into the app $-$ and therefore the various services your app uses $-$ but they don't need to look at the details of the code if they don't want to.
+With Docker, we can simply send our recipient some Docker images and the Docker Compose file, tell them to run `docker compose up`, then navigate to `http://localhost:5000` in their browser. That's it. The user can look at the Compose file to see which services are being used (e.g. whether we're using a Postgres vs. MySQL database), but otherwise most of the code is kept out of their way.
 
 ### Level 3: Heroku
 _**What your recipient needs to do:** click on a URL._
 
-For our final level of abstraction, we can remove the ability to see any code at all. Indeed, this is how most apps work $-$ you don't see the source code when you open Google Maps or Zillow $-$ you just see the user interface. 
+For our final level of abstraction, we remove all code. No GitHub repos, no command lines. When you [host](https://www.akamai.com/us/en/resources/application-hosting.jsp) your app on a service like [Heroku](https://www.heroku.com/what), [AWS](https://aws.amazon.com/what-is-aws/), or [DigitalOcean](https://www.cloudways.com/blog/what-is-digital-ocean/), a server in a data center somewhere takes care of running your app. Your user, then, only needs to click on a URL that will take them to that server.  
+
+In this level of abstraction, all your user sees is your app's [frontend](https://frontendmasters.com/books/front-end-handbook/2018/what-is-a-FD.html) $-$ typically a graphical interface, or at least the results of whatever action they requested from your app (e.g. a machine learning model's predicted value based on some inputs).
+
+<img src="{{ site.baseurl }}/images/projects/"
+
+
+If your app's [frontend code](https://frontendmasters.com/books/front-end-handbook/2018/what-is-a-FD.html) is written well, even a crafty user won't be able to tell if there are 100 lines of code or millions in the services in your app's [backend](https://techterms.com/definition/backend). Indeed, this is how most apps work $-$ you don't see the source code when you open Google Maps or Slack $-$ you just see the user interface.
 
 
 
