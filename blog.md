@@ -10,6 +10,7 @@ permalink: /blog/
   - [Statistics](#statistics)
   - [External](#external)
   - [Projects](#projects)
+  - [Data engineering](#data-engineering)
 - [**Python**](#python)
   - [Random Python](#random-python)
 - [**R**](#r)
@@ -45,10 +46,13 @@ permalink: /blog/
 2. [Backend]({{  site.baseurl  }}/spamCatch-2)
 3. [Frontend & Deployment]({{  site.baseurl  }}/spamCatch-3)
 
+### Data engineering
+1. [SQL vs. NoSQL databases in Python]({{  site.baseurl  }}/SQL_vs_NoSQL/)
+2. [3 levels of technical abstraction when sharing your code]({{ site.baseurl }}/Sharing-projects)
+
 ## Python
 ### Random Python
 1. [Perspectives on Python after R]({{ site.baseurl }}/R-to-Python)
-2. [SQL vs. NoSQL databases in Python]({{  site.baseurl  }}/SQL_vs_NoSQL/)
 
 ## R
 ### Introduction to R

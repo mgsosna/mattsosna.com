@@ -4,7 +4,7 @@ title: 3 levels of technical abstraction when sharing your code
 author: matt_sosna
 ---
 
-![]({{ site.baseurl }}/images/projects/sharing/sharing_services.png)
+![]({{ site.baseurl }}/images/data_engineering/sharing/sharing_services.png)
 
 I've been programming now for eight years, and it wasn't until *just months ago* that I was able to answer a question I've had this whole time: **"How do I share my project with someone?"**
 
@@ -21,7 +21,7 @@ Sharing code via GitHub is the least abstract of our three options $-$ **your re
 
 For example, take a look at [the GitHub repo for Python](https://github.com/python/cpython) (yes, *the* Python). Just looking at the files and folders, do you have any idea what commands to type to install Python? (Thankfully, their README has detailed instructions!)
 
-![]({{ site.baseurl }}/images/projects/sharing/cpython_repo.png)
+![]({{ site.baseurl }}/images/data_engineering/sharing/cpython_repo.png)
 
 Aside from instructions on how to launch the project, it's also critical to list the *external dependencies* (e.g. Python libraries) and their versions. Even though you're sharing the raw code when you send someone a GitHub repo, your project *likely still won't work* on their computer if your code references libraries your recipient doesn't have installed.
 
@@ -40,7 +40,7 @@ Containers come from publicly-available software "snapshots," or **images**, on 
 
 As of April 2021, there are *over 5.8 million images* on Docker Hub that you can download for free. And there's no cost to experimentation: any images you download are quietly hidden from your computer's global environment until you call on them to create a container.
 
-<img src = "{{ site.baseurl }}/images/projects/sharing/dockerhub.png" loading="lazy">
+<img src = "{{ site.baseurl }}/images/data_engineering/sharing/dockerhub.png" loading="lazy">
 
 Even better, though, you can *create your own* images.<sup>[[2]](#2-level-2-docker)</sup> The code below is all you'd need to create a Docker image for a simple Flask app. The steps involve installing the [Ubuntu](https://en.wikipedia.org/wiki/Ubuntu) operating system, Python, and Flask; copying your `app.py` file into the container; and making the container accessible to your computer's internal network.
 
@@ -93,7 +93,7 @@ For our final level of abstraction, we remove all code. No GitHub repos, no comm
 
 In this level of abstraction, **all your user sees is your app's [frontend](https://frontendmasters.com/books/front-end-handbook/2018/what-is-a-FD.html) $-$ typically a graphical interface.**<sup>[[3]](#3-level-3-heroku)</sup> Below, for example, is a screenshot from [a spam catching app](https://spam-catcher.herokuapp.com) I wrote. Aside from the HTML and CSS on the webpage, you can't tell what's happening behind the scenes. (Unless you go the [GitHub repo](https://github.com/mgsosna/spamCatch) or read [the blog series](https://mattsosna.com/spamCatch-1) I wrote. ;-))
 
-<img src="{{ site.baseurl }}/images/projects/spamcatch/spamcatch-demo.png" loading="lazy">
+<img src="{{ site.baseurl }}/images/data_engineering/spamcatch/spamcatch-demo.png" loading="lazy">
 
 If your app's frontend code is written well, even a crafty user won't be able to tell if there are 100 lines of code or millions in your app's [backend](https://techterms.com/definition/backend). Indeed, this is how most apps work: you don't see the source code when you open Google Maps or Slack $-$ you just see the user interface.
 
