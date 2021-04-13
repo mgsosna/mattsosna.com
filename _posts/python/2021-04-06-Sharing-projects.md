@@ -32,7 +32,7 @@ But even detailed instructions and a `requirements.txt` file may fall short if y
 ### Level 2: Docker
 _**What your recipient needs to do:** have Docker installed, pull the relevant images, and run a [Docker Compose](https://docs.docker.com/compose/)._
 
-[Docker](https://docs.docker.com/get-started/overview/) is a containerization service. A **container** is an isolated software environment, where its libraries, programs, *and even operating system* are independent from the rest of your computer. Think of a Docker container as a miniature computer inside your computer<sup>[[1]](#1-level-2-docker)</sup>.
+[Docker](https://docs.docker.com/get-started/overview/) is a containerization service. A **container** is an isolated software environment, where its libraries, programs, *and even operating system* are independent from the rest of your computer. Think of a Docker container as a miniature computer inside your computer.<sup>[[1]](#1-level-2-docker)</sup>
 
 When your project involves multiple services, each with its own dependencies, it's worth considering Docker. With Docker, you can download publicly-available software "snapshots," or **images**, from which you can create containers. If your app only runs on Python2, for example, rather than go through the headache of convincing your recipient to downgrade their Python, *just have them download the Python2.7 Docker image.*
 
@@ -40,7 +40,7 @@ As of April 2021, there are *over 5.8 million images* on Docker Hub that you can
 
 <img src = "{{ site.baseurl }}/images/projects/sharing/dockerhub.png" loading="lazy">
 
-Even better, though, you can *create your own* images. The code below is all you'd need to create a Docker image for a simple Flask app. The steps involve downloading the Docker image for the [Ubuntu](https://en.wikipedia.org/wiki/Ubuntu) operating system, installing Python and Flask, copying your `app.py` Python into the container, and making the container accessible to your computer.
+Even better, though, you can *create your own* images.<sup>[[2]](#2-level-2-docker)</sup> The code below is all you'd need to create a Docker image for a simple Flask app. The steps involve downloading the Docker image for the [Ubuntu](https://en.wikipedia.org/wiki/Ubuntu) operating system, installing Python and Flask, copying your `app.py` Python into the container, and making the container accessible to your computer.
 
 {% include header-dockerfile.html %}
 ```dockerfile
@@ -89,26 +89,27 @@ _**What your recipient needs to do:** click on a URL._
 
 For our final level of abstraction, we remove all code. No GitHub repos, no command lines. When you [host](https://www.akamai.com/us/en/resources/application-hosting.jsp) your app on a service like [Heroku](https://www.heroku.com/what), [AWS](https://aws.amazon.com/what-is-aws/), or [DigitalOcean](https://www.cloudways.com/blog/what-is-digital-ocean/), a server in a data center somewhere takes care of running your app. Your user, then, only needs to click on a URL that will take them to that server.  
 
-In this level of abstraction, all your user sees is your app's [frontend](https://frontendmasters.com/books/front-end-handbook/2018/what-is-a-FD.html) $-$ typically a graphical interface, or at least the results of whatever action they requested from your app (e.g. a machine learning model's predicted value based on some inputs).
+In this level of abstraction, **all your user sees is your app's [frontend](https://frontendmasters.com/books/front-end-handbook/2018/what-is-a-FD.html) $-$ typically a graphical interface.**<sup>[[3]](#3-level-3-heroku)</sup> Below, for example, is a screenshot from [a spam catching app](https://spam-catcher.herokuapp.com) I wrote. Aside from the HTML and CSS on the webpage, you can't tell what's happening behind the scenes. (Unless you go the [GitHub repo](https://github.com/mgsosna/spamCatch) or read [the blog series](https://mattsosna.com/spamCatch-1) I wrote. ;-))
 
-<img src="{{ site.baseurl }}/images/projects/"
+<img src="{{ site.baseurl }}/images/projects/spamcatch/spamcatch-demo.png" loading="lazy">
 
+If your app's frontend code is written well, even a crafty user won't be able to tell if there are 100 lines of code or millions in your app's [backend](https://techterms.com/definition/backend). Indeed, this is how most apps work: you don't see the source code when you open Google Maps or Slack $-$ you just see the user interface.
 
-If your app's [frontend code](https://frontendmasters.com/books/front-end-handbook/2018/what-is-a-FD.html) is written well, even a crafty user won't be able to tell if there are 100 lines of code or millions in the services in your app's [backend](https://techterms.com/definition/backend). Indeed, this is how most apps work $-$ you don't see the source code when you open Google Maps or Slack $-$ you just see the user interface.
-
-
+In a business context, it becomes essential to only show the user what you want them to see, rather than reveal all your app's secrets. You don't want any curious user discovering other users' private data, for example, or sharing with the world how exactly your company's nifty machine learning model works. In this case, our final level of abstraction is necessary for sharing your project.
 
 ## Conclusions
-These things aren't exclusive! In fact, I recommend sharing all of them with your user: the GitHub repo for in-the-weeds code, the Dockerfile for a quick execution on your machine, and Heroku if you just want to see the final product.
+This post set out to answer the question, "How do I share my coding project with someone?" The answer, it turns out, depends on how in the weeds you want your user to get!
 
+The least abstract method is sending over a **GitHub** repo $-$ the raw code. This is ideal for collaboration, since your recipient can see exactly how your app works. But it can be hard for them to actually *run* your project, since they need to recreate all the libraries, languages, and perhaps even operating system you're using.
 
-Commonality in Docker & Heroku: needing to know Flask. Honestly, learning Flask was a gamechanger for me.
+The next level of abstraction is **Docker**, where you can create software "snapshots" that others can download. This removes the headaches of ensuring all project dependencies are present (*and the correct versions!*), and most of the actual code is hidden from the user. They can still see, however, what *services* your app uses $-$ the exact flavor of database, whether your model uses Python or R, etc.
 
+The final level is to host your code with a service like **Heroku** and send your recipient a URL. This completely hides any backend code from the user, which is ideal in a business context. This approach turns your recipient into a *consumer* of your product rather than a *collaborator*, since they have no idea what's happening behind the scenes.
 
-## Docker
-Technical requirements of user: medium
-* They don't necessarily need to install all the components. But they at least need to have Docker on their computer, and then they have to pull the image and run a container. Probably easier with the right instructions
-  - I guess Docker Compose would help here...
+The right approach depends on how you want your recipient to interact with your project. But you also **don't have to choose only one of these ways to share code!** In fact, I recommend sharing all of them with your user: the app in Heroku to immediately interact with it, the GitHub repo to see the underlying code, and a Dockerfile to run it locally.
+
+Best,<br>
+Matt
 
 ## Footnotes
 #### 1. [Level 2: Docker](#level-2-docker)
@@ -117,3 +118,9 @@ Any time you talk about Docker, you probably need the obligatory disambiguation 
 A virtual machine, on the other hand, has its own RAM and CPU and is *truly* isolated. Docker containers are a lot "lighter" than virtual machines in that they don't require an independent operating system and resources.
 
 When you run a Docker container with a Linux operating system on your Windows or Mac computer, Docker actually runs the container [on a Linux virtual machine](https://www.docker.com/blog/docker-for-mac-windows-beta/).
+
+#### 2. [Level 2: Docker](#level-2-docker)
+One necessary leap from Level 1 to Levels 2 and 3 is turning your project into an API, which lets other software (like a web browser) communicate with your code. You can do this with [Flask](https://flask.palletsprojects.com/en/1.1.x/) in Python or [Plumber](https://www.rplumber.io/) in R.
+
+#### 3. [Level 3: Heroku](#level-3-heroku)
+A graphical interface is essential for apps whose audience includes non-programmers. But if your app is aimed at developers (e.g. the [Google Maps API](https://developers.google.com/maps) rather than normal Google Maps), the "front end" might just be a little welcome message in your command line. Either way, the backend code is still completely hidden from you.
