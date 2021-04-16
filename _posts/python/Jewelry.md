@@ -7,8 +7,27 @@ author: matt_sosna
 * What are decorators?
 * `jewelry` is a Python repo I've created for this. Please contribute.
 
+Briefly, a **decorator** is a function that modifies another function. You can think of it as a *wrapper* around it.
 
-## Main functionaliteis
+```python
+# Our decorator
+def double_args(func):
+    return func(2*a, 2*b)
+
+# Normal multiply
+def normal_multiply(a, b):
+    return a * b
+
+# Decorated multiply
+@double_args
+def double_multiply(a, b):
+    return a * b
+```
+
+
+
+
+## Main functionalities
 
 ### `ArgChecker`
 #### `enforce_type_hints`
@@ -30,6 +49,7 @@ safe_multiply(1, 2)  # 2
 multiply('1', 2)     # '11'
 safe_multiply('1', 2)  # AssertionError: a is type <class 'str'>
 ```
+
 
 
 
