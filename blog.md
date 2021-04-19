@@ -53,6 +53,7 @@ permalink: /blog/
 ## Python
 ### Random Python
 1. [Perspectives on Python after R]({{ site.baseurl }}/R-to-Python)
+2. [Efficient type validation for Python functions]({{ site.baseurl }}/Jewelry)
 
 ## R
 ### Introduction to R
