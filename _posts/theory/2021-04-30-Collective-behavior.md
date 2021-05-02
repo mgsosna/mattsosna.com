@@ -6,7 +6,11 @@ author: matt_sosna
 <img src="{{  site.baseurl  }}/images/theory/coll_beh/koi_shoal.jpg" alt="Fish school">
 <span style="font-size: 12px"><i>Photo by <a href="https://unsplash.com/@jwimmerli">jean wimmerlin</a> on <a href="https://unsplash.com">Unsplash</a></i></span>
 
-Animal groups are greater than the sum of their parts. It's flocks of birds that migrate, colonies of bees that build and maintain hives, and schools of fish that elegantly evade predators. Individual birds, bees, or fish are often clueless on what to do, but somehow the aggregate is capable. How does this happen?
+**Animal groups are greater than the sum of their parts.**
+
+While an individual termite paces frantically with no idea what to do, a colony of termites efficiently builds a sturdy and [well-ventilated mound](http://www.bbc.com/earth/story/20151210-why-termites-build-such-enormous-skyscrapers). While an individual stork struggles to find the migration route, the flock knows. https://flightforsurvival.org/white-stork/
+
+It's flocks of birds that migrate, colonies of bees that build and maintain hives, and schools of fish that elegantly evade predators. Individual birds, bees, or fish are often clueless on what to do, but somehow the aggregate is capable. How does this happen?
 
 I spent my Ph.D. puzzling over how *simple local interactions* can give rise to *complex group-level behaviors* not possible at the individual level, specifically how the information transmission networks in fish schools enable them to avoid predators.
 
