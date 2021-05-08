@@ -59,4 +59,3 @@ Spatial and temporal correlation: http://thekaolab.com/inc/papers/kao2014.pdf
 Hard to rule out other explanations for why fish schools are smarter than individuals: https://core.ac.uk/download/pdf/82291278.pdf
 
 ## Conclusions
-Alternate title: "Fish schools use XGBoost to survive"
