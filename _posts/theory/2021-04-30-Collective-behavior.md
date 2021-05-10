@@ -14,6 +14,11 @@ All the knowledge I gained seemed destined to become a pile of dusty facts in so
 
 This post will convince you that while individual fish are weak learners, together they form an accurate information processor.
 
+### The machine
+You're likely familiar with ensemble learning methods like the [random forest](https://en.wikipedia.org/wiki/Random_forest). A random forest consists of a set of decision trees fit to bootstrapped replicates of the data; you can also configure whether these replicates consist of all features or only a subset, as well as how deep each decision tree is allowed to grow. To generate a prediction from a random forest, the new data is fed into each decision tree and the final predicted value is either the majority class (in classification) or the average of the tree estimates (in regression). 
+
+
+
 ### Collective decision-making
 How are groups smarter than individuals? The short answer is that it varies wildly by species and context $-$ the mechanisms leading to a locusts swarm finding food are different than [small human groups solving a cognitive task](https://www.einsteinmed.org/uploadedFiles/diversity/collective-intelligence-science.pdf). But there are also many surprising commonalities.
 
