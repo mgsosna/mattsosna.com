@@ -15,7 +15,26 @@ All the knowledge I gained seemed destined to become a pile of dusty facts in so
 This post will convince you that while individual fish are weak learners, together they form an accurate information processor.
 
 ### The machine
-You're likely familiar with ensemble learning methods like the [random forest](https://en.wikipedia.org/wiki/Random_forest). A random forest consists of a set of decision trees fit to bootstrapped replicates of the data; you can also configure whether these replicates consist of all features or only a subset, as well as how deep each decision tree is allowed to grow. To generate a prediction from a random forest, the new data is fed into each decision tree and the final predicted value is either the majority class (in classification) or the average of the tree estimates (in regression). 
+Let's first cover the machine learning side, since you're probably more familiar with algorithms than animals! Ensemble learning methods use a _set_ of models to generate a prediction, rather than one single model. By taking an average of the model estimates (for regression), or the majority vote (for classification), the collective estimate is often both more accurate and robust.
+
+A [random forest](https://en.wikipedia.org/wiki/Random_forest), for example, consists of dozens or hundreds of [decision trees](https://en.wikipedia.org/wiki/Decision_tree). While there are [plenty of ways](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) to configure how the forest is assembled, the general process is that each tree is trained on [bootstrapped](https://machinelearningmastery.com/a-gentle-introduction-to-the-bootstrap-method/) replicates of the data and random subsets of the features. (If we used the same data for each tree, we'd create the same tree each time!)
+
+The result is a collection of models, each with a _slightly different understanding_ of the training data.
+
+To generate a prediction, the same input is fed into each tree, each tree generates an output, and the outputs are collapsed into one prediction from the entire forest.
+
+and the tree often becomes [overfit](https://www.investopedia.com/terms/o/overfitting.asp).
+
+
+
+
+The idea is that
+
+
+taking the majority vote of
+
+
+ensemble learning methods like the [random forest](https://en.wikipedia.org/wiki/Random_forest). A random forest consists of a set of decision trees fit to bootstrapped replicates of the data; you can also configure whether these replicates consist of all features or only a subset, as well as how deep each decision tree is allowed to grow. To generate a prediction from a random forest, the new data is fed into each decision tree and the final predicted value is either the majority class (in classification) or the average of the tree estimates (in regression).
 
 
 
