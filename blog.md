@@ -27,9 +27,12 @@ permalink: /blog/
 ### How to enter data science
 1. [The target]({{ site.baseurl }}/DS-transition-1)
 2. [The statistics]({{  site.baseurl  }}/DS-transition-2)
+  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [May 13 editors' picks](https://towardsdatascience.com/what-problem-is-your-data-solving-f39ae1daa6e9)</span>
 3. [The analytics]({{  site.baseurl  }}/DS-transition-3)
+  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [May 27 editors' picks](https://towardsdatascience.com/how-to-snap-out-of-a-data-science-slump-82314a9e4644)</span>
 4. [The engineering]({{  site.baseurl  }}/DS-transition-4)
 5. [The people]({{  site.baseurl  }}/DS-transition-5)
+  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [March 25 editors' picks](https://towardsdatascience.com/careers-in-machine-learning-python-music-and-ais-brain-connection-a40a3fd7fab1)</span>
 
 ### Careers
 1. [Transitioning to data science from academia]({{  site.baseurl  }}/Academia-to-DS)
@@ -51,6 +54,7 @@ permalink: /blog/
 
 ### Data engineering
 1. [SQL vs. NoSQL databases in Python]({{  site.baseurl  }}/SQL_vs_NoSQL/)
+  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [April 15 editors' picks](https://towardsdatascience.com/math-animations-irreproducible-research-and-telling-stories-with-data-d9b55aa3887b)</span>
 2. [3 levels of technical abstraction when sharing your code]({{ site.baseurl }}/Sharing-projects)
 
 ## Python
