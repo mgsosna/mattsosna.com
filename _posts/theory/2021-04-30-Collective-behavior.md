@@ -21,15 +21,36 @@ In the schematic below, our ensemble is the set of gray boxes, each of which is 
 
 <img src="{{ site.baseurl }}/images/theory/coll_beh/ensemble.png">
 
-One popular example of an ensemble method is a [**random forest**](https://en.wikipedia.org/wiki/Random_forest). A random forest consists of dozens or hundreds of [decision trees](https://en.wikipedia.org/wiki/Decision_tree). While there are [plenty of ways](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) to configure how the forest is assembled, the general process is that each tree is independently trained on [bootstrapped](https://machinelearningmastery.com/a-gentle-introduction-to-the-bootstrap-method/) replicates of the data and random subsets of the features. (If we used the same data for each tree, we'd create the same tree each time!)
+One popular ensemble method is a [**random forest**](https://en.wikipedia.org/wiki/Random_forest). A random forest consists of dozens or hundreds of [decision trees](https://en.wikipedia.org/wiki/Decision_tree). While there are [plenty of ways](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) to configure how the forest is assembled, the general process is that each tree is independently trained on [bootstrapped](https://machinelearningmastery.com/a-gentle-introduction-to-the-bootstrap-method/) observations and random subsets of the features. (If we used the same data for each tree, we'd create the same tree each time!)
 
 The result is a collection of models, each with a _slightly different understanding_ of the training data. This variation is crucial. Individual decision trees easily become [overfit](https://www.investopedia.com/terms/o/overfitting.asp) to their training data, meaning they fail to generalize well to new data. But because the ensemble consists of many trees, these errors tend to cancel one another out, leading to a more accurate model overall.
 
-### The beast
-The strength of ensemble methods
+### The theory
+The enhanced accuracy of a random forest can be summarized as the [wisdom of the crowds](https://en.wikipedia.org/wiki/Wisdom_of_the_crowd). The concept dates back to 1906 at a livestock fair in Plymouth, MA, which held a competition to guess the weight of an ox. Nearly 800 farmers gave their best estimates. Statistician [Sir Francis Galton](https://en.wikipedia.org/wiki/Francis_Galton) later examined the guesses and observed that while individual estimates varied widely, the _mean_ of the estimates was more accurate than any individual guess. Galton went on to formalize his theory in his famous [_Vox Populi_ paper](https://www.all-about-psychology.com/the-wisdom-of-crowds.html).
+
+There are two key requirements for the wisdom of the crowds to work. The first is that **individuals must _vary in their information_.** If everyone has the same information, the group's decision isn't going to be any more accurate than an individual's. This can even lead to _less_ accurate decisions in general as group members become overly confident in their [echo chamber](https://en.wikipedia.org/wiki/Echo_chamber_(media)).<sup>[[1]](#1-the-theory)</sup>
+
+The second requirement is that **individual estimates must be _independent_.** If those 800 farmers deliberated amongst their neighbors before voting, the number of unique perspectives would collapse to a few hundred, maybe even only a few dozen, as people's opinions began influencing each others'. The opinions of loud personalities would weigh more than those of the quiet; rare information would be discarded in favor of common knowledge.
+
+
+The training of a random forest model is like the lives of our farmers as they gain their knowledge.
+
+
+
+### The fish
+So how do fish compare to a random forest model?
+
+
+
+One important consideration is that these are independent estimates. This makes it more like bagging, rather than boosting.
 
 
 There's one more nuance to mention: boosted vs. bagged
+
+One additional parallel. We typically think of artificial neural networks as modeled off of biological neural networks. But the entire school can also be thought of as a neural network.
+
+
+
 
 ### Collective decision-making
 How are groups smarter than individuals? The short answer is that it varies wildly by species and context $-$ the mechanisms leading to a locusts swarm finding food are different than [small human groups solving a cognitive task](https://www.einsteinmed.org/uploadedFiles/diversity/collective-intelligence-science.pdf). But there are also many surprising commonalities.
@@ -61,8 +82,7 @@ Fish schools, and animal groups in general, aren't comprised of completely indep
 For fish species that live in large groups, staying close to others is often not a choice $-$ it's a matter of life or death. The surrounding environment is too unpredictable and too dangerous to go alone. I can try to find food by myself, or detect a predator early and hide, but it's easier when you're in a group. Then let's say the predator actually _does_ arrive - if you're the only one around, he can target you, but if you're in a big group, your risk is diluted by the presence of everyone around you.
 
 
-Wisdom of the crowds
-* Started by statistician [Sir Francis Galton](https://en.wikipedia.org/wiki/Francis_Galton) in 1907. Competition at a livestock fair to estimate weight of ox. Nearly 800 farmers guessed, and there was considerable variation. The mean of the guesses turned out to be more accurate than any individual guess.
+
 
 
 ### RF
@@ -75,3 +95,7 @@ Hard to rule out other explanations for why fish schools are smarter than indivi
 Bagging vs. boosting. Bagging: actually independent, more like wisdom of crowd. Boosting: individual models learn from failures of previous model. Bagging more accurate, boosting might actually be more like the fish in nature.
 
 ## Conclusions
+
+## Footnotes
+#### 1. [The theory](#the-theory)
+If you _never_ encounter a different worldview online, or you only ever see it framed as belonging to an idiot, then you're likely in an echo chamber. A lot of this is inevitable as [your social network self-segregates](https://www.pnas.org/content/118/7/e2022761118), meaning it's on you to seek out the diverse viewpoints necessary for a more objective worldview.
