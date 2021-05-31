@@ -15,30 +15,34 @@ All the knowledge I gained seemed destined to become a pile of dusty facts in so
 This post will show you how ensembles of weak learners $-$ whether they're fish or decision trees $-$ can together form an accurate information processor.
 
 ### The machine
-Let's first cover the machine learning side, since you're probably more familiar with algorithms than animals! **Ensemble learning methods use a _set_ of models to generate a prediction,** rather than one single model.
+Let's first cover the machine learning side, since you're probably more familiar with algorithms than animals! **Ensemble learning methods use a _set_ of models to generate a prediction,** rather than one single model. The idea is that the errors in the models' predictions cancel out, leading to more accurate predictions overall.
 
 In the schematic below, our ensemble is the set of gray boxes, each of which is a model. To generate a predicted value for the input, the input is sent into each model, which generates a prediction. These individual predictions are then collapsed into one _aggregate_ prediction by either averaging (for regression) or taking the majority vote (for classification).
 
 <img src="{{ site.baseurl }}/images/theory/coll_beh/ensemble.png">
 
-One popular ensemble method is a [**random forest**](https://en.wikipedia.org/wiki/Random_forest). A random forest consists of dozens or hundreds of [decision trees](https://en.wikipedia.org/wiki/Decision_tree). While there are [plenty of ways](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) to configure how the forest is assembled, the general process is that each tree is independently trained on [bootstrapped](https://machinelearningmastery.com/a-gentle-introduction-to-the-bootstrap-method/) observations and random subsets of the features. (If we used the same data for each tree, we'd create the same tree each time!)
+One popular ensemble method is a [**random forest**](https://en.wikipedia.org/wiki/Random_forest), a model that consists of dozens or hundreds of [decision trees](https://en.wikipedia.org/wiki/Decision_tree). While there are [plenty of ways](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) to configure how the forest is assembled, the general process is that each tree is independently trained on [bootstrapped](https://machinelearningmastery.com/a-gentle-introduction-to-the-bootstrap-method/) observations and random subsets of the features. (If we used the same data for each tree, we'd create the same tree each time!)
 
-The result is a collection of models, each with a _slightly different understanding_ of the training data. This variation is crucial. Individual decision trees easily become [overfit](https://www.investopedia.com/terms/o/overfitting.asp) to their training data, meaning they fail to generalize well to new data. But because the ensemble consists of many trees, these errors tend to cancel one another out, leading to a more accurate model overall.
+The result is a collection of models, **each with a _slightly different understanding_ of the training data.** This variation is crucial. Individual decision trees easily become [overfit](https://www.investopedia.com/terms/o/overfitting.asp) to their training data, meaning they fail to generalize well to new data. But because the ensemble consists of many trees, these errors tend to cancel one another out, leading to a more accurate model overall.
 
 ### The theory
 The enhanced accuracy of a random forest can be summarized as the [wisdom of the crowds](https://en.wikipedia.org/wiki/Wisdom_of_the_crowd). The concept dates back to 1906 at a livestock fair in Plymouth, MA, which held a competition to guess the weight of an ox. Nearly 800 farmers gave their best estimates. Statistician [Sir Francis Galton](https://en.wikipedia.org/wiki/Francis_Galton) later examined the guesses and observed that while individual estimates varied widely, the _mean_ of the estimates was more accurate than any individual guess. Galton went on to formalize his theory in his famous [_Vox Populi_ paper](https://www.all-about-psychology.com/the-wisdom-of-crowds.html).
 
+<img src="{{  site.baseurl  }}/images/theory/coll_beh/ox.jpg" loading="lazy">
+<span style="font-size: 12px"><i>Photo by <a href="https://www.pexels.com/@pixabay">Pixabay</a> from <a href="https://www.pexels.com/photo/brown-bull-on-green-glass-field-under-grey-and-blue-cloudy-sky-139399/">Pexels</a></i></span>
+
 There are two key requirements for the wisdom of the crowds to work. The first is that **individuals must _vary in their information_.** If everyone has the same information, the group's decision isn't going to be any more accurate than an individual's. This can even lead to _less_ accurate decisions in general as group members become overly confident in their [echo chamber](https://en.wikipedia.org/wiki/Echo_chamber_(media)).<sup>[[1]](#1-the-theory)</sup>
 
-The second requirement is that **individual estimates must be _independent_.** If those 800 farmers deliberated amongst their neighbors before voting, the number of unique perspectives would collapse to a few hundred, maybe even only a few dozen, as people's opinions began influencing each others'. The opinions of loud personalities would weigh more than those of the quiet; rare information would be discarded in favor of common knowledge.
+The second requirement is that **individual estimates must be _independent_.** If those 800 farmers deliberated with their neighbors before voting, the number of unique perspectives would drop to a few hundred, maybe even only a few dozen, as people's opinions began influencing each other. The opinions of loud personalities would weigh more than those of the quiet; rare information would be discarded in favor of common knowledge.
 
-
-The training of a random forest model is like the lives of our farmers as they gain their knowledge.
-
-
+A random forest isn't too different from the farmers at that fair. Throughout their lives, each farmer was "trained" on mapping various features of an ox $-$ the size of its horns, the height at the shoulder $-$ to a weight. At the fair, each farmer took a new datapoint and independently cast an estimate. Galton then finished the analogy by aggregating their responses into a final prediction.
 
 ### The fish
-So how do fish compare to a random forest model?
+The story gets more interesting for our shiners. A random forest isn't quite the right algorithm to describe schools of fish for one major reason: the information a fish has about its environment is strongly correlated with its neighbors.
+
+So what about our shiners? Can schools of shiners be considered another random forest, a swarm of decision trees?
+
+<img src="{{  site.baseurl  }}/images/theory/coll_beh/fish_school.jpg">
 
 
 
@@ -98,4 +102,4 @@ Bagging vs. boosting. Bagging: actually independent, more like wisdom of crowd. 
 
 ## Footnotes
 #### 1. [The theory](#the-theory)
-If you _never_ encounter a different worldview online, or you only ever see it framed as belonging to an idiot, then you're likely in an echo chamber. A lot of this is inevitable as [your social network self-segregates](https://www.pnas.org/content/118/7/e2022761118), meaning it's on you to seek out the diverse viewpoints necessary for a more objective worldview.
+If you _never_ encounter a different worldview online, or you only ever see it framed as belonging to an idiot, then you're likely in an echo chamber. A lot of this is inevitable as [social networks tend to self-segregate](https://www.pnas.org/content/118/7/e2022761118), meaning it's on you to seek out the diverse viewpoints necessary for a more objective worldview.
