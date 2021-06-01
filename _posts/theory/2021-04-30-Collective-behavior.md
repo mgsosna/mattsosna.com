@@ -40,10 +40,18 @@ A random forest isn't too different from the farmers at that fair. Throughout th
 ### The fish
 The story gets more interesting for our shiners. A random forest isn't quite the right algorithm to describe schools of fish for one major reason: the information a fish has about its environment is strongly correlated with its neighbors.
 
-So what about our shiners? Can schools of shiners be considered another random forest, a swarm of decision trees?
+Consider the image below of a school of 150 golden shiners. The field of view of each shiner has been approximated using a ray-casting algorithm, and only the rays that actually leave the group are colored white.
 
-<img src="{{  site.baseurl  }}/images/theory/coll_beh/fish_school.jpg">
+<img src="{{  site.baseurl  }}/images/theory/coll_beh/school_FOV.png" loading="lazy">
+<span style="font-size: 12px"><i>Image from the <a href="https://www.pnas.org/content/pnas/suppl/2015/03/24/1420068112.DCSupplemental/pnas.1420068112.sapp.pdf">supplementary info</a> for <a href="https://www.pnas.org/content/pnas/early/2015/03/24/1420068112.full.pdf?with-ds=yes">Rosenthal et al. 2015</a>.</i></span>
 
+The first thing that jumps out is that the inside of the school is a dead zone of information about the outside world $-$ these fish only see other fish. And even for the shiners that _do_ see the outside, individuals near one another are receiving essentially the same information about their surroundings.
+
+Yet, even though individuals' information is [spatially autocorrelated](https://rspatial.org/raster/analysis/3-spauto.html), which [prevents the wisdom of the crowds from occurring](http://thekaolab.com/inc/papers/Kao_ProcB_2014.pdf), schools of shiners are able to elegantly avoid attacking predators like in the video below.
+
+In short, individual estimates about what behavior to perform
+
+So how can a group like this make more informed decisions when most fish can't see the outside and those that can see mostly the same thing?
 
 
 One important consideration is that these are independent estimates. This makes it more like bagging, rather than boosting.
@@ -73,11 +81,9 @@ Individuals within groups have limited personal information and only local infor
 
 
 The short answer is that it's complicated! The slightly longer answer is that shiners have evolved mechanisms of translating noisy *social cues* into decisions more accurate than they could reach themselves.
-Maybe should start with the model, which people will be more familiar with
+
 
 Can think of it as fish have different experiences.
-
-There _are_ some important differences to point out, however. Ensemble methods rely on each estimator submitting _independent_ guesses. The "many-wrongs" idea here is that the inaccuracies of the guesses average out, resulting in a more accurate guess than any individual. But this only holds if the models aren't aware of one another.
 
 Fish schools, and animal groups in general, aren't comprised of completely independent estimators: there can be significant [spatial and temporal autocorrelation](http://thekaolab.com/inc/papers/kao2014.pdf).
 
