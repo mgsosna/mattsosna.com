@@ -54,10 +54,9 @@ In short, individual estimates about what behavior to perform
 So how can a group like this make more informed decisions when most fish can't see the outside and those that can see mostly the same thing?
 
 
-One important consideration is that these are independent estimates. This makes it more like bagging, rather than boosting.
+One important consideration is that these are independent estimates. This makes it more like bagging, rather than boosting. Bagging: actually independent, more like wisdom of crowd. Boosting: individual models learn from failures of previous model. Bagging more accurate, boosting might actually be more like the fish in nature.
 
 
-There's one more nuance to mention: boosted vs. bagged
 
 One additional parallel. We typically think of artificial neural networks as modeled off of biological neural networks. But the entire school can also be thought of as a neural network.
 
@@ -98,11 +97,8 @@ For fish species that live in large groups, staying close to others is often not
 ### RF
 **Note: the trees in a forest are uncorrelated.** That isn't the case in nature; fish close to one another in the school have highly correlated social information. But especially in fission-fusion species, they likely differ in their personal experience, their knowledge about the environment or how to interpret cues.
 
-Spatial and temporal correlation: http://thekaolab.com/inc/papers/kao2014.pdf
-
 Hard to rule out other explanations for why fish schools are smarter than individuals: https://core.ac.uk/download/pdf/82291278.pdf
 
-Bagging vs. boosting. Bagging: actually independent, more like wisdom of crowd. Boosting: individual models learn from failures of previous model. Bagging more accurate, boosting might actually be more like the fish in nature.
 
 ## Conclusions
 
