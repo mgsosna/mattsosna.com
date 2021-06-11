@@ -15,7 +15,12 @@ Another example was a CSV with 4 million rows. Just trying to load it into a `pa
 
  This was an amount of data that's hard to
 
-PySpark is useful. Let's build a short intuition. Dealing with RDDs: resilient distributed datasets. Distributed across machines.
+Apache Spark is useful. Let's build a short intuition. Dealing with RDDs: resilient distributed datasets. Distributed across machines.
+
+The real strength of Spark comes in being able to distribute your problem across nodes. These nodes can be cores inside a machine, or entire machines. The idea is that you have a coordinator node that allocates tasks to "worker" nodes.
+
+An example I've heard is counting the number of books in a library. The "vertical scaling" approach would be to train a person to count books faster and faster $-$ they'd spend years training to count while running as fast as possible. But a more scalable, fault-tolerant, and cheaper option would be to just bring 20 friends, assign each person a section of the library, and have them count the books in their section. In the end, you would just need to add their answers together to get the total sum.
+
 
 
 ## Web scraping
@@ -49,6 +54,10 @@ print(len(pars))  # 90
 ```
 
 Now we start our Spark stuff. We instantiate a Spark session, then create a [**resilient distributed dataset (RDD)**](https://sparkbyexamples.com/spark-rdd-tutorial/) of our list of strings. This RDD is the core data structure in Spark - it's what allows us to distribute our data to multiple workers who can execute a command in parallel.
+
+Resilient = able to recompute missing or damaged partitions.
+Mention `numSlices`?
+
 
 {% include header-python.html %}
 ```python
