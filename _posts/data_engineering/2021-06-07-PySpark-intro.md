@@ -188,6 +188,35 @@ reduce(lambda x, y: x + y, (Counter(val) for val in novel)).most_common(5)
 So with PySpark, we're about 67.7% faster than using base Python. Sweet! I'm still deciding what to do with these extra four seconds...
 
 
+## Calculating $\pi$
+
+There are [lots of great tutorials](https://www.cantorsparadise.com/calculating-the-value-of-pi-using-random-numbers-a-monte-carlo-simulation-d4b80dc12bdf) on how to calculate pi using random numbers. The brief summary is that we generate random x-y coordinates between (0,0) and (1,1), then calculate the proportion of those points that fall within a circle with radius 1. We can then solve for $\pi$ by multiplying this proportion by 4.
+
+<
+
+
+We add some chunking.
+
+```python
+def calculate_pi(n_samples):
+
+    means = []
+
+    # Chunk the calculation
+    for _ in np.arange(0, n_samples, n_samples/10):
+
+        x = np.random.rand(n_samples)
+        y = np.random.rand(n_samples)
+
+        means.append(np.mean(np.sqrt(x**2 + y**2) < 1))
+
+    return np.mean(means) * 4
+```
+
+
+
+
+
 # Old
 Note that the `\n` counts as a character, so we only get two letters back. Now let's save it as a text file.
 
