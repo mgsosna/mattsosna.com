@@ -158,6 +158,7 @@ print(our_novel[0]) # t. okh. ugzswkkxudhxcvubxl! fb, ualzv....
 
 Writing a novel has never been so easy! Now let's create our RDD, then time how long it takes to count all the letters using PySpark versus Python's built-in functions.
 
+{% include header-python.html %}
 ```python
 from functools import reduce
 from collections import Counter
@@ -172,6 +173,7 @@ rdd = spark.sparkContext.parallelize(novel)
 
 Then in _separate_ Jupyter notebook cells, we can run the following code. The `%%timeit` line is an [IPython magic command](https://ipython.readthedocs.io/en/stable/interactive/magics.html) that is super useful for timing how long a piece of code takes to run.
 
+{% include header-python.html %}
 ```python
 %%timeit
 rdd.map(Counter).reduce(lambda x, y: x + y).most_common(5)
@@ -179,6 +181,8 @@ rdd.map(Counter).reduce(lambda x, y: x + y).most_common(5)
 ```
 
 Versus in base Python:
+
+{% include header-python.html %}
 ```python
 %%timeit
 reduce(lambda x, y: x + y, (Counter(val) for val in novel)).most_common(5)
@@ -190,20 +194,21 @@ So with PySpark, we're about 67.7% faster than using base Python. Sweet! I'm sti
 
 ## Calculating $\pi$
 
-There are [lots of great tutorials](https://www.cantorsparadise.com/calculating-the-value-of-pi-using-random-numbers-a-monte-carlo-simulation-d4b80dc12bdf) on how to calculate pi using random numbers. The brief summary is that we generate random x-y coordinates between (0,0) and (1,1), then calculate the proportion of those points that fall within a circle with radius 1. We can then solve for $\pi$ by multiplying this proportion by 4.
+There are [lots of great tutorials](https://www.cantorsparadise.com/calculating-the-value-of-pi-using-random-numbers-a-monte-carlo-simulation-d4b80dc12bdf) on how to calculate pi using random numbers. The brief summary is that we generate random x-y coordinates between (0,0) and (1,1), then calculate the proportion of those points that fall within a circle with radius 1. We can then solve for $\pi$ by multiplying this proportion by 4. In the visualization below, we would divide the number of blue points by the total number of points to get $\frac{\pi}{4}$.
 
-<
+<center>
+<img src="{{  site.baseurl  }}/images/data_engineering/pyspark/calculate_pi.png" loading="lazy" height="45%" width="45%">
+</center>
 
+Here's a function for calculating pi. I tried striking a balance between 1) iterating through `n_samples` and generating one point each time (low memory intensity but takes long), versus 2) generating all samples at once and then calculating the mean (need to store all points in memory). A solution I found works pretty well is to break `n_samples` into several _chunks_, calculate the proportion of points within the circle for each chunk, and then get the mean of means at the end.
 
-We add some chunking.
-
+{% include header-python.html %}
 ```python
-def calculate_pi(n_samples):
+def calculate_pi(n_samples, n_chunks=11):
 
     means = []
 
-    # Chunk the calculation
-    for _ in np.arange(0, n_samples, n_samples/10):
+    for _ in np.linspace(0, n_samples, n_chunks):
 
         x = np.random.rand(n_samples)
         y = np.random.rand(n_samples)
@@ -211,6 +216,134 @@ def calculate_pi(n_samples):
         means.append(np.mean(np.sqrt(x**2 + y**2) < 1))
 
     return np.mean(means) * 4
+```
+
+Now let's get Spark going. We'll have a bunch of nodes on our machine estimate pi simultaneously, then take the average of their estimates to get a final result.
+
+{% include header-python.html %}
+```python
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.getOrCreate()
+
+n_partitions = 100
+n_samples = 100000
+
+rdd = spark.sparkContext.parallelize(range(n_partitions),
+                                     numSlices=n_partitions)
+
+rdd.map(lambda x: calculate_pi(n_samples)).mean()
+# 3.1411235
+```
+
+Not bad! Using `%%timeit` again, we see that on my machine, base Python takes 3.76 s $\pm$ 138 ms, while Spark takes 1.34 s $\pm$ 117 ms, a 64% improvement. Nice!
+
+
+## Spark dataframes
+Let's do one more example, this time using a nice abstration Spark provides on top of RDDs. In a syntax similar to `pandas`, we can use [Spark dataframes] to perform operations on data that's too large to fit into a `pandas` df.
+
+Let's generate a dataframe with 50 million rows. We'll need to do this in pieces, iteratively saving CSVs to later ingest with PySpark.
+
+{% include header-python.html %}
+```python
+import os
+import pandas as pd
+
+os.mkdir('datasets')
+
+names = ['Abby', 'Brad', 'Caroline', 'Dmitry']
+n_samples = 1000000
+
+for i in range(1, 51):
+    df = pd.DataFrame({'name': np.random.choice(names, n_samples),
+                       'age': np.random.normal(50, 10, n_samples),
+                       'height': np.random.rand(n_samples)})
+    df.to_csv(f'datasets/big_df_{i}.csv', index=False)
+
+    if i % 10 == 0:
+        print(i)
+```
+
+Then we can create a Spark dataframe from the CSVs. Let's check the schema and number of rows.
+
+{% include header-python.html %}
+```python
+rdd_df = spark.read.format('csv')\
+            .option('header', 'true')\
+            .option('inferSchema', 'true')\
+            .load('datasets/big_df*')
+
+rdd_df.printSchema()
+# root
+#  |-- name: string (nullable = true)
+#  |-- age: double (nullable = true)
+#  |-- height: double (nullable = true)
+
+rdd_df.count()
+# 50000000
+```
+
+Now let's analyze our data. Let's start by counting the number of rows for each person.
+
+{% include header-python.html %}
+```python
+rdd_df.groupBy('name').count().orderBy('name').show()
+# +--------+--------+
+# |    name|   count|
+# +--------+--------+
+# |    Abby|12505506|
+# |    Brad|12492586|
+# |Caroline|12501527|
+# |  Dmitry|12500381|
+# +--------+--------+
+```
+
+Now let's find the average age and height by person. Note that these should be very close to the mean of the distribution `numpy` generated them from!
+
+{% include header-python.html %}
+```python
+rdd_df.groupBy('name').mean().orderBy('name').show()
+# +--------+------------------+------------------+
+# |    name|          avg(age)|       avg(height)|
+# +--------+------------------+------------------+
+# |    Abby|50.003242502450576|0.5005356708258004|
+# |    Brad|  49.9928861434274|0.4999207020891359|
+# |Caroline| 50.00418138186213|  0.50003226601409|
+# |  Dmitry| 49.99832431955308|0.4998001935985182|
+# +--------+------------------+------------------+
+```
+
+What's curious is that if you run this a few times, the exact values you'll get will vary slightly, by about 0.001. Interesting...
+
+To have those values be nice and rounded, we'll actually need to create a user-defined function. Check it out. The `DoubleType()` refers to the type of the returned value.
+
+{% include header-python.html %}
+```python
+from pyspark.sql.types import DoubleType
+from pyspark.sql.functions import pandas_udf
+from pyspark.sql.functions import PandasUDFType
+
+@pandas_udf(DoubleType(), functionType=PandasUDFType.GROUPED_AGG)
+def round_mean(vals):
+    return round(vals.mean(), 4)
+
+spark.udf.register("round_mean", round_mean)
+```
+
+Now we can apply it to our dataframe. Note that since we're using `.agg`, we'll need to pass in a dictionary with the columns we want to apply our thing to.
+
+{% include header-python.html %}
+```python
+func_dict = {col: 'round_mean' for col in ['age', 'height']}
+
+rdd_df.groupBy('name').agg(func_dict).orderBy('name').show()
+# +--------+---------------+------------------+
+# |    name|round_mean(age)|round_mean(height)|
+# +--------+---------------+------------------+
+# |    Abby|        49.9943|            0.5001|
+# |    Brad|        50.0016|            0.4999|
+# |Caroline|        49.9991|               0.5|
+# |  Dmitry|        49.9955|            0.5001|
+# +--------+---------------+------------------+
 ```
 
 
