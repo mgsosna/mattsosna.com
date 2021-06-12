@@ -1,11 +1,25 @@
 ---
 layout: post
-title: Intro to big data with PySpark
+title: A hands-on demo of big data with PySpark
 author: matt_sosna
 ---
 
-
 We're used to dealing with data that can be stored on our machine. But what if you have a lot more?
+
+There's a lot of data out there, with IoT, click streams, etc. In 2020,
+
+[Cloud company Domo estimates](https://web-assets.domo.com/blog/wp-content/uploads/2020/08/20-data-never-sleeps-8-final-01-Resize.jpg) that for every minute in 2020, WhatsApp users shared 41.7 million messages, Netflix streamed 404,000 hours of video, consumers spent $1 million online, and 69,000 people applied for jobs on LinkedIn.
+
+In that firehose of data are patterns that can elevate a company in its market if acted upon $-$ or cause a company's downfall if ignored. 
+
+
+make or break business trajectories.
+
+businesses salivate over being able to make de
+
+
+Big data is important. But how can you actually practice big data processing if you're not already at a company with access to terabytes or petabytes of data? In this post, we'll keep things simple by generating large datasets ourselves on the fly, then processing them with PySpark. The nice thing is that the code in this post can be used verbatim on datasets hundreds or thousands of times larger than what we'll be dealing with $-$ just replace the lines for initializing Spark with whatever's needed to access the dozens or hundreds of machines you'll have at your fingertips when you're a data engineer at Google!
+
 
 In one of my previous roles, I analyzed IRS tax returns for nonprofits. That is... I analyzed _700,000_ tax returns. Each tax return was an XML document that was about XXXX KB. So in total, that was XXX GB on my computer... more than my RAM could handle.
 
@@ -15,7 +29,7 @@ Another example was a CSV with 4 million rows. Just trying to load it into a `pa
 
  This was an amount of data that's hard to
 
-Apache Spark is useful. Let's build a short intuition. Dealing with RDDs: resilient distributed datasets. Distributed across machines.
+[Apache Spark](https://spark.apache.org/) is useful. Let's build a short intuition. Dealing with RDDs: resilient distributed datasets. Distributed across machines.
 
 The real strength of Spark comes in being able to distribute your problem across nodes. These nodes can be cores inside a machine, or entire machines. The idea is that you have a coordinator node that allocates tasks to "worker" nodes.
 
@@ -193,12 +207,13 @@ So with PySpark, we're about 67.7% faster than using base Python. Sweet! I'm sti
 
 
 ## Calculating $\pi$
-
 There are [lots of great tutorials](https://www.cantorsparadise.com/calculating-the-value-of-pi-using-random-numbers-a-monte-carlo-simulation-d4b80dc12bdf) on how to calculate pi using random numbers. The brief summary is that we generate random x-y coordinates between (0,0) and (1,1), then calculate the proportion of those points that fall within a circle with radius 1. We can then solve for $\pi$ by multiplying this proportion by 4. In the visualization below, we would divide the number of blue points by the total number of points to get $\frac{\pi}{4}$.
 
 <center>
 <img src="{{  site.baseurl  }}/images/data_engineering/pyspark/calculate_pi.png" loading="lazy" height="45%" width="45%">
 </center>
+
+The more points we generate, the more accurate our estimate gets for $\pi$. This is an ideal place for PySpark to come in.
 
 Here's a function for calculating pi. I tried striking a balance between 1) iterating through `n_samples` and generating one point each time (low memory intensity but takes long), versus 2) generating all samples at once and then calculating the mean (need to store all points in memory). A solution I found works pretty well is to break `n_samples` into several _chunks_, calculate the proportion of points within the circle for each chunk, and then get the mean of means at the end.
 
@@ -240,6 +255,8 @@ Not bad! Using `%%timeit` again, we see that on my machine, base Python takes 3.
 
 ## Spark dataframes
 Let's do one more example, this time using a nice abstration Spark provides on top of RDDs. In a syntax similar to `pandas`, we can use [Spark dataframes] to perform operations on data that's too large to fit into a `pandas` df.
+
+You probably don't have a dataframe with a few million rows laying around, so we'll need to generate one.
 
 Let's generate a dataframe with 50 million rows. We'll need to do this in pieces, iteratively saving CSVs to later ingest with PySpark.
 
