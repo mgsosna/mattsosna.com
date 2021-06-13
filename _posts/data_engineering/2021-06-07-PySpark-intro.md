@@ -4,37 +4,30 @@ title: A hands-on demo of big data with PySpark
 author: matt_sosna
 ---
 
-We're used to dealing with data that can be stored on our machine. But what if you have a lot more?
+[Business intelligence firm Domo estimates](https://web-assets.domo.com/blog/wp-content/uploads/2020/08/20-data-never-sleeps-8-final-01-Resize.jpg) that for every minute in 2020, WhatsApp users sent 41.7 million messages, Netflix streamed 404,000 hours of video, $240,000 changed hands on Venmo, and 69,000 people applied for jobs on LinkedIn. In that firehose of data are patterns those companies use to inform product direction, gauge user sentiment, and ultimately stay alive in a hyper-competitive market.
 
-There's a lot of data out there, with IoT, click streams, etc. In 2020,
+But how is it possible to analyze a dataset like job applications on LinkedIn? The dataframe for 2020 alone would be 36.3 billion rows! When a dataset is too large to load into `pandas` on our laptop, we _could_ head to BestBuy.com, go to their computers section, and sort by "most expensive"... or we could try [**Apache Spark**](https://spark.apache.org/).
 
-[Cloud company Domo estimates](https://web-assets.domo.com/blog/wp-content/uploads/2020/08/20-data-never-sleeps-8-final-01-Resize.jpg) that for every minute in 2020, WhatsApp users shared 41.7 million messages, Netflix streamed 404,000 hours of video, consumers spent $1 million online, and 69,000 people applied for jobs on LinkedIn.
+**Spark is an analytics framework for processing massive amounts of data.** Its core approach is to _partition_ your data into subsets, _distribute_ the data to workers (whether they're cores on your laptop or entire machines in a network), and then _coordinate_ the workers to analyze the data.
 
-In that firehose of data are patterns that can elevate a company in its market if acted upon $-$ or cause a company's downfall if ignored. 
+A simple analogy is how to count the number of books in a library. The "expensive computer" approach would be to teach one person to count books as fast as possible, training them for years to accurately count while sprinting. While incredibly fun to watch, this approach wouldn't be that useful $-$ even Olympic sprinters can only run so fast, and you're out of luck if your one book-counter gets injured or decides to change professions!
 
+The Spark approach, meanwhile, would be to get 100 random people, assign each one a section of the library, have them count the books in their section, and then add their answers together. This approach is more scalable, fault-tolerant, and cheaper... though it'd probably be less fun to watch.
 
-make or break business trajectories.
-
-businesses salivate over being able to make de
-
-
-Big data is important. But how can you actually practice big data processing if you're not already at a company with access to terabytes or petabytes of data? In this post, we'll keep things simple by generating large datasets ourselves on the fly, then processing them with PySpark. The nice thing is that the code in this post can be used verbatim on datasets hundreds or thousands of times larger than what we'll be dealing with $-$ just replace the lines for initializing Spark with whatever's needed to access the dozens or hundreds of machines you'll have at your fingertips when you're a data engineer at Google!
+## Getting our hands dirty
+Analyzing big data with Spark sounds great, but how can you actually practice if you're not already at a company with terabytes or petabytes of data?
 
 
-In one of my previous roles, I analyzed IRS tax returns for nonprofits. That is... I analyzed _700,000_ tax returns. Each tax return was an XML document that was about XXXX KB. So in total, that was XXX GB on my computer... more than my RAM could handle.
-
-Another example was a CSV with 4 million rows. Just trying to load it into a `pandas` dataframe caused Jupyter to slow to a crawl and my fan to spin like crazy.
+In this post, we'll keep things simple by generating large datasets ourselves on the fly, then processing them with PySpark. The nice thing is that the code in this post can be used verbatim on datasets hundreds or thousands of times larger than what we'll be dealing with $-$ just replace the lines for initializing Spark with whatever's needed to access the dozens or hundreds of machines you'll have at your fingertips when you're a data engineer at Google!
 
 
 
- This was an amount of data that's hard to
 
-[Apache Spark](https://spark.apache.org/) is useful. Let's build a short intuition. Dealing with RDDs: resilient distributed datasets. Distributed across machines.
-
-The real strength of Spark comes in being able to distribute your problem across nodes. These nodes can be cores inside a machine, or entire machines. The idea is that you have a coordinator node that allocates tasks to "worker" nodes.
-
-An example I've heard is counting the number of books in a library. The "vertical scaling" approach would be to train a person to count books faster and faster $-$ they'd spend years training to count while running as fast as possible. But a more scalable, fault-tolerant, and cheaper option would be to just bring 20 friends, assign each person a section of the library, and have them count the books in their section. In the end, you would just need to add their answers together to get the total sum.
-
+### Table of contents
+1. [Web scraping](#web-scraping)
+2. [Counting letters in a novel](#counting-letters-in-a-novel)
+3. [Calculating $\pi$](#calculating-pi)
+4. [Spark dataframes](#spark-dataframes)
 
 
 ## Web scraping
@@ -137,7 +130,7 @@ You might have heard of Google's MapReduce, which is basically what's happening 
 
 (Worth comparing to the letter distribution in tons of data?)
 
-## Trying it on really massive data
+## Counting letters in a novel
 This works fine, but it's not much faster than running it without PySpark. Let's try really creating a massive dataset. We can create a thing that has a thing. We'll generate the text ourselves; the [*lorem ipsum*](https://loremipsum.io/) Python packages I found were a little inconsistent, and I don't want to hit the very funny [Bacon Ipsum API](https://baconipsum.com/json-api/) with a request for 100,000 paragraphs.
 
 {% include header-python.html %}
