@@ -1,20 +1,34 @@
 ---
 layout: post
-title: A hands-on demo of big data with PySpark
+title: A hands-on demo of analyzing big data with PySpark
 author: matt_sosna
 ---
 
-[Business intelligence firm Domo estimates](https://web-assets.domo.com/blog/wp-content/uploads/2020/08/20-data-never-sleeps-8-final-01-Resize.jpg) that for every minute in 2020, WhatsApp users sent 41.7 million messages, Netflix streamed 404,000 hours of video, $240,000 changed hands on Venmo, and 69,000 people applied for jobs on LinkedIn. In that firehose of data are patterns those companies use to inform product direction, gauge user sentiment, and ultimately stay alive in a hyper-competitive market.
+[Cloud services firm Domo estimates](https://web-assets.domo.com/blog/wp-content/uploads/2020/08/20-data-never-sleeps-8-final-01-Resize.jpg) that for every minute in 2020, WhatsApp users sent 41.7 million messages, Netflix streamed 404,000 hours of video, $240,000 changed hands on Venmo, and 69,000 people applied for jobs on LinkedIn. In that firehose of data are patterns those companies use to gauge user sentiment, predict the future, and ultimately stay alive in a hyper-competitive market.
 
-But how is it possible to analyze a dataset like job applications on LinkedIn? The dataframe for 2020 alone would be 36.3 billion rows! When a dataset is too large to load into `pandas` on our laptop, we _could_ head to BestBuy.com, go to their computers section, and sort by "most expensive"... or we could try [**Apache Spark**](https://spark.apache.org/).
+But how is it possible to extract insights from datasets so large they freeze your laptop when you try to load them into `pandas`? When a dataset has more rows than [dollars the median household will earn in 50 years](https://www.census.gov/library/publications/2020/demo/p60-270.html)<sup>[[1]](#1-intro)</sup>, we _could_ head to BestBuy.com, go to their computers section, and sort by "most expensive."
 
-**Spark is an analytics framework for processing massive amounts of data.** Its core approach is to _partition_ your data into subsets, _distribute_ the data to workers (whether they're cores on your laptop or entire machines in a network), and then _coordinate_ the workers to analyze the data.
+Or we could try [**Apache Spark**](https://spark.apache.org/).
 
-A simple analogy is how to count the number of books in a library. The "expensive computer" approach would be to teach one person to count books as fast as possible, training them for years to accurately count while sprinting. While incredibly fun to watch, this approach wouldn't be that useful $-$ even Olympic sprinters can only run so fast, and you're out of luck if your one book-counter gets injured or decides to change professions!
+By the end of this post, you'll understand why we don't need expensive hardware to analyze massive datasets $-$ because you'll have already done it. We'll cover what Spark is before counting the frequency of each letter in a novel, calculating $\pi$ by hand, and processing a dataframe with 50 million rows.
 
-The Spark approach, meanwhile, would be to get 100 random people, assign each one a section of the library, have them count the books in their section, and then add their answers together. This approach is more scalable, fault-tolerant, and cheaper... though it'd probably be less fun to watch.
+### Table of contents
+1. [The analytics framework for big data](#the-analytics-framework-for-big-data)
+2. [Counting letter frequencies in a novel](#counting-letter-frequencies-in-a-novel)
+3. [Calculating $\pi$](#calculating-pi)
+4. [Spark dataframes](#spark-dataframes)
 
-## Getting our hands dirty
+### The analytics framework for big data
+**Spark is a framework for processing massive amounts of data.** It works by **_partitioning_** your data into subsets, **_distributing_** the subsets to workers (whether they're [CPU cores](https://www.computerhope.com/jargon/c/core.htm) on your laptop or entire machines in a network), and then **_coordinating_** the workers to analyze the data. In essence, Spark is a "divide and conquer" strategy.
+
+A simple analogy can help visualize the value of this approach. Let's say we want to count the number of books in a library. The "expensive computer" approach would be to teach someone to count books as fast as possible, training them for years to accurately count while sprinting. While incredibly fun to watch, this approach wouldn't be that useful $-$ even Olympic sprinters can only run so fast, and you're out of luck if your book-counter gets injured or decides to change professions!
+
+The Spark approach, meanwhile, would be to get 100 random people, assign each one a section of the library, have them count the books in their section, and then add their answers together. This approach is more scalable, fault-tolerant, and cheaper... and probably still fun to watch.
+
+Spark's main data type is the [**resilient distributed dataset (RDD)**](https://sparkbyexamples.com/spark-rdd-tutorial/).
+
+
+
 Analyzing big data with Spark sounds great, but how can you actually practice if you're not already at a company with terabytes or petabytes of data?
 
 
@@ -22,146 +36,45 @@ In this post, we'll keep things simple by generating large datasets ourselves on
 
 
 
+### Counting letter frequencies in a novel
+[Project Gutenberg](https://www.gutenberg.org/) is an online repository of books in the [public domain](https://fairuse.stanford.edu/overview/public-domain/welcome/), so let's pull a book from there to analyze. I've always wanted to read Dostoevsky's _War and Peace_, or at least know how frequently each letter in the alphabet appeared, so let's pick that one.<sup>[[2]](#2-counting-letter-frequencies-in-a-novel)</sup>
 
-### Table of contents
-1. [Web scraping](#web-scraping)
-2. [Counting letters in a novel](#counting-letters-in-a-novel)
-3. [Calculating $\pi$](#calculating-pi)
-4. [Spark dataframes](#spark-dataframes)
+We'll pull the HTML from the webpage with the [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) Python library, tidy up the paragraphs, and then append them to a list. Finally, we remove the first staggering _408_ paragraphs that are just the table of contents!
 
-
-## Web scraping
-Let's scrape the Wikipedia page for computers and find the 10 most common characters (e.g. `a`, `b`, etc.) on the page. We'll take a distributed approach by handing each paragraph to a separate Spark node. (?)
-
-{% include header-python.html %}
 ```python
 import requests
-from bs4 import BeautifulSoup
+import bs4 as BeautifulSoup
 
-response = requests.get('https://en.wikipedia.org/wiki/Computer')
+# Pull book
+book_url = "https://www.gutenberg.org/files/2600/2600-h/2600-h.htm"
+response = requests.get(book_url)
 
+# Convert to soup object
 soup = BeautifulSoup(response.text, 'html')
-```
 
-Then we want to convert the HTML into a list of the paragraphs. We can do so like this.
-
-{% include header-python.html %}
-```python
+# Create list to store clean paragraphs
 pars = []
 
+# Iterate through paragraphs
 for par in soup.findAll('p'):
 
-    # Remove newline characters
-    text = par.text.split('\n')[0]
+    # Remove '\r\n'
+    par_clean = ''.join(par.text.split('\r\n'))
 
-    if len(text) > 0:
-        pars.append(text)
+    # Remove extra spaces
+    par_clean = par_clean.split('  ')
+    par_clean = ' '.join([p for p in par_clean if p != ''])
 
-print(len(pars))  # 90
+    # Add cleaned paragraph to list
+    pars.append(par_clean)
+
+# Remove table of contents
+pars = pars[408:]
 ```
 
-Now we start our Spark stuff. We instantiate a Spark session, then create a [**resilient distributed dataset (RDD)**](https://sparkbyexamples.com/spark-rdd-tutorial/) of our list of strings. This RDD is the core data structure in Spark - it's what allows us to distribute our data to multiple workers who can execute a command in parallel.
 
-Resilient = able to recompute missing or damaged partitions.
-Mention `numSlices`?
+adada
 
-
-{% include header-python.html %}
-```python
-from pyspark.sql import SparkSession
-
-spark = SparkSession.builder.getOrCreate()
-rdd = spark.sparkContext.parallelize(pars)
-
-# Visualize number of partitions
-print(rdd.count())   # 90
-```
-
-We see that `.parallelize` created one partition per paragraph. Let's now count how often each character (e.g. `a`, `b`, `c`, etc.) occurs in each paragraph in our RDD. `Counter` is a built-in Python class that's optimized for this. We'll **map** the `Counter` command to each string with `rdd.map(Counter)`.
-
-{% include header-python.html %}
-```python
-from collections import Counter
-
-# Nothing happens
-rdd.map(Counter)
-# PythonRDD[12] at RDD at PythonRDD.scala:53
-
-# We force the execution by asking to display 1st two results
-rdd.map(Counter).take(2)
-# [Counter({'A': 2,
-#           ' ': 88,
-#           'c': 22,
-#           ...
-#           ',': 3,
-#           '(': 1,
-#           ')': 1}),
-#  Counter({'A': 1,
-#           ' ': 60,
-#           'b': 3,
-#           ...
-#           'h': 6,
-#           'C': 1,
-#           'I': 1})]
-```
-
-Note that we need to do `.take(2)` at the end because PySpark does **lazy evaluation** - it won't actually run any commands we give it until forced to. This is because if we give a set of instructions and only at the end force Spark to execute the commands, it optimizes the task allocation at the end.
-
-Finally, let's finish what we originally set out to do: finding the 10 most common letters on the Wikipedia page.
-
-{% include header-python.html %}
-```python
-rdd.map(Counter).reduce(lambda x, y: x + y).most_common(10)
-# [(' ', 8017),
-#  ('e', 4933),
-#  ('t', 3584),
-#  ('a', 3241),
-#  ('o', 3104),
-#  ('i', 2900),
-#  ('r', 2896),
-#  ('n', 2835),
-#  ('s', 2593),
-#  ('c', 1817)]
-```
-
-Somewhat unsurprisingly, a space is the most common character, followed by `e`, `t`, and a couple vowels.
-
-You might have heard of Google's MapReduce, which is basically what's happening here.
-
-(Worth comparing to the letter distribution in tons of data?)
-
-## Counting letters in a novel
-This works fine, but it's not much faster than running it without PySpark. Let's try really creating a massive dataset. We can create a thing that has a thing. We'll generate the text ourselves; the [*lorem ipsum*](https://loremipsum.io/) Python packages I found were a little inconsistent, and I don't want to hit the very funny [Bacon Ipsum API](https://baconipsum.com/json-api/) with a request for 100,000 paragraphs.
-
-{% include header-python.html %}
-```python
-import numpy as np
-from string import ascii_lowercase
-
-# Create set of characters to sample from
-ALPHABET = list(ascii_lowercase) + [' ', ', ', '. ', '! ']
-
-# Set parameters
-N_PARAGRAPHS = 100000
-MIN_PAR_LEN = 100
-MAX_PAR_LEN = 2000
-
-# Set random state
-np.random.seed(42)
-
-# Generate novel
-novel = []
-for _ in range(N_PARAGRAPHS):
-
-    # Generate and visualize our data
-    n_char = np.random.randint(MIN_PAR_LEN, MAX_PAR_LEN)
-    paragraph = np.random.choice(ALPHABET, n_char)
-
-    novel.append(''.join(paragraph))
-
-# Visualize first "paragraph"
-print(our_novel[0]) # t. okh. ugzswkkxudhxcvubxl! fb, ualzv....
-```
 
 Writing a novel has never been so easy! Now let's create our RDD, then time how long it takes to count all the letters using PySpark versus Python's built-in functions.
 
@@ -396,4 +309,143 @@ print(txt.take(5))  # ['g', 't', 'o', 'k', 'h']
 # N letters that are 'e'
 print(txt.filter(lambda: letter == 'e').count())
 # 38833
+```
+
+
+## Old 2
+## Web scraping
+Let's scrape the Wikipedia page for computers and find the 10 most common characters (e.g. `a`, `b`, etc.) on the page. We'll take a distributed approach by handing each paragraph to a separate Spark node. (?)
+
+{% include header-python.html %}
+```python
+import requests
+from bs4 import BeautifulSoup
+
+response = requests.get('https://en.wikipedia.org/wiki/Computer')
+
+soup = BeautifulSoup(response.text, 'html')
+```
+
+Then we want to convert the HTML into a list of the paragraphs. We can do so like this.
+
+{% include header-python.html %}
+```python
+pars = []
+
+for par in soup.findAll('p'):
+
+    # Remove newline characters
+    text = par.text.split('\n')[0]
+
+    if len(text) > 0:
+        pars.append(text)
+
+print(len(pars))  # 90
+```
+
+Now we start our Spark stuff. We instantiate a Spark session, then create a [**resilient distributed dataset (RDD)**](https://sparkbyexamples.com/spark-rdd-tutorial/) of our list of strings. This RDD is the core data structure in Spark - it's what allows us to distribute our data to multiple workers who can execute a command in parallel.
+
+Resilient = able to recompute missing or damaged partitions.
+Mention `numSlices`?
+
+
+{% include header-python.html %}
+```python
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.getOrCreate()
+rdd = spark.sparkContext.parallelize(pars)
+
+# Visualize number of partitions
+print(rdd.count())   # 90
+```
+
+We see that `.parallelize` created one partition per paragraph. Let's now count how often each character (e.g. `a`, `b`, `c`, etc.) occurs in each paragraph in our RDD. `Counter` is a built-in Python class that's optimized for this. We'll **map** the `Counter` command to each string with `rdd.map(Counter)`.
+
+{% include header-python.html %}
+```python
+from collections import Counter
+
+# Nothing happens
+rdd.map(Counter)
+# PythonRDD[12] at RDD at PythonRDD.scala:53
+
+# We force the execution by asking to display 1st two results
+rdd.map(Counter).take(2)
+# [Counter({'A': 2,
+#           ' ': 88,
+#           'c': 22,
+#           ...
+#           ',': 3,
+#           '(': 1,
+#           ')': 1}),
+#  Counter({'A': 1,
+#           ' ': 60,
+#           'b': 3,
+#           ...
+#           'h': 6,
+#           'C': 1,
+#           'I': 1})]
+```
+
+Note that we need to do `.take(2)` at the end because PySpark does **lazy evaluation** - it won't actually run any commands we give it until forced to. This is because if we give a set of instructions and only at the end force Spark to execute the commands, it optimizes the task allocation at the end.
+
+Finally, let's finish what we originally set out to do: finding the 10 most common letters on the Wikipedia page.
+
+{% include header-python.html %}
+```python
+rdd.map(Counter).reduce(lambda x, y: x + y).most_common(10)
+# [(' ', 8017),
+#  ('e', 4933),
+#  ('t', 3584),
+#  ('a', 3241),
+#  ('o', 3104),
+#  ('i', 2900),
+#  ('r', 2896),
+#  ('n', 2835),
+#  ('s', 2593),
+#  ('c', 1817)]
+```
+
+Somewhat unsurprisingly, a space is the most common character, followed by `e`, `t`, and a couple vowels.
+
+You might have heard of Google's MapReduce, which is basically what's happening here.
+
+(Worth comparing to the letter distribution in tons of data?)
+
+## Footnotes
+#### 1. [Intro](#)
+The median household income in 2019 was \$68,703, according to [Census.gov](https://www.census.gov/library/publications/2020/demo/p60-270.html). Multiply this by 50 to get 3.43 million, which is smaller than some of the data we analyze in this post.
+
+#### 2. [Counting letter frequencies in a novel](#counting-letter-frequencies-in-a-novel)
+In earlier drafts of this post, I toyed around with generating the text for a "novel" myself. I looked at some [*lorem ipsum*](https://loremipsum.io/) Python packages, but they were a little inconsistent; I found the very funny [Bacon Ipsum API](https://baconipsum.com/json-api/) but didn't want to drown it with a request for 100,000 paragraphs. The code below generates a "novel" with 100,000 paragraphs ranging from 100 to 2000 characters.
+
+{% include header-python.html %}
+```python
+import numpy as np
+from string import ascii_lowercase
+
+# Create set of characters to sample from
+ALPHABET = list(ascii_lowercase) + [' ', ', ', '. ', '! ']
+
+# Set parameters
+N_PARAGRAPHS = 100000
+MIN_PAR_LEN = 100
+MAX_PAR_LEN = 2000
+
+# Set random state
+np.random.seed(42)
+
+# Generate novel
+novel = []
+for _ in range(N_PARAGRAPHS):
+
+    # Generate and visualize our data
+    n_char = np.random.randint(MIN_PAR_LEN, MAX_PAR_LEN)
+    paragraph = np.random.choice(ALPHABET, n_char)
+
+    novel.append(''.join(paragraph))
+
+# Visualize first "paragraph"
+print(our_novel[0]) # t. okh. ugzswkkxudhxcvubxl! fb, ualzv....
 ```
