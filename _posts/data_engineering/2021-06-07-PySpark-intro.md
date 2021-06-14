@@ -37,46 +37,64 @@ In this post, we'll keep things simple by generating large datasets ourselves on
 
 
 ### Counting letter frequencies in a novel
-[Project Gutenberg](https://www.gutenberg.org/) is an online repository of books in the [public domain](https://fairuse.stanford.edu/overview/public-domain/welcome/), so let's pull a book from there to analyze. I've always wanted to read Dostoevsky's _War and Peace_, or at least know how frequently each letter in the alphabet appeared, so let's pick that one.<sup>[[2]](#2-counting-letter-frequencies-in-a-novel)</sup>
+[Project Gutenberg](https://www.gutenberg.org/) is an online repository of books in the [public domain](https://fairuse.stanford.edu/overview/public-domain/welcome/), so we can pull a book from there to analyze. Let's do Fyodor Dostoevsky's _War and Peace_ $-$ I've always wanted to read it, or at least know how frequently each letter in the alphabet appears! <sup>[[2]](#2-counting-letter-frequencies-in-a-novel)</sup>
 
-We'll pull the HTML from the webpage with the [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) Python library, tidy up the paragraphs, and then append them to a list. Finally, we remove the first staggering _408_ paragraphs that are just the table of contents!
+Below, we pull the HTML from the novel's webpage with the [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) Python library, tidy up the paragraphs, and then append them to a list. Finally, we remove the first _388_ paragraphs that are just the table of contents! We're left with 11,186 paragraphs ranging from 4 letters to 4381.
 
 ```python
 import requests
+import pandas as pd
 import bs4 as BeautifulSoup
 
 # Pull book
 book_url = "https://www.gutenberg.org/files/2600/2600-h/2600-h.htm"
 response = requests.get(book_url)
-
-# Convert to soup object
 soup = BeautifulSoup(response.text, 'html')
 
 # Create list to store clean paragraphs
 pars = []
 
+# Set minimum str length for paragraphs
+MIN_PAR_LEN = 2
+
 # Iterate through paragraphs
 for par in soup.findAll('p'):
 
-    # Remove '\r\n'
-    par_clean = ''.join(par.text.split('\r\n'))
+    # Remove newlines and returns
+    par_clean = ''.join(par.text.split('\n'))
+    par_clean = ''.join(par_clean.split('\r'))
+
+    if par_clean == '':
+        continue
 
     # Remove extra spaces
     par_clean = par_clean.split('  ')
     par_clean = ' '.join([p for p in par_clean if p != ''])
 
     # Add cleaned paragraph to list
-    pars.append(par_clean)
+    if len(par_clean) > MIN_PAR_LEN:
+        pars.append(par_clean)
 
 # Remove table of contents
-pars = pars[408:]
+pars = pars[383:]
+
+# Visualize paragraph lengths
+pd.Series([len(par) for par in pars]).describe().astype(int)
+# count    11186
+# mean       284
+# std        337
+# min          4
+# 25%         84
+# 50%        170
+# 75%        347
+# max       4381
 ```
 
+Despite being a massive novel, we see that base Python can still process the data without a problem. But we'll move into PySpark to get familiar with the functionality, so we're prepared for the upcoming tougher challenges. We'll notice that despite not being a massive dataset, PySpark is actually faster at processing our data than base Python.
 
-adada
 
 
-Writing a novel has never been so easy! Now let's create our RDD, then time how long it takes to count all the letters using PySpark versus Python's built-in functions.
+Now let's create our RDD, then time how long it takes to count all the letters using PySpark versus Python's built-in functions.
 
 {% include header-python.html %}
 ```python
@@ -88,7 +106,7 @@ from pyspark.sql import SparkSession
 spark = SparkSession.builder.getOrCreate()
 
 # Partition novel into RDD
-rdd = spark.sparkContext.parallelize(novel)
+rdd = spark.sparkContext.parallelize(pars)
 ```
 
 Then in _separate_ Jupyter notebook cells, we can run the following code. The `%%timeit` line is an [IPython magic command](https://ipython.readthedocs.io/en/stable/interactive/magics.html) that is super useful for timing how long a piece of code takes to run.
@@ -97,7 +115,7 @@ Then in _separate_ Jupyter notebook cells, we can run the following code. The `%
 ```python
 %%timeit
 rdd.map(Counter).reduce(lambda x, y: x + y).most_common(5)
-# 2.58 s +/- 208 ms per loop (mean +/- std. dev. of 7 runs, 1 loop each)
+# 272 ms ± 18.6 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 ```
 
 Versus in base Python:
@@ -105,8 +123,8 @@ Versus in base Python:
 {% include header-python.html %}
 ```python
 %%timeit
-reduce(lambda x, y: x + y, (Counter(val) for val in novel)).most_common(5)
-# 7.98 s +/- 77.9 ms per loop (mean +/- std. dev. of 7 runs, 1 loop each)
+reduce(lambda x, y: x + y, (Counter(val) for val in pars)).most_common(5)
+# 806 ms ± 9.37 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 ```
 
 So with PySpark, we're about 67.7% faster than using base Python. Sweet! I'm still deciding what to do with these extra four seconds...
@@ -418,7 +436,7 @@ You might have heard of Google's MapReduce, which is basically what's happening 
 The median household income in 2019 was \$68,703, according to [Census.gov](https://www.census.gov/library/publications/2020/demo/p60-270.html). Multiply this by 50 to get 3.43 million, which is smaller than some of the data we analyze in this post.
 
 #### 2. [Counting letter frequencies in a novel](#counting-letter-frequencies-in-a-novel)
-In earlier drafts of this post, I toyed around with generating the text for a "novel" myself. I looked at some [*lorem ipsum*](https://loremipsum.io/) Python packages, but they were a little inconsistent; I found the very funny [Bacon Ipsum API](https://baconipsum.com/json-api/) but didn't want to drown it with a request for 100,000 paragraphs. The code below generates a "novel" with 100,000 paragraphs ranging from 100 to 2000 characters.
+In earlier drafts of this post, I toyed around with generating the text for a "novel" myself. I looked at some [*lorem ipsum*](https://loremipsum.io/) Python packages, but they were a little inconsistent; I found the very funny [Bacon Ipsum API](https://baconipsum.com/json-api/) but didn't want to drown it with a request for thousands of paragraphs. The code below uses random strings to generates a "novel" 100,000 paragraphs long, or 8.6x _War and Peace_'s measely 11,000. Turns out writing a novel is way easier than I thought!
 
 {% include header-python.html %}
 ```python
