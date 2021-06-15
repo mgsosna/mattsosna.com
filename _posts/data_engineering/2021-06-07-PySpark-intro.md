@@ -1,6 +1,6 @@
 ---
 layout: post
-title: A hands-on demo of analyzing big data with PySpark
+title: A hands-on demo of analyzing big data with Spark
 author: matt_sosna
 ---
 
@@ -10,7 +10,7 @@ But how is it possible to extract insights from datasets so large they freeze yo
 
 Or we could try [**Apache Spark**](https://spark.apache.org/).
 
-By the end of this post, you'll understand why we don't need expensive hardware to analyze massive datasets $-$ because you'll have already done it. We'll cover what Spark is before counting the frequency of each letter in a novel, calculating $\pi$ by hand, and processing a dataframe with 50 million rows.
+By the end of this post, you'll understand why you don't need expensive hardware to analyze massive datasets $-$ because you'll have already done it. We'll cover what Spark is before counting the frequency of each letter in a novel, calculating $\pi$ by hand, and processing a dataframe with 50 million rows.
 
 ### Table of contents
 1. [The analytics framework for big data](#the-analytics-framework-for-big-data)
@@ -21,25 +21,37 @@ By the end of this post, you'll understand why we don't need expensive hardware 
 ### The analytics framework for big data
 **Spark is a framework for processing massive amounts of data.** It works by **_partitioning_** your data into subsets, **_distributing_** the subsets to workers (whether they're [CPU cores](https://www.computerhope.com/jargon/c/core.htm) on your laptop or entire machines in a network), and then **_coordinating_** the workers to analyze the data. In essence, Spark is a "divide and conquer" strategy.
 
-A simple analogy can help visualize the value of this approach. Let's say we want to count the number of books in a library. The "expensive computer" approach would be to teach someone to count books as fast as possible, training them for years to accurately count while sprinting. While incredibly fun to watch, this approach wouldn't be that useful $-$ even Olympic sprinters can only run so fast, and you're out of luck if your book-counter gets injured or decides to change professions!
+A simple analogy can help visualize the value of this approach. Let's say we want to count the number of books in a library. The "expensive computer" approach would be to teach someone to count books as fast as possible, training them for years to accurately count while sprinting. While fun to watch, this approach isn't that useful $-$ even Olympic sprinters can only run so fast, and you're out of luck if your book-counter gets injured or decides to change professions!
 
 The Spark approach, meanwhile, would be to get 100 random people, assign each one a section of the library, have them count the books in their section, and then add their answers together. This approach is more scalable, fault-tolerant, and cheaper... and probably still fun to watch.
 
-Spark's main data type is the [**resilient distributed dataset (RDD)**](https://sparkbyexamples.com/spark-rdd-tutorial/).
+Spark's main data type is the [**resilient distributed dataset (RDD)**](https://sparkbyexamples.com/spark-rdd-tutorial/). An RDD is an abstraction of data distributed in many places, like how the entity "Walmart" is an abstraction of millions of people around the world. Working with RDDs feels like manipulating a simple array in memory, even though the underlying data may be spread across multiple machines.
 
+Spark is mainly written in [Scala](https://www.scala-lang.org/) but has support for Java, Python, R, and SQL. We'll use [PySpark](https://spark.apache.org/docs/latest/api/python/), the Python interface for Spark. Below is a simple snippit of creating an RDD of an array, visualizing the first two numbers, and printing out the maximum. With `.getNumPartitions`, we see that Spark allocated our array to eight worker nodes on my machine.
 
+{% include header-python.html %}
+```python
+from pyspark.sql import SparkSession
 
-Analyzing big data with Spark sounds great, but how can you actually practice if you're not already at a company with terabytes or petabytes of data?
+# Start Spark connection
+spark = SparkSession.builder.getOrCreate()
 
+# Allocate the numbers 0-999 to an RDD
+numbers = range(1000)
+rdd = spark.SparkContext.parallelize(numbers)
 
-In this post, we'll keep things simple by generating large datasets ourselves on the fly, then processing them with PySpark. The nice thing is that the code in this post can be used verbatim on datasets hundreds or thousands of times larger than what we'll be dealing with $-$ just replace the lines for initializing Spark with whatever's needed to access the dozens or hundreds of machines you'll have at your fingertips when you're a data engineer at Google!
+# Visualize RDD
+print(rdd.take(2))  # [0, 1]
+print(rdd.max())    # 999
+print(rdd.getNumPartitions())  # 8
+```
 
-
+With this basic primer, we're ready to start leveraging Spark to process large datasets. Since you probably don't have any terabyte- or petabyte-size datasets lying around to analyze, we'll need to get a little creative. Let's start with a novel.
 
 ### Counting letter frequencies in a novel
-[Project Gutenberg](https://www.gutenberg.org/) is an online repository of books in the [public domain](https://fairuse.stanford.edu/overview/public-domain/welcome/), so we can pull a book from there to analyze. Let's do Fyodor Dostoevsky's _War and Peace_ $-$ I've always wanted to read it, or at least know how frequently each letter in the alphabet appears! <sup>[[2]](#2-counting-letter-frequencies-in-a-novel)</sup>
+[Project Gutenberg](https://www.gutenberg.org/) is an online repository of books in the [public domain](https://fairuse.stanford.edu/overview/public-domain/welcome/), so we can pull a book from there to analyze. Let's do Fyodor Dostoyevsky's _War and Peace_ $-$ I've always wanted to read it, or at least know how frequently each letter in the alphabet appears! <sup>[[2]](#2-counting-letter-frequencies-in-a-novel)</sup>
 
-Below, we pull the HTML from the novel's webpage with the [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) Python library, tidy up the paragraphs, and then append them to a list. Finally, we remove the first _388_ paragraphs that are just the table of contents! We're left with 11,186 paragraphs ranging from 4 letters to 4381.
+Below, we get the HTML from the novel's webpage with the [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) Python library, tidy up the paragraphs, and then append them to a list. We then remove the first _382_ paragraphs that are just the table of contents! We're left with 11,186 paragraphs ranging from 4 characters to 4381. (The string kind of characters, but with _War and Peace_, maybe novel characters too.)
 
 ```python
 import requests
@@ -90,11 +102,9 @@ pd.Series([len(par) for par in pars]).describe().astype(int)
 # max       4381
 ```
 
-Despite being a massive novel, we see that base Python can still process the data without a problem. But we'll move into PySpark to get familiar with the functionality, so we're prepared for the upcoming tougher challenges. We'll notice that despite not being a massive dataset, PySpark is actually faster at processing our data than base Python.
+Despite _War and Peace_ being a massive novel, we see that `pandas` can still process high-level metrics without a problem $-$ line 38 runs nearly instantly on my laptop. But we'll start to notice a substantial performance improvement with Spark when we start asking tougher questions, like the frequency of each letter throughout the book. This is because **the paragraphs can be processed independently from one another**; Spark will process paragraphs eight at a time, whereas Python and `pandas` will process them one by one.
 
-
-
-Now let's create our RDD, then time how long it takes to count all the letters using PySpark versus Python's built-in functions.
+As before, we start our Spark session and create an RDD of our paragraphs. We also load `Counter`, a built-in Python class optimized for counting, and `reduce`, which we'll use to demo the base Python approach later.
 
 {% include header-python.html %}
 ```python
@@ -109,7 +119,60 @@ spark = SparkSession.builder.getOrCreate()
 rdd = spark.sparkContext.parallelize(pars)
 ```
 
-Then in _separate_ Jupyter notebook cells, we can run the following code. The `%%timeit` line is an [IPython magic command](https://ipython.readthedocs.io/en/stable/interactive/magics.html) that is super useful for timing how long a piece of code takes to run.
+We then [map](https://en.wikipedia.org/wiki/Map_(higher-order_function)) the `Counter` command to each paragraph with `rdd.map(Counter)`. Note how nothing happens unless we add `.take(2)` to output the first two results $-$ Spark does [lazy evaluation](https://en.wikipedia.org/wiki/Lazy_evaluation), a method for optimizing chains of queries until a result actually needs to be returned.
+
+{% include header-python.html %}
+```python
+# Nothing happens
+rdd.map(Counter)
+# PythonRDD[12] at RDD at PythonRDD.scala:53
+
+# We force the execution by asking to display 1st two results
+rdd.map(Counter).take(2)
+# [Counter({'“': 1,
+#           'W': 1,
+#           'e': 40,
+#           ...
+#           '!': 1,
+#           '?': 1,
+#           '”': 1}),
+#  Counter({'I': 1,
+#           't': 19,
+#           ' ': 79,
+#           ...
+#           'K': 1,
+#           ';': 1,
+#           'b': 3})]
+```
+
+`rdd.map(Counter)` gives us a new RDD with the letter frequencies for each paragraph, but we actually want the letter frequencies of the entire book. Fortunately, we can do this by simply adding the `Counter` objects together. ("Fortunately" because this is painfully hard with normal Python dictionaries!)  
+
+We therefore simply tell Spark to add all the RDD elements together. We perform this [reduction](https://en.wikipedia.org/wiki/Fold_(higher-order_function)) from a multi-element object to a single output with the `.reduce` method, and we pass in an anonymous addition function to specify how to collapse the RDD.<sup>[[3]](#3-counting-letter-frequencies-in-a-novel)</sup> The result is a `Counter` object; we finish our analysis by using the `.most_common` method to print out the ten most common characters.
+
+{% include header-python.html %}
+```python
+rdd.map(Counter).reduce(lambda x, y: x + y).most_common(10)
+# [(' ', 554621),
+#  ('e', 308958),
+#  ('t', 217658),
+#  ('a', 194793),
+#  ('o', 186623),
+#  ('n', 179202),
+#  ('i', 162925),
+#  ('h', 162216),
+#  ('s', 158811),
+#  ('r', 143914)]
+```
+
+And the winner is... space! Here's those same frequencies, but in a nice barplot.
+
+<center>
+<img src="{{  site.baseurl  }}/images/data_engineering/pyspark/war_and_peace_letters.png" height="85%" width="85%">
+</center>
+
+Was using Spark worth it? Let's end this section by timing how long it takes our task to run in Spark versus base Python. We can use the incredibly useful `%%timeit` [IPython magic command](https://ipython.readthedocs.io/en/stable/interactive/magics.html) in _separate_ Jupyter notebook cells to see how our methods compare.
+
+In Spark:
 
 {% include header-python.html %}
 ```python
@@ -118,7 +181,7 @@ rdd.map(Counter).reduce(lambda x, y: x + y).most_common(5)
 # 272 ms ± 18.6 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 ```
 
-Versus in base Python:
+And in base Python:
 
 {% include header-python.html %}
 ```python
@@ -127,8 +190,7 @@ reduce(lambda x, y: x + y, (Counter(val) for val in pars)).most_common(5)
 # 806 ms ± 9.37 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 ```
 
-So with PySpark, we're about 67.7% faster than using base Python. Sweet! I'm still deciding what to do with these extra four seconds...
-
+With Spark, we're about 67.7% faster than using base Python. Sweet! Now I need to decide what to do with that extra half second of free time.
 
 ## Calculating $\pi$
 There are [lots of great tutorials](https://www.cantorsparadise.com/calculating-the-value-of-pi-using-random-numbers-a-monte-carlo-simulation-d4b80dc12bdf) on how to calculate pi using random numbers. The brief summary is that we generate random x-y coordinates between (0,0) and (1,1), then calculate the proportion of those points that fall within a circle with radius 1. We can then solve for $\pi$ by multiplying this proportion by 4. In the visualization below, we would divide the number of blue points by the total number of points to get $\frac{\pi}{4}$.
@@ -137,7 +199,11 @@ There are [lots of great tutorials](https://www.cantorsparadise.com/calculating-
 <img src="{{  site.baseurl  }}/images/data_engineering/pyspark/calculate_pi.png" loading="lazy" height="45%" width="45%">
 </center>
 
-The more points we generate, the more accurate our estimate gets for $\pi$. This is an ideal place for PySpark to come in.
+The more points we generate, the more accurate our estimate gets for $\pi$.
+
+[Monte Carlo simulations](https://www.ibm.com/cloud/learn/monte-carlo-simulation)
+
+ This is an ideal place for PySpark to come in.
 
 Here's a function for calculating pi. I tried striking a balance between 1) iterating through `n_samples` and generating one point each time (low memory intensity but takes long), versus 2) generating all samples at once and then calculating the mean (need to store all points in memory). A solution I found works pretty well is to break `n_samples` into several _chunks_, calculate the proportion of points within the circle for each chunk, and then get the mean of means at the end.
 
@@ -378,55 +444,7 @@ rdd = spark.sparkContext.parallelize(pars)
 print(rdd.count())   # 90
 ```
 
-We see that `.parallelize` created one partition per paragraph. Let's now count how often each character (e.g. `a`, `b`, `c`, etc.) occurs in each paragraph in our RDD. `Counter` is a built-in Python class that's optimized for this. We'll **map** the `Counter` command to each string with `rdd.map(Counter)`.
-
-{% include header-python.html %}
-```python
-from collections import Counter
-
-# Nothing happens
-rdd.map(Counter)
-# PythonRDD[12] at RDD at PythonRDD.scala:53
-
-# We force the execution by asking to display 1st two results
-rdd.map(Counter).take(2)
-# [Counter({'A': 2,
-#           ' ': 88,
-#           'c': 22,
-#           ...
-#           ',': 3,
-#           '(': 1,
-#           ')': 1}),
-#  Counter({'A': 1,
-#           ' ': 60,
-#           'b': 3,
-#           ...
-#           'h': 6,
-#           'C': 1,
-#           'I': 1})]
-```
-
-Note that we need to do `.take(2)` at the end because PySpark does **lazy evaluation** - it won't actually run any commands we give it until forced to. This is because if we give a set of instructions and only at the end force Spark to execute the commands, it optimizes the task allocation at the end.
-
-Finally, let's finish what we originally set out to do: finding the 10 most common letters on the Wikipedia page.
-
-{% include header-python.html %}
-```python
-rdd.map(Counter).reduce(lambda x, y: x + y).most_common(10)
-# [(' ', 8017),
-#  ('e', 4933),
-#  ('t', 3584),
-#  ('a', 3241),
-#  ('o', 3104),
-#  ('i', 2900),
-#  ('r', 2896),
-#  ('n', 2835),
-#  ('s', 2593),
-#  ('c', 1817)]
-```
-
-Somewhat unsurprisingly, a space is the most common character, followed by `e`, `t`, and a couple vowels.
-
+We see that `.parallelize` created one partition per paragraph.
 You might have heard of Google's MapReduce, which is basically what's happening here.
 
 (Worth comparing to the letter distribution in tons of data?)
@@ -467,3 +485,6 @@ for _ in range(N_PARAGRAPHS):
 # Visualize first "paragraph"
 print(our_novel[0]) # t. okh. ugzswkkxudhxcvubxl! fb, ualzv....
 ```
+
+#### 3. [Counting letter frequencies in a novel](#counting-letter-frequencies-in-a-novel)
+You can easily reduce RDDs with more complex functions, or ones you've defined ahead of time. But for much big data processing, the operations are usually pretty simple $-$ adding elements together, filtering by some threshold $-$ so it's a little overkill to define these functions explicitly outside the one or two times you use them.
