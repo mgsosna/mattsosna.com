@@ -510,7 +510,7 @@ np.random.seed(42)
 novel = []
 for _ in range(N_PARAGRAPHS):
 
-    # Generate and visualize our data
+    # Generate a paragraph
     n_char = np.random.randint(MIN_PAR_LEN, MAX_PAR_LEN)
     paragraph = np.random.choice(ALPHABET, n_char)
 
