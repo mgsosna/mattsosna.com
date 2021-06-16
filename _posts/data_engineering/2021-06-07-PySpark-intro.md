@@ -4,11 +4,11 @@ title: A hands-on demo of analyzing big data with Spark
 author: matt_sosna
 ---
 
-[Cloud services firm Domo estimates](https://web-assets.domo.com/blog/wp-content/uploads/2020/08/20-data-never-sleeps-8-final-01-Resize.jpg) that for every minute in 2020, WhatsApp users sent 41.7 million messages, Netflix streamed 404,000 hours of video, $240,000 changed hands on Venmo, and 69,000 people applied for jobs on LinkedIn. In that firehose of data are patterns those companies use to gauge user sentiment, predict the future, and ultimately stay alive in a hyper-competitive market.
+[Cloud services firm Domo estimates](https://web-assets.domo.com/blog/wp-content/uploads/2020/08/20-data-never-sleeps-8-final-01-Resize.jpg) that for every minute in 2020, WhatsApp users sent 41.7 million messages, Netflix streamed 404,000 hours of video, $240,000 changed hands on Venmo, and 69,000 people applied for jobs on LinkedIn. In that firehose of data are patterns those companies use to understand the present, predict the future, and ultimately stay alive in a hyper-competitive market.
 
-But how is it possible to extract insights from datasets so large they freeze your laptop when you try to load them into `pandas`? When a dataset has more rows than [dollars the median household will earn in 50 years](https://www.census.gov/library/publications/2020/demo/p60-270.html)<sup>[[1]](#1-intro)</sup>, we _could_ head to BestBuy.com, go to their computers section, and sort by "most expensive."
+But how is it possible to extract insights from datasets so large they freeze your laptop when you try to load them into `pandas`? When a dataset has more rows than [dollars the median household will earn in 50 years](https://www.census.gov/library/publications/2020/demo/p60-270.html)<sup>[[1]](#1-intro)</sup>, we _could_ head to BestBuy.com, sort their computers by "most expensive," and shell out some cash for a fancy machine.
 
-Or we could try [**Apache Spark**](https://spark.apache.org/).
+**Or we could try [Apache Spark](https://spark.apache.org/).**
 
 By the end of this post, you'll understand why you don't need expensive hardware to analyze massive datasets $-$ because you'll have already done it. We'll cover what Spark is before counting the frequency of each letter in a novel, calculating $\pi$ by hand, and processing a dataframe with 50 million rows.
 
@@ -16,10 +16,10 @@ By the end of this post, you'll understand why you don't need expensive hardware
 1. [The analytics framework for big data](#the-analytics-framework-for-big-data)
 2. [Counting letter frequencies in a novel](#counting-letter-frequencies-in-a-novel)
 3. [Calculating $\pi$](#calculating-pi)
-4. [Spark dataframes](#spark-dataframes)
+4. [Spark dataframes and machine learning](#spark-dataframes-and-machine-learning)
 
 ### The analytics framework for big data
-**Spark is a framework for processing massive amounts of data.** It works by **_partitioning_** your data into subsets, **_distributing_** the subsets to workers (whether they're [CPU cores](https://www.computerhope.com/jargon/c/core.htm) on your laptop or entire machines in a network), and then **_coordinating_** the workers to analyze the data. In essence, Spark is a "divide and conquer" strategy.
+**Spark is a framework for processing massive amounts of data.** It works by **_partitioning_** your data into subsets, **_distributing_** the subsets to worker nodes (whether they're [logical CPU cores](https://unix.stackexchange.com/questions/88283/so-what-are-logical-cpu-cores-as-opposed-to-physical-cpu-cores) on your laptop<sup>[[2]](#2-the-analytics-framework-for-big-data)</sup> or entire machines in a cluster), and then **_coordinating_** the workers to analyze the data. In essence, Spark is a "divide and conquer" strategy.
 
 A simple analogy can help visualize the value of this approach. Let's say we want to count the number of books in a library. The "expensive computer" approach would be to teach someone to count books as fast as possible, training them for years to accurately count while sprinting. While fun to watch, this approach isn't that useful $-$ even Olympic sprinters can only run so fast, and you're out of luck if your book-counter gets injured or decides to change professions!
 
@@ -27,7 +27,27 @@ The Spark approach, meanwhile, would be to get 100 random people, assign each on
 
 Spark's main data type is the [**resilient distributed dataset (RDD)**](https://sparkbyexamples.com/spark-rdd-tutorial/). An RDD is an abstraction of data distributed in many places, like how the entity "Walmart" is an abstraction of millions of people around the world. Working with RDDs feels like manipulating a simple array in memory, even though the underlying data may be spread across multiple machines.
 
-Spark is mainly written in [Scala](https://www.scala-lang.org/) but has support for Java, Python, R, and SQL. We'll use [PySpark](https://spark.apache.org/docs/latest/api/python/), the Python interface for Spark. Below is a simple snippit of creating an RDD of an array, visualizing the first two numbers, and printing out the maximum. With `.getNumPartitions`, we see that Spark allocated our array to eight worker nodes on my machine.
+#### Getting started
+Spark is mainly written in [Scala](https://www.scala-lang.org/) but can be used from Java, Python, R, and SQL. We'll use [PySpark](https://spark.apache.org/docs/latest/api/python/), the Python interface for Spark. To install PySpark, type `pip install pyspark` in the Terminal. You might also need to [install or update Java](https://java.com/en/download/). You'll know everything is set up when you can type `pyspark` in the Terminal and see something like this.
+
+{% include header-bash.html %}
+```
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /__ / .__/\_,_/_/ /_/\_\   version 3.1.2
+      /_/
+
+Using Python version 3.7.4 (default, Sep  7 2019 18:27:02)
+Spark context Web UI available at http://matts-mbp:4041
+Spark context available as 'sc' (master = local[*], app id = local-123).
+SparkSession available as 'spark'.
+```
+
+The rest of the code in this post can be run in the Spark terminal as above, or in a separate Python or Jupyter instance. I'll run the rest of the code in Jupyter so we can have access the incredibly handy `%%timeit` [IPython magic command](https://ipython.readthedocs.io/en/stable/interactive/magics.html) for measuring the speed of code blocks.
+
+Below is a tiny PySpark demo. We start by manually defining the `SparkSession` to start a connection to Spark. (If you're in the PySpark Terminal, this is already done for you.) We then create an RDD of an array, visualize the first two numbers, and print out the maximum. With `.getNumPartitions`, we see that Spark allocated our array to the eight logical cores on my machine.
 
 {% include header-python.html %}
 ```python
@@ -49,10 +69,11 @@ print(rdd.getNumPartitions())  # 8
 With this basic primer, we're ready to start leveraging Spark to process large datasets. Since you probably don't have any terabyte- or petabyte-size datasets lying around to analyze, we'll need to get a little creative. Let's start with a novel.
 
 ### Counting letter frequencies in a novel
-[Project Gutenberg](https://www.gutenberg.org/) is an online repository of books in the [public domain](https://fairuse.stanford.edu/overview/public-domain/welcome/), so we can pull a book from there to analyze. Let's do Fyodor Dostoyevsky's _War and Peace_ $-$ I've always wanted to read it, or at least know how frequently each letter in the alphabet appears! <sup>[[2]](#2-counting-letter-frequencies-in-a-novel)</sup>
+[Project Gutenberg](https://www.gutenberg.org/) is an online repository of books in the [public domain](https://fairuse.stanford.edu/overview/public-domain/welcome/), so we can pull a book from there to analyze. Let's do Fyodor Dostoyevsky's _War and Peace_ $-$ I've always wanted to read it, or at least know how frequently each letter in the alphabet appears! <sup>[[3]](#3-counting-letter-frequencies-in-a-novel)</sup>
 
 Below, we get the HTML from the novel's webpage with the [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) Python library, tidy up the paragraphs, and then append them to a list. We then remove the first _382_ paragraphs that are just the table of contents! We're left with 11,186 paragraphs ranging from 4 characters to 4381. (The string kind of characters, but with _War and Peace_, maybe novel characters too.)
 
+{% include header-python.html %}
 ```python
 import requests
 import pandas as pd
@@ -102,7 +123,9 @@ pd.Series([len(par) for par in pars]).describe().astype(int)
 # max       4381
 ```
 
-Despite _War and Peace_ being a massive novel, we see that `pandas` can still process high-level metrics without a problem $-$ line 38 runs nearly instantly on my laptop. But we'll start to notice a substantial performance improvement with Spark when we start asking tougher questions, like the frequency of each letter throughout the book. This is because **the paragraphs can be processed independently from one another**; Spark will process paragraphs eight at a time, whereas Python and `pandas` will process them one by one.
+Despite _War and Peace_ being a massive novel, we see that `pandas` can still process high-level metrics without a problem $-$ line 38 runs nearly instantly on my laptop.
+
+But we'll start to notice a substantial performance improvement with Spark when we start asking tougher questions, like the frequency of each letter throughout the book. This is because **the paragraphs can be processed independently from one another**; Spark will process paragraphs several at a time, whereas Python and `pandas` will process them one by one.
 
 As before, we start our Spark session and create an RDD of our paragraphs. We also load `Counter`, a built-in Python class optimized for counting, and `reduce`, which we'll use to demo the base Python approach later.
 
@@ -145,9 +168,9 @@ rdd.map(Counter).take(2)
 #           'b': 3})]
 ```
 
-`rdd.map(Counter)` gives us a new RDD with the letter frequencies for each paragraph, but we actually want the letter frequencies of the entire book. Fortunately, we can do this by simply adding the `Counter` objects together. ("Fortunately" because this is painfully hard with normal Python dictionaries!)  
+`rdd.map(Counter)` gives us a new RDD with the letter frequencies for each paragraph, but we actually want the letter frequencies of the entire book. Fortunately, we can do this by simply adding the `Counter` objects together.
 
-We therefore simply tell Spark to add all the RDD elements together. We perform this [reduction](https://en.wikipedia.org/wiki/Fold_(higher-order_function)) from a multi-element object to a single output with the `.reduce` method, and we pass in an anonymous addition function to specify how to collapse the RDD.<sup>[[3]](#3-counting-letter-frequencies-in-a-novel)</sup> The result is a `Counter` object; we finish our analysis by using the `.most_common` method to print out the ten most common characters.
+We perform this [reduction](https://en.wikipedia.org/wiki/Fold_(higher-order_function)) from a multi-element RDD to a single output with the `.reduce` method, passing in an anonymous addition function to specify how to collapse the RDD.<sup>[[4]](#4-counting-letter-frequencies-in-a-novel)</sup> The result is a `Counter` object. We then finish our analysis by using its `.most_common` method to print out the ten most common characters.
 
 {% include header-python.html %}
 ```python
@@ -167,10 +190,10 @@ rdd.map(Counter).reduce(lambda x, y: x + y).most_common(10)
 And the winner is... space! Here's those same frequencies, but in a nice barplot.
 
 <center>
-<img src="{{  site.baseurl  }}/images/data_engineering/pyspark/war_and_peace_letters.png" height="85%" width="85%">
+<img src="{{  site.baseurl  }}/images/data_engineering/pyspark/war_and_peace_letters.png" height="85%" width="85%" loading="lazy">
 </center>
 
-Was using Spark worth it? Let's end this section by timing how long it takes our task to run in Spark versus base Python. We can use the incredibly useful `%%timeit` [IPython magic command](https://ipython.readthedocs.io/en/stable/interactive/magics.html) in _separate_ Jupyter notebook cells to see how our methods compare.
+Was using Spark worth it? Let's end this section by timing how long it takes our task to run in Spark versus base Python. We can use the `%%timeit` [IPython magic command](https://ipython.readthedocs.io/en/stable/interactive/magics.html) in _separate_ Jupyter notebook cells to see how our methods compare.
 
 In Spark:
 
@@ -192,104 +215,135 @@ reduce(lambda x, y: x + y, (Counter(val) for val in pars)).most_common(5)
 
 With Spark, we're about 67.7% faster than using base Python. Sweet! Now I need to decide what to do with that extra half second of free time.
 
-## Calculating $\pi$
-There are [lots of great tutorials](https://www.cantorsparadise.com/calculating-the-value-of-pi-using-random-numbers-a-monte-carlo-simulation-d4b80dc12bdf) on how to calculate pi using random numbers. The brief summary is that we generate random x-y coordinates between (0,0) and (1,1), then calculate the proportion of those points that fall within a circle with radius 1. We can then solve for $\pi$ by multiplying this proportion by 4. In the visualization below, we would divide the number of blue points by the total number of points to get $\frac{\pi}{4}$.
+### Calculating $\pi$
+There are [many great tutorials](https://www.cantorsparadise.com/calculating-the-value-of-pi-using-random-numbers-a-monte-carlo-simulation-d4b80dc12bdf) on how to calculate pi using random numbers. The brief summary is that we generate random x-y coordinates between (0,0) and (1,1), then calculate the proportion of those points that fall within a circle with radius 1. We can then solve for $\pi$ by multiplying this proportion by 4. In the visualization of 10,000 points below, we would divide the number of blue points by the total number of points to get $\frac{\pi}{4}$.
 
 <center>
 <img src="{{  site.baseurl  }}/images/data_engineering/pyspark/calculate_pi.png" loading="lazy" height="45%" width="45%">
 </center>
 
-The more points we generate, the more accurate our estimate gets for $\pi$.
+The more points we generate, the more accurate our estimate gets for $\pi$. This is an ideal challenge for Spark, since the generated points are all independent. Rather than analyze pre-existing data, we can use our worker nodes to _each generate thousands of points_ and _calculate the proportion of those points that land inside the circle._ We can then take the mean of our proportions for our final estimate of $\pi$.
 
-[Monte Carlo simulations](https://www.ibm.com/cloud/learn/monte-carlo-simulation)
-
- This is an ideal place for PySpark to come in.
-
-Here's a function for calculating pi. I tried striking a balance between 1) iterating through `n_samples` and generating one point each time (low memory intensity but takes long), versus 2) generating all samples at once and then calculating the mean (need to store all points in memory). A solution I found works pretty well is to break `n_samples` into several _chunks_, calculate the proportion of points within the circle for each chunk, and then get the mean of means at the end.
+Here's the function we'll have each worker run. I tried striking a balance between 1) generating one point each time (low memory but slow), versus 2) generating all samples at once and then calculating the proportion (efficient but can hit memory limits). A decent solution I found is to break `n_points` into several _chunks_, calculate the proportion of points within the circle for each chunk, and then get the mean of proportions at the end.
 
 {% include header-python.html %}
 ```python
-def calculate_pi(n_samples, n_chunks=11):
+import numpy as np
 
+def calculate_pi(n_points, n_chunks=11):
+    """
+    Generate n_points coordinates between [0, 1), [0, 1) and count
+    the proportion that fall within a unit circle. n_points/n_chunks
+    points generated at a time.
+    """
     means = []
 
-    for _ in np.linspace(0, n_samples, n_chunks):
+    for _ in np.linspace(0, n_points, n_chunks):
 
-        x = np.random.rand(n_samples)
-        y = np.random.rand(n_samples)
+        x = np.random.rand(n_points)
+        y = np.random.rand(n_points)
 
         means.append(np.mean(np.sqrt(x**2 + y**2) < 1))
 
     return np.mean(means) * 4
 ```
 
-Now let's get Spark going. We'll have a bunch of nodes on our machine estimate pi simultaneously, then take the average of their estimates to get a final result.
+Now let's create an RDD and map `calculate_pi` to each element, then take the mean of each element's estimate of $\pi$.
 
 {% include header-python.html %}
 ```python
 from pyspark.sql import SparkSession
 spark = SparkSession.builder.getOrCreate()
 
-n_partitions = 100
+n_estimators = 100
 n_samples = 100000
 
-rdd = spark.sparkContext.parallelize(range(n_partitions),
-                                     numSlices=n_partitions)
+rdd = spark.sparkContext.parallelize(range(n_estimators))
 
 rdd.map(lambda x: calculate_pi(n_samples)).mean()
-# 3.1411235
+# 3.141782
 ```
 
-Not bad! Using `%%timeit` again, we see that on my machine, base Python takes 3.76 s $\pm$ 138 ms, while Spark takes 1.34 s $\pm$ 117 ms, a 64% improvement. Nice!
+Our estimate of pi isn't too bad! Using `%%timeit` again, we see that on my machine, base Python takes about 3.67 s, while Spark takes 0.95 s, a 74% improvement. Nice!
 
+### Spark dataframes and machine learning
+Let's do one more example, this time using a nice abstration Spark provides on top of RDDs. In a syntax similar to `pandas`, we can use [Spark dataframes](https://spark.apache.org/docs/latest/sql-programming-guide.html) to perform operations on data that's too large to fit into a `pandas` df.
 
-## Spark dataframes
-Let's do one more example, this time using a nice abstration Spark provides on top of RDDs. In a syntax similar to `pandas`, we can use [Spark dataframes] to perform operations on data that's too large to fit into a `pandas` df.
+You probably don't have a dataframe with a few million rows laying around, so we'll need to generate one. Since by definition we're trying to create a dataset too large to fit into `pandas`, we'll need to generate the dataframe in pieces, iteratively saving CSVs to later ingest with PySpark.
 
-You probably don't have a dataframe with a few million rows laying around, so we'll need to generate one.
-
-Let's generate a dataframe with 50 million rows. We'll need to do this in pieces, iteratively saving CSVs to later ingest with PySpark.
+Let's do 50 million rows, just for fun. We'll generate 50 CSVs, each with 1,000,000 rows. Our data will consist of exam scores for four students, and the number of hours they spent studying vs. dancing the previous day. These are some students dedicated to big data $-$ they'll be taking about 12.5 million exams each!
 
 {% include header-python.html %}
 ```python
 import os
+import numpy as np
 import pandas as pd
 
-os.mkdir('datasets')
+# Create dataset folder to store CSVs
+folder = "datasets"
 
-names = ['Abby', 'Brad', 'Caroline', 'Dmitry']
-n_samples = 1000000
+if folder not in os.listdir():
+    os.mkdir(folder)
+
+# Define students and number of rows per CSV
+students = ['Abby', 'Brad', 'Caroline', 'Dmitry']
+n = 1000000
 
 for i in range(1, 51):
-    df = pd.DataFrame({'name': np.random.choice(names, n_samples),
-                       'age': np.random.normal(50, 10, n_samples),
-                       'height': np.random.rand(n_samples)})
-    df.to_csv(f'datasets/big_df_{i}.csv', index=False)
 
-    if i % 10 == 0:
-        print(i)
+    # Generate vector of random names
+    names = np.random.choice(students, n)
+
+    # Generate features with varying influence on exam score
+    study = np.linspace(0, 8, n) + np.random.normal(0, 0.5, n)
+    dance = np.linspace(0, 8, n) + np.random.normal(0, 10, n)
+
+    # Generate scores
+    score = np.linspace(0, 100, n) + np.random.normal(0, 0.5, n)
+
+    # Group data together into df
+    df_iter = pd.DataFrame({'name': names,
+                            'study': study,
+                            'dance': dance,
+                            'score': score})
+
+    df_iter.to_csv(f'{folder}/big_df_{i}.csv', index=False)
+
+    # Log our progress
+    if i % 5 == 0:
+        print(f"{round(100*i/10)}% complete")
 ```
 
-Then we can create a Spark dataframe from the CSVs. Let's check the schema and number of rows.
+We'll now create a Spark dataframe from the CSVs, visualize the schema, and print out the number of rows. But we'll first need to add a configuration option when we define our Spark session $-$ for the following code blocks to run, I needed to double the [driver memory](https://researchcomputing.princeton.edu/computational-hardware/hadoop/spark-memory) to avoid crashing Spark! We'll do this with the `.config('spark.driver.memory', '2g')` line.
 
 {% include header-python.html %}
 ```python
+from pyspark.sql import SparkSession
+
+# Define session and increase driver memory
+spark = SparkSession.builder\
+            .config('spark.driver.memory', '2g')\
+            .getOrCreate()
+
+# Create a Spark df from the CSVs
 rdd_df = spark.read.format('csv')\
             .option('header', 'true')\
             .option('inferSchema', 'true')\
-            .load('datasets/big_df*')
+            .load(f'{folder}/big_df*')
 
 rdd_df.printSchema()
 # root
 #  |-- name: string (nullable = true)
-#  |-- age: double (nullable = true)
-#  |-- height: double (nullable = true)
+#  |-- study: double (nullable = true)
+#  |-- sleep: double (nullable = true)
+#  |-- dance: double (nullable = true)
+#  |-- score: double (nullable = true)
 
 rdd_df.count()
 # 50000000
 ```
 
-Now let's analyze our data. Let's start by counting the number of rows for each person.
+Let's now analyze our data. We'll start by counting the number of rows for each person.
 
 {% include header-python.html %}
 ```python
@@ -297,37 +351,36 @@ rdd_df.groupBy('name').count().orderBy('name').show()
 # +--------+--------+
 # |    name|   count|
 # +--------+--------+
-# |    Abby|12505506|
-# |    Brad|12492586|
-# |Caroline|12501527|
-# |  Dmitry|12500381|
+# |    Abby|12502617|
+# |    Brad|12505754|
+# |Caroline|12497831|
+# |  Dmitry|12493798|
 # +--------+--------+
 ```
 
-Now let's find the average age and height by person. Note that these should be very close to the mean of the distribution `numpy` generated them from!
+12.5 million exams each... incredible. Now let's find the average of the hours studied, hours danced, and exam scores by person.
 
 {% include header-python.html %}
 ```python
 rdd_df.groupBy('name').mean().orderBy('name').show()
-# +--------+------------------+------------------+
-# |    name|          avg(age)|       avg(height)|
-# +--------+------------------+------------------+
-# |    Abby|50.003242502450576|0.5005356708258004|
-# |    Brad|  49.9928861434274|0.4999207020891359|
-# |Caroline| 50.00418138186213|  0.50003226601409|
-# |  Dmitry| 49.99832431955308|0.4998001935985182|
-# +--------+------------------+------------------+
+# +--------+------------------+------------------+------------------+
+# |    name|        avg(study)|        avg(dance)|        avg(score)|
+# +--------+------------------+------------------+------------------+
+# |    Abby| 4.000719675263846| 4.003064539205431| 50.00863317710569|
+# |    Brad| 4.000347945431657|3.9951049814089465|50.003555427979684|
+# |Caroline|3.9990820375739693| 3.997358096942248| 49.99076907377133|
+# |  Dmitry|3.9999589716292063|3.9977244162538814| 49.99676120966577|
+# +--------+------------------+------------------+------------------+
 ```
 
-What's curious is that if you run this a few times, the exact values you'll get will vary slightly, by about 0.001. Interesting...
+Unsurprisingly, there's no variation between people since we didn't specify any when generating the data. The means are also right in the middle of the ranges specified on the data: 0-8 for hours, and 0-100 for scores.
 
-To have those values be nice and rounded, we'll actually need to create a user-defined function. Check it out. The `DoubleType()` refers to the type of the returned value.
+To make those values nice and rounded, we'll actually need to create a [user-defined function (UDF)](https://docs.databricks.com/spark/latest/spark-sql/udf-python.html). For a function we can apply to a groupby operation, we'll load in `pandas_udf` and `PandasUDFType`. We also import `DoubleType`, which refers to the data type of the returned value from our function. After defining our function, we use `spark.udf.register` to make it available to our Spark environment.
 
 {% include header-python.html %}
 ```python
 from pyspark.sql.types import DoubleType
-from pyspark.sql.functions import pandas_udf
-from pyspark.sql.functions import PandasUDFType
+from pyspark.sql.functions import pandas_udf, PandasUDFType
 
 @pandas_udf(DoubleType(), functionType=PandasUDFType.GROUPED_AGG)
 def round_mean(vals):
@@ -336,125 +389,102 @@ def round_mean(vals):
 spark.udf.register("round_mean", round_mean)
 ```
 
-Now we can apply it to our dataframe. Note that since we're using `.agg`, we'll need to pass in a dictionary with the columns we want to apply our thing to.
+Now we can apply it to our dataframe. Note that since we're using `.agg`, we'll need to pass in a dictionary with the columns we want to apply our UDF to. Rather than type out `{'round_mean': 'study', 'round_mean': 'dance', 'round_mean': 'score'}`, I used a dictionary comprehension to be fancy. Though it's probably the same number of keystrokes...
 
 {% include header-python.html %}
 ```python
-func_dict = {col: 'round_mean' for col in ['age', 'height']}
+func_dict = {col: 'round_mean' for col in rdd_df.columns[1:]}
 
 rdd_df.groupBy('name').agg(func_dict).orderBy('name').show()
-# +--------+---------------+------------------+
-# |    name|round_mean(age)|round_mean(height)|
-# +--------+---------------+------------------+
-# |    Abby|        49.9943|            0.5001|
-# |    Brad|        50.0016|            0.4999|
-# |Caroline|        49.9991|               0.5|
-# |  Dmitry|        49.9955|            0.5001|
-# +--------+---------------+------------------+
+# +--------+-----------------+-----------------+-----------------+
+# |    name|round_mean(score)|round_mean(study)|round_mean(dance)|
+# +--------+-----------------+-----------------+-----------------+
+# |    Abby|          50.0086|           4.0007|           4.0031|
+# |    Brad|          50.0036|           4.0003|           3.9951|
+# |Caroline|          49.9908|           3.9991|           3.9974|
+# |  Dmitry|          49.9968|              4.0|           3.9977|
+# +--------+-----------------+-----------------+-----------------+
 ```
 
+Finally, let's run a linear regression on our data. When training models, you're probably used to having your feature vectors spread out across columns in a dataframe, one per feature. In `sklearn`, for example, we could just fit a model directly on `score` vs. `['study', 'age']`.
 
-
-
-
-# Old
-Note that the `\n` counts as a character, so we only get two letters back. Now let's save it as a text file.
+**Spark, however, expects the entire feature vector for a row to reside in one column.** We'll therefore use `VectorAssembler` to turn our `study` and `dance` values into a new `features` column of 2-element vectors.
 
 {% include header-python.html %}
 ```python
-with open('novel.txt', 'w') as file:
-    file.write(our_novel)
+from pyspark.ml.feature import VectorAssembler
+
+# Create a reformatted df
+assembler = VectorAssembler(inputCols=['study', 'dance'],
+                            outputCol='features')
+df_assembled = assembler.transform(rdd_df)
+df_assembled.show(2)
+# +------+--------+--------+--------+--------------------+
+# |  name|   study|   dance|   score|            features|
+# +------+--------+--------+--------+--------------------+
+# |Dmitry|0.036...|-9.30...|-0.52...|[0.036..., -9.30...]|
+# |  Abby|-0.63...|8.582...|-0.28...|[-0.63..., 8.582...]|
+# +------+--------+--------+--------+--------------------+
+# only showing top 2 rows
 ```
 
-Now it's time for some PySpark magic. Make sure you have [Java](https://java.com/en/download/manual.jsp) and PySpark installed.
-
-I'll run this in a Jupyter notebook or Python instance.
+Now we actually fit our model. We split our data into training and test sets, then use the `LinearRegression` class to find the relationship between `features` and `score`. Finally, we visualize our coefficients and their p-values before calculating the [RMSE](https://en.wikipedia.org/wiki/Root-mean-square_deviation) on our test set.
 
 {% include header-python.html %}
 ```python
-import pyspark
+from pyspark.ml.regression import LinearRegression
+from pyspark.ml.evaluation import RegressionEvaluator
 
-sc = pyspark.SparkContext('local[*]')
+# Split into train (70%) vs. test (30%) data
+splits = df_assembled.randomSplit([0.7, 0.3])
+df_train = splits[0]
+df_test = splits[1]
 
-# Load our file
-txt = sc.textFile('novel.txt')
+# Define LinearRegression object
+lr = LinearRegression(featuresCol='features', labelCol='score')
+
+# Fit model and visualize coefficients
+lr_model = lr.fit(df_train)
+print(lr_model.intercept)       # 2.2327
+print(lr_model.coefficients)    # [11.912, 0.0297]
+print(lr_model.summary.pValues) # [0.0, 0.0, 0.0]
+
+# Generate predictions to compare to actuals
+lr_predictions = lrModel.transform(df_test)
+lr_evaluator = RegressionEvaluator(predictionCol="prediction",
+                                   labelCol="score",
+                                   metricName="rmse")
+
+# Evaluate RMSE on test set                        
+print(lr_evaluator.evaluate(lr_predictions))  # 6.12
 ```
 
-Now that our data is loaded in, let's run some analyses on it.
+In our totally fake data, it looks like there's a fairly strong effect of studying on exam scores, whereas dance... not so much. With so much data, it's unsurprising our p-values are all "zero" $-$ with 50 million rows, all that's saying is that the coefficient isn't exactly zero. And check out that RMSE: our model's predictions are on average about 6.12 off the actual score! Auto-generated data is always so clean and nice.
 
-{% include header-python.html %}
-```python
-# N letters
-print(txt.count())  # 1000000
+## Conclusions
+This post was a deep dive on using Spark to process big data. We started with an overview of distributed computing before counting the frequency of each letter in Dostoyevsky's _War and Peace_, estimating $\pi$ with randomly generated numbers, and finally analyzing a Spark dataframe of 50 million rows. This post should hopefully give you a foundation to build off of when you're the next hot shot data engineer at Google.
 
-# First 5 letters
-print(txt.take(5))  # ['g', 't', 'o', 'k', 'h']
+If you're interested in learning more, the rabbit hole goes a lot deeper! [Configuring the number and size of drivers and workers](https://stackoverflow.com/questions/24622108/apache-spark-the-number-of-cores-vs-the-number-of-executors) requires some careful planning $-$ we just used the default number of worker nodes on one machine, but it gets a lot more complicated when [running Spark on multiple machines](https://spark.apache.org/docs/latest/cluster-overview.html). Similarly, allocating the right amount of memory is critical to avoid crashing Spark or [starving other applications](http://site.clairvoyantsoft.com/understanding-resource-allocation-configurations-spark-application/).    
 
-# N letters that are 'e'
-print(txt.filter(lambda: letter == 'e').count())
-# 38833
-```
+But once you have the hang of Spark's nuances, it'll be a small step to build models that catch fraud on Venmo, or identify the perfect next show for a Netflix user, or help someone on LinkedIn get their next job. The world is your oyster when you have the tools to understand its never-ending firehose of data.
 
+Best,<br>
+Matt
 
-## Old 2
-## Web scraping
-Let's scrape the Wikipedia page for computers and find the 10 most common characters (e.g. `a`, `b`, etc.) on the page. We'll take a distributed approach by handing each paragraph to a separate Spark node. (?)
-
-{% include header-python.html %}
-```python
-import requests
-from bs4 import BeautifulSoup
-
-response = requests.get('https://en.wikipedia.org/wiki/Computer')
-
-soup = BeautifulSoup(response.text, 'html')
-```
-
-Then we want to convert the HTML into a list of the paragraphs. We can do so like this.
-
-{% include header-python.html %}
-```python
-pars = []
-
-for par in soup.findAll('p'):
-
-    # Remove newline characters
-    text = par.text.split('\n')[0]
-
-    if len(text) > 0:
-        pars.append(text)
-
-print(len(pars))  # 90
-```
-
-Now we start our Spark stuff. We instantiate a Spark session, then create a [**resilient distributed dataset (RDD)**](https://sparkbyexamples.com/spark-rdd-tutorial/) of our list of strings. This RDD is the core data structure in Spark - it's what allows us to distribute our data to multiple workers who can execute a command in parallel.
-
-Resilient = able to recompute missing or damaged partitions.
-Mention `numSlices`?
-
-
-{% include header-python.html %}
-```python
-from pyspark.sql import SparkSession
-
-spark = SparkSession.builder.getOrCreate()
-rdd = spark.sparkContext.parallelize(pars)
-
-# Visualize number of partitions
-print(rdd.count())   # 90
-```
-
-We see that `.parallelize` created one partition per paragraph.
-You might have heard of Google's MapReduce, which is basically what's happening here.
-
-(Worth comparing to the letter distribution in tons of data?)
 
 ## Footnotes
 #### 1. [Intro](#)
 The median household income in 2019 was \$68,703, according to [Census.gov](https://www.census.gov/library/publications/2020/demo/p60-270.html). Multiply this by 50 to get 3.43 million, which is smaller than some of the data we analyze in this post.
 
-#### 2. [Counting letter frequencies in a novel](#counting-letter-frequencies-in-a-novel)
-In earlier drafts of this post, I toyed around with generating the text for a "novel" myself. I looked at some [*lorem ipsum*](https://loremipsum.io/) Python packages, but they were a little inconsistent; I found the very funny [Bacon Ipsum API](https://baconipsum.com/json-api/) but didn't want to drown it with a request for thousands of paragraphs. The code below uses random strings to generates a "novel" 100,000 paragraphs long, or 8.6x _War and Peace_'s measely 11,000. Turns out writing a novel is way easier than I thought!
+#### 2. [The analytics framework for big data](#the-analytics-framework-for-big-data)
+I had to go down quite a rabbit hole to understand what hardware, exactly, Spark allocates tasks to. Your computer has several physical [CPU cores](https://www.computerhope.com/jargon/c/core.htm) with independent processing power. This is how you can type in a Word doc and flip through photos while YouTube is playing, for example.
+
+We can take it a step further, though $-$ a physical CPU core can handle multiple tasks at once by [hyper-threading](https://en.wikipedia.org/wiki/Hyper-threading) between two or more ["logical" cores](https://unix.stackexchange.com/questions/88283/so-what-are-logical-cpu-cores-as-opposed-to-physical-cpu-cores). Logical cores act as independent cores each handling their own tasks, but they're really just the same physical core. The trick is that the physical core can switch between logical cores incredibly quickly, taking advantage of task downtime (e.g. waiting for YouTube to send back data after you enter a search term) to squeeze in more computations.
+
+When running on your local machine, Spark allocates tasks to all logical cores on your computer unless you specify otherwise. By default, Spark sets aside [512 MB of each core](https://stackoverflow.com/questions/26562033/how-to-set-apache-spark-executor-memory) and partitions data equally to each one. You can check the number of logical cores with `sc.defaultParallelism`.
+
+#### 3. [Counting letter frequencies in a novel](#counting-letter-frequencies-in-a-novel)
+In earlier drafts of this post, I toyed around with generating the text for a "novel" myself. I looked at some [*lorem ipsum*](https://loremipsum.io/) Python packages, but they were a little inconsistent; I found the very funny [Bacon Ipsum API](https://baconipsum.com/json-api/) but didn't want to drown it with a request for thousands of paragraphs. The code below uses random strings to generates a "novel" 100,000 paragraphs long, or 8.9x _War and Peace_'s measely 11,186. Turns out writing a novel is way easier than I thought!
 
 {% include header-python.html %}
 ```python
@@ -486,5 +516,5 @@ for _ in range(N_PARAGRAPHS):
 print(our_novel[0]) # t. okh. ugzswkkxudhxcvubxl! fb, ualzv....
 ```
 
-#### 3. [Counting letter frequencies in a novel](#counting-letter-frequencies-in-a-novel)
+#### 4. [Counting letter frequencies in a novel](#counting-letter-frequencies-in-a-novel)
 You can easily reduce RDDs with more complex functions, or ones you've defined ahead of time. But for much big data processing, the operations are usually pretty simple $-$ adding elements together, filtering by some threshold $-$ so it's a little overkill to define these functions explicitly outside the one or two times you use them.
