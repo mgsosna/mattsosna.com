@@ -71,7 +71,7 @@ With this basic primer, we're ready to start leveraging Spark to process large d
 ### Counting letter frequencies in a novel
 [Project Gutenberg](https://www.gutenberg.org/) is an online repository of books in the [public domain](https://fairuse.stanford.edu/overview/public-domain/welcome/), so we can pull a book from there to analyze. Let's do Fyodor Dostoyevsky's _War and Peace_ $-$ I've always wanted to read it, or at least know how frequently each letter in the alphabet appears! <sup>[[3]](#3-counting-letter-frequencies-in-a-novel)</sup>
 
-Below, we get the HTML from the novel's webpage with the [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) Python library, tidy up the paragraphs, and then append them to a list. We then remove the first _382_ paragraphs that are just the table of contents! We're left with 11,186 paragraphs ranging from 4 characters to 4381. (The string kind of characters, but with _War and Peace_, maybe novel characters too.)
+Below, we get the HTML from the novel's webpage with the [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) Python library, tidy up the paragraphs, and then append them to a list. We then remove the first _383_ paragraphs that are just the table of contents! We're left with 11,186 paragraphs ranging from 4 characters to 4381. (The string kind of characters, but with _War and Peace_, maybe novel characters too.)
 
 {% include header-python.html %}
 ```python
@@ -222,7 +222,7 @@ There are [many great tutorials](https://www.cantorsparadise.com/calculating-the
 <img src="{{  site.baseurl  }}/images/data_engineering/pyspark/calculate_pi.png" loading="lazy" height="45%" width="45%">
 </center>
 
-The more points we generate, the more accurate our estimate gets for $\pi$. This is an ideal challenge for Spark, since the generated points are all independent. Rather than analyze pre-existing data, we can use our worker nodes to _each generate thousands of points_ and _calculate the proportion of those points that land inside the circle._ We can then take the mean of our proportions for our final estimate of $\pi$.
+The more points we generate, the more accurate our estimate gets for $\pi$. This is an ideal use case for Spark, since the generated points are all independent. Rather than analyze pre-existing data, we can use our worker nodes to _each generate thousands of points_ and _calculate the proportion of those points that land inside the circle._ We can then take the mean of our proportions for our final estimate of $\pi$.
 
 Here's the function we'll have each worker run. I tried striking a balance between 1) generating one point each time (low memory but slow), versus 2) generating all samples at once and then calculating the proportion (efficient but can hit memory limits). A decent solution I found is to break `n_points` into several _chunks_, calculate the proportion of points within the circle for each chunk, and then get the mean of proportions at the end.
 
@@ -267,8 +267,9 @@ rdd.map(lambda x: calculate_pi(n_samples)).mean()
 Our estimate of pi isn't too bad! Using `%%timeit` again, we see that on my machine, base Python takes about 3.67 s, while Spark takes 0.95 s, a 74% improvement. Nice!
 
 ### Spark dataframes and machine learning
-Let's do one more example, this time using a nice abstration Spark provides on top of RDDs. In a syntax similar to `pandas`, we can use [Spark dataframes](https://spark.apache.org/docs/latest/sql-programming-guide.html) to perform operations on data that's too large to fit into a `pandas` df.
+Let's do one more example, this time using a nice abstraction Spark provides on top of RDDs. In a syntax similar to `pandas`, we can use [Spark dataframes](https://spark.apache.org/docs/latest/sql-programming-guide.html) to perform operations on data that's too large to fit into a `pandas` df. We can then train machine learning models with our dataframe.
 
+#### Spark dataframes
 You probably don't have a dataframe with a few million rows laying around, so we'll need to generate one. Since by definition we're trying to create a dataset too large to fit into `pandas`, we'll need to generate the dataframe in pieces, iteratively saving CSVs to later ingest with PySpark.
 
 Let's do 50 million rows, just for fun. We'll generate 50 CSVs, each with 1,000,000 rows. Our data will consist of exam scores for four students, and the number of hours they spent studying vs. dancing the previous day. These are some students dedicated to big data $-$ they'll be taking about 12.5 million exams each!
@@ -311,7 +312,7 @@ for i in range(1, 51):
 
     # Log our progress
     if i % 5 == 0:
-        print(f"{round(100*i/10)}% complete")
+        print(f"{round(100*i/50)}% complete")
 ```
 
 We'll now create a Spark dataframe from the CSVs, visualize the schema, and print out the number of rows. But we'll first need to add a configuration option when we define our Spark session $-$ for the following code blocks to run, I needed to double the [driver memory](https://researchcomputing.princeton.edu/computational-hardware/hadoop/spark-memory) to avoid crashing Spark! We'll do this with the `.config('spark.driver.memory', '2g')` line.
@@ -406,7 +407,10 @@ rdd_df.groupBy('name').agg(func_dict).orderBy('name').show()
 # +--------+-----------------+-----------------+-----------------+
 ```
 
-Finally, let's run a linear regression on our data. When training models, you're probably used to having your feature vectors spread out across columns in a dataframe, one per feature. In `sklearn`, for example, we could just fit a model directly on `score` vs. `['study', 'age']`.
+Much cleaner! UDFs are a powerful tool for applying calculations to our data that don't already come with PySpark.
+
+#### Machine learning
+Finally, let's run a linear regression on our data. When training models, you're probably used to having your feature vectors spread out across columns in a dataframe, one per feature. In `sklearn`, for example, we could just fit a model directly on the `score` column vs. the `['study', 'dance']` columns.
 
 **Spark, however, expects the entire feature vector for a row to reside in one column.** We'll therefore use `VectorAssembler` to turn our `study` and `dance` values into a new `features` column of 2-element vectors.
 
@@ -464,7 +468,7 @@ In our totally fake data, it looks like there's a fairly strong effect of studyi
 ## Conclusions
 This post was a deep dive on using Spark to process big data. We started with an overview of distributed computing before counting the frequency of each letter in Dostoyevsky's _War and Peace_, estimating $\pi$ with randomly generated numbers, and finally analyzing a Spark dataframe of 50 million rows. This post should hopefully give you a foundation to build off of when you're the next hot shot data engineer at Google.
 
-If you're interested in learning more, the rabbit hole goes a lot deeper! [Configuring the number and size of drivers and workers](https://stackoverflow.com/questions/24622108/apache-spark-the-number-of-cores-vs-the-number-of-executors) requires some careful planning $-$ we just used the default number of worker nodes on one machine, but it gets a lot more complicated when [running Spark on multiple machines](https://spark.apache.org/docs/latest/cluster-overview.html). Similarly, allocating the right amount of memory is critical to avoid crashing Spark or [starving other applications](http://site.clairvoyantsoft.com/understanding-resource-allocation-configurations-spark-application/).    
+If you're interested in learning more, the rabbit hole goes a lot deeper! On the analytics side, there's a [graph processing](https://www.knowledgehut.com/tutorials/apache-spark-tutorial/graph-processing-with-graphframes) for network applications and [structured streaming](https://www.knowledgehut.com/tutorials/apache-spark-tutorial/continous-apps-structured-streaming) for continuous data streams. On the engineering side, there’s plenty of optimization to squeeze out by betters [configuring the number and size of drivers and workers](https://stackoverflow.com/questions/24622108/apache-spark-the-number-of-cores-vs-the-number-of-executors) requires some careful planning $-$ we just used the default number of worker nodes on one machine, but it gets a lot more complicated when [running Spark on multiple machines](https://spark.apache.org/docs/latest/cluster-overview.html). Similarly, allocating the right amount of memory is critical to avoid crashing Spark or [starving other applications](http://site.clairvoyantsoft.com/understanding-resource-allocation-configurations-spark-application/).    
 
 But once you have the hang of Spark's nuances, it'll be a small step to build models that catch fraud on Venmo, or identify the perfect next show for a Netflix user, or help someone on LinkedIn get their next job. The world is your oyster when you have the tools to understand its never-ending firehose of data.
 
@@ -484,7 +488,7 @@ We can take it a step further, though $-$ a physical CPU core can handle multipl
 When running on your local machine, Spark allocates tasks to all logical cores on your computer unless you specify otherwise. By default, Spark sets aside [512 MB of each core](https://stackoverflow.com/questions/26562033/how-to-set-apache-spark-executor-memory) and partitions data equally to each one. You can check the number of logical cores with `sc.defaultParallelism`.
 
 #### 3. [Counting letter frequencies in a novel](#counting-letter-frequencies-in-a-novel)
-In earlier drafts of this post, I toyed around with generating the text for a "novel" myself. I looked at some [*lorem ipsum*](https://loremipsum.io/) Python packages, but they were a little inconsistent; I found the very funny [Bacon Ipsum API](https://baconipsum.com/json-api/) but didn't want to drown it with a request for thousands of paragraphs. The code below uses random strings to generates a "novel" 100,000 paragraphs long, or 8.9x _War and Peace_'s measely 11,186. Turns out writing a novel is way easier than I thought!
+In earlier drafts of this post, I toyed around with generating the text for a "novel" myself. I looked at some [*lorem ipsum*](https://loremipsum.io/) Python packages, but they were a little inconsistent; I found the very funny [Bacon Ipsum API](https://baconipsum.com/json-api/) but didn't want to drown it with a request for thousands of paragraphs. The code below uses random strings to generates a "novel" 100,000 paragraphs long, or 8.9x _War and Peace_'s measly 11,186. Turns out writing a novel is way easier than I thought!
 
 {% include header-python.html %}
 ```python
