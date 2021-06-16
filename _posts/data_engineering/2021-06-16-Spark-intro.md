@@ -454,7 +454,7 @@ print(lr_model.coefficients)    # [11.912, 0.0297]
 print(lr_model.summary.pValues) # [0.0, 0.0, 0.0]
 
 # Generate predictions to compare to actuals
-lr_predictions = lrModel.transform(df_test)
+lr_predictions = lr_model.transform(df_test)
 lr_evaluator = RegressionEvaluator(predictionCol="prediction",
                                    labelCol="score",
                                    metricName="rmse")
