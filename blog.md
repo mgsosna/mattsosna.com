@@ -60,7 +60,7 @@ permalink: /blog/
 1. [SQL vs. NoSQL databases in Python]({{  site.baseurl  }}/SQL_vs_NoSQL/)
   - <span style="font-size: 12px">Featured in _Toward Data Science_'s [April 15 editors' picks](https://towardsdatascience.com/math-animations-irreproducible-research-and-telling-stories-with-data-d9b55aa3887b)</span>
 2. [3 levels of technical abstraction when sharing your code]({{ site.baseurl }}/Sharing-projects)
-3. [A hands-on demo of big data with Spark]({{  site.baseurl  }}/PySpark-intro)
+3. [A hands-on demo of big data with Spark]({{  site.baseurl  }}/Spark-intro)
 
 ## Python
 ### Random Python
