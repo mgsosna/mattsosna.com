@@ -390,7 +390,7 @@ def round_mean(vals):
 spark.udf.register("round_mean", round_mean)
 ```
 
-Now we can apply it to our dataframe. Note that since we're using `.agg`, we'll need to pass in a dictionary with the columns we want to apply our UDF to. Rather than type out `{'round_mean': 'study', 'round_mean': 'dance', 'round_mean': 'score'}`, I used a dictionary comprehension to be fancy. Though it's probably the same number of keystrokes...
+Now we can apply it to our dataframe. Note that since we're using `.agg`, we'll need to pass in a dictionary with the columns we want to apply our UDF to. Rather than type out `{'study': 'round_mean', 'dance': 'round_mean', 'score': 'round_mean'}`, I used a dictionary comprehension to be fancy. Though it's probably the same number of keystrokes...
 
 {% include header-python.html %}
 ```python
