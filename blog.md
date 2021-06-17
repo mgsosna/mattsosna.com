@@ -45,6 +45,7 @@ permalink: /blog/
 
 ### Theory
 1. [Fish schools as ensemble learning algorithms]({{  site.baseurl  }}/Collective-behavior)
+  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [June 17 editors' picks](https://towardsdatascience.com/can-ai-transform-the-way-we-recycle-our-trash-75a91bd9e0c6)</span>
 
 ### External
 1. [Data quality at Aquicore](https://aquicore.com/blog/how-aquicore-built-the-ultimate-data-quality-safeguard/)
