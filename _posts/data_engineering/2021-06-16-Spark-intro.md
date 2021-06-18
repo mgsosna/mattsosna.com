@@ -77,7 +77,7 @@ Below, we get the HTML from the novel's webpage with the [Beautiful Soup](https:
 ```python
 import requests
 import pandas as pd
-import bs4 as BeautifulSoup
+from bs4 import BeautifulSoup
 
 # Pull book
 book_url = "https://www.gutenberg.org/files/2600/2600-h/2600-h.htm"
