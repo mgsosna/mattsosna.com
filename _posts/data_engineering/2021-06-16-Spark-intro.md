@@ -58,7 +58,7 @@ spark = SparkSession.builder.getOrCreate()
 
 # Allocate the numbers 0-999 to an RDD
 numbers = range(1000)
-rdd = spark.SparkContext.parallelize(numbers)
+rdd = spark.sparkContext.parallelize(numbers)
 
 # Visualize RDD
 print(rdd.take(2))  # [0, 1]
