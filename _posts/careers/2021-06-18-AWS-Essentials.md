@@ -4,8 +4,14 @@ title: AWS Essentials for Data Science
 author: matt_sosna
 ---
 
+Data science requires computers. The stronger your computer, the more computations you can run per second, the larger the datasets you can manipulate at once, and the more data you can store on your machine. This is the case for any programming work (e.g. even just having an app).
+
+But the laptop or desktop you're using right now probably isn't optimized for running calculations all day $-$ it's optimized for providing a good consumer experience. Some resources are dedicated to the graphical interface displayed on your monitor; malware detection is running in the background; weather and news apps are pinging external APIs every few minutes to stay up-to-date.
 
 Cloud computing is an important aspect of data science work. Basically, don't be limited by the power of your computer; use powerful servers in the cloud. These servers can store your data, process things, etc.
+
+Cloud services as an industry
+
 
 AWS is market leader, so we'll focus on them. But all of these services are available from the other major players in the cloud market, Google Cloud Platform and Microsoft Azure. This post will therefore cover more of the concepts than stuff specific to AWS.
 
@@ -40,6 +46,7 @@ Data warehouse.
 
 ### Compute
 #### EC2
+EC2 is Elastic Compute Cloud. Amazon's first cloud offering in 2006. Basically just a server you can rent on the web. 
 
 #### Lambda
 
