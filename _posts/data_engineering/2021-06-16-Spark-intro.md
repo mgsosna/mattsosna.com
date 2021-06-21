@@ -6,7 +6,7 @@ author: matt_sosna
 
 [Cloud services firm Domo estimates](https://web-assets.domo.com/blog/wp-content/uploads/2020/08/20-data-never-sleeps-8-final-01-Resize.jpg) that for every minute in 2020, WhatsApp users sent 41.7 million messages, Netflix streamed 404,000 hours of video, $240,000 changed hands on Venmo, and 69,000 people applied for jobs on LinkedIn. In that firehose of data are patterns those companies use to understand the present, predict the future, and ultimately stay alive in a hyper-competitive market.
 
-But how is it possible to extract insights from datasets so large they freeze your laptop when you try to load them into `pandas`? When a dataset has more rows than [dollars the median household will earn in 50 years](https://www.census.gov/library/publications/2020/demo/p60-270.html)<sup>[[1]](#1-intro)</sup>, we _could_ head to BestBuy.com, sort their computers by "most expensive," and shell out some cash for a fancy machine.
+But how is it possible to extract insights from datasets so large they freeze your laptop when you try to load them into `pandas`? When a dataset has more rows than [dollars the median U.S. household will earn in 50 years](https://www.census.gov/library/publications/2020/demo/p60-270.html)<sup>[[1]](#1-intro)</sup>, we _could_ head to BestBuy.com, sort their computers by "most expensive," and shell out some cash for a fancy machine.
 
 **Or we could try [Apache Spark](https://spark.apache.org/).**
 
