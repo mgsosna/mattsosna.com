@@ -10,6 +10,15 @@ But the laptop or desktop you're using right now probably isn't optimized for ru
 
 Cloud computing is an important aspect of data science work. Basically, don't be limited by the power of your computer; use powerful servers in the cloud. These servers can store your data, process things, etc.
 
+Scalable. You're an online retailer getting ready for Black Friday. Your website is going to get a lot more traffic... so much so that the server will have trouble fulfilling HTTP requests (such as sending the HTML for the homepage when a user lands on the site, or updating the database with the availability of each item as orders are placed). It's normally pretty fast, but as the number of users increases on your site, there'll start to be a backlog of requests, causing the website to be slow. Similarly, it can take a while for an item to be marked as out of stock... hopefully before another person adds it to their cart and orders it too! 
+
+https://queue-it.com/blog/how-high-online-traffic-can-crash-your-website/
+
+
+
+You'd normally have to buy a bunch of servers to handle the surge in traffic your website will get.
+
+
 Cloud services as an industry
 
 
@@ -46,7 +55,7 @@ Data warehouse.
 
 ### Compute
 #### EC2
-EC2 is Elastic Compute Cloud. Amazon's first cloud offering in 2006. Basically just a server you can rent on the web. 
+EC2 is Elastic Compute Cloud. Amazon's first cloud offering in 2006. Basically just a server you can rent on the web. An _instance_ is a virtual server in the AWS cloud. You can choose the amount of resources your server has (i.e. CPU, memory) <sup>[[1]](#1-ec2)</sup>, and then you can configure the operating system and applications on your instance.
 
 #### Lambda
 
@@ -73,3 +82,9 @@ DNS management.
 These combine with S3 to let you treat a bucket (or directory within one) as a big table that you can query with SQL.
 
 There are services that build off these.
+
+[AWS infrastructure explained](https://aws.plainenglish.io/aws-infrastructure-explained-b0f4fb7b6829)
+
+## Footnotes
+#### 1. [EC2](#ec2)
+It's tempting to say that you choose what _hardware_ you want your virtual server to have when you're deciding the amount of memory and CPU your instance will have, but this is likely provisioned via software as well.
