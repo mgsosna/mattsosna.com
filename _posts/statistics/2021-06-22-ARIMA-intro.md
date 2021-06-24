@@ -6,6 +6,10 @@ author: matt_sosna
 
 Forecasting is a ubiquitous problem. Time series data = repeated measures over time.
 
+There are assumptions in modeling time series. The biggest one is that the time series is **stationary** (at least over the period you're modeling and forecasting). This means that the parameters that can summarize the time series aren't changing over time; the mean isn't increasing, the variance isn't decreasing, etc. It doesn't matter what section of the time series you look at $-$ the underlying process generating that data is the same. If this _isn't_ true, you'll need to transform your data before you can model it, e.g. by differencing.
+
+
+
 ## AR(0): Gaussian white noise
 Let's start with the simplest kind of forecasting model. In this model, there are no terms. Well, almost. There's just the _error_ term.
 
@@ -13,7 +17,9 @@ $$ y_t = \epsilon_t $$
 
 $\epsilon_t$ is a random value drawn from a normal distribution with mean 0 and variance $\sigma^2$. Written mathematically, we would say:
 
-$$ \epsilon_t \sim \mathcal{N}(0, \sigma^2) $$
+$$ \epsilon_t \overset{iid}{\sim} \mathcal{N}(0, \sigma^2) $$
+
+This kind of time series is called **Gaussian white noise.**<sup>[[1]](#1-ar0-gaussian-white-noise)</sup>
 
 The important thing is that these values are completely independent. This means that the time series is a sequence of random numbers and **it cannot be predicted**. Your best bet at guessing the next value is to just guess the mean of the distribution the samples are drawn from, which here is zero.
 
@@ -22,6 +28,8 @@ The important thing is that these values are completely independent. This means 
 </center>
 
 A time series of random values we can't forecast is actually a useful tool to have. It's an important null hypothesis for our analyses $-$ is there a pattern in the data that's sufficiently strong to distinguish the series from white noise?
+
+We also can have a constant $c$ so our time series isn't centered at zero, e.g. $y_t = \epsilon_t + c$.
 
 ## Autoregression (AR)
 "Auto" means "self." In essence, you're fitting a regression to "yourself"; specifically, your past values. These previous values are called **lags.**
@@ -32,11 +40,17 @@ $$y_t = \alpha_1y_{t-1}+\epsilon_t$$
 
 What this is saying that we predict the current time step, $y_t$, by adjusting the _previous_ time step $y_{t-1}$ by a multiplier $\alpha_1$. We then add an $\epsilon_t$ term to account for any changes in slope.
 
+If $\alpha_1 = 1$, we can have a random walk.
+
 <center>
 <img src="{{  site.baseurl  }}/images/statistics/arima/random_walk.png" height="110%" width="110%">
 </center>
 
 Note that I extended the y-xis and generated 1000 instead of 100 points to better show how the path wanders.
+
+If $0 < \alpha_1 < 1$, we have mean-reverting behavior.
+
+
 
 
 
@@ -181,3 +195,7 @@ for i, scale in enumerate([0.01, 0.03, 0.1]):
 plt.suptitle('Random walk: $y_t = y_{t-1} + \epsilon_t$', fontsize=22)
 plt.show()
 ```
+
+## Foonotes
+#### 1. [AR(0): Gaussian white noise](#ar0-gaussian-white-noise)
+We can use other distributions besides the Gaussian (normal) distribution to generate our random values. We could generate values with a uniform distribution, for example.
