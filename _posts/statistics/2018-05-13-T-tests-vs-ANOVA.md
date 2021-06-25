@@ -43,7 +43,7 @@ This all works well for comparing two groups, but when we compare more than two 
 
 ## Results
 ### Visualizing false positive rates
-We can use our custom function `false_pos` to easily visualize the problems of running multiple t-tests. Our function creates multiple groups that are sampled from the same population, so they should all be identical.<sup>[[1]](#footnotes)</sup> This should be reflected in having a t-test and ANOVA p-value above 0.05. Because there's randomness in what exact numbers are drawn for each sample, let's run this process 10,000 times to get a feel for the *distribution* of possible answers we could get. Let's do this for three groups with ten observations each.
+We can use our custom function `false_pos` to easily visualize the problems of running multiple t-tests. Our function creates multiple groups that are sampled from the same population, so they should all be identical.<sup>[[1]](#1-visualizing-false-positive-rates)</sup> This should be reflected in having a t-test and ANOVA p-value above 0.05. Because there's randomness in what exact numbers are drawn for each sample, let's run this process 10,000 times to get a feel for the *distribution* of possible answers we could get. Let's do this for three groups with ten observations each.
 
 ![](https://i.imgur.com/jeP6YNm.png)
 
@@ -56,7 +56,7 @@ To answer these questions, we can run set ranges on `n_obs` and `n_groups`, then
 
 ![](https://i.imgur.com/2WEeQxj.png)
 
-As we can see, t-tests are incredibly sensitive to the number of comparisons you run. As you move to the right of the figure (increasing the number of groups), the false positive rate steadily rises until you have around a 70% error rate when comparing 10 groups. Somewhat surprisingly, increasing the number of observations per group does almost nothing to lower the error rate. A strange exception exists for `n_obs` = 2, maybe corresponding to the fact that any differences between the groups are overriden by how low the sample size is, producing a low test statistic and hence high p-value.<sup>[[2]](#footnotes)</sup>
+As we can see, t-tests are incredibly sensitive to the number of comparisons you run. As you move to the right of the figure (increasing the number of groups), the false positive rate steadily rises until you have around a 70% error rate when comparing 10 groups. Somewhat surprisingly, increasing the number of observations per group does almost nothing to lower the error rate. A strange exception exists for `n_obs` = 2, maybe corresponding to the fact that any differences between the groups are overriden by how low the sample size is, producing a low test statistic and hence high p-value.<sup>[[2]](#2-changing-number-of-observations-and-groups)</sup>
 
 Meanwhile, the story is much simpler for ANOVAs: they are resilient. No matter the number of observations or groups, the false positive rate hovers around 0.05, exactly where we set our p-value threshold. This makes sense: **wherever we set our threshold, we should expect this percentage of errors.** (More on this in the Conclusions.) Below, we can see that the distribution of ANOVA p-values below 0.05 values lies neatly at 5%, as well as the mean false positive rate as a function of group size.
 
@@ -76,39 +76,45 @@ Finally, if you made it this far into the post, enjoy [this xkcd comic](https://
 ![](https://imgs.xkcd.com/comics/significant.png)
 
 ## Footnotes
-1. [[Visualizing false positive rates]](#visualizing-false-positive-rates) I use `rnorm` to create each group. The parent population here is infinite. An alternate approach is to create a population that is then sampled from, e.g. the code below. However, this approach is slower, as the population needs to be stored in memory (and if you want to be thorough, a new population needs to be created with every iteration). Also, it becomes a little tedious to write the code to sample without replacement; it's simpler to sample with replacement, but then as you increase `n_obs`, each group begins to represent a substantial percent of the parent population, and the groups begin to have many overlapping values. This then decreases the false error rate because it's literally the same numbers in both groups.
-    ```r
-    population <- rnorm(1e6)
-    for(k in 1:n_groups){
-        groups[[k]] <- sample(population, n_obs)
+#### 1. [Visualizing false positive rates](#visualizing-false-positive-rates)
+I use `rnorm` to create each group. The parent population here is infinite. An alternate approach is to create a population that is then sampled from, e.g. the code below. However, this approach is slower, as the population needs to be stored in memory (and if you want to be thorough, a new population needs to be created with every iteration). Also, it becomes a little tedious to write the code to sample without replacement; it's simpler to sample with replacement, but then as you increase `n_obs`, each group begins to represent a substantial percent of the parent population, and the groups begin to have many overlapping values. This then decreases the false error rate because it's literally the same numbers in both groups.
+
+{% include header-r.html %}
+```r
+population <- rnorm(1e6)
+for(k in 1:n_groups){
+    groups[[k]] <- sample(population, n_obs)
+}
+```
+
+#### 2. [Changing number of observations and groups](#changing-number-of-observations-and-groups)
+The t-test [equations](https://www.statsdirect.co.uk/help/parametric_methods/utt.htm) are helpful for wrapping your head around why increased sample size doesn't help much: with more samples, **we just end up comparing increasingly specific estimates of the population means.** Even at _10 million samples each_, for example, it's still uncomfortably easy to get a significant p-value saying the parent populations are different.
+
+{% include header-r.html %}
+```r
+for(i in 1:100){
+    set.seed(i)
+    sample1 <- rnorm(1e7)
+    sample2 <- rnorm(1e7)
+
+    result <- t.test(sample1, sample2)
+
+    cat('Iteration', i, '-', result$p.value, '\n')
+
+    if(result$p.value < 0.05){
+        break
     }
-    ```
-2. [[Changing number of observations and groups]](#changing-number-of-observations-and-groups) The t-test [equations](https://www.statsdirect.co.uk/help/parametric_methods/utt.htm) are helpful for wrapping your head around why increased sample size doesn't help much: with more samples, **we just end up comparing increasingly specific estimates of the population means.** Even at _10 million samples each_, for example, it's still uncomfortably easy to get a significant p-value saying the parent populations are different.
-
-    ```r
-    for(i in 1:100){
-        set.seed(i)
-        sample1 <- rnorm(1e7)
-        sample2 <- rnorm(1e7)
-
-        result <- t.test(sample1, sample2)
-
-        cat('Iteration', i, '-', result$p.value, '\n')
-
-        if(result$p.value < 0.05){
-            break
-        }
-    }
-    # Iteration 1 - 0.1140783
-    # Iteration 2 - 0.2911598
-    # Iteration 3 - 0.6300628
-    # Iteration 4 - 0.06974418   # <- close O_O
-    # Iteration 5 - 0.9480819
-    # Iteration 6 - 0.5793899
-    # Iteration 7 - 0.6090801
-    # Iteration 8 - 0.2801767
-    # Iteration 9 - 0.9060832
-    # Iteration 10 - 0.3056238
-    # Iteration 11 - 0.4466754
-    # Iteration 12 - 0.02794961  # <- false positive
-    ```
+}
+# Iteration 1 - 0.1140783
+# Iteration 2 - 0.2911598
+# Iteration 3 - 0.6300628
+# Iteration 4 - 0.06974418   # <- close O_O
+# Iteration 5 - 0.9480819
+# Iteration 6 - 0.5793899
+# Iteration 7 - 0.6090801
+# Iteration 8 - 0.2801767
+# Iteration 9 - 0.9060832
+# Iteration 10 - 0.3056238
+# Iteration 11 - 0.4466754
+# Iteration 12 - 0.02794961  # <- false positive
+```
