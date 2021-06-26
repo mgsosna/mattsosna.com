@@ -4,7 +4,9 @@ title: A deep dive on ARIMA models
 author: matt_sosna
 ---
 
-Forecasting is a ubiquitous problem. Time series data = repeated measures over time.
+Forecasting is a ubiquitous problem. What will weather be, what will stock price be, what will sales be next quarter.
+
+Time series data = repeated measures over time.
 
 There are assumptions in modeling time series. The biggest one is that the time series is **stationary** (at least over the period you're modeling and forecasting). This means that the parameters that can summarize the time series aren't changing over time; the mean isn't increasing, the variance isn't decreasing, etc. It doesn't matter what section of the time series you look at $-$ the underlying process generating that data is the same. If this _isn't_ true, you'll need to transform your data before you can model it, e.g. by differencing.
 
