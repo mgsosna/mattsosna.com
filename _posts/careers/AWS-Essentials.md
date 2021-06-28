@@ -68,7 +68,7 @@ S3 is Simple Storage Service. This is like Dropbox or Google Drive - just the ra
 RDS is Relational Database Service. This is like a SQL database hosted in the cloud (on top of an EC2 instance). For NoSQL, you're looking at DynamoDB.
 
 #### Redshift
-Data warehouse.
+Data warehouse. A data warehouse is a https://www.talend.com/resources/what-is-data-warehouse/.
 
 
 
