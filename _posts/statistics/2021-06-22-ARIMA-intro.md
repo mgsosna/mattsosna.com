@@ -10,18 +10,28 @@ Time series data = repeated measures over time.
 
 There are assumptions in modeling time series. The biggest one is that the time series is **stationary** (at least over the period you're modeling and forecasting). This means that the parameters that can summarize the time series aren't changing over time; the mean isn't increasing, the variance isn't decreasing, etc. It doesn't matter what section of the time series you look at $-$ the underlying process generating that data is the same. If this _isn't_ true, you'll need to transform your data before you can model it, e.g. by differencing.
 
+We'll cover the three components of ARIMA before expanding to _seasonality_ and _exogeneous_ variables, creating a full SARIMAX model.
+
+We'll generate the data using the incredibly handy `generate_arma_sample` function from the `statsmodels.tsa.arima_process` library in Python. We can pass in the coefficients for our autoregressive and moving average components, then see randomly generated data for such a process.
+
+### Table of contents
+* [AR: Autoregression](#ar-autoregression)
+  - [AR(0): White noise](#ar0-white-noise)
+  - [AR(1): Random walks and oscillations](#ar1-random-walks-and-oscillations)
 
 
-## AR(0): Gaussian white noise
+## AR: Autoregression
+Auto means self. In a typical multivariate regression, you might model how features like _hours studied_ and _hours slept_ affect exam score. In an autoregressive model, you use _previous values of the target_ to predict _future values_. Rather than hours studied and slept, for example, you could use the student's two previous exam scores to predict their next score.
+
+### AR(0): White noise
 Let's start with the simplest kind of forecasting model. In this model, there are no terms. Well, almost. There's just the _error_ term.
 
 $$ y_t = \epsilon_t $$
 
-$\epsilon_t$ is a random value drawn from a normal distribution with mean 0 and variance $\sigma^2$. Written mathematically, we would say:
+This kind of time series is called **white noise.**<sup>[[1]](#1-ar0-white-noise)</sup> $\epsilon_t$ is a random value drawn from a normal distribution with mean 0 and variance $\sigma^2$. Each value is drawn independently, meaning $\epsilon_t$ has no correlation with $\epsilon_{t-1}$ or $\epsilon_{t+1}$. Written mathematically, we would say:
 
 $$ \epsilon_t \overset{iid}{\sim} \mathcal{N}(0, \sigma^2) $$
 
-This kind of time series is called **Gaussian white noise.**<sup>[[1]](#1-ar0-gaussian-white-noise)</sup>
 
 The important thing is that these values are completely independent. This means that the time series is a sequence of random numbers and **it cannot be predicted**. Your best bet at guessing the next value is to just guess the mean of the distribution the samples are drawn from, which here is zero.
 
@@ -33,7 +43,7 @@ A time series of random values we can't forecast is actually a useful tool to ha
 
 We also can have a constant $c$ so our time series isn't centered at zero, e.g. $y_t = \epsilon_t + c$.
 
-## Autoregression (AR)
+### AR(1): Random walks and oscillations
 "Auto" means "self." In essence, you're fitting a regression to "yourself"; specifically, your past values. These previous values are called **lags.**
 
 Here's a simple AR(1) model.
@@ -50,10 +60,14 @@ If $\alpha_1 = 1$, we can have a random walk.
 
 Note that I extended the y-xis and generated 1000 instead of 100 points to better show how the path wanders.
 
-If $0 < \alpha_1 < 1$, we have mean-reverting behavior.
+If $0 < \alpha_1 < 1$, we have mean-reverting behavior. It's subtle, but you'll notice that the values are correlated with one another _and_ they tend to hover around zero. It's like less chaotic white noise. When $\alpha$ = 0, you get a white noise. When $\alpha$ = 1, you get a random walk.
+
+<img src="{{  site.baseurl  }}/images/statistics/arima/mean_reversion.png">
+
+We get really strange behavior if $\alpha_1$ is less than -1 or greater than 1. The magnitude of the time series values are constantly increasing, meaning they move exponentially further from the starting point. This causes the time series to not be stationary, meaning we can't model it anymore, so we usually [constrain our $\alpha_1$ parameter space](https://otexts.com/fpp2/AR.html) to -1 < $\alpha_1$ < 1 when performing [maximum likelihood estimation](https://towardsdatascience.com/probability-concepts-explained-maximum-likelihood-estimation-c7b4342fdbb1).
 
 
-
+### AR(2): Smooth predictions
 
 
 Here's what an AR(2) model would look like. It's the same as above, just with another $\alpha_n y_{t-n}$ term.
@@ -199,5 +213,5 @@ plt.show()
 ```
 
 ## Foonotes
-#### 1. [AR(0): Gaussian white noise](#ar0-gaussian-white-noise)
-We can use other distributions besides the Gaussian (normal) distribution to generate our random values. We could generate values with a uniform distribution, for example.
+#### 1. [AR(0): White noise](#ar0-gaussian-white-noise)
+In our example, the $\epsilon_t$ values are sampled from a normal distribution, so this is **Gaussian white noise.** We could easily use another distribution to generate our values, though, such as a uniform distribution.
