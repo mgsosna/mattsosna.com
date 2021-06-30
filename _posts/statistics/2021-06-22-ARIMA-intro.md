@@ -4,24 +4,36 @@ title: A deep dive on ARIMA models
 author: matt_sosna
 ---
 
-Forecasting is a ubiquitous problem. What will weather be, what will stock price be, what will sales be next quarter.
+What does the future hold? Predicting the future, or **forecasting,** is a universal challenge. Will tomorrow be sunny or rainy? Will my AAPL stock price increase or crash? What will my company's sales be next quarter? In each of these cases, we can use _historical patterns_ to predict the future (with varying accuracy).
 
-Time series data = repeated measures over time.
+Forecasting involves **time series** data, or repeated measures over time.
 
-There are assumptions in modeling time series. The biggest one is that the time series is **stationary** (at least over the period you're modeling and forecasting). This means that the parameters that can summarize the time series aren't changing over time; the mean isn't increasing, the variance isn't decreasing, etc. It doesn't matter what section of the time series you look at $-$ the underlying process generating that data is the same. If this _isn't_ true, you'll need to transform your data before you can model it, e.g. by differencing.
+
 
 We'll cover the three components of ARIMA before expanding to _seasonality_ and _exogeneous_ variables, creating a full SARIMAX model.
 
 We'll generate the data using the incredibly handy `generate_arma_sample` function from the `statsmodels.tsa.arima_process` library in Python. We can pass in the coefficients for our autoregressive and moving average components, then see randomly generated data for such a process.
 
-### Table of contents
-* [AR: Autoregression](#ar-autoregression)
+## Table of contents
+* [Getting started](#getting-started)
+  - [Assumptions](#assumptions)
+  - [Autocorrelation](#autocorrelation)
+* [**AR:** Autoregression](#ar-autoregression)
   - [AR(0): White noise](#ar0-white-noise)
   - [AR(1): Random walks and oscillations](#ar1-random-walks-and-oscillations)
+* [**MA:** Moving average](#ma-moving-average)
+* [Additional components](#additional-components)
+  - [**I:** Integrated](#integrated)
+  - [**S:** Seasonal](#seasonal)
+  - [**X:** Exogeneous](#exogeneous)
+* [Comparing model fit](#comparing-model-fit)
 
+
+## Getting started
+There are assumptions in modeling time series. The biggest one is that the time series is **stationary** (at least over the period you're modeling and forecasting). This means that the parameters that can summarize the time series aren't changing over time; the mean isn't increasing, the variance isn't decreasing, etc. It doesn't matter what section of the time series you look at $-$ the underlying process generating that data is the same. If this _isn't_ true, you'll need to transform your data before you can model it, e.g. by differencing.
 
 ## AR: Autoregression
-Auto means self. In a typical multivariate regression, you might model how features like _hours studied_ and _hours slept_ affect exam score. In an autoregressive model, you use _previous values of the target_ to predict _future values_. Rather than hours studied and slept, for example, you could use the student's two previous exam scores to predict their next score.
+In a typical multivariate regression, you might model how features like _hours studied_ and _hours slept_ affect exam score. In an autoregressive model, you use _previous values of the target_ to predict _future values_. Rather than hours studied and slept, for example, you could use the student's two previous exam scores to predict their next score.
 
 ### AR(0): White noise
 Let's start with the simplest kind of forecasting model. In this model, there are no terms. Well, almost. There's just the _error_ term.
@@ -82,10 +94,20 @@ $$y_t = \sum_{i=1}^{p} \alpha_ny_{t-n} + \epsilon_t$$
 
 When we fit a model with an autoregressive component (be it AR, ARMA, ARIMA, etc.), we solve for the $\alpha$ coefficients such that the predicted and actual $y_t$ values are as similar as possible.
 
-## Moving average (MA)
-Here we regress the shock values against one another. Basically, we forecast the errors.
+## MA: Moving average
+MA models are strange. An MA model by itself (i.e. no AR component) is just modeling autocorrelation in the _errors_. Our $e_t$ term, previously just noise that we added to our time series forecasts, now takes center stage as we model the error.
+
+
 
 $$y_t = m_1\epsilon_{t-1} + \epsilon_t$$
+
+Above,
+
+
+It's hard to find a use case for using an MA model by itself. Generally, we use MA in conjunction with AR to account for different types of autocorrelation.
+
+
+
 
 
 
