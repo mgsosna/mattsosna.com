@@ -30,7 +30,9 @@ We'll generate the data using the incredibly handy `generate_arma_sample` functi
 
 
 ## Getting started
-There are assumptions in modeling time series. The biggest one is that the time series is **stationary** (at least over the period you're modeling and forecasting). This means that the parameters that can summarize the time series aren't changing over time; the mean isn't increasing, the variance isn't decreasing, etc. It doesn't matter what section of the time series you look at $-$ the underlying process generating that data is the same. If this _isn't_ true, you'll need to transform your data before you can model it, e.g. by differencing.
+As with any statistical model, there are assumptions that must be met when modeling time series data. The biggest one is that the time series is **stationary**. 
+
+This means that the parameters that can summarize the time series aren't changing over time; the mean isn't increasing, the variance isn't decreasing, etc. It doesn't matter what section of the time series you look at $-$ the underlying process generating that data is the same. If this _isn't_ true, you'll need to transform your data before you can model it, e.g. by differencing.
 
 ## AR: Autoregression
 In a typical multivariate regression, you might model how features like _hours studied_ and _hours slept_ affect exam score. In an autoregressive model, you use _previous values of the target_ to predict _future values_. Rather than hours studied and slept, for example, you could use the student's two previous exam scores to predict their next score.
