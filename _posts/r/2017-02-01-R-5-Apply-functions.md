@@ -9,7 +9,7 @@ author: matt_sosna
 1. [Introduction]({{  site.baseurl  }}/R-1-Intro)
 2. [Random data and plotting]({{  site.baseurl  }}/R-2-Plotting)
 3. [`for` loops and random walks]({{  site.baseurl  }}/R-3-For-loops)
-4. [Functions and if statements]({{  site.baseurl  }}/R-4-Functions)
+4. [Functions and `if` statements]({{  site.baseurl  }}/R-4-Functions)
 5. **The `apply` functions**
 
 ---
@@ -19,13 +19,7 @@ We've reached the point in learning R where we can now afford to focus on effici
 - `apply`, `sapply`, `tapply`, `lapply` (pronounced "apply," "s-apply," "t-apply," and "l-apply")
 - `sweep`
 
-**Previous posts included:**
-1. [An introduction to R]({{ site.baseurl }}/R-1-Intro/)
-2. [Distributions, plotting, and linear regression]({{ site.baseurl }}/R-2-Plotting/)
-3. [For loops and random walks]({{ site.baseurl }}/R-3-For-loops)
-4. [Functions and if statements]({{ site.baseurl }}/R-4-Functions)
-
-The most important code from those posts is shown below:
+The most important code from previous posts is shown below:
 
 {% include header-r.html %}
 ```r

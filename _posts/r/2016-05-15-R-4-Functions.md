@@ -25,12 +25,7 @@ I immediately contradicted that quote with three posts full of using R's built-i
 - Logical operators
 - Integrating functions and `if` statements into `for` loops
 
-**Previous posts included:**
-1. [An introduction to R]({{ site.baseurl }}/R-1-Intro/),
-2. Using R to understand [distributions, plotting, and linear regression]({{ site.baseurl }}/R-2-Plotting/)
-3. [For loops and random walks]({{ site.baseurl }}/R-3-For-loops).
-
-The most important code from those posts is shown below.
+The most important code from previous posts is shown below.
 
 {% include header-r.html %}
 ```r
