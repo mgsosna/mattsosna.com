@@ -4,7 +4,15 @@ title: A deep dive on ARIMA models
 author: matt_sosna
 ---
 
-What does the future hold? Predicting the future, or **forecasting,** is a universal challenge. Will tomorrow be sunny or rainy? Will my AAPL stock price increase or crash? What will my company's sales be next quarter? In each of these cases, we can use _historical patterns_ to predict the future (with varying accuracy).
+Predicting the future forever has been, and forever will be, a universal challenge. From estimating when to plant crops based on future rainfall, to deciding whether to buy or sell a stock, to 
+
+
+When in the season should I plant seeds to maximize crop output? Will my lifetime income increase if I go to college or study at a trade school?
+
+
+What does the future hold? This is a question humans forever have had, and forever will have. While we might never be able to fully predict the future (especially given type-2 chaotic systems)...
+
+Predicting the future, or **forecasting,** is a universal challenge. Will tomorrow be sunny or rainy? Will my AAPL stock price increase or crash? What will my company's sales be next quarter? In each of these cases, we can use _historical patterns_ to predict the future (with varying accuracy).
 
 Forecasting involves **time series** data, or repeated measures over time.
 
@@ -30,7 +38,7 @@ We'll generate the data using the incredibly handy `generate_arma_sample` functi
 
 
 ## Getting started
-As with any statistical model, there are assumptions that must be met when modeling time series data. The biggest one is that the time series is **stationary**. 
+As with any statistical model, there are assumptions that must be met when modeling time series data. The biggest one is that the time series is **stationary**.
 
 This means that the parameters that can summarize the time series aren't changing over time; the mean isn't increasing, the variance isn't decreasing, etc. It doesn't matter what section of the time series you look at $-$ the underlying process generating that data is the same. If this _isn't_ true, you'll need to transform your data before you can model it, e.g. by differencing.
 
