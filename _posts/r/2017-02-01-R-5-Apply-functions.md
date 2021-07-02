@@ -4,6 +4,15 @@ title: Learning R - 5. The apply functions
 title-clean: Learning R <div class="a2">5. The apply functions</div>
 author: matt_sosna
 ---
+---
+**Learning R series**
+1. [Introduction]({{  site.baseurl  }}/R-1-Intro)
+2. [Random data and plotting]({{  site.baseurl  }}/R-2-Plotting)
+3. [`for` loops and random walks]({{  site.baseurl  }}/R-3-For-loops)
+4. [Functions and if statements]({{  site.baseurl  }}/R-4-Functions)
+5. **The `apply` functions**
+
+---
 We've reached the point in learning R where we can now afford to focus on efficiency over "whatever works." A prime example of this is the `apply` functions, which are powerful tools to quickly analyze data. The functions can find slices of data frames, matrices, or lists and rapidly perform calculations on them. These functions make it simple to perform analyses like finding the variance of all rows of a matrix, or calculating the mean of all individuals that meet conditions X, Y, and Z in your data, or to feed each element of a vector into a complex equation. With these functions in hand, you will have the tools to move beyond introductory knowledge of R and into more advanced analyses.
 
 **This is the fifth in a series of posts on R. This post covers:**
