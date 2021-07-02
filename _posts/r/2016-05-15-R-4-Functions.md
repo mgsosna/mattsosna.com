@@ -4,6 +4,16 @@ title: Learning R - 4. Functions and if statements
 title-clean: Learning R <div class="a2">4. Functions and if statements</div>
 author: matt_sosna
 ---
+---
+**Learning R series**
+1. [Introduction]({{  site.baseurl  }}/R-1-Intro)
+2. [Random data and plotting]({{  site.baseurl  }}/R-2-Plotting)
+3. [`for` loops and random walks]({{  site.baseurl  }}/R-3-For-loops)
+4. **Functions and `if` statements**
+5. [The `apply` functions]({{  site.baseurl  }}/R-5-Apply-functions)
+
+---
+
 If you've been following this series from the [first post]({{ site.baseurl }}/R-1-Intro), you might recall this soapbox speech I gave:
 > With programming, you get rid of the comfortable structure of a friendly interface with buttons in favor of freedom. Your analyses are now limited by your imagination and knowledge of the R language, not what someone else thought was relevant for you.
 
@@ -15,12 +25,7 @@ I immediately contradicted that quote with three posts full of using R's built-i
 - Logical operators
 - Integrating functions and `if` statements into `for` loops
 
-**Previous posts included:**
-1. [An introduction to R]({{ site.baseurl }}/R-1-Intro/),
-2. Using R to understand [distributions, plotting, and linear regression]({{ site.baseurl }}/R-2-Plotting/)
-3. [For loops and random walks]({{ site.baseurl }}/R-3-For-loops).
-
-The most important code from those posts is shown below.
+The most important code from previous posts is shown below.
 
 {% include header-r.html %}
 ```r
