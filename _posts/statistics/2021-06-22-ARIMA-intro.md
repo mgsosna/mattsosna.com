@@ -4,15 +4,7 @@ title: A deep dive on ARIMA models
 author: matt_sosna
 ---
 
-Predicting the future forever has been, and forever will be, a universal challenge. From estimating when to plant crops based on future rainfall, to deciding whether to buy or sell a stock, to 
-
-
-When in the season should I plant seeds to maximize crop output? Will my lifetime income increase if I go to college or study at a trade school?
-
-
-What does the future hold? This is a question humans forever have had, and forever will have. While we might never be able to fully predict the future (especially given type-2 chaotic systems)...
-
-Predicting the future, or **forecasting,** is a universal challenge. Will tomorrow be sunny or rainy? Will my AAPL stock price increase or crash? What will my company's sales be next quarter? In each of these cases, we can use _historical patterns_ to predict the future (with varying accuracy).
+Predicting the future has forever been a universal challenge, from decisions like whether to plant crops now or next week, marry someone or remain single, sell a stock or hold, or quit your job and play music full time. **Forecasting** is the science of utilizing _historical patterns_ to estimate _future patterns_, and it's a skill worth investing in no matter what field you're in.
 
 Forecasting involves **time series** data, or repeated measures over time.
 
@@ -38,9 +30,15 @@ We'll generate the data using the incredibly handy `generate_arma_sample` functi
 
 
 ## Getting started
-As with any statistical model, there are assumptions that must be met when modeling time series data. The biggest one is that the time series is **stationary**.
+As with any statistical model, there are assumptions that must be met when modeling time series data. The biggest one is that the time series is **stationary**. Linear models tend to require that the samples be _independent_ and _identically likely to be drawn from the parent population_. This isn't the case with time series data $-$ stock prices, for example, are highly correlated day to day. AAPL's stock this morning didn't start from a random location; it started exactly where it left off when the market closed yesterday. The thing is, things like the law of large numbers, central limit theorem, etc. that hold for independent random variables also hold for _stationary_ random variables. ([source](https://stats.stackexchange.com/questions/19715/why-does-a-time-series-have-to-be-stationary))
+
+<img src="{{  site.baseurl  }}/images/statistics/arima/stationary.png">
+
 
 This means that the parameters that can summarize the time series aren't changing over time; the mean isn't increasing, the variance isn't decreasing, etc. It doesn't matter what section of the time series you look at $-$ the underlying process generating that data is the same. If this _isn't_ true, you'll need to transform your data before you can model it, e.g. by differencing.
+
+ARMA = a nice model, but requires stationarity. ARIMA (differencing) is one way to achieve stationarity.
+
 
 ## AR: Autoregression
 In a typical multivariate regression, you might model how features like _hours studied_ and _hours slept_ affect exam score. In an autoregressive model, you use _previous values of the target_ to predict _future values_. Rather than hours studied and slept, for example, you could use the student's two previous exam scores to predict their next score.
