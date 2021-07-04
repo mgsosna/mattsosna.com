@@ -4,15 +4,29 @@ title: A deep dive on ARIMA models
 author: matt_sosna
 ---
 
-Predicting the future has forever been a universal challenge, from decisions like whether to plant crops now or next week, marry someone or remain single, sell a stock or hold, or quit your job and play music full time. **Forecasting** is the science of utilizing _historical patterns_ to estimate _future patterns_, and it's a skill worth investing in no matter what field you're in.
+Predicting the future has forever been a universal challenge, from decisions like whether to plant crops now or next week, marry someone or remain single, sell a stock or hold, or go to college or play music full time. We will never be able to perfectly predict the future<sup>[[1]](#1-intro)</sup>, but we can use tools from the statistical field of **forecasting** to better understand what lies ahead.
 
-Forecasting involves **time series** data, or repeated measures over time.
+Forecasting involves **time series** data, or repeated measures over time. In data such as hourly temperature, daily stock prices, or annual global population estimates, we can look for patterns that collapse those hundreds or thousands of numbers down to a few defining characteristics. We can quantify the rate at which the values are _trending_ upward or downward, measure how much one value is _correlated with the previous few_, and decompose our data into its _underlying repeating cycles_.
 
+To do so, we'll iterate from the most basic forecasting models towards a full autoregressive integrated moving average (ARIMA) model. We'll then take it a step further to include [_seasonal_](https://otexts.com/fpp2/seasonal-arima.html) and [_exogeneous_](https://www.statisticshowto.com/endogenous-variable/) variables, expanding into a [SARIMAX](https://www.statsmodels.org/dev/generated/statsmodels.tsa.statespace.sarimax.SARIMAX.html) model. In other words, we'll build from this:
 
+$$y_t = \epsilon_t$$
 
-We'll cover the three components of ARIMA before expanding to _seasonality_ and _exogeneous_ variables, creating a full SARIMAX model.
+to this:
 
-We'll generate the data using the incredibly handy `generate_arma_sample` function from the `statsmodels.tsa.arima_process` library in Python. We can pass in the coefficients for our autoregressive and moving average components, then see randomly generated data for such a process.
+$$y_t =
+\color{royalblue}{\sum_{n=1}^{p}\alpha_ny_{t-n}} +
+\color{orangered}{\sum_{n=1}^{d}\omega_n(y_t-y_{t-n})} +
+\color{darkorchid}{\sum_{n=1}^{q}m_n\epsilon_{t-n}} + \\
+\color{green}{\sum_{n=1}^{r}\beta_nx_{tn}} +
+\color{orange}{\sum_{n=1}^{P}\phi_ny_{t-sn}} +
+\color{orange}{\sum_{n=1}^{D}\gamma_n(y_t-y_{t-sn})} +
+\color{orange}{\sum_{n=1}^{Q}\theta_n\epsilon_{t-sn}} +
+\epsilon_t $$
+
+It looks complicated, but each of these pieces $-$ the <span style="color:royalblue; font-weight: bold">autoregressive</span>, <span style="color:orangered; font-weight: bold">integrated</span>, <span style="color:darkorchid; font-weight: bold">moving average</span>, <span style="color:green; font-weight: bold">exogeneous</span>, and <span style="color:orange; font-weight: bold">seasonal</span> components $-$ are literally just added together. We can easily tune up or down the complexity of our model by adding or removing terms.
+
+Enough talk. Let's get started!
 
 ## Table of contents
 * [Getting started](#getting-started)
@@ -40,6 +54,10 @@ This means that the parameters that can summarize the time series aren't changin
 ARMA = a nice model, but requires stationarity. ARIMA (differencing) is one way to achieve stationarity.
 
 
+
+We'll generate the data using the incredibly handy `generate_arma_sample` function from the `statsmodels.tsa.arima_process` library in Python. We can pass in the coefficients for our autoregressive and moving average components, then see randomly generated data for such a process.
+
+
 ## AR: Autoregression
 In a typical multivariate regression, you might model how features like _hours studied_ and _hours slept_ affect exam score. In an autoregressive model, you use _previous values of the target_ to predict _future values_. Rather than hours studied and slept, for example, you could use the student's two previous exam scores to predict their next score.
 
@@ -48,7 +66,7 @@ Let's start with the simplest kind of forecasting model. In this model, there ar
 
 $$ y_t = \epsilon_t $$
 
-This kind of time series is called **white noise.**<sup>[[1]](#1-ar0-white-noise)</sup> $\epsilon_t$ is a random value drawn from a normal distribution with mean 0 and variance $\sigma^2$. Each value is drawn independently, meaning $\epsilon_t$ has no correlation with $\epsilon_{t-1}$ or $\epsilon_{t+1}$. Written mathematically, we would say:
+This kind of time series is called **white noise.**<sup>[[2]](#2-ar0-white-noise)</sup> $\epsilon_t$ is a random value drawn from a normal distribution with mean 0 and variance $\sigma^2$. Each value is drawn independently, meaning $\epsilon_t$ has no correlation with $\epsilon_{t-1}$ or $\epsilon_{t+1}$. Written mathematically, we would say:
 
 $$ \epsilon_t \overset{iid}{\sim} \mathcal{N}(0, \sigma^2) $$
 
@@ -243,5 +261,12 @@ plt.show()
 ```
 
 ## Foonotes
-#### 1. [AR(0): White noise](#ar0-gaussian-white-noise)
+#### 1. [Intro](#)
+"We may never be able to perfectly predict the future" sounds obvious, but the reasoning behind it is actually fascinating. In the book [_Sapiens_](https://www.ynharari.com/book/sapiens-2/), Yuval Noah Harari talks about [two types of chaotic systems](https://www.goodreads.com/quotes/7426402-history-cannot-be-explained-deterministically-and-it-cannot-be-predicted). The first is chaos that doesn't react to predictions about it, such as the weather. Weather emerges via the nonlinear interactions of countless air molecules $-$ it's immensely difficult to predict but we can use stronger and stronger computer simulations to gradually improve our accuracy.
+
+The second type of chaotic system, meanwhile, _does_ respond to predictions about it. History, politics, and markets are examples of this type of system. If we perfectly predict that the price of oil will be higher tomorrow than it is today, for example, the rush to buy oil will change its price both today and tomorrow, _causing the prediction to become inaccurate_.
+
+As data scientists, we're used to thinking about our analyses as separate from the processes we're trying to understand. But in cases where our predictions actually influence the outcome, we have little hope to perfectly predict the future... unless perhaps we keep our guesses very quiet.
+
+#### 2. [AR(0): White noise](#ar0-white-noise)
 In our example, the $\epsilon_t$ values are sampled from a normal distribution, so this is **Gaussian white noise.** We could easily use another distribution to generate our values, though, such as a uniform distribution.
