@@ -6,7 +6,7 @@ author: matt_sosna
 
 Predicting the future has forever been a universal challenge, from decisions like whether to plant crops now or next week, marry someone or remain single, sell a stock or hold, or go to college or play music full time. We will never be able to perfectly predict the future<sup>[[1]](#1-intro)</sup>, but we can use tools from the statistical field of **forecasting** to better understand what lies ahead.
 
-Forecasting involves **time series** data, or repeated measures over time. In data such as hourly temperature, daily stock prices, or annual global population estimates, we can look for patterns that collapse those hundreds or thousands of numbers down to a few defining characteristics. We can quantify the rate at which the values are _trending_ upward or downward, measure how much one value is _correlated with the previous few_, and decompose our data into its _underlying repeating cycles_.
+Forecasting involves **time series** data, or repeated measures over time. In data such as hourly temperature, daily stock prices, or annual global population estimates, we can look for patterns that collapse those hundreds or thousands of numbers down to a few defining characteristics. We can use time series analysis to quantify the rate at which the values are _trending_ upward or downward, measure how much one value is _correlated with the previous few_, decompose our data into its _underlying repeating cycles_, and more.
 
 To do so, we'll iterate from the most basic forecasting models towards a full autoregressive integrated moving average (ARIMA) model. We'll then take it a step further to include [_seasonal_](https://otexts.com/fpp2/seasonal-arima.html) and [_exogeneous_](https://www.statisticshowto.com/endogenous-variable/) variables, expanding into a [SARIMAX](https://www.statsmodels.org/dev/generated/statsmodels.tsa.statespace.sarimax.SARIMAX.html) model. In other words, we'll build from this:
 
@@ -121,6 +121,10 @@ $$y_t = \sum_{i=1}^{p} \alpha_ny_{t-n} + \epsilon_t$$
 When we fit a model with an autoregressive component (be it AR, ARMA, ARIMA, etc.), we solve for the $\alpha$ coefficients such that the predicted and actual $y_t$ values are as similar as possible.
 
 ## MA: Moving average
+You can imagine an MA model for a time series that doesn't care about its own history; it's just affected by external random factors that remember each other for a brief period.
+
+MA model is a linear combination of past white noise with some multipliers, rather than past values of the time series itself.
+
 MA models are strange. An MA model by itself (i.e. no AR component) is just modeling autocorrelation in the _errors_. Our $e_t$ term, previously just noise that we added to our time series forecasts, now takes center stage as we model the error.
 
 
@@ -132,9 +136,12 @@ Above,
 
 It's hard to find a use case for using an MA model by itself. Generally, we use MA in conjunction with AR to account for different types of autocorrelation.
 
+[YouTube video](https://www.youtube.com/watch?v=voryLhxiPzE)
 
 
+Mean of an MA process is just zero, as it's the sum of white noise terms (which are sampled from a distribution centered at zero).
 
+We build an MA model if the values are ACF drops sharply but the PACF trails off. (For AR: PACF drops sharply; ACF tails off.)
 
 
 ## SARIMAX
