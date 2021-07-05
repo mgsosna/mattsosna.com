@@ -6,7 +6,7 @@ author: matt_sosna
 
 Predicting the future has forever been a universal challenge, from decisions like whether to plant crops now or next week, marry someone or remain single, sell a stock or hold, or go to college or play music full time. We will never be able to perfectly predict the future<sup>[[1]](#1-intro)</sup>, but we can use tools from the statistical field of **forecasting** to better understand what lies ahead.
 
-Forecasting involves **time series** data, or repeated measures over time. In data such as hourly temperature, daily stock prices, or annual global population estimates, we can look for patterns that collapse those hundreds or thousands of numbers down to a few defining characteristics. We can use time series analysis to quantify the rate at which the values are _trending_ upward or downward, measure how much one value is _correlated with the previous few_, decompose our data into its _underlying repeating cycles_, and more.
+Forecasting involves **time series** data, or repeated measures over time. In data such as hourly temperature, daily electricity consumption, or annual global population estimates, we can look for patterns that collapse those hundreds or thousands of numbers down to a few defining characteristics. We can use time series analysis to quantify the rate at which the values are _trending_ upward or downward, measure how much one value is _correlated with the previous few_, decompose our data into its _underlying repeating cycles_, and more.
 
 To do so, we'll iterate from the most basic forecasting models towards a full autoregressive integrated moving average (ARIMA) model. We'll then take it a step further to include [_seasonal_](https://otexts.com/fpp2/seasonal-arima.html) and [_exogeneous_](https://www.statisticshowto.com/endogenous-variable/) variables, expanding into a [SARIMAX](https://www.statsmodels.org/dev/generated/statsmodels.tsa.statespace.sarimax.SARIMAX.html) model. In other words, we'll build from this:
 
@@ -62,16 +62,15 @@ We'll generate the data using the incredibly handy `generate_arma_sample` functi
 In a typical multivariate regression, you might model how features like _hours studied_ and _hours slept_ affect exam score. In an autoregressive model, you use _previous values of the target_ to predict _future values_. Rather than hours studied and slept, for example, you could use the student's two previous exam scores to predict their next score.
 
 ### AR(0): White noise
-Let's start with the simplest kind of forecasting model. In this model, there are no terms. Well, almost. There's just the _error_ term.
+Let's start building out our ARIMA model. We'll start with the absolute simplest model, one with no terms. Well, almost. There's just the _error_ term.
 
 $$ y_t = \epsilon_t $$
 
-This kind of time series is called **white noise.**<sup>[[2]](#2-ar0-white-noise)</sup> $\epsilon_t$ is a random value drawn from a normal distribution with mean 0 and variance $\sigma^2$. Each value is drawn independently, meaning $\epsilon_t$ has no correlation with $\epsilon_{t-1}$ or $\epsilon_{t+1}$. Written mathematically, we would say:
+This kind of time series is called **white noise.** $\epsilon_t$ is a random value drawn from a normal distribution with mean 0 and variance $\sigma^2$.<sup>[[2]](#2-ar0-white-noise)</sup> Each value is drawn independently, meaning $\epsilon_t$ has no correlation with $\epsilon_{t-1}$, $\epsilon_{t+1}$, or any other $\epsilon_{t \pm n}$. Written mathematically, we would say:
 
 $$ \epsilon_t \overset{iid}{\sim} \mathcal{N}(0, \sigma^2) $$
 
-
-The important thing is that these values are completely independent. This means that the time series is a sequence of random numbers and **it cannot be predicted**. Your best bet at guessing the next value is to just guess the mean of the distribution the samples are drawn from, which here is zero.
+Because the $\epsilon_t$ values are completely independent, the time series described by the model $y_t = \epsilon_t$ is just a sequence of random numbers that **cannot be predicted**. Your best bet at guessing the next value is to just guess the mean of the distribution the samples are drawn from, which here is zero.
 
 <center>
 <img src="{{  site.baseurl  }}/images/statistics/arima/white_noise.png" height="110%" width="110%">
@@ -79,24 +78,20 @@ The important thing is that these values are completely independent. This means 
 
 A time series of random values we can't forecast is actually a useful tool to have. It's an important null hypothesis for our analyses $-$ is there a pattern in the data that's sufficiently strong to distinguish the series from white noise?
 
-We also can have a constant $c$ so our time series isn't centered at zero, e.g. $y_t = \epsilon_t + c$.
+We also can have a constant $c$ so our time series isn't centered at zero, e.g. $y_t = c + \epsilon_t$. When $c$ is zero, we just omit it for simplicity.
 
 ### AR(1): Random walks and oscillations
-"Auto" means "self." In essence, you're fitting a regression to "yourself"; specifically, your past values. These previous values are called **lags.**
+Let's start adding autoregressive terms to our model. The name indicates what we'll be doing $-$ "auto" means "self," so we'll be using the time series' _previous values_ as inputs to our model. These previous values are called **lags**.
 
-Here's a simple AR(1) model.
+In AR(1) model, we predict the current time step, $y_t$, by adjusting the _previous_ time step $y_{t-1}$ by a multiplier $\alpha_1$ and then adding white noise ($\epsilon_t$).
 
 $$y_t = \alpha_1y_{t-1}+\epsilon_t$$
 
-What this is saying that we predict the current time step, $y_t$, by adjusting the _previous_ time step $y_{t-1}$ by a multiplier $\alpha_1$. We then add an $\epsilon_t$ term to account for any changes in slope.
-
-If $\alpha_1 = 1$, we can have a random walk.
+The value of $\alpha$ plays a defining role in what our time series looks like. If $\alpha_1 = 1$, we get a **random walk.**
 
 <center>
 <img src="{{  site.baseurl  }}/images/statistics/arima/random_walk.png" height="110%" width="110%">
 </center>
-
-Note that I extended the y-xis and generated 1000 instead of 100 points to better show how the path wanders.
 
 If $0 < \alpha_1 < 1$, we have mean-reverting behavior. It's subtle, but you'll notice that the values are correlated with one another _and_ they tend to hover around zero. It's like less chaotic white noise. When $\alpha$ = 0, you get a white noise. When $\alpha$ = 1, you get a random walk.
 
@@ -116,12 +111,27 @@ This says that the value at our current time step $y_t$ is determined by the val
 
 And here's the general form for an AR(p) model, where $p$ is the number of lags.
 
-$$y_t = \sum_{i=1}^{p} \alpha_ny_{t-n} + \epsilon_t$$
+$$y_t = \sum_{n=1}^{p} \alpha_ny_{t-n} + \epsilon_t$$
 
 When we fit a model with an autoregressive component (be it AR, ARMA, ARIMA, etc.), we solve for the $\alpha$ coefficients such that the predicted and actual $y_t$ values are as similar as possible.
 
 ## MA: Moving average
+The second major component of an ARIMA model is the _moving average_ component. The $e_t$ term, previously just noise that we added to our forecast, now takes center stage. In an MA(1) model, our forecast for $y_t$ is the _previous_ white noise term with a multiplier, plus the _current_ white noise term.
+
+$$y_t = m_1\epsilon_{t-1} + \epsilon_t$$
+
+Here's what that would look like. Here we vary the value of $m_1$, the multiplier on the previous error value. I'm no forecasting expert, but I don't think there's an "ah-ha" waiting moment waiting for you when you look at these $-$ they should look fairly similar to a white noise plot.
+
+<img src="{{  site.baseurl  }}/images/statistics/arima/ma1.png">
+
+It's surprisingly hard to find a real-world example of a moving average process with no autoregressive component. What time series has no memory of its past behavior, but remembers its previous random noise? It took me days of searching before I found [this clear example](https://www.youtube.com/watch?v=voryLhxiPzE) by [YouTuber ritvikmath](https://www.youtube.com/channel/UCUcpVoi5KkJmnE3bvEhHR0Q).
+
+
 You can imagine an MA model for a time series that doesn't care about its own history; it's just affected by external random factors that remember each other for a brief period.
+
+
+
+
 
 MA model is a linear combination of past white noise with some multipliers, rather than past values of the time series itself.
 
@@ -129,14 +139,16 @@ MA models are strange. An MA model by itself (i.e. no AR component) is just mode
 
 
 
-$$y_t = m_1\epsilon_{t-1} + \epsilon_t$$
+
 
 Above,
 
 
 It's hard to find a use case for using an MA model by itself. Generally, we use MA in conjunction with AR to account for different types of autocorrelation.
 
-[YouTube video](https://www.youtube.com/watch?v=voryLhxiPzE)
+
+
+I wonder if the "indirect" effect of the errors on AR processes gets at the PACF sharp dropoff, while the "direct but restricted" gets at the sharp ACF dropoff in MA processes. Look into this...
 
 
 Mean of an MA process is just zero, as it's the sum of white noise terms (which are sampled from a distribution centered at zero).
@@ -197,7 +209,6 @@ results = pmd.auto_arima(df['y'],
                          trace=True,
                          error_action='ignore'
                          )
-
 ```
 
 
