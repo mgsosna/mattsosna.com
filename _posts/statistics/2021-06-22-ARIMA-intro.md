@@ -44,9 +44,11 @@ Enough talk. Let's get started!
 
 
 ## Getting started
-As with any statistical model, there are assumptions that must be met when modeling time series data. The biggest one is that the time series is **stationary**. Linear models tend to require that the samples be _independent_ and _identically likely to be drawn from the parent population_. This isn't the case with time series data $-$ stock prices, for example, are highly correlated day to day. AAPL's stock this morning didn't start from a random location; it started exactly where it left off when the market closed yesterday. The thing is, things like the law of large numbers, central limit theorem, etc. that hold for independent random variables also hold for _stationary_ random variables. ([source](https://stats.stackexchange.com/questions/19715/why-does-a-time-series-have-to-be-stationary))
+As with any statistical model, there are assumptions that must be met when forecasting time series data. The biggest assumption is that the time series is **stationary**. In other words, we assume that **the parameters that describe the time series aren't changing over time.** To predict the future values of a time series, the data must have constant mean, variance, and [autocorrelation](https://en.wikipedia.org/wiki/Autocorrelation). If this _isn't_ the case, we'll need to transform the data before trying to model it, e.g. by [differencing](https://machinelearningmastery.com/remove-trends-seasonality-difference-transform-python/).
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/stationary.png">
+
+Linear models tend to require that the samples be _independent_ and _identically likely to be drawn from the parent population_. This isn't the case with time series data $-$ stock prices, for example, are highly correlated day to day. AAPL's stock this morning didn't start from a random location; it started exactly where it left off when the market closed yesterday. The thing is, things like the law of large numbers, central limit theorem, etc. that hold for independent random variables also hold for _stationary_ random variables. ([source](https://stats.stackexchange.com/questions/19715/why-does-a-time-series-have-to-be-stationary))
 
 
 This means that the parameters that can summarize the time series aren't changing over time; the mean isn't increasing, the variance isn't decreasing, etc. It doesn't matter what section of the time series you look at $-$ the underlying process generating that data is the same. If this _isn't_ true, you'll need to transform your data before you can model it, e.g. by differencing.
@@ -280,7 +282,7 @@ plt.show()
 
 ## Foonotes
 #### 1. [Intro](#)
-"We may never be able to perfectly predict the future" sounds obvious, but the reasoning behind it is actually fascinating. In the book [_Sapiens_](https://www.ynharari.com/book/sapiens-2/), Yuval Noah Harari talks about [two types of chaotic systems](https://www.goodreads.com/quotes/7426402-history-cannot-be-explained-deterministically-and-it-cannot-be-predicted). The first is chaos that doesn't react to predictions about it, such as the weather. Weather emerges via the nonlinear interactions of countless air molecules $-$ it's immensely difficult to predict but we can use stronger and stronger computer simulations to gradually improve our accuracy.
+"We will never be able to perfectly predict the future" sounds obvious, but the reasoning behind it is actually fascinating. In the book [_Sapiens_](https://www.ynharari.com/book/sapiens-2/), Yuval Noah Harari talks about [two types of chaotic systems](https://www.goodreads.com/quotes/7426402-history-cannot-be-explained-deterministically-and-it-cannot-be-predicted). The first is chaos that doesn't react to predictions about it, such as the weather. Weather emerges via the nonlinear interactions of countless air molecules $-$ it's immensely difficult to predict but we can use stronger and stronger computer simulations to gradually improve our accuracy.
 
 The second type of chaotic system, meanwhile, _does_ respond to predictions about it. History, politics, and markets are examples of this type of system. If we perfectly predict that the price of oil will be higher tomorrow than it is today, for example, the rush to buy oil will change its price both today and tomorrow, _causing the prediction to become inaccurate_.
 
