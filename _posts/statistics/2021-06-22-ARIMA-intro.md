@@ -44,9 +44,16 @@ Enough talk. Let's get started!
 
 
 ## Getting started
-As with any statistical model, there are assumptions that must be met when forecasting time series data. The biggest assumption is that the time series is **stationary**. In other words, we assume that **the parameters that describe the time series aren't changing over time.** To predict the future values of a time series, the data must have constant mean, variance, and [autocorrelation](https://en.wikipedia.org/wiki/Autocorrelation). If this _isn't_ the case, we'll need to transform the data before trying to model it, e.g. by [differencing](https://machinelearningmastery.com/remove-trends-seasonality-difference-transform-python/).
+As with any statistical model, there are assumptions that must be met when forecasting time series data. The biggest assumption is that the time series is **stationary.** In other words, we assume that **the parameters that describe the time series aren't changing over time.** To predict the future values of a time series, the data must have constant mean, variance, and [autocorrelation](https://en.wikipedia.org/wiki/Autocorrelation).<sup>[[2]](#2-getting-started)</sup>
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/stationary.png">
+
+This doesn't mean we can't forecast a time series unless it looks like a jumbled mess. Rather, we just have to _transform_ our time series of interest into one we can model. Some common transformations to deal with a changing mean or variance include [differencing](https://machinelearningmastery.com/remove-trends-seasonality-difference-transform-python/) (and then possibly differencing again), taking the logarithm or square root of the data, or taking the percent change. For changing autocorrelation, though, you may need to split your data into the different regimes.
+
+We need to deal with these
+
+
+**Check other assumptions of ARMA**
 
 Linear models tend to require that the samples be _independent_ and _identically likely to be drawn from the parent population_. This isn't the case with time series data $-$ stock prices, for example, are highly correlated day to day. AAPL's stock this morning didn't start from a random location; it started exactly where it left off when the market closed yesterday. The thing is, things like the law of large numbers, central limit theorem, etc. that hold for independent random variables also hold for _stationary_ random variables. ([source](https://stats.stackexchange.com/questions/19715/why-does-a-time-series-have-to-be-stationary))
 
@@ -68,7 +75,7 @@ Let's start building out our ARIMA model. We'll start with the absolute simplest
 
 $$ y_t = \epsilon_t $$
 
-This kind of time series is called **white noise.** $\epsilon_t$ is a random value drawn from a normal distribution with mean 0 and variance $\sigma^2$.<sup>[[2]](#2-ar0-white-noise)</sup> Each value is drawn independently, meaning $\epsilon_t$ has no correlation with $\epsilon_{t-1}$, $\epsilon_{t+1}$, or any other $\epsilon_{t \pm n}$. Written mathematically, we would say:
+This kind of time series is called **white noise.** $\epsilon_t$ is a random value drawn from a normal distribution with mean 0 and variance $\sigma^2$.<sup>[[3]](#3-ar0-white-noise)</sup> Each value is drawn independently, meaning $\epsilon_t$ has no correlation with $\epsilon_{t-1}$, $\epsilon_{t+1}$, or any other $\epsilon_{t \pm n}$. Written mathematically, we would say:
 
 $$ \epsilon_t \overset{iid}{\sim} \mathcal{N}(0, \sigma^2) $$
 
@@ -288,5 +295,13 @@ The second type of chaotic system, meanwhile, _does_ respond to predictions abou
 
 As data scientists, we're used to thinking about our analyses as separate from the processes we're trying to understand. But in cases where our predictions actually influence the outcome, we have little hope to perfectly predict the future... unless perhaps we keep our guesses very quiet.
 
-#### 2. [AR(0): White noise](#ar0-white-noise)
+#### 2. [Getting started](#getting-started)
+I went down a long rabbit hole trying to understand what the assumption of stationarity really means. In the graphic of the stationary versus non-stationary processes, I use a noisy sine wave as the example of the stationary process. This dataset _does_ pass the [Augmented Dicky-Fuller test](https://en.wikipedia.org/wiki/Augmented_Dickey%E2%80%93Fuller_test), but if you extend the data out to 1000 samples, the ADF test no longer says the time series is stationary.
+
+This is because the ADF in essence measures reversion to the mean $-$ a non-stationary process has no problem drifting away, and previous lags don't provide relevant information. The lagged values of a stationary process, meanwhile, _do_ provide relvant info in predicting the next values.
+
+A sine wave, though, is a bit of an exception to all this because it's deterministic, not stochastic. If you know that a time series is a sine wave and where in the wave you are, you can perfectly predict all past and future values of the series. The concept of stationarity [doesn't apply to deterministic processes](https://stats.stackexchange.com/questions/172979/is-a-model-with-a-sine-wave-time-series-stationary), so perhaps an ADF test isn't the right approach. But what about when your series has sesonality but noise on top? It feels like we're extremely restricted in the sorts of time series we can model if they all need to meet this strict definition of stationarity... I like the mean/variance/autocorr one.
+
+
+#### 3. [AR(0): White noise](#ar0-white-noise)
 In our example, the $\epsilon_t$ values are sampled from a normal distribution, so this is **Gaussian white noise.** We could easily use another distribution to generate our values, though, such as a uniform distribution.
