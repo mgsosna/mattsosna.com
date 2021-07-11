@@ -8,7 +8,12 @@ Predicting the future has forever been a universal challenge, from decisions lik
 
 Forecasting involves **time series** data, or repeated measures over time. In data such as hourly temperature, daily electricity consumption, or annual global population estimates, we can look for patterns that collapse those hundreds or thousands of numbers down to a few defining characteristics. We can use time series analysis to quantify the rate at which the values are _trending_ upward or downward, measure how much one value is _correlated with the previous few_, decompose our data into its _underlying repeating cycles_, and more.
 
-To do so, we'll iterate from the most basic forecasting models towards a full autoregressive integrated moving average (ARIMA) model. We'll then take it a step further to include [_seasonal_](https://otexts.com/fpp2/seasonal-arima.html) and [_exogeneous_](https://www.statisticshowto.com/endogenous-variable/) variables, expanding into a [SARIMAX](https://www.statsmodels.org/dev/generated/statsmodels.tsa.statespace.sarimax.SARIMAX.html) model. In other words, we'll build from this:
+<img src="{{  site.baseurl  }}/images/statistics/arima/spy_500.png">
+<span style="font-size: 12px"><i>S&P 500 daily prices over the last five years, an example of a highly-studied time series. Screenshot from Google Finance.</i></span>
+
+To do so, we'll iterate from the most basic forecasting models towards a full autoregressive integrated moving average (ARIMA) model. We'll then take it a step further to include [_seasonal_](https://otexts.com/fpp2/seasonal-arima.html) and [_exogeneous_](https://www.statisticshowto.com/endogenous-variable/) variables, expanding into a [SARIMAX](https://www.statsmodels.org/dev/generated/statsmodels.tsa.statespace.sarimax.SARIMAX.html) model.
+
+In other words, we'll build from this:
 
 $$y_t = \epsilon_t$$
 
@@ -45,9 +50,11 @@ Enough talk. Let's get started!
 
 ## Getting started
 ### Autocorrelation
-Before we can start building ARIMA models or even cover the assumptions, we need to mention a crucial topic in forecasting models: [**autocorrelation**](https://en.wikipedia.org/wiki/Autocorrelation). Autocorrelation is the correlation of values of a time series with **lagged** values. Here's what a typical autocorrelation plot looks like.
+Before we can start building ARIMA models or even cover the assumptions, we need to mention a crucial topic: [**autocorrelation**](https://en.wikipedia.org/wiki/Autocorrelation). Autocorrelation literally means "self-correlation": it is the correlation of a time series' values with earlier values, or **lags**. Here's what typical autocorrelation plots look like.
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/autocorrelation.png">
+
+We construct these plots by calculating the correlation of each value ($y_t$) with the value from one time step ago ($y_{t-1}$), two steps ago ($y_{t-2}$), three ($y_{t-3}$), and so on. The correlation at lag zero is always 1: $y_t$ better be perfectly correlated with $y_t$, or something's wrong. For the remaining lags, we focus on whether they fall within the shaded confidence envelope on the plot: when the autocorrelation at this lag is within the envelope, that means the values aren't significantly correlated. 
 
 
 ### Model assumptions
