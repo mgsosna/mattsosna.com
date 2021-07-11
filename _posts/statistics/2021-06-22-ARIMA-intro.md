@@ -11,7 +11,9 @@ Forecasting involves **time series** data, or repeated measures over time. In da
 <img src="{{  site.baseurl  }}/images/statistics/arima/spy_500.png">
 <span style="font-size: 12px"><i>S&P 500 daily prices over the last five years, an example of a highly-studied time series. Screenshot from Google Finance.</i></span>
 
-To do so, we'll iterate from the most basic forecasting models towards a full autoregressive integrated moving average (ARIMA) model. We'll then take it a step further to include [_seasonal_](https://otexts.com/fpp2/seasonal-arima.html) and [_exogeneous_](https://www.statisticshowto.com/endogenous-variable/) variables, expanding into a [SARIMAX](https://www.statsmodels.org/dev/generated/statsmodels.tsa.statespace.sarimax.SARIMAX.html) model.
+To summarize a time series and predict its future, we need to model the relationship the values in the time series have with one another. Does today tend to be similar to yesterday? How about this time last week, or last year? How much do factors outside the time series play a role?
+
+To answer these questions, we'll start with the most basic forecasting model and iterate towards a full autoregressive integrated moving average (ARIMA) model. We'll then take it a step further to include [_seasonal_](https://otexts.com/fpp2/seasonal-arima.html) and [_exogeneous_](https://www.statisticshowto.com/endogenous-variable/) variables, expanding into a [SARIMAX](https://www.statsmodels.org/dev/generated/statsmodels.tsa.statespace.sarimax.SARIMAX.html) model.
 
 In other words, we'll build from this:
 
@@ -34,27 +36,51 @@ It looks complicated, but each of these pieces $-$ the <span style="color:royalb
 Enough talk. Let's get started!
 
 ## Table of contents
-* [Getting started](#getting-started)  
+* [**Getting started**](#getting-started)  
   - [Autocorrelation](#autocorrelation)
   - [Model assumptions](#model-assumptions)
-* [**AR:** Autoregression](#ar-autoregression)
+* [**AR: Autoregression**](#ar-autoregression)
   - [AR(0): White noise](#ar0-white-noise)
   - [AR(1): Random walks and oscillations](#ar1-random-walks-and-oscillations)
-* [**MA:** Moving average](#ma-moving-average)
-* [Additional components](#additional-components)
-  - [**I:** Integrated](#integrated)
-  - [**S:** Seasonal](#seasonal)
-  - [**X:** Exogeneous](#exogeneous)
-* [Comparing model fit](#comparing-model-fit)
+* [**MA: Moving average**](#ma-moving-average)
+* [**Additional components**](#additional-components)
+  - [I: Integrated](#integrated)
+  - [S: Seasonal](#seasonal)
+  - [X: Exogeneous](#exogeneous)
+* [**Comparing model fit**](#comparing-model-fit)
 
 
 ## Getting started
 ### Autocorrelation
-Before we can start building ARIMA models or even cover the assumptions, we need to mention a crucial topic: [**autocorrelation**](https://en.wikipedia.org/wiki/Autocorrelation). Autocorrelation literally means "self-correlation": it is the correlation of a time series' values with earlier values, or **lags**. Here's what typical autocorrelation plots look like.
+Before we can start building any models, we need to cover a topic essential for describing time series: [**autocorrelation**](https://en.wikipedia.org/wiki/Autocorrelation). Autocorrelation literally means "self-correlation": it is the similarity of a time series' values with earlier values, or **lags**.
+
+We can visualize the correlation of the _present value_ with a _previous value $n$ lags ago_ with an autocorrelation plot. Below we visualize the autocorrelation of [daily S&P 500 closing prices](https://finance.yahoo.com/quote/DX-Y.NYB/history?period1=1468195200&period2=1625961600&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true) (left) and [daily maximum temperature at the Chicago Botanical Garden](https://www.ncdc.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND:USC00111497/detail) (right).
+
+<img src="{{  site.baseurl  }}/images/statistics/arima/autocorr_examples.png">
+
+
+Today's maximum temperature at the Chicago Botanical Garden tends to be 90.5% correlated with _yesterday's_ max temperature, meaning the autocorrelation at _lag-1_ is 0.905. The correlation of today vs. two days ago is 83.6%, meaning the autocorrelation at _lag-2_ is 0.836. These correlations aren't always significant, meanwhile $-$ the
+
+The maximum daily temperature at the Chicago botanical garden today, meanwhile, tends to be -43% correlated with the temperature 130 days ago, meaning the autocorrelation at _lag-130_ is -0.43.
+
+<!-- If today's value tends to be 90% correlated with _yesterday's_ value, our autocorrelation at _lag-1_ will be 0.9. If today tends to be 50% _negatively correlated_ with the value from _two days ago_, the autocorrelation at _lag-2_ will be -0.5. At some point, the correlation between today and some time ago is too low to be meaningful $-$ we call that value -->
+
+
+When we calculate the autocorrelation at a given lag, we
+
+At some point, today's value won't be meaningfully correlated with a previous value.
+
+Got S&P data from here https://finance.yahoo.com/quote/DX-Y.NYB/history?period1=1468195200&period2=1625961600&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true
+
+
+
+ Unless we have an infinitely long time series, these correlations will always be estimates, and so they will need to be significantly different from zero for us to consider them real.
+
+Here's what typical autocorrelation plots look like.
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/autocorrelation.png">
 
-We construct these plots by calculating the correlation of each value ($y_t$) with the value from one time step ago ($y_{t-1}$), two steps ago ($y_{t-2}$), three ($y_{t-3}$), and so on. The correlation at lag zero is always 1: $y_t$ better be perfectly correlated with $y_t$, or something's wrong. For the remaining lags, we focus on whether they fall within the shaded confidence envelope on the plot: when the autocorrelation at this lag is within the envelope, that means the values aren't significantly correlated. 
+We construct these plots by calculating the correlation of each value ($y_t$) with the value from one time step ago ($y_{t-1}$), two steps ago ($y_{t-2}$), three ($y_{t-3}$), and so on. The correlation at lag zero is always 1: $y_t$ better be perfectly correlated with $y_t$, or something's wrong. For the remaining lags, we focus on whether they fall within the shaded confidence envelope on the plot: when the autocorrelation at this lag is within the envelope, that means the values aren't significantly correlated.
 
 
 ### Model assumptions
