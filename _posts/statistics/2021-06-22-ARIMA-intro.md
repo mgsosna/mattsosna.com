@@ -29,9 +29,9 @@ It looks complicated, but each of these pieces $-$ the <span style="color:royalb
 Enough talk. Let's get started!
 
 ## Table of contents
-* [Getting started](#getting-started)
-  - [Assumptions](#assumptions)
+* [Getting started](#getting-started)  
   - [Autocorrelation](#autocorrelation)
+  - [Model assumptions](#model-assumptions)
 * [**AR:** Autoregression](#ar-autoregression)
   - [AR(0): White noise](#ar0-white-noise)
   - [AR(1): Random walks and oscillations](#ar1-random-walks-and-oscillations)
@@ -44,7 +44,14 @@ Enough talk. Let's get started!
 
 
 ## Getting started
-As with any statistical model, there are assumptions that must be met when forecasting time series data. The biggest assumption is that the time series is **stationary.** In other words, we assume that **the parameters that describe the time series aren't changing over time.** To predict the future values of a time series, the data must have constant mean, variance, and [autocorrelation](https://en.wikipedia.org/wiki/Autocorrelation).<sup>[[2]](#2-getting-started)</sup>
+### Autocorrelation
+Before we can start building ARIMA models or even cover the assumptions, we need to mention a crucial topic in forecasting models: [**autocorrelation**](https://en.wikipedia.org/wiki/Autocorrelation). Autocorrelation is the correlation of values of a time series with **lagged** values. Here's what a typical autocorrelation plot looks like.
+
+<img src="{{  site.baseurl  }}/images/statistics/arima/autocorrelation.png">
+
+
+### Model assumptions
+As with any statistical model, there are assumptions that must be met when forecasting time series data. The biggest assumption is that the time series is **stationary.** In other words, we assume that **the parameters that describe the time series aren't changing over time.** To predict the future values of a time series, the data must have constant mean, variance, and autocorrelation.<sup>[[2]](#2-model-assumptions)</sup>
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/stationary.png">
 
@@ -295,7 +302,7 @@ The second type of chaotic system, meanwhile, _does_ respond to predictions abou
 
 As data scientists, we're used to thinking about our analyses as separate from the processes we're trying to understand. But in cases where our predictions actually influence the outcome, we have little hope to perfectly predict the future... unless perhaps we keep our guesses very quiet.
 
-#### 2. [Getting started](#getting-started)
+#### 2. [Model assumptions](#model-assumptions)
 I went down a long rabbit hole trying to understand what the assumption of stationarity really means. In the graphic of the stationary versus non-stationary processes, I use a noisy sine wave as the example of the stationary process. This dataset _does_ pass the [Augmented Dicky-Fuller test](https://en.wikipedia.org/wiki/Augmented_Dickey%E2%80%93Fuller_test), but if you extend the data out to 1000 samples, the ADF test no longer says the time series is stationary.
 
 This is because the ADF in essence measures reversion to the mean $-$ a non-stationary process has no problem drifting away, and previous lags don't provide relevant information. The lagged values of a stationary process, meanwhile, _do_ provide relvant info in predicting the next values.
