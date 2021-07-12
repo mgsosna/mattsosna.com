@@ -52,35 +52,28 @@ Enough talk. Let's get started!
 
 ## Getting started
 ### Autocorrelation
-Before we can start building any models, we need to cover a topic essential for describing time series: [**autocorrelation**](https://en.wikipedia.org/wiki/Autocorrelation). Autocorrelation literally means "self-correlation": it is the similarity of a time series' values with earlier values, or **lags**.
+Before we can start building any models, we need to cover a topic essential for describing time series: [**autocorrelation**](https://en.wikipedia.org/wiki/Autocorrelation). Autocorrelation means "self-correlation": it is the similarity of a time series' values with earlier values, or **lags**.
 
-We can visualize the correlation of the _present value_ with a _previous value $n$ lags ago_ with an autocorrelation plot. Below we visualize the autocorrelation of [daily S&P 500 closing prices](https://finance.yahoo.com/quote/DX-Y.NYB/history?period1=1468195200&period2=1625961600&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true) (left) and [daily maximum temperature at the Chicago Botanical Garden](https://www.ncdc.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND:USC00111497/detail) (right).
+We can visualize the correlation of the _present value_ with a _previous value $n$ lags ago_ with an autocorrelation plot. These plots are constructed by calculating the correlation of each value ($y_t$) with the value at the previous time step ($y_{t-1}$), two steps ago ($y_{t-2}$), three ($y_{t-3}$), and so on. The y-axis shows the strength of correlation at that lag, and we consider any value outside the shaded error interval to be a significant correlation.
+
+The correlation at lag zero is always 1: $y_t$ better be perfectly correlated with $y_t$, or something's wrong. For the remaining lags, there are three typical patterns: 1) a lack of autocorrelation, 2) a gradual decay, and 3) a sharp drop. (Though in real-world data, you might get a mix of \#2 and \#3.)
+
+<img src="{{  site.baseurl  }}/images/statistics/arima/autocorrelation.png">
+
+Below we visualize the autocorrelation of [daily S&P 500 closing prices](https://finance.yahoo.com/quote/DX-Y.NYB/history?period1=1468195200&period2=1625961600&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true) (left) and [daily maximum temperature at the Chicago Botanical Garden](https://www.ncdc.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND:USC00111497/detail) (right). The S&P 500 prices are so correlated that you have to look more than six months into the past to find uncorrelated values. The Chicago temperatures become uncorrelated faster, at about the two month mark, but then shoot out the other side and become _negatively correlated_ with temperatures from 4-7 months ago.
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/autocorr_examples.png">
 
+### Partial autocorrelation
+Then we can look at partial autocorrelation.
 
-Today's maximum temperature at the Chicago Botanical Garden tends to be 90.5% correlated with _yesterday's_ max temperature, meaning the autocorrelation at _lag-1_ is 0.905. The correlation of today vs. two days ago is 83.6%, meaning the autocorrelation at _lag-2_ is 0.836. These correlations aren't always significant, meanwhile $-$ the
+<img src="{{  site.baseurl  }}/images/statistics/arima/partial_autocorr_examples.png">
 
-The maximum daily temperature at the Chicago botanical garden today, meanwhile, tends to be -43% correlated with the temperature 130 days ago, meaning the autocorrelation at _lag-130_ is -0.43.
-
-<!-- If today's value tends to be 90% correlated with _yesterday's_ value, our autocorrelation at _lag-1_ will be 0.9. If today tends to be 50% _negatively correlated_ with the value from _two days ago_, the autocorrelation at _lag-2_ will be -0.5. At some point, the correlation between today and some time ago is too low to be meaningful $-$ we call that value -->
-
-
-When we calculate the autocorrelation at a given lag, we
-
-At some point, today's value won't be meaningfully correlated with a previous value.
-
-Got S&P data from here https://finance.yahoo.com/quote/DX-Y.NYB/history?period1=1468195200&period2=1625961600&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true
 
 
 
  Unless we have an infinitely long time series, these correlations will always be estimates, and so they will need to be significantly different from zero for us to consider them real.
 
-Here's what typical autocorrelation plots look like.
-
-<img src="{{  site.baseurl  }}/images/statistics/arima/autocorrelation.png">
-
-We construct these plots by calculating the correlation of each value ($y_t$) with the value from one time step ago ($y_{t-1}$), two steps ago ($y_{t-2}$), three ($y_{t-3}$), and so on. The correlation at lag zero is always 1: $y_t$ better be perfectly correlated with $y_t$, or something's wrong. For the remaining lags, we focus on whether they fall within the shaded confidence envelope on the plot: when the autocorrelation at this lag is within the envelope, that means the values aren't significantly correlated.
 
 
 ### Model assumptions
