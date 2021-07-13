@@ -31,7 +31,7 @@ $$y_t =
 \color{orange}{\sum_{n=1}^{Q}\theta_n\epsilon_{t-sn}} +
 \epsilon_t $$
 
-It looks complicated, but each of these pieces $-$ the <span style="color:royalblue; font-weight: bold">autoregressive</span>, <span style="color:orangered; font-weight: bold">integrated</span>, <span style="color:darkorchid; font-weight: bold">moving average</span>, <span style="color:green; font-weight: bold">exogeneous</span>, and <span style="color:orange; font-weight: bold">seasonal</span> components $-$ are literally just added together. We can easily tune up or down the complexity of our model by adding or removing terms.
+It looks complicated, but each of these pieces $-$ the <span style="color:royalblue; font-weight: bold">autoregressive</span>, <span style="color:orangered; font-weight: bold">integrated</span>, <span style="color:darkorchid; font-weight: bold">moving average</span>, <span style="color:green; font-weight: bold">exogeneous</span>, and <span style="color:orange; font-weight: bold">seasonal</span> components $-$ are just added together. We can easily tune up or down the complexity of our model by adding or removing terms.
 
 Enough talk. Let's get started!
 
@@ -52,7 +52,7 @@ Enough talk. Let's get started!
 
 ## Getting started
 ### Autocorrelation
-Before we can start building any models, we need to cover a topic essential for describing time series: [**autocorrelation**](https://en.wikipedia.org/wiki/Autocorrelation). Autocorrelation means "self-correlation": it is the similarity of a time series' values with earlier values, or **lags**.
+Before we can start building any models, we need to cover a topic essential for describing time series: [**autocorrelation**](https://en.wikipedia.org/wiki/Autocorrelation). Autocorrelation means "self-correlation": it is the similarity of a time series' values with earlier values, or **lags**. If our time series was the values `[5, 10, 15]`, for example, our lag-1 autocorrelation would be the correlation of `[10, 15]` with `[5, 10]`.
 
 We can visualize the correlation of the _present value_ with a _previous value $n$ lags ago_ with an autocorrelation plot. These plots are constructed by calculating the correlation of each value ($y_t$) with the value at the previous time step ($y_{t-1}$), two steps ago ($y_{t-2}$), three ($y_{t-3}$), and so on. The y-axis shows the strength of correlation at that lag, and we consider any value outside the shaded error interval to be a significant correlation.
 
@@ -65,10 +65,16 @@ Below we visualize the autocorrelation of [daily S&P 500 closing prices](https:/
 <img src="{{  site.baseurl  }}/images/statistics/arima/autocorr_examples.png">
 
 ### Partial autocorrelation
-Then we can look at partial autocorrelation.
+Autocorrelation plots are useful, but there can be substantial correlation "spillover" between lags. In the S&P 500 prices, for example, the lag-1 correlation is an astonishing 0.997 $-$ it's hard to get a good read on the following lags with the first lag indirectly affecting all downstream correlations.
+
+This is where **partial autocorrelation** can be a useful measure. Partial autocorrelation is the correlation of $y_t$ and $y_{t-n}$, _controlling for the autocorrelation at earlier lags_. Rather than directly measure the correlation of $y_t$ and $y_{t-2}$, for example, we fit a linear regression of $y_t \sim \beta_0 + \beta_1y_{t-1}$, then find the correlation between $y_t$ and the _residuals_ of the regression. The residuals quantify the amount of variation in $y_t$ that cannot be explained by $y_{t-1}$, granting us an unbiased look at the relationship between $y_t$ and $y_{t-2}$.
+
+Here's how the partial autocorrelation plots look for the S&P 500 prices and Chicago temperatures. Notice how the lag-1 autocorrelation remains highly significant, but the following lags dive off a cliff.
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/partial_autocorr_examples.png">
 
+
+So why not always just the partial autocorrelation plot? Well the autocorrelation plot is still an intuitive measure: lag-2 means the correlation between $y_t$ and $y_{t-2}$, for example.
 
 
 
@@ -260,6 +266,9 @@ mod = SARIMAX(df['y'],
               seasonal_order=(1, 0, 0, cycle_len),
               trend='c')
 ```
+
+## Conclusions
+Why not just use an RNN? Well, it depends on the approach we want to take. If we're trying to generate the most accurate forecast without necessarily understanding how our model came to that conclusion, a deep learning model can be the way to go. But if we want to model the _underlying process that gave rise to that data_, we'll need to turn to statistics.
 
 
 ## Code to generate plots
