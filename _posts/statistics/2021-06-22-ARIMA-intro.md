@@ -74,17 +74,10 @@ Here's how the partial autocorrelation plots look for the S&P 500 prices and Chi
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/partial_autocorr_examples.png">
 
-
-So why not always just the partial autocorrelation plot? Well the autocorrelation plot is still an intuitive measure: lag-2 means the correlation between $y_t$ and $y_{t-2}$, for example.
-
-
-
- Unless we have an infinitely long time series, these correlations will always be estimates, and so they will need to be significantly different from zero for us to consider them real.
-
-
+Autocorrelation and partial autocorrelation plots can be used to determine whether a simple AR or MA model (as opposed to full ARIMA model) is sufficient to describe your data<sup>[[2]](#2-partial-autocorrelation)</sup>. In the fifty years since autocorrelation plots [were first introduced](https://archive.org/details/timeseriesanalys0000boxg), though, your laptop has likely become strong enough to perform a full parameter scan to find the ARIMA (or even SARIMAX) model that best describes your data, even if there are thousands of observations. These plots, then, are probably more useful as complementary ways of visualizing the temporal dependence of your data.
 
 ### Stationarity
-As with any statistical model, there are assumptions that must be met when forecasting time series data. The biggest assumption is that the time series is **stationary.** In other words, we assume that **the parameters that describe the time series aren't changing over time.** To predict the future values of a time series, the data must have constant mean, variance, and autocorrelation.<sup>[[2]](#2-model-assumptions)</sup>
+As with any statistical model, there are assumptions that must be met when forecasting time series data. The biggest assumption is that the time series is **stationary.** In other words, we assume that **the parameters that describe the time series aren't changing over time.** To predict the future values of a time series, the data must have constant mean, variance, and autocorrelation.<sup>[[3]](#3-stationarity)</sup>
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/stationary.png">
 
@@ -111,7 +104,7 @@ Let's start building out our ARIMA model. We'll start with the absolute simplest
 
 $$ y_t = \epsilon_t $$
 
-This kind of time series is called **white noise.** $\epsilon_t$ is a random value drawn from a normal distribution with mean 0 and variance $\sigma^2$.<sup>[[3]](#3-ar0-white-noise)</sup> Each value is drawn independently, meaning $\epsilon_t$ has no correlation with $\epsilon_{t-1}$, $\epsilon_{t+1}$, or any other $\epsilon_{t \pm n}$. Written mathematically, we would say:
+This kind of time series is called **white noise.** $\epsilon_t$ is a random value drawn from a normal distribution with mean 0 and variance $\sigma^2$.<sup>[[4]](#4-ar0-white-noise)</sup> Each value is drawn independently, meaning $\epsilon_t$ has no correlation with $\epsilon_{t-1}$, $\epsilon_{t+1}$, or any other $\epsilon_{t \pm n}$. Written mathematically, we would say:
 
 $$ \epsilon_t \overset{iid}{\sim} \mathcal{N}(0, \sigma^2) $$
 
@@ -334,7 +327,10 @@ The second type of chaotic system, meanwhile, _does_ respond to predictions abou
 
 As data scientists, we're used to thinking about our analyses as separate from the processes we're trying to understand. But in cases where our predictions actually influence the outcome, we have little hope to perfectly predict the future... unless perhaps we keep our guesses very quiet.
 
-#### 2. [Model assumptions](#model-assumptions)
+#### 2. [Partial autocorrelation](#partial-autocorrelation)
+A sharp drop at lag $n$ in the autocorrelation plot indicates an **MA(n)** process, while a clear drop in the partial autocorrelation plot indicates an **AR(n)** process. However, unless your dataset is truly massive, you'll most likely end up doing a parameter scan to determine the parameters of a model that best describes your data. And if both autocorrelation plots trail off, you're looking at an ARMA or ARIMA process and will need to do a parameter scan anyway.
+
+#### 3. [Stationarity](#stationarity)
 I went down a long rabbit hole trying to understand what the assumption of stationarity really means. In the graphic of the stationary versus non-stationary processes, I use a noisy sine wave as the example of the stationary process. This dataset _does_ pass the [Augmented Dicky-Fuller test](https://en.wikipedia.org/wiki/Augmented_Dickey%E2%80%93Fuller_test), but if you extend the data out to 1000 samples, the ADF test no longer says the time series is stationary.
 
 This is because the ADF in essence measures reversion to the mean $-$ a non-stationary process has no problem drifting away, and previous lags don't provide relevant information. The lagged values of a stationary process, meanwhile, _do_ provide relvant info in predicting the next values.
@@ -342,5 +338,5 @@ This is because the ADF in essence measures reversion to the mean $-$ a non-stat
 A sine wave, though, is a bit of an exception to all this because it's deterministic, not stochastic. If you know that a time series is a sine wave and where in the wave you are, you can perfectly predict all past and future values of the series. The concept of stationarity [doesn't apply to deterministic processes](https://stats.stackexchange.com/questions/172979/is-a-model-with-a-sine-wave-time-series-stationary), so perhaps an ADF test isn't the right approach. But what about when your series has sesonality but noise on top? It feels like we're extremely restricted in the sorts of time series we can model if they all need to meet this strict definition of stationarity... I like the mean/variance/autocorr one.
 
 
-#### 3. [AR(0): White noise](#ar0-white-noise)
+#### 4. [AR(0): White noise](#ar0-white-noise)
 In our example, the $\epsilon_t$ values are sampled from a normal distribution, so this is **Gaussian white noise.** We could easily use another distribution to generate our values, though, such as a uniform distribution.
