@@ -38,7 +38,8 @@ Enough talk. Let's get started!
 ## Table of contents
 * [**Getting started**](#getting-started)  
   - [Autocorrelation](#autocorrelation)
-  - [Model assumptions](#model-assumptions)
+  - [Partial autocorrelation](#partial-autocorrelation)
+  - [Stationarity](#stationarity)
 * [**AR: Autoregression**](#ar-autoregression)
   - [AR(0): White noise](#ar0-white-noise)
   - [AR(1): Random walks and oscillations](#ar1-random-walks-and-oscillations)
@@ -82,20 +83,16 @@ So why not always just the partial autocorrelation plot? Well the autocorrelatio
 
 
 
-### Model assumptions
+### Stationarity
 As with any statistical model, there are assumptions that must be met when forecasting time series data. The biggest assumption is that the time series is **stationary.** In other words, we assume that **the parameters that describe the time series aren't changing over time.** To predict the future values of a time series, the data must have constant mean, variance, and autocorrelation.<sup>[[2]](#2-model-assumptions)</sup>
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/stationary.png">
 
 This doesn't mean we can't forecast a time series unless it looks like a jumbled mess. Rather, we just have to _transform_ our time series of interest into one we can model. Some common transformations to deal with a changing mean or variance include [differencing](https://machinelearningmastery.com/remove-trends-seasonality-difference-transform-python/) (and then possibly differencing again), taking the logarithm or square root of the data, or taking the percent change. For changing autocorrelation, though, you may need to split your data into the different regimes.
 
-We need to deal with these
-
-
-**Check other assumptions of ARMA**
-
-Linear models tend to require that the samples be _independent_ and _identically likely to be drawn from the parent population_. This isn't the case with time series data $-$ stock prices, for example, are highly correlated day to day. AAPL's stock this morning didn't start from a random location; it started exactly where it left off when the market closed yesterday. The thing is, things like the law of large numbers, central limit theorem, etc. that hold for independent random variables also hold for _stationary_ random variables. ([source](https://stats.stackexchange.com/questions/19715/why-does-a-time-series-have-to-be-stationary))
-
+We need to deal with these hassles because linear models tend to require that the samples be _independent_ and _identically likely to be drawn from the parent population_. This isn't the case with time series data, but many of the conveniences of independent random variables [also hold for stationary time series](https://stats.stackexchange.com/questions/19715/why-does-a-time-series-have-to-be-stationary)).
+* Law of large numbers
+* Central limit theorem
 
 This means that the parameters that can summarize the time series aren't changing over time; the mean isn't increasing, the variance isn't decreasing, etc. It doesn't matter what section of the time series you look at $-$ the underlying process generating that data is the same. If this _isn't_ true, you'll need to transform your data before you can model it, e.g. by differencing.
 
