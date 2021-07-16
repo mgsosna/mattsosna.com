@@ -55,7 +55,7 @@ Enough talk. Let's get started!
 ### Autocorrelation
 Before we can start building any models, we need to cover a topic essential for describing time series: [**autocorrelation**](https://en.wikipedia.org/wiki/Autocorrelation). Autocorrelation means "self-correlation": it is the similarity of a time series' values with earlier values, or **lags**. If our time series was the values `[5, 10, 15]`, for example, our lag-1 autocorrelation would be the correlation of `[10, 15]` with `[5, 10]`.
 
-We can visualize the correlation of the _present value_ with a _previous value $n$ lags ago_ with an autocorrelation plot. These plots are constructed by calculating the correlation of each value ($y_t$) with the value at the previous time step ($y_{t-1}$), two steps ago ($y_{t-2}$), three ($y_{t-3}$), and so on. The y-axis shows the strength of correlation at that lag, and we consider any value outside the shaded error interval to be a significant correlation.
+We can visualize the correlation of the _present value_ with a _previous value $n$ lags ago_ with an **autocorrelation plot.** These plots are constructed by calculating the correlation of each value ($y_t$) with the value at the previous time step ($y_{t-1}$), two steps ago ($y_{t-2}$), three ($y_{t-3}$), and so on. The y-axis shows the strength of correlation at that lag, and we consider any value outside the shaded error interval to be a significant correlation.
 
 The correlation at lag zero is always 1: $y_t$ better be perfectly correlated with $y_t$, or something's wrong. For the remaining lags, there are three typical patterns: 1) a lack of autocorrelation, 2) a gradual decay, and 3) a sharp drop. (Though in real-world data, you might get a mix of \#2 and \#3.)
 
@@ -68,7 +68,9 @@ Below we visualize the autocorrelation of [daily S&P 500 closing prices](https:/
 ### Partial autocorrelation
 Autocorrelation plots are useful, but there can be substantial correlation "spillover" between lags. In the S&P 500 prices, for example, the lag-1 correlation is an astonishing 0.997 $-$ it's hard to get a good read on the following lags with the first lag indirectly affecting all downstream correlations.
 
-This is where **partial autocorrelation** can be a useful measure. Partial autocorrelation is the correlation of $y_t$ and $y_{t-n}$, _controlling for the autocorrelation at earlier lags_. Rather than directly measure the correlation of $y_t$ and $y_{t-2}$, for example, we fit a linear regression of $y_t \sim \beta_0 + \beta_1y_{t-1}$, then find the correlation between $y_t$ and the _residuals_ of the regression. The residuals quantify the amount of variation in $y_t$ that cannot be explained by $y_{t-1}$, granting us an unbiased look at the relationship between $y_t$ and $y_{t-2}$.
+This is where [**partial autocorrelation**](https://online.stat.psu.edu/stat510/lesson/2/2.2) can be a useful measure. Partial autocorrelation is the correlation of $y_t$ and $y_{t-n}$, _controlling for the autocorrelation at earlier lags_.
+
+Let's say we want to measure the lag-2 autocorrelation without the lag-1 spillover. Rather than directly measure the correlation of $y_t$ and $y_{t-2}$, we'd fit a linear regression of $y_t \sim \beta_0 + \beta_1y_{t-1}$, then find the correlation between $y_t$ and the _residuals_ of the regression. The residuals quantify the amount of variation in $y_t$ that cannot be explained by $y_{t-1}$, granting us an unbiased look at the relationship between $y_t$ and $y_{t-2}$.
 
 Here's how the partial autocorrelation plots look for the S&P 500 prices and Chicago temperatures. Notice how the lag-1 autocorrelation remains highly significant, but the following lags dive off a cliff.
 
@@ -77,30 +79,19 @@ Here's how the partial autocorrelation plots look for the S&P 500 prices and Chi
 Autocorrelation and partial autocorrelation plots can be used to determine whether a simple AR or MA model (as opposed to full ARIMA model) is sufficient to describe your data<sup>[[2]](#2-partial-autocorrelation)</sup>, but you probably won't use them this way. In the fifty years since autocorrelation plots [were first introduced](https://archive.org/details/timeseriesanalys0000boxg), your laptop has likely become strong enough to perform a brute force scan to find the parameters for the ARIMA (or even SARIMAX) model that best describes your data, even if there are thousands of observations. These plots, then, are probably more useful as complementary ways of visualizing the temporal dependence of your data.
 
 ### Stationarity
-As with any statistical model, there are assumptions that must be met when forecasting time series data. The biggest assumption is that the time series is **stationary.** In other words, we assume that **the parameters that describe the time series aren't changing over time.** To predict the future values of a time series, the data must have constant mean, variance, and autocorrelation.<sup>[[3]](#3-stationarity)</sup>
+As with any statistical model, there are assumptions that must be met when forecasting time series data. The biggest assumption is that the time series is **stationary.** In other words, we assume that **the parameters that describe the time series aren't changing over time.** No matter where on the time series you look, you should see the same mean, variance, and autocorrelation.<sup>[[3]](#3-stationarity)</sup>
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/stationary.png">
 
-This doesn't mean we can't forecast a time series unless it looks like a jumbled mess. Rather, we just have to _transform_ our time series of interest into one we can model. Some common transformations to deal with a changing mean or variance include [differencing](https://machinelearningmastery.com/remove-trends-seasonality-difference-transform-python/) (and then possibly differencing again), taking the logarithm or square root of the data, or taking the percent change. For changing autocorrelation, though, you may need to split your data into the different regimes.
+This doesn't mean we can only forecast time series that look like the green jumbled mess above. While most real-world time series aren't stationary, we can _transform_ a time series into one that is stationary, generate forecasts on the stationary data, then _un-transform_ the forecast to get the real-world values. Some common transformations include [differencing](https://machinelearningmastery.com/remove-trends-seasonality-difference-transform-python/) (and then possibly differencing again), taking the logarithm or square root of the data, or taking the percent change.
 
-We need to deal with these hassles because linear models tend to require that the samples be _independent_ and _identically likely to be drawn from the parent population_. This isn't the case with time series data, but many of the conveniences of independent random variables [also hold for stationary time series](https://stats.stackexchange.com/questions/19715/why-does-a-time-series-have-to-be-stationary)).
-* Law of large numbers
-* Central limit theorem
-
-This means that the parameters that can summarize the time series aren't changing over time; the mean isn't increasing, the variance isn't decreasing, etc. It doesn't matter what section of the time series you look at $-$ the underlying process generating that data is the same. If this _isn't_ true, you'll need to transform your data before you can model it, e.g. by differencing.
-
-ARMA = a nice model, but requires stationarity. ARIMA (differencing) is one way to achieve stationarity.
-
-
-
-We'll generate the data using the incredibly handy `generate_arma_sample` function from the `statsmodels.tsa.arima_process` library in Python. We can pass in the coefficients for our autoregressive and moving average components, then see randomly generated data for such a process.
-
+Transformations are necessary because linear models require that the data they model be _independent_ and _identically likely to be drawn from the parent population_. This isn't the case with time series data $-$ any autocorrelation at all immediately violates the independence assumption. But many of the conveniences of independent random variables $-$ such as the [law of large numbers](https://en.wikipedia.org/wiki/Law_of_large_numbers), the [central limit theorem](https://sphweb.bumc.bu.edu/otlt/mph-modules/bs/bs704_probability/BS704_Probability12.html) $-$ [also hold for stationary time series](https://stats.stackexchange.com/questions/19715/why-does-a-time-series-have-to-be-stationary). Making a time series stationary is therefore a critical step in being able to model our data.
 
 ## AR: Autoregression
-In a typical multivariate regression, you might model how features like _hours studied_ and _hours slept_ affect exam score. In an autoregressive model, you use _previous values of the target_ to predict _future values_. Rather than hours studied and slept, for example, you could use the student's two previous exam scores to predict their next score.
+With some basics behind us, let's start building towards our ARIMA model. We'll start with the **AR**, or **autoregressive** component, then later add in the moving average and integrated pieces.
 
 ### AR(0): White noise
-Let's start building out our ARIMA model. We'll start with the absolute simplest model, one with no terms. Well, almost. There's just the _error_ term.
+We'll start with the absolute simplest model, one with no terms. Well, almost. There's just the _error_ term.
 
 $$ y_t = \epsilon_t $$
 
@@ -108,7 +99,7 @@ This kind of time series is called **white noise.** $\epsilon_t$ is a random val
 
 $$ \epsilon_t \overset{iid}{\sim} \mathcal{N}(0, \sigma^2) $$
 
-Because the $\epsilon_t$ values are completely independent, the time series described by the model $y_t = \epsilon_t$ is just a sequence of random numbers that **cannot be predicted**. Your best bet at guessing the next value is to just guess the mean of the distribution the samples are drawn from, which here is zero.
+Because all $\epsilon_t$ values are independent, the time series described by the model $y_t = \epsilon_t$ is just a sequence of random numbers that **cannot be predicted**. Your best guess for the next value is the mean of the distribution the samples are drawn from, which is zero.
 
 <center>
 <img src="{{  site.baseurl  }}/images/statistics/arima/white_noise.png" height="110%" width="110%">
