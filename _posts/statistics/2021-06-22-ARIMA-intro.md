@@ -35,9 +35,7 @@ It looks complicated, but each of these pieces $-$ the <span style="color:royalb
 
 Once we've built a model, we'll be able to predict the future of a time series like this.
 
-(add plot of forecast)
-
-Enough talk. Let's get started!
+<img src="{{  site.baseurl  }}/images/statistics/arima/example_forecast.png">
 
 ## Table of contents
 * [**Getting started**](#getting-started)  
@@ -66,7 +64,7 @@ The correlation at lag zero is always 1: $y_t$ better be perfectly correlated wi
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/autocorrelation.png">
 
-Below we visualize the autocorrelation of [daily S&P 500 closing prices](https://finance.yahoo.com/quote/DX-Y.NYB/history?period1=1468195200&period2=1625961600&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true) (left) and [daily maximum temperature at the Chicago Botanical Garden](https://www.ncdc.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND:USC00111497/detail) (right). The S&P 500 prices are so correlated that you have to look more than six months into the past to find uncorrelated values. The Chicago temperatures become uncorrelated faster, at about the two month mark, but then shoot out the other side and become _negatively correlated_ with temperatures from 4-7 months ago.
+Below we visualize the autocorrelation of [daily S&P 500 closing prices](https://finance.yahoo.com/quote/SPY/history?p=SPY) (left) and [daily maximum temperature at the Chicago Botanical Garden](https://www.ncdc.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND:USC00111497/detail) (right). The S&P 500 prices are so correlated that you have to look more than three months into the past to find uncorrelated values. The Chicago temperatures become uncorrelated faster, at about the two month mark, but then shoot out the other side and become _negatively correlated_ with temperatures from 4-7 months ago.
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/autocorr_examples.png">
 
@@ -259,6 +257,8 @@ mod = SARIMAX(df['y'],
 
 ## Conclusions
 Why not just use an RNN? Well, it depends on the approach we want to take. If we're trying to generate the most accurate forecast without necessarily understanding how our model came to that conclusion, a deep learning model can be the way to go. But if we want to model the _underlying process that gave rise to that data_, we'll need to turn to statistics.
+
+Interested in learning more? Check out Facebook's [Prophet](https://facebook.github.io/prophet/) package and LinkedIn's X package.
 
 
 ## Code to generate plots
