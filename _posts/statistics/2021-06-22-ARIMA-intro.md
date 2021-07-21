@@ -17,11 +17,11 @@ To answer these questions, we'll start with the most basic forecasting model and
 
 In other words, we'll build from this:
 
-$$y_t = \epsilon_t$$
+$$y_t = c + \epsilon_t$$
 
 to this:
 
-$$y_t =
+$$y_t = c +
 \color{royalblue}{\sum_{n=1}^{p}\alpha_ny_{t-n}} +
 \color{orangered}{\sum_{n=1}^{d}\omega_n(y_t-y_{t-n})} +
 \color{darkorchid}{\sum_{n=1}^{q}\theta_n\epsilon_{t-n}} + \\
@@ -95,9 +95,9 @@ Transformations are necessary because linear models require that the data they m
 With some basics behind us, let's start building towards our ARIMA model. We'll start with the **AR**, or **autoregressive** component, then later add in the moving average and integrated pieces.
 
 ### AR(0): White noise
-The simplest model we can build is one with no terms. Well, almost. There's just the _error_ term.
+The simplest model we can build is one with no terms. Well, almost. There's just a _constant_ and an _error_ term.
 
-$$ y_t = \epsilon_t $$
+$$ y_t = c + \epsilon_t $$
 
 This kind of time series is called **white noise.** $\epsilon_t$ is a random value drawn from a normal distribution with mean 0 and variance $\sigma^2$.<sup>[[4]](#4-ar0-white-noise)</sup> Each value is drawn independently, meaning $\epsilon_t$ has no correlation with $\epsilon_{t-1}$, $\epsilon_{t+1}$, or any other $\epsilon_{t \pm n}$. Written mathematically, we would say:
 
@@ -105,7 +105,7 @@ $$ \epsilon_t \overset{iid}{\sim} \mathcal{N}(0, \sigma^2) $$
 
 Because all $\epsilon_t$ values are independent, the time series described by the model $y_t = \epsilon_t$ is just a sequence of random numbers that **cannot be predicted**. Your best guess for the next value is the mean of the distribution the samples are drawn from, which is zero.
 
-(We can also add a constant $c$ if our time series isn't centered at zero, so that $y_t = c + \epsilon_t$. When $c$ is zero, we just omit it for simplicity.)
+Below are three white noise time series drawn from normal distributions with increasing standard deviation. $c$ is zero and is therefore omitted from the equation. (A positive or negative $c$ would cause the series to trend upwards or downwards, respectively.)
 
 <center>
 <img src="{{  site.baseurl  }}/images/statistics/arima/white_noise.png" height="110%" width="110%">
@@ -118,9 +118,9 @@ White noise is also useful for determining whether our model is capturing all th
 ### AR(1): Random walks and oscillations
 Let's start adding autoregressive terms to our model. These terms will be lagged values of our time series, multiplied by coefficients that best translate those previous values into our current value.
 
-In an AR(1) model, we predict the current time step, $y_t$, by adjusting the _previous_ time step $y_{t-1}$ by a multiplier $\alpha_1$ and then adding white noise, $\epsilon_t$.
+In an AR(1) model, we predict the current time step, $y_t$, by taking our constant $c$, adding the _previous_ time step $y_{t-1}$ adjusted by a multiplier $\alpha_1$, and then adding white noise, $\epsilon_t$.
 
-$$y_t = \alpha_1y_{t-1}+\epsilon_t$$
+$$y_t = c + \alpha_1y_{t-1} + \epsilon_t$$
 
 The value of $\alpha_1$ plays a defining role in what our time series looks like. If $\alpha_1 = 1$, we get a [**random walk**](https://www.sciencedirect.com/science/article/pii/S0370157317302946). Unlike white noise, our time series is free to wander away from its origin. Random walks are an incredibly useful model for stochastic processes across many applications, such as modeling [the movement of particles through a fluid](https://en.wikipedia.org/wiki/Brownian_motion), the [search path of a foraging animal](https://www.quantamagazine.org/random-search-wired-into-animals-may-help-them-hunt-20200611/), or [changes in stock prices](https://www.investopedia.com/terms/r/randomwalktheory.asp).
 
@@ -132,41 +132,41 @@ So when $\alpha_1$ = 0, we get white noise, and when $\alpha_1$ = 1, we get a ra
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/mean_reversion.png">
 
-When fitting an AR model, we [constrain the $\alpha$ parameter space](https://otexts.com/fpp2/AR.html) to $-1 \leq \alpha \leq 1$. Unless you're modeling exponential growth or oscillations, the time series described by these models are probably not what you're looking for.
+When fitting an AR model, we [constrain the $\alpha$ parameter space](https://otexts.com/fpp2/AR.html) to $-1 \leq \alpha \leq 1$. Unless you're modeling exponential growth or sharp oscillations, the time series described by these models are probably not what you're looking for.
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/bad_arr.png">
 
 ### AR(p): Higher-order terms
 Adding more lags to our model is just a matter of adding $\alpha_n y_{t-n}$ terms. Here's what an AR(2) model looks like, with the additional term highlighted in blue.
 
-$$y_t = \alpha_1y_{t-1} + \color{royalblue}{\mathbf{\alpha_2y_{t-2}}} + \epsilon_t$$
+$$y_t = c + \alpha_1y_{t-1} + \color{royalblue}{\mathbf{\alpha_2y_{t-2}}} + \epsilon_t$$
 
-This says that the value at our current time step $y_t$ is determined by the value at the previous time step, $y_{t-1}$, multiplied by some number $\alpha_1$, plus the value two time steps ago, $y_{t-2}$, multiplied by another number $\alpha_2$, plus a white noise value, $\epsilon_t$. To fit this type of model, we now estimate values for both $\alpha_1$ and $\alpha_2$.
+This says that the value at our current time step $y_t$ is determined by our constant $c$, plus the value at the previous time step $y_{t-1}$ multiplied by some number $\alpha_1$, plus the value two time steps ago $y_{t-2}$ multiplied by another number $\alpha_2$, plus a white noise value $\epsilon_t$. To fit this type of model, we now estimate values for both $\alpha_1$ and $\alpha_2$.
 
-As we add more lags to our model, or we start including moving average, exogeneous, or seasonal terms, it will become useful to rewrite our autoregressive terms as a summation. (Statisticians also use [backshift notation](https://otexts.com/fpp2/backshift.html), but we'll stick with summations to avoid the learning curve.) Here's the general form for an AR(p) model, where $p$ is the number of lags.
+As we add more lags to our model, or we start including moving average, exogeneous, or seasonal terms, it will become useful to rewrite our autoregressive terms as a summation. (Statisticians also use [backshift notation](https://otexts.com/fpp2/backshift.html), but we'll stick with summations to avoid that learning curve.) Here's the general form for an AR(p) model, where $p$ is the number of lags.
 
-$$y_t = \sum_{n=1}^{p} \alpha_ny_{t-n} + \epsilon_t$$
+$$y_t = c + \sum_{n=1}^{p} \alpha_ny_{t-n} + \epsilon_t$$
 
-The above equations simply says "add together every lag $y_{t-n}$ multiplied by its coefficient $\alpha_n$, then add $\epsilon_t$." We can use the same equation regardless of whether $p$ is 1 or 100... though if your model has 100 lags, you might want to look into including the next term we'll describe: the moving average.
+The above equation simply says "our current value equals our constant, plus every lag $y_{t-n}$ multiplied by its coefficient $\alpha_n$, plus $\epsilon_t$." We can use the same equation regardless of whether $p$ is 1 or 100... though if your model has 100 lags, you might want to look into including the next term we'll describe: the moving average.
 
 ## MA: Moving average
 The second major component of an ARIMA model is the **moving average** component. This component is _not_ a rolling average, but rather _the lags in the white noise_.
 
-The $\epsilon_t$ term, previously just noise that we added to our forecast, now takes center stage. In an MA(1) model, our forecast for $y_t$ is the _previous_ white noise term, $\epsilon_{t-1}$ with a multiplier $\theta_1$, plus the _current_ white noise term $\epsilon_t$.
+The $\epsilon_t$ term, previously some forgettable noise we add to our forecast, now takes center stage. In an MA(1) model, our forecast for $y_t$ is our constant plut the _previous_ white noise term $\epsilon_{t-1}$ with a multiplier $\theta_1$, plus the _current_ white noise term $\epsilon_t$.
 
-$$y_t = \theta_1\epsilon_{t-1} + \epsilon_t$$
+$$y_t = c + \theta_1\epsilon_{t-1} + \epsilon_t$$
 
 As before, we can concisely describe an MA(q) model with this summation:
 
-$$y_t = \sum_{n=1}^{q}\theta_n\epsilon_{t-n} + \epsilon_t$$
+$$y_t = c + \sum_{n=1}^{q}\theta_n\epsilon_{t-n} + \epsilon_t$$
 
-Here's what time series following a MA(1) process look like. Here we vary the value of $\theta_1$, the multiplier on the previous error value. Don't feel bad if you don't experience an "ah-ha" moment looking at these; they should look fairly similar to white noise.
+Here's are three MA(1) time series that vary in the value of $\theta_1$, the multiplier on $\epsilon_{t-1}$. Don't feel bad if you don't experience an "ah-ha" moment looking at these; they should look fairly similar to white noise.
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/ma1.png">
 
-It's surprisingly hard to find real-world examples of a moving average process with no autoregressive component. What time series has no memory of its past behavior, but remembers its previous random noise? It took me days of searching before I found [this clear example](https://www.youtube.com/watch?v=voryLhxiPzE) by [YouTuber ritvikmath](https://www.youtube.com/channel/UCUcpVoi5KkJmnE3bvEhHR0Q). It's a little silly, but I found it useful!
+Moving average processes are a lot less intuitive than autoregression $-$ what time series has no memory of its past behavior, but remembers it previous random noise? Yet a surprising number of [real-world time series _are_ moving average processes](https://stats.stackexchange.com/questions/45026/real-life-examples-of-moving-average-processes), from mis-alignment of store goods and sales, battery purchases in response to (unpredicted) natural disasters, and low-pass filters such as the treble knobs on car stereos.
 
-ritvikmath describes a recurring party where you're assigned to provide one cupcake per guest. The number of guests follows a white noise process and cannot be predicted ahead of time. With no idea how many people to expect, you start by bringing 10 cupcakes ($c=10$). When you arrive, you note how many cupcakes you over- or under-supplied ($\epsilon_t$). $y_t$ is the number of leftover cupcakes, and it's possible to be negative.
+Here's a silly but helpful ["mis-alignment" example]([this clear example](https://www.youtube.com/watch?v=voryLhxiPzE)) from [YouTuber ritvikmath](https://www.youtube.com/channel/UCUcpVoi5KkJmnE3bvEhHR0Q). Imagine a recurring party where you're assigned to provide one cupcake per guest. The number of guests follows a white noise process and cannot be predicted ahead of time. With no idea how many people to expect, you start by bringing 10 cupcakes ($c=10$). When you arrive, you note how many cupcakes you over- or under-supplied ($\epsilon_t$). $y_t$ is the number of leftover cupcakes, and it's possible to be negative.
 
 For the following meeting, you bring 10 cupcakes _adjusted by that difference from the previous meeting_ (now $\epsilon_{t-1}$) multiplied by some factor ($\theta_1$). You want to bring the negative of the number of cupcakes you were off by last time, so we set $\theta_1=-1$. If you were two short last time ($\epsilon_{t-1}=-2$), for example, you'd bring two extra.
 
@@ -177,18 +177,22 @@ $$y_t = \color{royalblue}{10 - \epsilon_{t-1}} + \color{orange}{\epsilon_t}$$
 The thing to note here is that **this time series doesn't care about its own history;** it is only affected by external random noise that is remembered for a brief period. This is therefore a moving average process.
 
 ## Beyond the fundamentals
-Having covered AR and MA processes, we've made a good dent into the theory for modeling time series. Let's start by putting the two components together to form ARMA and ARIMA models, then add in seasonal and exogeneous components to get us to the full SARIMAX.
+Having covered AR and MA processes, we have all we need to build ARMA and ARIMA models. As you'll see, these more complex models simply consist of AR and MA components added together.
 
 ### ARMA: Autoregressive moving average
 Outside a textbook, you're unlikely to find a time series that's a pure autoregressive or pure moving average process. Real-world time series, rather, are much more likely to be comprised of both AR and MA components. These **ARMA** processes can be modeled with the following equation:
 
-$$y_t = \sum_{n=1}^{p}\alpha_ny_{t-n} + \sum_{n=1}^{q}\theta_n\epsilon_{t-n}$$
+$$y_t = c + \sum_{n=1}^{p}\alpha_ny_{t-n} + \sum_{n=1}^{q}\theta_n\epsilon_{t-n}$$
 
-As with the MA(1) plot above, it's difficult to look at any of the time series below and intuit the parameter values, or even that they're ARMA processes.
+ARMA models cover a wide range of topics... etc. etc.
+
+
+
+Below are four ARMA(1,1) time series. As with the MA(1) plot above, it's difficult to look at any of the time series below and intuit the parameter values, or even that they're ARMA processes. We're at the point where our time series have become too complex to be able to get much out of inspecting the raw values.
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/arma.png">
 
-But that's ok $-$ moving forward, we'll start using Python to identify whether our time series is an AR, MA, or ARMA process, as well as the optimal number of lags for each component.
+But that's ok. Moving forward, we'll start using [**AIC**](https://en.wikipedia.org/wiki/Akaike_information_criterion) to determine which model to use and [**maximum likelihood estimation**](https://en.wikipedia.org/wiki/Maximum_likelihood_estimation) to set the model parameters. At the end of this post, we'll walk through the Python code to do so. In the meantime, let's finish covering the remaining pieces of our SARIMAX model.
 
 ### ARIMA: Autoregressive integrated moving average
 An ARIMA model is simply an ARMA model on the _differenced_ time series. We could perform the differencing ourselves and then fit the model, but.
@@ -337,7 +341,7 @@ mod = SARIMAX(df['y'],
 ## Conclusions
 Why not just use an RNN? Well, it depends on the approach we want to take. If we're trying to generate the most accurate forecast without necessarily understanding how our model came to that conclusion, a deep learning model can be the way to go. But if we want to model the _underlying process that gave rise to that data_, we'll need to turn to statistics.
 
-Interested in learning more? Check out Facebook's [Prophet](https://facebook.github.io/prophet/) package and LinkedIn's X package.
+Interested in learning more? Check out [Facebook's Prophet](https://facebook.github.io/prophet/) and [LinkedIn's Greykite](https://engineering.linkedin.com/blog/2021/greykite--a-flexible--intuitive--and-fast-forecasting-library) packages.
 
 
 ## Code to generate plots
