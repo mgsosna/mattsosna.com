@@ -7,7 +7,7 @@ permalink: /academics/
 Here is information about my academic life. For blog posts with advice for undergraduates or students currently pursuing Masters or PhD's, check out the [Blog]({{ site.baseurl }}/blog/) page. My Google Scholar profile can be found [here](https://scholar.google.com/citations?user=osyIJMYAAAAJ&hl).
 
 ## Publications
-1. Davidson JD, **Sosna MMG**, Twomey CR, Sridhar VH, Leblanc S, Couzin ID. 2021. [Collective detection based on visual information in fish schools](https://www.biorxiv.org/content/10.1101/2021.02.18.431380v2). _**Journal of the Royal Society Interface.**_ _in press_
+1. Davidson JD, **Sosna MMG**, Twomey CR, Sridhar VH, Leblanc S, Couzin ID. 2021. [Collective detection based on visual information in fish schools](https://royalsocietypublishing.org/doi/10.1098/rsif.2021.0142). _**Journal of the Royal Society Interface.**_ 18 (180): 20210142. https://doi.org/10.1098/rsif.2021.0142
 
 2. Twomey CR, Hartnett AT, **Sosna MMG**, Romanczuk P. 2020. [Searching for structure in collective systems.](https://link.springer.com/content/pdf/10.1007/s12064-020-00311-9.pdf) _**Theory in Biosciences.**_ https://doi.org/10.1007/s12064-020-00311-9
 
