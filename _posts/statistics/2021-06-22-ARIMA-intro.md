@@ -265,9 +265,6 @@ The code above says that an ARMA(1,2) model best fits
 ## Additional components
 We've built an ARMA model. This gets us pretty far in modeling time series. But now we can add additional components to handle additional cases.
 
-### I: Integrated
-This is an ARMA model on the differenced time series. We can either difference the time series ourselves and then fit an ARMA model to the data, or simply specify a term for the $I$ component, and the model will do it for us (and retransform the forecasts back into the original).
-
 ### S: Seasonal
 Seasonality is important to model. There are its own autoregressive, integrated, and moving average components.
 
