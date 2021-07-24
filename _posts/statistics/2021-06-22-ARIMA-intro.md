@@ -47,7 +47,9 @@ Once we've built a model, we'll be able to predict the future of a time series l
   - [AR(1): Random walks and oscillations](#ar1-random-walks-and-oscillations)
   - [AR(p): Higher-order terms](#arp-higher-order-terms)
 * [**MA: Moving average**](#ma-moving-average)
-* [**ARMA: Autoregressive moving average**](#arma-autoregressive-moving-average)
+* [**Putting it together**](#putting-it-together)
+  - [ARMA: Autoregressive moving average](#arma-autoregressive-moving-average)
+  - [ARIMA: Autoregressive integrated moving average](#arima-autoregressive-integrated-moving-average)
 * [**Additional components**](#additional-components)
   - [I: Integrated](#integrated)
   - [S: Seasonal](#seasonal)
@@ -176,46 +178,59 @@ $$y_t = \color{royalblue}{10 - \epsilon_{t-1}} + \color{orange}{\epsilon_t}$$
 
 The thing to note here is that **this time series doesn't care about its own history;** it is only affected by external random noise that is remembered for a brief period. This is therefore a moving average process.
 
-## Beyond the fundamentals
+## Putting it together
 Having covered AR and MA processes, we have all we need to build ARMA and ARIMA models. As you'll see, these more complex models simply consist of AR and MA components added together.
 
 ### ARMA: Autoregressive moving average
-Outside a textbook, you're unlikely to find a time series that's a pure autoregressive or pure moving average process. Real-world time series, rather, are much more likely to be comprised of both AR and MA components. These **ARMA** processes can be modeled with the following equation:
+While many time series can be boiled down to a pure autoregressive or pure moving average process, you often need to combine AR and MA components to successfully describe your data. These **ARMA** processes can be modeled with the following equation:
 
-$$y_t = c + \sum_{n=1}^{p}\alpha_ny_{t-n} + \sum_{n=1}^{q}\theta_n\epsilon_{t-n}$$
+$$y_t = c + \sum_{n=1}^{p}\alpha_ny_{t-n} + \sum_{n=1}^{q}\theta_n\epsilon_{t-n} + \epsilon_t$$
 
-ARMA models cover a wide range of topics... etc. etc.
+The ARMA equation simply states that the value at the current time step is a constant plus the sum of the autoregressive lags and their multipliers, plus the sum of the moving average lags and their multipliers, plus some white noise. This equation is the basis for a wide range of applications, from [modeling wind speed](https://www.koreascience.or.kr/article/JAKO201315463253802.pdf), [forecasting financial returns](https://link.springer.com/article/10.1007/s00180-014-0543-9), and even [filtering images](https://projecteuclid.org/journals/brazilian-journal-of-probability-and-statistics/volume-23/issue-2/Spatial-ARMA-models-and-its-applications-to-image-filtering/10.1214/08-BJPS019.full).
 
-
-
-Below are four ARMA(1,1) time series. As with the MA(1) plot above, it's difficult to look at any of the time series below and intuit the parameter values, or even that they're ARMA processes. We're at the point where our time series have become too complex to be able to get much out of inspecting the raw values.
+Below are four ARMA(1,1) time series. As with the MA(1) plot above, it's difficult to look at any of the time series below and intuit the parameter values, or even that they're ARMA processes rather than AR or MA alone. We're at the point where our time series have become too complex to be able to get much out of inspecting the raw values.
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/arma.png">
 
 But that's ok. Moving forward, we'll start using [**AIC**](https://en.wikipedia.org/wiki/Akaike_information_criterion) to determine which model to use and [**maximum likelihood estimation**](https://en.wikipedia.org/wiki/Maximum_likelihood_estimation) to set the model parameters. At the end of this post, we'll walk through the Python code to do so. In the meantime, let's finish covering the remaining pieces of our SARIMAX model.
 
 ### ARIMA: Autoregressive integrated moving average
-An ARIMA model is simply an ARMA model on the _differenced_ time series. We could perform the differencing ourselves and then fit the model, but.
+We've arrived at the namesake of this blog post: the ARIMA model. Despite the buildup, we'll actually see that an ARIMA model is just an ARMA model, with a preprocessing step handled by the model rather than the user.
 
+Let's start with the equation for the model. The black terms are the ARMA model and the red is the _integrated_ component that makes this an ARIMA model.
+
+$$y_t = c + \sum_{n=1}^{p}\alpha_ny_{t-n} + \color{orangered}{\sum_{n=1}^{d}\omega_n(y_t-y_{t-n})} + \sum_{n=1}^{q}\theta_n\epsilon_{t-n} + \epsilon_t $$
+
+The integrated summation says that we sum the _difference_ between the current value and the value $n$ lags ago, multiplied by a coefficient $\omega_n$, for the number of lags specified by $d$. If $d=2$, for example, we would add $\omega_1(y_t-y_{t-1})$ and $\omega_2(y_t-y_{t-2})$.
+
+In other words, an ARIMA model is simply an ARMA model on the _differenced_ time series. That's it! We could perform the differencing ourselves and then fit the model, but it gets cumbersome if $d$ is greater than 1, and we would then need to transform our values back to get the original units (on top of undoing any log, square root, etc. transformations to make the time series stationary).
+
+But to prove I'm not making this up, here's a demonstration of how the model coefficients in an ARIMA(1,1,1) model on the _raw_ data and ARMA(1,1) model on the _differenced_ data are equal.
+
+{% include header-python.html %}
 ```python
+# Using statsmodels v0.12.2
 import numpy as np
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.arima_process import arma_generate_sample
 
+# Set coefficients
 ar_coefs = [1, -1]
 ma_coefs = [1, 0.5]
 
-y1 = arma_generate_sample(ar_coefs, ma_coefs, nsample=1500)
+# Generate data
+y1 = arma_generate_sample(ar_coefs, ma_coefs, nsample=2000, scale=0.1)
 y2 = np.diff(y1)
 
+# Fit models
 mod1 = ARIMA(y1, order=(1, 1, 1)).fit()  # ARIMA on original
 mod2 = ARIMA(y2, order=(1, 0, 1)).fit()  # ARMA on differenced
 
-# AR coefficients are identical
+# AR coefficients are same
 print(mod1.polynomial_ar.round(4) == mod2.polynomial_ar.round(4))
 # True
 
-# MA coefficients are identical
+# MA coefficients are same
 print(mod1.polynomial_ma.round(4) == mod2.polynomial_ma.round(4))
 # True
 ```
