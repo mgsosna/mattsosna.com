@@ -51,11 +51,9 @@ Once we've built a model, we'll be able to predict the future of a time series l
   - [ARMA: Autoregressive moving average](#arma-autoregressive-moving-average)
   - [ARIMA: Autoregressive integrated moving average](#arima-autoregressive-integrated-moving-average)
 * [**Additional components**](#additional-components)
-  - [I: Integrated](#integrated)
-  - [S: Seasonal](#seasonal)
-  - [X: Exogeneous](#exogeneous)
+  - [S: Seasonality](#seasonal)
+  - [X: Exogeneous variables](#exogeneous-variables)
 * [**Comparing model fit**](#comparing-model-fit)
-
 
 ## Getting started
 ### Autocorrelation
@@ -235,55 +233,33 @@ print(mod1.polynomial_ma.round(4) == mod2.polynomial_ma.round(4))
 # True
 ```
 
-
-
-To do so, we'll use the `auto_arima` function from the [pmdarima](https://pypi.org/project/pmdarima/) library. Here's the code for identifying what the AR and MA orders should be for an ARMA model on the last five years of S&P 500 closing prices.
-
-{% include header-python.html %}
-```python
-import pandas as pd
-import pmdarima as pmd
-
-df = pd.read_csv("spy.csv")
-
-results = pmd.auto_arima(df['Close'],
-                         d=0,        # restrict to ARMA, not ARIMA
-                         start_p=0,  # initial guess for AR(p)
-                         start_q=0,  # initial guess for MA(q)
-                         max_p=2,    # max guess for AR(p)
-                         max_q=2,    # max guess for MA(q)
-                         trend='c',
-                         information_criterion='aic',
-                         trace=True,
-                         error_action='ignore'
-                         )
-
-# Performing stepwise search to minimize aic
-#  ARIMA(0,0,0)(0,0,0)[0] intercept   : AIC=13722.091, Time=0.03 sec
-#  ARIMA(1,0,0)(0,0,0)[0] intercept   : AIC=inf, Time=0.10 sec
-#  ARIMA(0,0,1)(0,0,0)[0] intercept   : AIC=12044.936, Time=0.20 sec
-#  ARIMA(0,0,0)(0,0,0)[0]             : AIC=13722.091, Time=0.03 sec
-#  ARIMA(1,0,1)(0,0,0)[0] intercept   : AIC=6654.430, Time=0.71 sec
-#  ARIMA(2,0,1)(0,0,0)[0] intercept   : AIC=6680.479, Time=0.75 sec
-#  ARIMA(1,0,2)(0,0,0)[0] intercept   : AIC=6627.935, Time=0.96 sec
-#  ARIMA(0,0,2)(0,0,0)[0] intercept   : AIC=10841.632, Time=0.58 sec
-#  ARIMA(2,0,2)(0,0,0)[0] intercept   : AIC=6637.467, Time=1.03 sec
-#  ARIMA(1,0,2)(0,0,0)[0]             : AIC=6627.935, Time=0.96 sec
-#
-# Best model:  ARIMA(1,0,2)(0,0,0)[0] intercept
-# Total fit time: 5.356 seconds
-```
-
-The code above says that an ARMA(1,2) model best fits
-
-
 ## Additional components
-We've built an ARMA model. This gets us pretty far in modeling time series. But now we can add additional components to handle additional cases.
+With the AR, MA, and I components under our belt, we're equipped to analyze and forecast a wide range of time series. But there are two additional components that will truly take our forecasting to the next level: **seasonality** and **exogeneous variables.** Let's briefly cover those before closing out this post.
 
-### S: Seasonal
-Seasonality is important to model. There are its own autoregressive, integrated, and moving average components.
+### S: Seasonality
+As alluded to in the name, seasonality refers to _repeating patterns with a fixed frequency_ in the data. [Housing sales](https://otexts.com/fpp2/tspatterns.html) tend to be correlated with the number of sales a year ago. Movie theater ticket sales tend to be correlated with the sales from a week earlier.
 
-### Exogeneous
+Unlike _cycles_, which are significant fluctuations with no set frequency, we can easily control for seasonality by adding an additional set of parameters to our model. Below is a SARIMA model, with the seasonal component highlighted in orange.
+
+$$y_t = c + \\
+\sum_{n=1}^{p}\alpha_ny_{t-n} +
+\sum_{n=1}^{d}\omega_n(y_t-y_{t-n}) +
+\sum_{n=1}^{q}\theta_n\epsilon_{t-n} + \\
+\color{orange}{\sum_{n=1}^{P}\phi_ny_{t-sn}} +
+\color{orange}{\sum_{n=1}^{D}\gamma_n(y_t-y_{t-sn})} +
+\color{orange}{\sum_{n=1}^{Q}\eta_n\epsilon_{t-sn}} + \\
+\epsilon_t $$
+
+Notice how the seasonal and non-seasonal components look suspiciously similar. This is because we actually fit a _separate_ set of autoregressive, integrated, and moving average components on data differenced by some number of lags $s$, the frequency of our seasonality. For a model of daily e-commerce profits with a strong weekly seasonality, for example, we'd set $s$ = 7.
+
+Even for highly seasonal time series, we likely still want to include a non-seasonal component or two to improve accuracy. We usually care about both non-seasonal and seasonal components in our model. Let's say we have a SARMA(1,0,0)(1,0,0)(7) model, which is basically just a non-seasonal and seasonal AR(1) component. The equation would look like this:
+
+$$y_t = c + \alpha_1y_{t-1} + \phi_1y_{t-7} + \epsilon_t$$
+
+This model is saying that we care about the previous value, _as well as_ the value 7 lags ago.
+
+
+### X: Exogeneous variables
 It's no strange idea to think of incorporating external features to help predict a target $-$ you can't build a predictive model without doing exactly this. Time series forecasting is no different.
 
 
@@ -349,6 +325,45 @@ mod = SARIMAX(df['y'],
               seasonal_order=(1, 0, 0, cycle_len),
               trend='c')
 ```
+
+To do so, we'll use the `auto_arima` function from the [pmdarima](https://pypi.org/project/pmdarima/) library. Here's the code for identifying what the AR and MA orders should be for an ARMA model on the last five years of S&P 500 closing prices.
+
+{% include header-python.html %}
+```python
+import pandas as pd
+import pmdarima as pmd
+
+df = pd.read_csv("spy.csv")
+
+results = pmd.auto_arima(df['Close'],
+                         d=0,        # restrict to ARMA, not ARIMA
+                         start_p=0,  # initial guess for AR(p)
+                         start_q=0,  # initial guess for MA(q)
+                         max_p=2,    # max guess for AR(p)
+                         max_q=2,    # max guess for MA(q)
+                         trend='c',
+                         information_criterion='aic',
+                         trace=True,
+                         error_action='ignore'
+                         )
+
+# Performing stepwise search to minimize aic
+#  ARIMA(0,0,0)(0,0,0)[0] intercept   : AIC=13722.091, Time=0.03 sec
+#  ARIMA(1,0,0)(0,0,0)[0] intercept   : AIC=inf, Time=0.10 sec
+#  ARIMA(0,0,1)(0,0,0)[0] intercept   : AIC=12044.936, Time=0.20 sec
+#  ARIMA(0,0,0)(0,0,0)[0]             : AIC=13722.091, Time=0.03 sec
+#  ARIMA(1,0,1)(0,0,0)[0] intercept   : AIC=6654.430, Time=0.71 sec
+#  ARIMA(2,0,1)(0,0,0)[0] intercept   : AIC=6680.479, Time=0.75 sec
+#  ARIMA(1,0,2)(0,0,0)[0] intercept   : AIC=6627.935, Time=0.96 sec
+#  ARIMA(0,0,2)(0,0,0)[0] intercept   : AIC=10841.632, Time=0.58 sec
+#  ARIMA(2,0,2)(0,0,0)[0] intercept   : AIC=6637.467, Time=1.03 sec
+#  ARIMA(1,0,2)(0,0,0)[0]             : AIC=6627.935, Time=0.96 sec
+#
+# Best model:  ARIMA(1,0,2)(0,0,0)[0] intercept
+# Total fit time: 5.356 seconds
+```
+
+The code above says that an ARMA(1,2) model best fits
 
 ## Conclusions
 Why not just use an RNN? Well, it depends on the approach we want to take. If we're trying to generate the most accurate forecast without necessarily understanding how our model came to that conclusion, a deep learning model can be the way to go. But if we want to model the _underlying process that gave rise to that data_, we'll need to turn to statistics.
