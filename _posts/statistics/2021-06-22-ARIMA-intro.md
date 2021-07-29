@@ -147,7 +147,7 @@ As we add more lags to our model, or we start including moving average, exogeneo
 
 $$y_t = c + \sum_{n=1}^{p} \alpha_ny_{t-n} + \epsilon_t$$
 
-The above equation simply says "our current value equals our constant, plus every lag $y_{t-n}$ multiplied by its coefficient $\alpha_n$, plus $\epsilon_t$." We can use the same equation regardless of whether $p$ is 1 or 100... though if your model has 100 lags, you might want to look into including the next term we'll describe: the moving average.
+The above equation simply says "our current value $y_t$ equals our constant $c$, plus every lag $y_{t-n}$ multiplied by its coefficient $\alpha_n$, plus $\epsilon_t$." We can use the same equation regardless of whether $p$ is 1 or 100... though if your model has 100 lags, you might want to look into including the next term we'll describe: the moving average.
 
 ## MA: Moving average
 The second major component of an ARIMA model is the **moving average** component. This component is _not_ a rolling average, but rather _the lags in the white noise_.
@@ -164,17 +164,19 @@ Here's are three MA(1) time series that vary in the value of $\theta_1$, the mul
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/ma1.png">
 
-Moving average processes are a lot less intuitive than autoregression $-$ what time series has no memory of its past behavior, but remembers it previous random noise? Yet a surprising number of [real-world time series _are_ moving average processes](https://stats.stackexchange.com/questions/45026/real-life-examples-of-moving-average-processes), from mis-alignment of store goods and sales, battery purchases in response to (unpredicted) natural disasters, and low-pass filters such as the treble knobs on car stereos.
+Moving average processes are a lot less intuitive than autoregression $-$ what time series has no memory of its past behavior, but remembers it previous random noise? Yet a surprising number of [real-world time series _are_ moving average processes](https://stats.stackexchange.com/questions/45026/real-life-examples-of-moving-average-processes), from misalignment of store goods and sales, battery purchases in response to natural disasters, and low-pass filters such as the treble knobs on car stereos.
 
-Here's a silly but helpful ["mis-alignment" example]([this clear example](https://www.youtube.com/watch?v=voryLhxiPzE)) from [YouTuber ritvikmath](https://www.youtube.com/channel/UCUcpVoi5KkJmnE3bvEhHR0Q). Imagine a recurring party where you're assigned to provide one cupcake per guest. The number of guests follows a white noise process and cannot be predicted ahead of time. With no idea how many people to expect, you start by bringing 10 cupcakes ($c=10$). When you arrive, you note how many cupcakes you over- or under-supplied ($\epsilon_t$). $y_t$ is the number of leftover cupcakes, and it's possible to be negative.
+Here's a silly but helpful [misalignment example](https://www.youtube.com/watch?v=voryLhxiPzE) from [YouTuber ritvikmath](https://www.youtube.com/channel/UCUcpVoi5KkJmnE3bvEhHR0Q). Imagine a recurring party where you're assigned to provide one cupcake per guest. $y_t$ is the correct number of cupcakes to bring. You're expecting roughly 10 people, so you start by bringing 10 cupcakes ($c=10$). When you arrive, you note how many cupcakes you over- or under-supplied ($\epsilon_t$).
 
-For the following meeting, you bring 10 cupcakes _adjusted by that difference from the previous meeting_ (now $\epsilon_{t-1}$) multiplied by some factor ($\theta_1$). You want to bring the negative of the number of cupcakes you were off by last time, so we set $\theta_1=-1$. If you were two short last time ($\epsilon_{t-1}=-2$), for example, you'd bring two extra.
+For the following meeting, you bring 10 cupcakes _adjusted by that difference from the previous meeting_ (now $\epsilon_{t-1}$) multiplied by some factor ($\theta_1$). You want to bring the negative of the number of cupcakes you were off by last time, so you set $\theta_1=-1$. If you were two short last time ($\epsilon_{t-1}=-2$), for example, you'd bring two extra.
 
-We can therefore model the number of leftover cupcakes at each meeting like below. The blue terms are the number of cupcakes you bring to the meeting, and the orange is the number of people who show up.
+The number of guests who show up is essentially random, but **the guests remember the number of cupcakes at the previous meeting** $-$ if there were too many, more guests will show up, and if there were too few, then fewer guests will come.
+
+We can therefore model the correct number of cupcakes at each meeting like below. The blue terms are the number of cupcakes you bring to the meeting, and the orange is the difference between the number we bring and the number of people who show up.
 
 $$y_t = \color{royalblue}{10 - \epsilon_{t-1}} + \color{orange}{\epsilon_t}$$
 
-The thing to note here is that **this time series doesn't care about its own history;** it is only affected by external random noise that is remembered for a brief period. This is therefore a moving average process.
+The thing to note here is that **this time series doesn't care about its own history** (the correct number of cupcakes); it is only affected by **external random noise that is remembered for a brief period** (the difference between the number of cupcakes and the number of party attendees). This is therefore a moving average process.
 
 ## Putting it together
 Having covered AR and MA processes, we have all we need to build ARMA and ARIMA models. As you'll see, these more complex models simply consist of AR and MA components added together.
