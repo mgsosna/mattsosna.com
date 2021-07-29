@@ -178,6 +178,9 @@ $$y_t = \color{royalblue}{10 - \epsilon_{t-1}} + \color{orange}{\epsilon_t}$$
 
 The thing to note here is that **this time series doesn't care about its own history** (the correct number of cupcakes); it is only affected by **external random noise that is remembered for a brief period** (the difference between the number of cupcakes and the number of party attendees). This is therefore a moving average process.
 
+<img src="{{  site.baseurl  }}/images/statistics/arima/cupcakes.jpg">
+<span style="font-size: 12px"><i>Photo by <a href="https://unsplash.com/@brookelark">Brooke Lark</a> on <a href="https://unsplash.com">Unsplash</a></i></span>
+
 ## Putting it together
 Having covered AR and MA processes, we have all we need to build ARMA and ARIMA models. As you'll see, these more complex models simply consist of AR and MA components added together.
 
