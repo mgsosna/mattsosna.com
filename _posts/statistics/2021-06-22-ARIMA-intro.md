@@ -132,7 +132,7 @@ So when $\alpha_1$ = 0, we get white noise, and when $\alpha_1$ = 1, we get a ra
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/mean_reversion.png">
 
-When fitting an AR model, we [constrain the $\alpha$ parameter space](https://otexts.com/fpp2/AR.html) to $-1 \leq \alpha \leq 1$. Unless you're modeling exponential growth or sharp oscillations, the time series described by these models are probably not what you're looking for.
+When fitting an AR model, statistics packages typically [constrain the $\alpha$ parameter space](https://otexts.com/fpp2/AR.html) to $-1 \leq \alpha \leq 1$ when performing [maximum likelihood estimation](https://en.wikipedia.org/wiki/Maximum_likelihood_estimation). Unless you're modeling exponential growth or sharp oscillations, the time series described by these models are probably not what you're looking for.
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/bad_arr.png">
 
@@ -195,7 +195,7 @@ Below are four ARMA(1,1) time series. As with the MA(1) plot above, it's difficu
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/arma.png">
 
-But that's ok. Moving forward, we'll start using [**AIC**](https://en.wikipedia.org/wiki/Akaike_information_criterion) to determine which model to use and [**maximum likelihood estimation**](https://en.wikipedia.org/wiki/Maximum_likelihood_estimation) to set the model parameters. At the end of this post, we'll walk through the Python code to do so. In the meantime, let's finish covering the remaining pieces of our SARIMAX model.
+But that's ok. Moving forward, we'll start using [**AIC**](https://en.wikipedia.org/wiki/Akaike_information_criterion) to determine which model best describes our data, whether that's an AR, MA, or ARMA model, as well as the optimal number of lags for each component. We'll cover this process at the end of this post, but in the meantime let's cover the remaining pieces of the SARIMAX model.
 
 ### ARIMA: Autoregressive integrated moving average
 We've arrived at the namesake of this blog post: the ARIMA model. Despite the buildup, we'll actually see that an ARIMA model is just an ARMA model, with a preprocessing step handled by the model rather than the user.
@@ -230,21 +230,23 @@ mod1 = ARIMA(y1, order=(1, 1, 1)).fit()  # ARIMA on original
 mod2 = ARIMA(y2, order=(1, 0, 1)).fit()  # ARMA on differenced
 
 # AR coefficients are same
-print(mod1.polynomial_ar.round(4) == mod2.polynomial_ar.round(4))
-# True
+print(mod1.polynomial_ar.round(3) == mod2.polynomial_ar.round(3))
+# array([True, True])
 
 # MA coefficients are same
-print(mod1.polynomial_ma.round(4) == mod2.polynomial_ma.round(4))
-# True
+print(mod1.polynomial_ma.round(3) == mod2.polynomial_ma.round(3))
+# array([True, True])
 ```
 
+Above, we first use the `arma_generate_sample` function to simulate data for an ARMA process with specified $\alpha$ and $\theta$ parameters. We then use the `ARIMA` function to fit an ARIMA model on the raw data and an ARMA data on the differenced data. Finally, we compare the two models' estimated parameters and show that they're equal.
+
 ## Additional components
-With the AR, MA, and I components under our belt, we're equipped to analyze and forecast a wide range of time series. But there are two additional components that will truly take our forecasting to the next level: **seasonality** and **exogeneous variables.** Let's briefly cover those before closing out this post.
+With the AR, MA, and I components under our belt, we're equipped to analyze and forecast a wide range of time series. But there are two additional components that will truly take our forecasting to the next level: **seasonality** and **exogeneous variables.** Let's briefly cover those before covering some code and then closing out this post.
 
 ### S: Seasonality
-As alluded to in the name, seasonality refers to _repeating patterns with a fixed frequency_ in the data. [Housing sales](https://otexts.com/fpp2/tspatterns.html) tend to be correlated with the number of sales a year ago. Movie theater ticket sales tend to be correlated with the sales from a week earlier.
+As alluded to in the name, seasonality refers to _repeating patterns with a fixed frequency_ in the data. [Housing sales](https://otexts.com/fpp2/tspatterns.html) tend to be correlated with the number of sales a year ago. Movie theater ticket sales tend to be correlated with the sales from a week earlier. Temperature tends to be correlated with last year's weather.
 
-Unlike _cycles_, which are significant fluctuations with no set frequency, we can easily control for seasonality by adding an additional set of parameters to our model. Below is a SARIMA model, with the seasonal component highlighted in orange.
+We can readily control for seasonality by adding an additional set of parameters to our model. Below is a SARIMA model, with the seasonal component highlighted in orange.
 
 $$y_t = c + \\
 \sum_{n=1}^{p}\alpha_ny_{t-n} +
@@ -255,120 +257,54 @@ $$y_t = c + \\
 \color{orange}{\sum_{n=1}^{Q}\eta_n\epsilon_{t-sn}} + \\
 \epsilon_t $$
 
-Notice how the seasonal and non-seasonal components look suspiciously similar. This is because we actually fit a _separate_ set of autoregressive, integrated, and moving average components on data differenced by some number of lags $s$, the frequency of our seasonality. For a model of daily e-commerce profits with a strong weekly seasonality, for example, we'd set $s$ = 7.
+Notice how the seasonal and non-seasonal components look suspiciously similar. This is because we actually fit a _separate_ set of autoregressive, integrated, and moving average components on data differenced by some number of lags $s$, the frequency of our seasonality. For a model of daily e-commerce profits with strong weekly seasonality, for example, we'd set $s$ = 7.
 
-Even for highly seasonal time series, we likely still want to include a non-seasonal component or two to improve accuracy. We usually care about both non-seasonal and seasonal components in our model. Let's say we have a SARMA(1,0,0)(1,0,0)(7) model, which is basically just a non-seasonal and seasonal AR(1) component. The equation would look like this:
+Even for highly seasonal time series, we likely still want to include a non-seasonal component or two to improve accuracy. You can think of the seasonal component dealing with long-term trends and the non-seasonal component adjusting our predictions for shorter-term variations.
+
+Let's say we have a SARMA(1,0,0)(1,0,0)(7) model, which just contains a non-seasonal AR(1) term and a seasonal AR(1) term. The equation would look like this:
 
 $$y_t = c + \alpha_1y_{t-1} + \phi_1y_{t-7} + \epsilon_t$$
 
 This model is saying that we care about the previous value, _as well as_ the value 7 lags ago.
 
-
 ### X: Exogeneous variables
 It's no strange idea to think of incorporating external features to help predict a target $-$ you can't build a predictive model without doing exactly this. Time series forecasting is no different.
 
+Here's what the equation would look like. The exogeneous term is highlighted in green. We've now built our full SARIMAX model!
 
-## SARIMAX
-The main thing is the seasonal component.
+$$y_t = c +
+\sum_{n=1}^{p}\alpha_ny_{t-n} +
+\sum_{n=1}^{d}\omega_n(y_t-y_{t-n}) +
+\sum_{n=1}^{q}\theta_n\epsilon_{t-n} + \\
+\color{green}{\sum_{n=1}^{r}\beta_nx_{tn}} + \\
+\sum_{n=1}^{P}\phi_ny_{t-sn} +
+\sum_{n=1}^{D}\gamma_n(y_t-y_{t-sn}) +
+\sum_{n=1}^{Q}\eta_n\epsilon_{t-sn} +
+\epsilon_t $$
+
+
+
+## Comparing model fit
+As alluded to earlier, we can fit an ARIMA model in Python with the `statsmodels` library. We can fit a SARIMAX(1,0,0)(1,0,0)(7) model of sales data, with an exogeneous time series of advertising spending, like this:
 
 {% include header-python.html %}
 ```python
-import numpy as np
 import pandas as pd
-import pmdarima as pmd
-import matplotlib.pyplot as plt
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 
-cycle_len = 25
-train_start = -5*np.pi
-train_end = 5*np.pi
-step_size = 2*np.pi / cycle_len
+df = pd.read_csv("data.csv")
 
-x = np.arange(train_start, train_end, step_size)
-y = np.sin(x) + np.random.normal(0, 0.05, len(x))
-
-df = pd.DataFrame({'x': x, 'y': y})
-```
-
-We'll put our data into `pandas` so the index is automatically aligned when we plot our forecast later.
-
-Now let's visualize it.
-
-{% include header-python.html %}
-```python
-plt.figure(figsize=(15,5))
-plt.plot(df['x'], df['y'])
-plt.show()
-```
-
-Now let's build a model.
-
-Scan for best parameters for $p$, $d$, $q$ (for the ARIMA part) and $P$, $D$, $Q$ and $S$ (for the seasonal part).
-
-```python
-results = pmd.auto_arima(df['y'],
-                         start_p=0,  # initial guess for AR(p)
-                         start_d=0,  # initial guess for I(d)
-                         start_q=0,  # initial guess for MA(q)
-                         max_p=2,    # max guess for AR(p)
-                         max_d=2,    # max guess for I(d)
-                         max_1=2,    # max guess for MA(q)
-                         start_P=0,  # initial guess for seasonal AR(p)
-                         start_D=0,  # initial guess for seasonal I(d)
-                         start_Q=0,  # initial guess for seasonal MA(q)
-                         trend='c',
-                         information_criterion='aic',
-                         trace=True,
-                         error_action='ignore'
-                         )
-```
-
-
-```python
-mod = SARIMAX(df['y'],
-              order=(0, 0, 0),
-              seasonal_order=(1, 0, 0, cycle_len),
+mod = SARIMAX(endog=df['sales'],
+              exog=df['ad_spend'],
+              order=(1, 0, 0),
+              seasonal_order=(1, 0, 0, 7),
               trend='c')
 ```
 
-To do so, we'll use the `auto_arima` function from the [pmdarima](https://pypi.org/project/pmdarima/) library. Here's the code for identifying what the AR and MA orders should be for an ARMA model on the last five years of S&P 500 closing prices.
+But what if we don't know ahead of time what order we want for our model?
 
-{% include header-python.html %}
-```python
-import pandas as pd
-import pmdarima as pmd
 
-df = pd.read_csv("spy.csv")
 
-results = pmd.auto_arima(df['Close'],
-                         d=0,        # restrict to ARMA, not ARIMA
-                         start_p=0,  # initial guess for AR(p)
-                         start_q=0,  # initial guess for MA(q)
-                         max_p=2,    # max guess for AR(p)
-                         max_q=2,    # max guess for MA(q)
-                         trend='c',
-                         information_criterion='aic',
-                         trace=True,
-                         error_action='ignore'
-                         )
-
-# Performing stepwise search to minimize aic
-#  ARIMA(0,0,0)(0,0,0)[0] intercept   : AIC=13722.091, Time=0.03 sec
-#  ARIMA(1,0,0)(0,0,0)[0] intercept   : AIC=inf, Time=0.10 sec
-#  ARIMA(0,0,1)(0,0,0)[0] intercept   : AIC=12044.936, Time=0.20 sec
-#  ARIMA(0,0,0)(0,0,0)[0]             : AIC=13722.091, Time=0.03 sec
-#  ARIMA(1,0,1)(0,0,0)[0] intercept   : AIC=6654.430, Time=0.71 sec
-#  ARIMA(2,0,1)(0,0,0)[0] intercept   : AIC=6680.479, Time=0.75 sec
-#  ARIMA(1,0,2)(0,0,0)[0] intercept   : AIC=6627.935, Time=0.96 sec
-#  ARIMA(0,0,2)(0,0,0)[0] intercept   : AIC=10841.632, Time=0.58 sec
-#  ARIMA(2,0,2)(0,0,0)[0] intercept   : AIC=6637.467, Time=1.03 sec
-#  ARIMA(1,0,2)(0,0,0)[0]             : AIC=6627.935, Time=0.96 sec
-#
-# Best model:  ARIMA(1,0,2)(0,0,0)[0] intercept
-# Total fit time: 5.356 seconds
-```
-
-The code above says that an ARMA(1,2) model best fits
 
 ## Conclusions
 Why not just use an RNN? Well, it depends on the approach we want to take. If we're trying to generate the most accurate forecast without necessarily understanding how our model came to that conclusion, a deep learning model can be the way to go. But if we want to model the _underlying process that gave rise to that data_, we'll need to turn to statistics.
