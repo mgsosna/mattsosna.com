@@ -25,13 +25,13 @@ $$y_t = c +
 \color{royalblue}{\sum_{n=1}^{p}\alpha_ny_{t-n}} +
 \color{orangered}{\sum_{n=1}^{d}\omega_n(y_t-y_{t-n})} +
 \color{darkorchid}{\sum_{n=1}^{q}\theta_n\epsilon_{t-n}} + \\
-\color{green}{\sum_{n=1}^{r}\beta_nx_{tn}} +
+\color{green}{\sum_{n=1}^{r}\beta_nx_{n_t}} +
 \color{orange}{\sum_{n=1}^{P}\phi_ny_{t-sn}} +
 \color{orange}{\sum_{n=1}^{D}\gamma_n(y_t-y_{t-sn})} +
 \color{orange}{\sum_{n=1}^{Q}\eta_n\epsilon_{t-sn}} +
 \epsilon_t $$
 
-It looks complicated, but each of these pieces $-$ the <span style="color:royalblue; font-weight: bold">autoregressive</span>, <span style="color:orangered; font-weight: bold">integrated</span>, <span style="color:darkorchid; font-weight: bold">moving average</span>, <span style="color:green; font-weight: bold">exogeneous</span>, and <span style="color:orange; font-weight: bold">seasonal</span> components $-$ are just added together. We can easily tune up or down the complexity of our model by adding or removing terms.
+It looks complicated, but each of these pieces $-$ the <span style="color:royalblue; font-weight: bold">autoregressive</span>, <span style="color:orangered; font-weight: bold">integrated</span>, <span style="color:darkorchid; font-weight: bold">moving average</span>, <span style="color:green; font-weight: bold">exogeneous</span>, and <span style="color:orange; font-weight: bold">seasonal</span> components $-$ are just added together. We can easily tune up or down the complexity of our model by adding or removing terms, creating ARMA, SARIMA, ARX, etc. models.
 
 Once we've built a model, we'll be able to predict the future of a time series like this.
 
@@ -259,30 +259,37 @@ $$y_t = c + \\
 
 Notice how the seasonal and non-seasonal components look suspiciously similar. This is because we actually fit a _separate_ set of autoregressive, integrated, and moving average components on data differenced by some number of lags $s$, the frequency of our seasonality. For a model of daily e-commerce profits with strong weekly seasonality, for example, we'd set $s$ = 7.
 
-Here's a basic SARMA(1,0,0)(1,0,0)(7) model, which contains both seasonal and non-seasonal autoregressive terms.
+A perfect sine wave with a wavelength of 10 could be modeled with a SARMA(0,0)(1,0)(10) model like below<sup>[[5]](#5-s-seasonality)</sup>.
+
+$$y_t = c + \phi_1y_{t-10} + \epsilon_t$$
+
+But for real-world time series, even highly seasonal data is likely still better modeled with a non-seasonal component or two: the seasonal component may capture _long-term trends_ while the non-seasonal components adjust our predictions for _shorter-term variation_. We could accomplish this with a basic SARMA(1,0)(1,0)(7) model, for example, which contains both seasonal and non-seasonal autoregressive terms.
 
 $$y_t = c + \alpha_1y_{t-1} + \phi_1y_{t-7} + \epsilon_t$$
 
 This model says that the current value $y_t$ is a function of a constant $c$ plus the previous value $y_{t-1}$ multiplied by a coefficient $\alpha_1$, plus the value seven lags ago $y_{t-7}$ multiplied by a coefficient $\phi_1$, plus white noise $\epsilon_t$.
 
-Even for highly seasonal time series, our model is likely still more accurate with a non-seasonal component or two: the seasonal component may capture long-term trends while the non-seasonal components adjust our predictions for shorter-term variation.
-
 ### X: Exogeneous variables
-It's no strange idea to think of incorporating external features to help predict a target $-$ you can't build a predictive model without doing exactly this. Time series forecasting is no different.
+All the components we've described so far are features from our time series itself. Our final component, **exogeneous variables,** bucks this trend by considering the effect of _external data_ on our time series.
 
-Here's what the equation would look like. The exogeneous term is highlighted in green. We've now built our full SARIMAX model!
+This shouldn't sound too intimidating $-$ **exogeneous variables are simply the normal features in any non-time series model you've built up to this point.** In a model of student test scores, for example, a standard linear regression would have features like the _number of hours studied_ and _number of hours slept_. An ARIMAX model, meanwhile, would also include **_endogeneous_** features such as the student's previous $n$ exam scores.  
+
+Here's what our full SARIMAX equation looks like. The exogeneous term is highlighted in green.
 
 $$y_t = c +
 \sum_{n=1}^{p}\alpha_ny_{t-n} +
 \sum_{n=1}^{d}\omega_n(y_t-y_{t-n}) +
 \sum_{n=1}^{q}\theta_n\epsilon_{t-n} + \\
-\color{green}{\sum_{n=1}^{r}\beta_nx_{tn}} + \\
+\color{green}{\sum_{n=1}^{r}\beta_nx_{n_t}} + \\
 \sum_{n=1}^{P}\phi_ny_{t-sn} +
 \sum_{n=1}^{D}\gamma_n(y_t-y_{t-sn}) +
 \sum_{n=1}^{Q}\eta_n\epsilon_{t-sn} +
 \epsilon_t $$
 
-Some examples of exogeneous variables in ARIMAX models include the effects of the [price of oil on the U.S. exchange rate](https://www.mathworks.com/help/econ/arima-model-including-exogenous-regressors.html), [temperature on electricity demand](https://www.mdpi.com/1996-1073/7/5/2938), and [economic indicators on disability insurance claims](https://www.soa.org/globalassets/assets/files/research/projects/research-2013-arima-arimax-ben-appl-rates.pdf). 
+Some examples of exogeneous variables in ARIMAX models include the effects of the [price of oil on the U.S. exchange rate](https://www.mathworks.com/help/econ/arima-model-including-exogenous-regressors.html), [temperature on electricity demand](https://www.mdpi.com/1996-1073/7/5/2938), and [economic indicators on disability insurance claims](https://www.soa.org/globalassets/assets/files/research/projects/research-2013-arima-arimax-ben-appl-rates.pdf).
+
+While exogeneous factors
+Note that these exogeneous factors
 
 
 
@@ -388,8 +395,8 @@ I went down a long rabbit hole trying to understand what the assumption of stati
 
 This is because the ADF in essence measures reversion to the mean $-$ a non-stationary process has no problem drifting away, and previous lags don't provide relevant information. The lagged values of a stationary process, meanwhile, _do_ provide relvant info in predicting the next values.
 
-A sine wave, though, is a bit of an exception to all this because it's deterministic, not stochastic. If you know that a time series is a sine wave and where in the wave you are, you can perfectly predict all past and future values of the series. The concept of stationarity [doesn't apply to deterministic processes](https://stats.stackexchange.com/questions/172979/is-a-model-with-a-sine-wave-time-series-stationary), so perhaps an ADF test isn't the right approach. But what about when your series has sesonality but noise on top? It feels like we're extremely restricted in the sorts of time series we can model if they all need to meet this strict definition of stationarity... I like the mean/variance/autocorr one.
-
-
 #### 4. [AR(0): White noise](#ar0-white-noise)
 In our example, the $\epsilon_t$ values are sampled from a normal distribution, so this is **Gaussian white noise.** [We could easily use another distribution](https://ionides.github.io/531w20/03/notes03.pdf) to generate our values, though, such as a uniform, binary, or sinusoidal distribution.
+
+#### 5. [S: Seasonality](#s-seasonality)
+After much digging through Stack Exchange debates, it seems like we may have violated some critical forecasting assumptions by modeling a sine wave (even though it works as a great example of a seasonal process!). The issue is that sine waves are **deterministic:** if you know that a time series is a sine wave and where in the wave you are, you can perfectly predict all past and future values of the series. The concept of stationarity, meanwhile, [only applies to **stochastic** processes](https://stats.stackexchange.com/questions/172979/is-a-model-with-a-sine-wave-time-series-stationary).
