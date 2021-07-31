@@ -259,13 +259,13 @@ $$y_t = c + \\
 
 Notice how the seasonal and non-seasonal components look suspiciously similar. This is because we actually fit a _separate_ set of autoregressive, integrated, and moving average components on data differenced by some number of lags $s$, the frequency of our seasonality. For a model of daily e-commerce profits with strong weekly seasonality, for example, we'd set $s$ = 7.
 
-Even for highly seasonal time series, we likely still want to include a non-seasonal component or two to improve accuracy. You can think of the seasonal component dealing with long-term trends and the non-seasonal component adjusting our predictions for shorter-term variations.
-
-Let's say we have a SARMA(1,0,0)(1,0,0)(7) model, which just contains a non-seasonal AR(1) term and a seasonal AR(1) term. The equation would look like this:
+Here's a basic SARMA(1,0,0)(1,0,0)(7) model, which contains both seasonal and non-seasonal autoregressive terms.
 
 $$y_t = c + \alpha_1y_{t-1} + \phi_1y_{t-7} + \epsilon_t$$
 
-This model is saying that we care about the previous value, _as well as_ the value 7 lags ago.
+This model says that the current value $y_t$ is a function of a constant $c$ plus the previous value $y_{t-1}$ multiplied by a coefficient $\alpha_1$, plus the value seven lags ago $y_{t-7}$ multiplied by a coefficient $\phi_1$, plus white noise $\epsilon_t$.
+
+Even for highly seasonal time series, our model is likely still more accurate with a non-seasonal component or two: the seasonal component may capture long-term trends while the non-seasonal components adjust our predictions for shorter-term variation.
 
 ### X: Exogeneous variables
 It's no strange idea to think of incorporating external features to help predict a target $-$ you can't build a predictive model without doing exactly this. Time series forecasting is no different.
@@ -281,6 +281,8 @@ $$y_t = c +
 \sum_{n=1}^{D}\gamma_n(y_t-y_{t-sn}) +
 \sum_{n=1}^{Q}\eta_n\epsilon_{t-sn} +
 \epsilon_t $$
+
+Some examples of exogeneous variables in ARIMAX models include the effects of the [price of oil on the U.S. exchange rate](https://www.mathworks.com/help/econ/arima-model-including-exogenous-regressors.html), [temperature on electricity demand](https://www.mdpi.com/1996-1073/7/5/2938), and [economic indicators on disability insurance claims](https://www.soa.org/globalassets/assets/files/research/projects/research-2013-arima-arimax-ben-appl-rates.pdf). 
 
 
 
@@ -301,7 +303,7 @@ mod = SARIMAX(endog=df['sales'],
               trend='c')
 ```
 
-But what if we don't know ahead of time what order we want for our model?
+But what if we don't know ahead of time what order we want for our model? For simple AR or MA models, we can look at the [partial autocorrelation](#partial-autocorrelation) or [autocorrelation plots](#autocorrelation), respectively. But for more complex models, we'll need to perform model comparison. We do this with AIC, a measure of how well our model fits the data. Because model accuracy inevitably increases as we throw in more terms, AIC penalizes more complex models.
 
 
 
