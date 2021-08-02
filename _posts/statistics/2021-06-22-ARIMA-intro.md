@@ -241,10 +241,10 @@ print(mod1.polynomial_ma.round(3) == mod2.polynomial_ma.round(3))
 Above, we first use the `arma_generate_sample` function to simulate data for an ARMA process with specified $\alpha$ and $\theta$ parameters. We then use the `ARIMA` function to fit an ARIMA model on the raw data and an ARMA data on the differenced data. Finally, we compare the two models' estimated parameters and show that they're equal.
 
 ## Additional components
-With the AR, MA, and I components under our belt, we're equipped to analyze and forecast a wide range of time series. But there are two additional components that will truly take our forecasting to the next level: **seasonality** and **exogeneous variables.** Let's briefly cover those before covering some code and then closing out this post.
+With the AR, MA, and I components under our belt, we're equipped to analyze and forecast a wide range of time series. But there are two additional components that will truly take our forecasting to the next level: **seasonality** and **exogeneous variables.** Let's briefly cover those before going over some code and then closing out this post.
 
 ### S: Seasonality
-As alluded to in the name, seasonality refers to _repeating patterns with a fixed frequency_ in the data. [Housing sales](https://otexts.com/fpp2/tspatterns.html) tend to be correlated with the number of sales a year ago. Movie theater ticket sales tend to be correlated with the sales from a week earlier. Temperature tends to be correlated with last year's weather.
+As alluded to in the name, seasonality refers to _repeating patterns with a fixed frequency_ in the data: patterns that repeat every day, every two weeks, every four months, etc. Movie theater ticket sales tend to be correlated with the sales from a week earlier, for example, while [housing sales](https://otexts.com/fpp2/tspatterns.html) and temperature tend to be correlated with the values from the previous year.
 
 We can readily control for seasonality by adding an additional set of parameters to our model. Below is a SARIMA model, with the seasonal component highlighted in orange.
 
@@ -259,7 +259,7 @@ $$y_t = c + \\
 
 Notice how the seasonal and non-seasonal components look suspiciously similar. This is because we actually fit a _separate_ set of autoregressive, integrated, and moving average components on data differenced by some number of lags $s$, the frequency of our seasonality. For a model of daily e-commerce profits with strong weekly seasonality, for example, we'd set $s$ = 7.
 
-A perfect sine wave with a wavelength of 10 could be modeled with a SARMA(0,0)(1,0)(10) model like below<sup>[[5]](#5-s-seasonality)</sup>.
+A perfect sine wave with a wavelength of 10 could be modeled with a SARMA(0,0)(1,0)(10) model like below.<sup>[[5]](#5-s-seasonality)</sup>
 
 $$y_t = c + \phi_1y_{t-10} + \epsilon_t$$
 
@@ -272,7 +272,7 @@ This model says that the current value $y_t$ is a function of a constant $c$ plu
 ### X: Exogeneous variables
 All the components we've described so far are features from our time series itself. Our final component, **exogeneous variables,** bucks this trend by considering the effect of _external data_ on our time series.
 
-This shouldn't sound too intimidating $-$ **exogeneous variables are simply the normal features in any non-time series model you've built up to this point.** In a model of student test scores, for example, a standard linear regression would have features like the _number of hours studied_ and _number of hours slept_. An ARIMAX model, meanwhile, would also include **_endogeneous_** features such as the student's previous $n$ exam scores.  
+This shouldn't sound too intimidating $-$ **exogeneous variables are simply the features in any non-time series model you've built up to this point.** In a model of student test scores, for example, a standard linear regression would have features like the _number of hours studied_ and _number of hours slept_. An ARIMAX model, meanwhile, would also include **_endogeneous_** features such as the student's previous $n$ exam scores and previous white noise terms.  
 
 Here's what our full SARIMAX equation looks like. The exogeneous term is highlighted in green.
 
@@ -288,8 +288,11 @@ $$y_t = c +
 
 Some examples of exogeneous variables in ARIMAX models include the effects of the [price of oil on the U.S. exchange rate](https://www.mathworks.com/help/econ/arima-model-including-exogenous-regressors.html), [temperature on electricity demand](https://www.mdpi.com/1996-1073/7/5/2938), and [economic indicators on disability insurance claims](https://www.soa.org/globalassets/assets/files/research/projects/research-2013-arima-arimax-ben-appl-rates.pdf).
 
-While exogeneous factors
-Note that these exogeneous factors
+Note that in a time series model, the effects of exogeneous factors are already indirectly included in our time series' history. Even if we don't formally include a term for the price of oil in our model of the U.S. exchange rate, for example, its effects will be indirectly reflected in the autoregressive or moving average components. Any real-world time series is a result of dozens or hundreds of exogeneous influences, so why bother with exogeneous terms at all?
+
+While the endogeneous terms in our model will indirectly measure external effects, it is still much more powerful to directly measure those influences. Our forecasts will respond much more quickly to nudges from the external factor, for example, rather than needing to wait for it to be reflected in the lags.
+
+
 
 
 
@@ -399,4 +402,4 @@ This is because the ADF in essence measures reversion to the mean $-$ a non-stat
 In our example, the $\epsilon_t$ values are sampled from a normal distribution, so this is **Gaussian white noise.** [We could easily use another distribution](https://ionides.github.io/531w20/03/notes03.pdf) to generate our values, though, such as a uniform, binary, or sinusoidal distribution.
 
 #### 5. [S: Seasonality](#s-seasonality)
-After much digging through Stack Exchange debates, it seems like we may have violated some critical forecasting assumptions by modeling a sine wave (even though it works as a great example of a seasonal process!). The issue is that sine waves are **deterministic:** if you know that a time series is a sine wave and where in the wave you are, you can perfectly predict all past and future values of the series. The concept of stationarity, meanwhile, [only applies to **stochastic** processes](https://stats.stackexchange.com/questions/172979/is-a-model-with-a-sine-wave-time-series-stationary).
+After much digging through Stack Exchange debates, it seems like we may have violated some critical forecasting assumptions by modeling a sine wave (even though it works as a great example of a seasonal process!). The issue is that sine waves are **deterministic:** if you know that a time series is a sine wave and where in the wave you are, you can perfectly predict all past and future values of the series. The concept of stationarity, and building ARIMA models in general, [only applies to **stochastic** processes](https://stats.stackexchange.com/questions/172979/is-a-model-with-a-sine-wave-time-series-stationary).
