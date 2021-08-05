@@ -13,7 +13,7 @@ Forecasting involves **time series** data, or repeated measures over time. In da
 
 To summarize a time series and predict its future, we need to model the relationship the values in the time series have with one another. Does today tend to be similar to yesterday, a week ago, or last year? How much do factors outside the time series, such as noise or _other_ time series, play a role?
 
-To answer these questions, we'll start with the most basic forecasting model and iterate towards a full autoregressive integrated moving average (ARIMA) model. We'll then take it a step further to include [_seasonal_](https://otexts.com/fpp2/seasonal-arima.html) and [_exogeneous_](https://www.statisticshowto.com/endogenous-variable/) variables, expanding into a [SARIMAX](https://www.statsmodels.org/dev/generated/statsmodels.tsa.statespace.sarimax.SARIMAX.html) model.
+To answer these questions, we'll start with an incredibly basic forecasting model and iterate towards a full autoregressive integrated moving average (ARIMA) model. We'll then take it a step further to include [_seasonal_](https://otexts.com/fpp2/seasonal-arima.html) and [_exogeneous_](https://www.statisticshowto.com/endogenous-variable/) variables, expanding into a [SARIMAX](https://www.statsmodels.org/dev/generated/statsmodels.tsa.statespace.sarimax.SARIMAX.html) model.
 
 In other words, we'll build from this:
 
@@ -33,7 +33,7 @@ $$y_t = c +
 
 It looks complicated, but each of these pieces $-$ the <span style="color:royalblue; font-weight: bold">autoregressive</span>, <span style="color:orangered; font-weight: bold">integrated</span>, <span style="color:darkorchid; font-weight: bold">moving average</span>, <span style="color:green; font-weight: bold">exogeneous</span>, and <span style="color:orange; font-weight: bold">seasonal</span> components $-$ are just added together. We can easily tune up or down the complexity of our model by adding or removing terms, creating ARMA, SARIMA, ARX, etc. models.
 
-Once we've built a model, we'll be able to predict the future of a time series like this.
+Once we've built a model, we'll be able to predict the future of a time series like this. But perhaps more importantly, we'll understand the underlying patterns that give rise to our time series.
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/example_forecast.png">
 
@@ -53,13 +53,16 @@ Once we've built a model, we'll be able to predict the future of a time series l
 * [**Additional components**](#additional-components)
   - [S: Seasonality](#seasonal)
   - [X: Exogeneous variables](#exogeneous-variables)
-* [**Comparing model fit**](#comparing-model-fit)
+* [**Time series in Python**](#time-series-in-python)
+  - [Fitting models](#fitting-models)
+  - [Comparing model fit](#comparing-model-fit)
+  - [Why not deep learning?](#why-not-deep-learning)
 
 ## Getting started
 ### Autocorrelation
 Before we can start building any models, we need to cover a topic essential for describing time series: [**autocorrelation**](https://en.wikipedia.org/wiki/Autocorrelation). Autocorrelation means "self-correlation": it is the similarity of a time series' values with earlier values, or **lags**. If our time series was the values `[5, 10, 15]`, for example, our lag-1 autocorrelation would be the correlation of `[10, 15]` with `[5, 10]`.
 
-We can visualize the correlation of the _present value_ with a _previous value $n$ lags ago_ with an **autocorrelation plot.** These plots are constructed by calculating the correlation of each value ($y_t$) with the value at the previous time step ($y_{t-1}$), two steps ago ($y_{t-2}$), three ($y_{t-3}$), and so on. The y-axis shows the strength of correlation at that lag, and we consider any value outside the shaded error interval to be a significant correlation.
+We can visualize the correlation of the _present value_ with a _previous value $n$ lags ago_ with an **autocorrelation plot.** These plots are constructed by calculating the correlation of each value ($y_t$) with the value at the previous time step ($y_{t-1}$), two steps ago ($y_{t-2}$), three ($y_{t-3}$), and so on. The y-axis shows the strength of correlation at lag $n$, and we consider any value outside the shaded error interval to be a significant correlation.
 
 The correlation at lag zero is always 1: $y_t$ better be perfectly correlated with $y_t$, or something's wrong. For the remaining lags, there are three typical patterns: 1) a lack of autocorrelation, 2) a gradual decay, and 3) a sharp drop. (Though in real-world data, you might get a mix of \#2 and \#3.)
 
@@ -128,7 +131,7 @@ The value of $\alpha_1$ plays a defining role in what our time series looks like
 <img src="{{  site.baseurl  }}/images/statistics/arima/random_walk.png" height="110%" width="110%">
 </center>
 
-So when $\alpha_1$ = 0, we get white noise, and when $\alpha_1$ = 1, we get a random walk. When $0 < \alpha_1 < 1$, our time series exhibits [**mean reversion**](https://www.investopedia.com/terms/m/meanreversion.asp). It's subtle, but you'll notice that the values are correlated with one another _and_ they tend to hover around zero, like less chaotic white noise. Large changes in stock prices [tend to be followed by mean reversion](https://decodingmarkets.com/mean-reversion-trading-strategy/).
+So when $\alpha_1$ = 0, we get white noise, and when $\alpha_1$ = 1, we get a random walk. When $0 < \alpha_1 < 1$, our time series exhibits [**mean reversion**](https://www.investopedia.com/terms/m/meanreversion.asp). It's subtle, but you'll notice that the values are correlated with one another _and_ they tend to hover around zero, like less chaotic white noise. A real-world example of this process is large changes in stock prices: sudden shifts [tend to be followed by mean reversion](https://decodingmarkets.com/mean-reversion-trading-strategy/).
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/mean_reversion.png">
 
@@ -191,7 +194,7 @@ $$y_t = c + \sum_{n=1}^{p}\alpha_ny_{t-n} + \sum_{n=1}^{q}\theta_n\epsilon_{t-n}
 
 The ARMA equation simply states that the value at the current time step is a constant plus the sum of the autoregressive lags and their multipliers, plus the sum of the moving average lags and their multipliers, plus some white noise. This equation is the basis for a wide range of applications, from [modeling wind speed](https://www.koreascience.or.kr/article/JAKO201315463253802.pdf), [forecasting financial returns](https://link.springer.com/article/10.1007/s00180-014-0543-9), and even [filtering images](https://projecteuclid.org/journals/brazilian-journal-of-probability-and-statistics/volume-23/issue-2/Spatial-ARMA-models-and-its-applications-to-image-filtering/10.1214/08-BJPS019.full).
 
-Below are four ARMA(1,1) time series. As with the MA(1) plot above, it's difficult to look at any of the time series below and intuit the parameter values, or even that they're ARMA processes rather than AR or MA alone. We're at the point where our time series have become too complex to be able to get much out of inspecting the raw values.
+Below are four ARMA(1,1) time series. As with the MA(1) plot above, it's difficult to look at any of the time series below and intuit the parameter values, or even that they're ARMA processes rather than AR or MA alone. We're at the point where our time series have become too complex to intuit the type of model or its parameters from eyeballing the raw data.
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/arma.png">
 
@@ -222,7 +225,7 @@ ar_coefs = [1, -1]
 ma_coefs = [1, 0.5]
 
 # Generate data
-y1 = arma_generate_sample(ar_coefs, ma_coefs, nsample=2000, scale=0.1)
+y1 = arma_generate_sample(ar_coefs, ma_coefs, nsample=2500, scale=0.01)
 y2 = np.diff(y1)
 
 # Fit models
@@ -259,11 +262,11 @@ $$y_t = c + \\
 
 Notice how the seasonal and non-seasonal components look suspiciously similar. This is because we actually fit a _separate_ set of autoregressive, integrated, and moving average components on data differenced by some number of lags $s$, the frequency of our seasonality. For a model of daily e-commerce profits with strong weekly seasonality, for example, we'd set $s$ = 7.
 
-A perfect sine wave with a wavelength of 10 could be modeled with a SARMA(0,0)(1,0)(10) model like below.<sup>[[5]](#5-s-seasonality)</sup>
+A perfect sine wave with a wavelength of 10 could be modeled with a SARMA(0,0)(1,0)[10] model like below.<sup>[[5]](#5-s-seasonality)</sup>
 
 $$y_t = c + \phi_1y_{t-10} + \epsilon_t$$
 
-But for real-world time series, even highly seasonal data is likely still better modeled with a non-seasonal component or two: the seasonal component may capture _long-term trends_ while the non-seasonal components adjust our predictions for _shorter-term variation_. We could accomplish this with a basic SARMA(1,0)(1,0)(7) model, for example, which contains both seasonal and non-seasonal autoregressive terms.
+But for real-world time series, even highly seasonal data is likely still better modeled with a non-seasonal component or two: the seasonal component may capture _long-term trends_ while the non-seasonal components adjust our predictions for _shorter-term variation_. We could accomplish this with a basic SARMA(1,0)(1,0)[7] model, for example, which contains both seasonal and non-seasonal autoregressive terms.
 
 $$y_t = c + \alpha_1y_{t-1} + \phi_1y_{t-7} + \epsilon_t$$
 
@@ -286,101 +289,127 @@ $$y_t = c +
 \sum_{n=1}^{Q}\eta_n\epsilon_{t-sn} +
 \epsilon_t $$
 
-Some examples of exogeneous variables in ARIMAX models include the effects of the [price of oil on the U.S. exchange rate](https://www.mathworks.com/help/econ/arima-model-including-exogenous-regressors.html), [temperature on electricity demand](https://www.mdpi.com/1996-1073/7/5/2938), and [economic indicators on disability insurance claims](https://www.soa.org/globalassets/assets/files/research/projects/research-2013-arima-arimax-ben-appl-rates.pdf).
+Some examples of exogeneous variables in ARIMAX models include the effects of the [price of oil on the U.S. exchange rate](https://www.mathworks.com/help/econ/arima-model-including-exogenous-regressors.html), [outdoor temperature on electricity demand](https://www.mdpi.com/1996-1073/7/5/2938), and [economic indicators on disability insurance claims](https://www.soa.org/globalassets/assets/files/research/projects/research-2013-arima-arimax-ben-appl-rates.pdf).
 
-Note that in a time series model, the effects of exogeneous factors are already indirectly included in our time series' history. Even if we don't formally include a term for the price of oil in our model of the U.S. exchange rate, for example, its effects will be indirectly reflected in the autoregressive or moving average components. Any real-world time series is a result of dozens or hundreds of exogeneous influences, so why bother with exogeneous terms at all?
+Note that the effects of exogeneous factors are already _indirectly_ included in our time series' history. Even if we don't include a term for the price of oil in our model of the U.S. exchange rate, for example, oil's effects will be reflected in the exchange rate's autoregressive or moving average components. Any real-world time series is a result of dozens or hundreds of exogeneous influences, so why bother with exogeneous terms at all?
 
-While the endogeneous terms in our model will indirectly measure external effects, it is still much more powerful to directly measure those influences. Our forecasts will respond much more quickly to nudges from the external factor, for example, rather than needing to wait for it to be reflected in the lags.
+While external effects are indirectly represented within the endogeneous terms in our model, it is still much more powerful to directly measure those influences. Our forecasts will respond much more quickly to nudges from the external factor, for example, rather than needing to wait for it to be reflected in the lags.
 
+## Time series in Python
+So far, we've covered the theory and math behind [autoregressive](#ar-autoregression), [moving average](#ma-moving-average), [integrated](#arima-integrated-moving-average), [seasonal](#s-seasonality), and [exogeneous](#x-exogeneous-variables) components of time series models. With a little effort we could probably fill out the equation for a SARIMAX model and generate a prediction by hand. But how do we find the parameter values for the model?
 
+To do this, we'll use Python's `statsmodels` library. We'll first fit a model where we know ahead of time what our model order should be. In the following section, we'll then show how to use the `pmdarima` library to scan through potential model orders and find the best match for your data.
 
+### Fitting models
+Let's say we're a data scientist at some e-commerce company and we want to forecast our sales for the following few weeks. We have a CSV of the last year of daily sales, as well as each day's spending on advertising. We know we want our model to have a non-seasonal ARIMA(1,1,1) component, a seasonal AR(1) component with a period of 7 days, and an exogeneous variable of advertising spend.
 
-
-## Comparing model fit
-As alluded to earlier, we can fit an ARIMA model in Python with the `statsmodels` library. We can fit a SARIMAX(1,0,0)(1,0,0)(7) model of sales data, with an exogeneous time series of advertising spending, like this:
+In other words, we know we want a SARIMAX(1,1,1)(1,0,0)[7] model. Here's how we would fit such a model in Python.
 
 {% include header-python.html %}
 ```python
 import pandas as pd
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 
+# Load data
 df = pd.read_csv("data.csv")
 
+# Specify model
 mod = SARIMAX(endog=df['sales'],
               exog=df['ad_spend'],
-              order=(1, 0, 0),
+              order=(1, 1, 1),
               seasonal_order=(1, 0, 0, 7),
               trend='c')
+
+# Fit model
+results = mod.fit()
+
+# Inspect model
+results.summary()
+
+# Generate predictions
+results.predict(7)   # In-sample predictions
+results.forecast(7)  # Out-of-sample forecast
 ```
 
-But what if we don't know ahead of time what order we want for our model? For simple AR or MA models, we can look at the [partial autocorrelation](#partial-autocorrelation) or [autocorrelation plots](#autocorrelation), respectively. But for more complex models, we'll need to perform model comparison. We do this with AIC, a measure of how well our model fits the data. Because model accuracy inevitably increases as we throw in more terms, AIC penalizes more complex models.
+That's it! We specify our model with `SARIMAX`, then fit it with the `.fit` method (which must be saved to a separate variable). We can then get a [scikit-learn](https://scikit-learn.org/stable/) style model summary with the `summary` method. The `predict` method lets us compare our model [in-sample predictions](https://stats.stackexchange.com/questions/260899/what-is-difference-between-in-sample-and-out-of-sample-forecasts) to the actual values, while the `forecast` method generates a prediction of the future `n` steps.
 
+### Comparing model fit
+This is all great, but what if we don't know ahead of time what our model order should be? For simple AR or MA models, we can look at the [partial autocorrelation](#partial-autocorrelation) or [autocorrelation plots](#autocorrelation), respectively. But for more complex models, we'll need to perform **model comparison.**
+
+We typically perform model comparisons with AIC, a measure of how well our model fits the data, with a penalty for more complex models. The penalty is a way to safeguard against overfitting $-$ yes, model accuracy inevitably increases as we add more terms, but is the improvement enough to justify adding another term?
+
+To identify the optimal model, we can perform a parameter scan on different model orders, then choose the model with the lowest AIC. (If we're particularly concerned about overfitting, we can use the stricter [BIC](https://en.wikipedia.org/wiki/Bayesian_information_criterion) instead.)
+
+Rather than needing to write a bunch of `for` loops ourselves, we can rely on the `auto_arima` function from the [pmdarima](https://pypi.org/project/pmdarima/) library to do the heavy lifting. All we need to do is pass in our initial order estimates for the AR, I, and MA components, as well as the highest order in each category that we want to consider. For a seasonal model, we also need to pass in the frequency of our seasonality, as well as the estimates for the seasonal AR, I, and MA components.
+
+Here's how we would identify the optimal SARIMA model on our S&P 500 daily closing prices from the start of this post.
+
+```python
+import pandas as pd
+import pmdarima as pmd
+
+df = pd.read_csv("spy.csv")
+
+results = pmd.auto_arima(df['Close'],
+                         start_p=0,  # initial guess for AR(p)
+                         start_d=0,  # initial guess for I(d)
+                         start_q=0,  # initial guess for MA(q)
+                         max_p=2,    # max guess for AR(p)
+                         max_d=2,    # max guess for I(d)
+                         max_1=2,    # max guess for MA(q)
+                         m=7,        # seasonal order
+                         start_P=0,  # initial guess for seasonal AR(P)
+                         start_D=0,  # initial guess for seasonal I(D)
+                         start_Q=0,  # initial guess for seasonal MA(Q)
+                         trend='c',
+                         information_criterion='aic',
+                         trace=True,
+                         error_action='ignore'
+                         )
+
+# Performing stepwise search to minimize aic
+# ARIMA(0,1,0)(0,0,0)[7] intercept   : AIC=6671.069, Time=0.03 sec
+# ARIMA(1,1,0)(1,0,0)[7] intercept   : AIC=6595.106, Time=0.30 sec
+# ARIMA(0,1,1)(0,0,1)[7] intercept   : AIC=6602.479, Time=0.38 sec
+# ARIMA(0,1,0)(0,0,0)[7]             : AIC=6671.069, Time=0.03 sec
+# ARIMA(1,1,0)(0,0,0)[7] intercept   : AIC=6626.321, Time=0.10 sec
+# ARIMA(1,1,0)(2,0,0)[7] intercept   : AIC=6596.194, Time=0.60 sec
+# ARIMA(1,1,0)(1,0,1)[7] intercept   : AIC=6595.849, Time=0.53 sec
+# ARIMA(1,1,0)(0,0,1)[7] intercept   : AIC=6597.437, Time=0.31 sec
+# ARIMA(1,1,0)(2,0,1)[7] intercept   : AIC=inf, Time=2.65 sec
+# ARIMA(0,1,0)(1,0,0)[7] intercept   : AIC=6619.748, Time=0.15 sec
+# ARIMA(2,1,0)(1,0,0)[7] intercept   : AIC=6588.194, Time=0.39 sec
+# ARIMA(2,1,0)(0,0,0)[7] intercept   : AIC=6614.206, Time=0.11 sec
+# ARIMA(2,1,0)(2,0,0)[7] intercept   : AIC=6589.336, Time=0.79 sec
+# ARIMA(2,1,0)(1,0,1)[7] intercept   : AIC=6588.839, Time=0.68 sec
+# ARIMA(2,1,0)(0,0,1)[7] intercept   : AIC=6590.019, Time=0.31 sec
+# ARIMA(2,1,0)(2,0,1)[7] intercept   : AIC=inf, Time=3.14 sec
+# ARIMA(2,1,1)(1,0,0)[7] intercept   : AIC=6589.040, Time=0.57 sec
+# ARIMA(1,1,1)(1,0,0)[7] intercept   : AIC=6592.657, Time=0.47 sec
+# ARIMA(2,1,0)(1,0,0)[7]             : AIC=6588.194, Time=0.40 sec
+#
+# Best model:  ARIMA(2,1,0)(1,0,0)[7] intercept
+# Total fit time: 11.975 seconds
+```
+
+The code above says that a SARIMA(2,1,0)(1,0,0)[7] model best fits the last five years of S&P 500 data... with some important caveats! Before you gamble your life savings on the forecasts from this model, we should keep in mind that despite a convenient parameter scan, we still have a lot of accuracy we can squeeze out of modeling this data.
+
+For one, we didn't pre-process the data in any way, such as scanning for outliers or interpolating any gaps. Similarly, we didn't examine whether any transformations would make the data easier to forecast. Finally, the frequency of our seasonality, 7, came somewhat out of thin air $-$ there could be a seasonality such as monthly, quarterly, or yearly that significantly improves our model performance.
+
+### Why not deep learning?
+There's one issue we haven't covered and is essential to this post. Classical statistics is great, but in the era of machine learning, is ARIMA a relic from the past? When open-source libraries like [Facebook's Prophet](https://facebook.github.io/prophet/) and [LinkedIn's Greykite](https://engineering.linkedin.com/blog/2021/greykite--a-flexible--intuitive--and-fast-forecasting-library) generate forecasts far more accurate than our carefully-polished ARIMA model, why even bother?
+
+The answer comes from an important distinction between statistics and machine learning.
+
+Why not just use an RNN? Well, it depends on the approach we want to take. If we're trying to generate the most accurate forecast without necessarily understanding how our model came to that conclusion, a deep learning model can be the way to go. But if we want to model the _underlying process that gave rise to that data_, we'll need to turn to statistics.
 
 
 
 ## Conclusions
-Why not just use an RNN? Well, it depends on the approach we want to take. If we're trying to generate the most accurate forecast without necessarily understanding how our model came to that conclusion, a deep learning model can be the way to go. But if we want to model the _underlying process that gave rise to that data_, we'll need to turn to statistics.
-
-Interested in learning more? Check out [Facebook's Prophet](https://facebook.github.io/prophet/) and [LinkedIn's Greykite](https://engineering.linkedin.com/blog/2021/greykite--a-flexible--intuitive--and-fast-forecasting-library) packages.
+In this post, we did a lot...
 
 
-## Code to generate plots
-#### White noise
-```python
-import matplotlib.pyplot as plt
-from statsmodels.tsa.arima_process import arma_generate_sample
 
-# Set coefficients
-ar_coefs = [1]
-ma_coefs = [1]
-
-# Plot data
-plt.figure(figsize=(16,4.5))
-for i, scale in enumerate([0.01, 0.1, 0.25]):
-
-    y = arma_generate_sample(ar_coefs, ma_coefs, nsample=100,
-                             scale=scale)
-
-    plt.subplot(1, 3, i+1)
-    plt.plot(y, label=f"$\sigma$ = {scale}")
-    plt.ylim(-1, 1)
-    plt.legend(fontsize=12, frameon=False, loc='upper left')
-
-    if i == 1:
-        plt.xlabel('Time (t)', fontsize=22)
-
-plt.suptitle('White noise: $y_t = \epsilon_t$', fontsize=22)
-plt.show()
-```
-
-#### Random walk
-```python
-import matplotlib.pyplot as plt
-from statsmodels.tsa.arima_process import arma_generate_sample
-
-# Set coefficients
-ar_coefs = [1, -1]  # Note: ar_coefs[1:] are negative of what you expect
-ma_coefs = [1, 0]
-
-# Plot data
-plt.figure(figsize=(16,4.5))
-for i, scale in enumerate([0.01, 0.03, 0.1]):
-
-    # Generate data
-    y = arma_generate_sample(ar_coefs, ma_coefs, nsample=1000,
-                             scale=scale)
-
-    plt.subplot(1, 3, i+1)
-    plt.plot(y, label=f"$\sigma$ = {scale}")
-    plt.ylim(-4, 4)
-    plt.legend(fontsize=12, frameon=False, loc='upper left')
-
-    if i == 1:
-        plt.xlabel('Time (t)', fontsize=22)
-
-plt.suptitle('Random walk: $y_t = y_{t-1} + \epsilon_t$', fontsize=22)
-plt.show()
-```
 
 ## Foonotes
 #### 1. [Intro](#)
