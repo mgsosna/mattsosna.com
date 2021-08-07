@@ -13,7 +13,7 @@ Forecasting involves **time series** data, or repeated measures over time. In da
 
 To summarize a time series and predict its future, we need to model the relationship the values in the time series have with one another. Does today tend to be similar to yesterday, a week ago, or last year? How much do factors outside the time series, such as noise or _other_ time series, play a role?
 
-To answer these questions, we'll start with an incredibly basic forecasting model and iterate towards a full autoregressive integrated moving average (ARIMA) model. We'll then take it a step further to include [_seasonal_](https://otexts.com/fpp2/seasonal-arima.html) and [_exogeneous_](https://www.statisticshowto.com/endogenous-variable/) variables, expanding into a [SARIMAX](https://www.statsmodels.org/dev/generated/statsmodels.tsa.statespace.sarimax.SARIMAX.html) model.
+To answer these questions, we'll start with a basic forecasting model and iterate towards a full autoregressive moving average (ARMA) model. We'll then take it a step further to include [_integrated_](https://www.investopedia.com/terms/a/autoregressive-integrated-moving-average-arima.asp), [_seasonal_](https://otexts.com/fpp2/seasonal-arima.html), and [_exogeneous_](https://www.statisticshowto.com/endogenous-variable/) components, expanding into a [SARIMAX](https://www.statsmodels.org/dev/generated/statsmodels.tsa.statespace.sarimax.SARIMAX.html) model.
 
 In other words, we'll build from this:
 
@@ -21,17 +21,15 @@ $$y_t = c + \epsilon_t$$
 
 to this:
 
-$$y_t = c +
-\color{royalblue}{\sum_{n=1}^{p}\alpha_ny_{t-n}} +
-\color{orangered}{\sum_{n=1}^{d}\omega_n(y_t-y_{t-n})} +
+$$\color{orangered}{d_t} = c +
+\color{royalblue}{\sum_{n=1}^{p}\alpha_nd_{t-n}} +
 \color{darkorchid}{\sum_{n=1}^{q}\theta_n\epsilon_{t-n}} + \\
 \color{green}{\sum_{n=1}^{r}\beta_nx_{n_t}} +
-\color{orange}{\sum_{n=1}^{P}\phi_ny_{t-sn}} +
-\color{orange}{\sum_{n=1}^{D}\gamma_n(y_t-y_{t-sn})} +
+\color{orange}{\sum_{n=1}^{P}\phi_nd_{t-sn}} +
 \color{orange}{\sum_{n=1}^{Q}\eta_n\epsilon_{t-sn}} +
 \epsilon_t $$
 
-It looks complicated, but each of these pieces $-$ the <span style="color:royalblue; font-weight: bold">autoregressive</span>, <span style="color:orangered; font-weight: bold">integrated</span>, <span style="color:darkorchid; font-weight: bold">moving average</span>, <span style="color:green; font-weight: bold">exogeneous</span>, and <span style="color:orange; font-weight: bold">seasonal</span> components $-$ are just added together. We can easily tune up or down the complexity of our model by adding or removing terms, creating ARMA, SARIMA, ARX, etc. models.
+It looks complicated, but each of these pieces $-$ the <span style="color:royalblue; font-weight: bold">autoregressive</span>, <span style="color:darkorchid; font-weight: bold">moving average</span>, <span style="color:green; font-weight: bold">exogeneous</span>, and <span style="color:orange; font-weight: bold">seasonal</span> components $-$ are just added together. We can easily tune up or down the complexity of our model by adding or removing terms, and switching between raw and <span style="color:orangered; font-weight: bold">differenced</span> data, to create ARMA, SARIMA, ARX, etc. models.
 
 Once we've built a model, we'll be able to predict the future of a time series like this. But perhaps more importantly, we'll understand the underlying patterns that give rise to our time series.
 
@@ -203,13 +201,17 @@ But that's ok. Moving forward, we'll start using [**AIC**](https://en.wikipedia.
 ### ARIMA: Autoregressive integrated moving average
 We've arrived at the namesake of this blog post: the ARIMA model. Despite the buildup, we'll actually see that an ARIMA model is just an ARMA model, with a preprocessing step handled by the model rather than the user.
 
-Let's start with the equation for the model. The black terms are the ARMA model and the red is the _integrated_ component that makes this an ARIMA model.
+Let's start with the equation for an ARIMA(1,1,0) model.
 
-$$y_t = c + \sum_{n=1}^{p}\alpha_ny_{t-n} + \color{orangered}{\sum_{n=1}^{d}\omega_n(y_t-y_{t-n})} + \sum_{n=1}^{q}\theta_n\epsilon_{t-n} + \epsilon_t $$
+$$\color{red}{y_t - y_{t-1}} = c + \alpha_1(\color{red}{y_{t-1} - y_{t-2}}) + \epsilon_t$$
 
-The integrated summation says that we sum the _difference_ between the current value and the value $n$ lags ago, multiplied by a coefficient $\omega_n$, for the number of lags specified by $d$. If $d=2$, for example, we would add $\omega_1(y_t-y_{t-1})$ and $\omega_2(y_t-y_{t-2})$.
+We've gone from modeling $y_t$ to modeling the _change_ between $y_t$ and $y_{t-1}$. As such, our autoregressive term, previously $\alpha_1y_{t-1}$, is now $\alpha_1(y_{t-1}-y_{t-2})$.
 
-In other words, an ARIMA model is simply an ARMA model on the _differenced_ time series. That's it! We could perform the differencing ourselves and then fit the model, but it gets cumbersome if $d$ is greater than 1, and we would then need to transform our values back to get the original units (on top of undoing any log, square root, etc. transformations to make the time series stationary).
+In other words, an ARIMA model is simply an ARMA model on the _differenced_ time series. That's it! If we replace $y_t$ with $d_t$, representing our differenced data, then we simply have the ARMA equation again.
+
+$$\color{red}{d_t} = c + \sum_{n=1}^{p}\alpha_n\color{red}{d_{t-n}} + \sum_{n=1}^{q}\theta_n\epsilon_{t-n} + \epsilon_t$$
+
+We could perform the differencing ourselves and then fit the model, but it gets cumbersome if $d$ is greater than 1, and we would then need to transform our values back to get the original units (on top of undoing any log, square root, etc. transformations to make the time series stationary).
 
 But to prove I'm not making this up, here's a demonstration of how the model coefficients in an ARIMA(1,1,1) model on the _raw_ data and ARMA(1,1) model on the _differenced_ data are equal.
 
@@ -245,6 +247,15 @@ Above, we first use the `arma_generate_sample` function to simulate data for an 
 
 ## Additional components
 With the AR, MA, and I components under our belt, we're equipped to analyze and forecast a wide range of time series. But there are two additional components that will truly take our forecasting to the next level: **seasonality** and **exogeneous variables.** Let's briefly cover those before going over some code and then closing out this post.
+
+
+
+
+
+
+
+
+
 
 ### S: Seasonality
 As alluded to in the name, seasonality refers to _repeating patterns with a fixed frequency_ in the data: patterns that repeat every day, every two weeks, every four months, etc. Movie theater ticket sales tend to be correlated with the sales from a week earlier, for example, while [housing sales](https://otexts.com/fpp2/tspatterns.html) and temperature tend to be correlated with the values from the previous year.
