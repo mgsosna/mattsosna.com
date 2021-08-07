@@ -211,9 +211,9 @@ In other words, an ARIMA model is simply an ARMA model on the _differenced_ time
 
 $$\color{red}{d_t} = c + \sum_{n=1}^{p}\alpha_n\color{red}{d_{t-n}} + \sum_{n=1}^{q}\theta_n\epsilon_{t-n} + \epsilon_t$$
 
-We could perform the differencing ourselves and then fit the model, but it gets cumbersome if $d$ is greater than 1, and we would then need to transform our values back to get the original units (on top of undoing any log, square root, etc. transformations to make the time series stationary).
+We could perform the differencing ourselves and then fit the model, but it gets cumbersome if $d$ is greater than 1, and we would then need to transform our values back to get the original units (on top of undoing any log, square root, etc. transformations to make the time series stationary). We'll therefore use Python's `ARIMA` function to handle the differencing under the hood for us.
 
-But to prove I'm not making this up, here's a demonstration of how the model coefficients in an ARIMA(1,1,1) model on the _raw_ data and ARMA(1,1) model on the _differenced_ data are equal.
+And to prove I'm not making this up, here's a demonstration of how the model coefficients in an ARIMA(1,1,1) model on the _raw_ data and ARMA(1,1) model on the _differenced_ data are equal.
 
 {% include header-python.html %}
 ```python
@@ -244,6 +244,27 @@ print(mod1.polynomial_ma.round(3) == mod2.polynomial_ma.round(3))
 ```
 
 Above, we first use the `arma_generate_sample` function to simulate data for an ARMA process with specified $\alpha$ and $\theta$ parameters. We then use the `ARIMA` function to fit an ARIMA model on the raw data and an ARMA data on the differenced data. Finally, we compare the two models' estimated parameters and show that they're equal.
+
+Here's the same proof of concept for an ARIMA(1,2,1) model on the raw data, versus an ARMA(1,1) model on the data that's been differenced twice.
+
+{% include header-python.html %}
+```python
+# Generate data
+y1 = arma_generate_sample(ar_coefs, ma_coefs, nsample=2000, scale=0.001)
+y2 = np.diff(np.diff(y1))
+
+# Fit models
+mod1 = ARIMA(y1, order=(1,2,1)).fit()  # ARIMA on original
+mod2 = ARIMA(y2, order=(1,0,1)).fit()  # ARMA on differenced
+
+# AR coefficients are same
+print(mod1.polynomial_ar.round(3) == mod2.polynomial_ar.round(3))
+# array([True, True])
+
+# MA coefficients are same
+print(mod1.polynomial_ma.round(3) == mod2.polynomial_ma.round(3))
+# array([True, True])
+```
 
 ## Additional components
 With the AR, MA, and I components under our belt, we're equipped to analyze and forecast a wide range of time series. But there are two additional components that will truly take our forecasting to the next level: **seasonality** and **exogeneous variables.** Let's briefly cover those before going over some code and then closing out this post.
