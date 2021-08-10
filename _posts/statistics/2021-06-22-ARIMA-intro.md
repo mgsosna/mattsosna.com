@@ -104,9 +104,9 @@ This kind of time series is called **white noise.** $\epsilon_t$ is a random val
 
 $$ \epsilon_t \overset{iid}{\sim} \mathcal{N}(0, \sigma^2) $$
 
-Because all $\epsilon_t$ values are independent, the time series described by the model $y_t = \epsilon_t$ is just a sequence of random numbers that **cannot be predicted**. Your best guess for the next value is the mean of the distribution the samples are drawn from, which is zero.
+Because all $\epsilon_t$ values are independent, the time series described by the model $y_t = \epsilon_t$ is just a sequence of random numbers that **cannot be predicted**. Your best guess for the next value is $c$, since the expected value of $\epsilon_t$ will be zero.
 
-Below are three white noise time series drawn from normal distributions with increasing standard deviation. $c$ is zero and is therefore omitted from the equation. (A positive or negative $c$ would cause the series to trend upwards or downwards, respectively.)
+Below are three white noise time series drawn from normal distributions with increasing standard deviation. $c$ is zero and is therefore omitted from the equation.
 
 <center>
 <img src="{{  site.baseurl  }}/images/statistics/arima/white_noise.png" height="110%" width="110%">
@@ -114,7 +114,7 @@ Below are three white noise time series drawn from normal distributions with inc
 
 **A time series of random values we can't forecast is actually a useful tool to have.** It's an important null hypothesis for our analyses $-$ is there a pattern in the data that's sufficiently strong to distinguish the series from white noise? Our eyes love finding patterns $-$ even when none actually exist $-$ so a white noise comparison can protect against false positives.
 
-White noise is also useful for determining whether our model is capturing all the [**signal**](https://conceptually.org/concepts/signal-and-noise) it can get from our time series. If the deviations of our forecasts from actual values _isn't_ white noise, [your model is overlooking a pattern](https://machinelearningmastery.com/white-noise-time-series-python/) that it could use to generate more accurate predictions.
+White noise is also useful for determining whether our model is capturing all the [**signal**](https://conceptually.org/concepts/signal-and-noise) it can get from our time series. If the residuals of our forecasts _aren't_ white noise, [our model is overlooking a pattern](https://machinelearningmastery.com/white-noise-time-series-python/) that it could use to generate more accurate predictions.
 
 ### AR(1): Random walks and oscillations
 Let's start adding autoregressive terms to our model. These terms will be lagged values of our time series, multiplied by coefficients that best translate those previous values into our current value.
@@ -136,6 +136,10 @@ So when $\alpha_1$ = 0, we get white noise, and when $\alpha_1$ = 1, we get a ra
 When fitting an AR model, statistics packages typically [constrain the $\alpha$ parameter space](https://otexts.com/fpp2/AR.html) to $-1 \leq \alpha \leq 1$ when performing [maximum likelihood estimation](https://en.wikipedia.org/wiki/Maximum_likelihood_estimation). Unless you're modeling exponential growth or sharp oscillations, the time series described by these models are probably not what you're looking for.
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/bad_arr.png">
+
+Finally, our interpretation of $c$ changes. In a white noise model, $c$ corresponded to where our time series was centered. But since our model now takes into account $y_{t-1}$, $c$ now represents a rate at which our time series trends upward (if $c > 0$) or downward (if $c < 0$).
+
+<img src="{{  site.baseurl  }}/images/statistics/arima/trend.png">
 
 ### AR(p): Higher-order terms
 Adding more lags to our model is just a matter of adding $\alpha_n y_{t-n}$ terms. Here's what an AR(2) model looks like, with the additional term highlighted in blue.
