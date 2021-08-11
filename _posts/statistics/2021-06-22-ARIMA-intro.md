@@ -445,20 +445,29 @@ The code above says that a SARIMA(2,1,0)(1,0,0)<sub>7</sub> model best fits the 
 For one, we didn't pre-process the data in any way, such as scanning for outliers or interpolating any gaps. Similarly, we didn't examine whether any transformations would make the data easier to forecast, such as taking the percent return or square root. Finally, the frequency of our seasonality, 7, came somewhat out of thin air $-$ there could be a seasonality such as monthly, quarterly, or yearly that significantly improves our model performance. Considerations like these are essential for delivering forecasts that won't later embarrass you!
 
 ### Why not deep learning?
-There's one final concept we haven't yet covered that is an important perspective for this post. Classical statistics is great, but in the era of machine learning, is ARIMA a relic from the past? When open-source libraries like [Facebook's Prophet](https://facebook.github.io/prophet/) and [LinkedIn's Greykite](https://engineering.linkedin.com/blog/2021/greykite--a-flexible--intuitive--and-fast-forecasting-library) generate forecasts more accurate than a carefully-polished SARIMAX model, why even bother trying to understand [that moving average cupcake example from earlier](#ma-moving-average)?
+There's one final concept we haven't yet covered that provides an important perspective for this post. Classical statistics is great, but in the era of machine learning, is ARIMA a relic from the past? When open-source libraries like [Facebook's Prophet](https://facebook.github.io/prophet/) and [LinkedIn's Greykite](https://engineering.linkedin.com/blog/2021/greykite--a-flexible--intuitive--and-fast-forecasting-library) generate forecasts more accurate than a carefully-polished SARIMAX model, why even bother trying to understand [that moving average cupcake example from earlier](#ma-moving-average)?
 
-This question touches on an important distinction between machine learning and statistics, and ultimately a tradeoff between accuracy and explainability. To choose which tool to use, you must understand whether your goal is to **generate the most accurate prediction possible**, or to **model the underlying generative processes in your data.**
+<img src="{{  site.baseurl  }}/images/statistics/arima/prophet.png">
 
-Machine learning $-$ and deep learning especially $-$ is the tool of choice when you want to maximize accuracy. Classical statistics, meanwhile, aims to explain _why_ your data is the way it is. These two tools represent a tradeoff between accuracy and explainability; a [recurrent neural network](https://en.wikipedia.org/wiki/Recurrent_neural_network) may generate accurate forecasts, but you'll struggle to explain to a stakeholder where a particular number came from. An ARIMA model may be less accurate, but you can clearly point to the coefficients on the lags to explain a result.
+This question touches on an important distinction between machine learning and statistics, and ultimately a tradeoff between accuracy and explainability. To choose which tool to use, you must understand whether your goal is to **generate the most accurate prediction possible**, or to **understand the underlying generative processes in your data.**
 
-The right answer ultimately depends on your needs.
+Machine learning $-$ and deep learning especially $-$ is the tool of choice when you want to maximize accuracy and are willing to sacrifice some explainability. [Recurrent neural networks](https://en.wikipedia.org/wiki/Recurrent_neural_network) are a powerful forecasting tool, for example, but explaining _how_ the network generated a prediction requires searching through the tangled mess of hidden layers that feed both forward and backward $-$ a daunting task. If senior leadership at your company is weighing a major business decision based on your forecasts, they're unlikely to accept a model when even you don't quite understand how it works.
 
+An ARIMA model can therefore be an attractive alternative, even given its lower predictive power. By concretely understanding how values in the time series relate to one another, it's much easier to build an intuition for the time series itself, such as how much today's values influence tomorrow, the cycle of seasonality, and more.
+
+**The right tool $-$ machine learning or classical statistics $-$ ultimately depends on the broader business context for your analysis.** (Prophet actually sits [in between these two extremes](https://peerj.com/preprints/3190/#) by using a linear combination of curve-fitting models.)
 
 ## Conclusions
-In this post, we did a lot...
+This post was a deep dive into the ARIMA family of time series forecasting models. We started with [some foundational theory](#getting-started) of forecasting models, covering [autocorrelation](#autocorrelation) and [stationarity](#stationarity). We then built simple [autoregressive](#ar-autoregression) models, where the present value of the time series is the weighted sum of some number of previous values. We then examined [moving average](#ma-moving-average) processes, a non-intuitive but common phenomenon where the time series remembers historical external noise.
 
+We put these components together to form [ARMA](#arma-autoregressive-moving-average) models, then showed how an [ARIMA](#arima-autoregressive-integrated-moving-average) model is simply an ARMA model on our differenced data. We then showed how to account for [seasonality](#s-seasonality) by adding a set of seasonal autoregressive and moving average components, as well as directly measuring the effects of [exogeneous](#x-exogeneous-variables) factors on our data.
 
+Finally, we [trained a SARIMAX model](#fitting-models) in Python and performed a [parameter scan](#comparing-model-fit) to identify a potential model order for our S&P 500 closing price dataset. We then discussed why ARIMA may still be a useful option, [even when more accurate methods exist](#why-not-deep-learning).
 
+Time series forecasting is a massive field, and we can fill dozens more blog posts with nuances in model choice and formulation. But regardless of _your_ time series of time series knowledge, I hope it continually trends upward.
+
+Best,<br>
+Matt
 
 ## Foonotes
 #### 1. [Intro](#)
