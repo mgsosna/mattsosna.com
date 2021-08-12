@@ -8,7 +8,7 @@ Predicting the future has forever been a universal challenge, from decisions lik
 
 Forecasting involves **time series** data, or repeated measures over time. In data such as hourly temperature, daily electricity consumption, or annual global population estimates, we can look for patterns that collapse those hundreds or thousands of numbers down to a few defining characteristics. We can use time series analysis to quantify the rate at which the values are _trending_ upward or downward, measure how much one value is _correlated with the previous few_, decompose our data into its _underlying repeating cycles_, and more.
 
-<img src="{{  site.baseurl  }}/images/statistics/arima/spy_500.png">
+<img src="{{  site.baseurl  }}/images/statistics/arima/spy_500.png" loading="lazy" alt="S&P 500 time series">
 <span style="font-size: 12px"><i>S&P 500 daily prices over the last five years, an example of a highly-studied time series. Screenshot from Google Finance.</i></span>
 
 To summarize a time series and predict its future, we need to model the relationship the values in the time series have with one another. Does today tend to be similar to yesterday, a week ago, or last year? How much do factors outside the time series, such as noise or _other_ time series, play a role?
@@ -33,7 +33,7 @@ It looks complicated, but each of these pieces $-$ the <span style="color:royalb
 
 Once we've built a model, we'll be able to predict the future of a time series like below. But perhaps more importantly, we'll also understand the _underlying patterns that give rise to our time series_.
 
-<img src="{{  site.baseurl  }}/images/statistics/arima/example_forecast.png">
+<img src="{{  site.baseurl  }}/images/statistics/arima/example_forecast.png" loading="lazy" alt="Forecast for S&P 500">
 
 (Obligatory note: this post does not constitute investment advice; all examples are just for illustrative purposes.)
 
@@ -66,11 +66,11 @@ We can visualize the correlation of the _present value_ with a _previous value $
 
 The correlation at lag zero is always 1: $y_t$ better be perfectly correlated with $y_t$, or something's wrong. For the remaining lags, there are three typical patterns: 1) a lack of autocorrelation, 2) a gradual decay, and 3) a sharp drop. (Though in real-world data, you might get a mix of \#2 and \#3.)
 
-<img src="{{  site.baseurl  }}/images/statistics/arima/autocorrelation.png">
+<img src="{{  site.baseurl  }}/images/statistics/arima/autocorrelation.png" loading="lazy" alt="Autocorrelation plots">
 
 Below we visualize the autocorrelation of [daily S&P 500 closing prices](https://www.marketwatch.com/investing/fund/spy) (left) and [daily maximum temperature at the Chicago Botanical Garden](https://www.ncdc.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND:USC00111497/detail) (right). The S&P 500 prices are so correlated that you have to look more than three months into the past to find uncorrelated values. The Chicago temperatures become uncorrelated faster, at about the two month mark, but then shoot out the other side and become _negatively correlated_ with temperatures from 4-7 months ago.
 
-<img src="{{  site.baseurl  }}/images/statistics/arima/autocorr_examples.png">
+<img src="{{  site.baseurl  }}/images/statistics/arima/autocorr_examples.png" loading="lazy" alt="Examples of autocorrelation plots">
 
 ### Partial autocorrelation
 Autocorrelation plots are useful, but there can be substantial correlation "spillover" between lags. In the S&P 500 prices, for example, the lag-1 correlation is an astonishing 0.994 $-$ it's hard to get a good read on the following lags with the first lag indirectly affecting all downstream correlations.
@@ -81,14 +81,14 @@ Let's say we want to measure the lag-2 autocorrelation without the lag-1 spillov
 
 Here's how the partial autocorrelation plots look for the S&P 500 prices and Chicago temperatures. Notice how the lag-1 autocorrelation remains highly significant, but the following lags dive off a cliff.
 
-<img src="{{  site.baseurl  }}/images/statistics/arima/partial_autocorr_examples.png">
+<img src="{{  site.baseurl  }}/images/statistics/arima/partial_autocorr_examples.png" loading="lazy" alt="Examples of partial autocorrelation plots">
 
 Autocorrelation and partial autocorrelation plots can be used to determine whether a simple AR or MA model (as opposed to full ARIMA model) is sufficient to describe your data<sup>[[2]](#2-partial-autocorrelation)</sup>, but you probably won't use them this way. In the fifty years since autocorrelation plots [were first introduced](https://archive.org/details/timeseriesanalys0000boxg), your laptop has likely become strong enough to perform a brute force scan to find the parameters for the ARIMA (or even SARIMAX) model that best describes your data, even if there are thousands of observations. These plots, then, are probably more useful as complementary ways of visualizing the temporal dependence of your data.
 
 ### Stationarity
 As with any statistical model, there are assumptions that must be met when forecasting time series data. The biggest assumption is that the time series is **stationary.** In other words, we assume that **the parameters that describe the time series aren't changing over time.** No matter where on the time series you look, you should see the same mean, variance, and autocorrelation.<sup>[[3]](#3-stationarity)</sup>
 
-<img src="{{  site.baseurl  }}/images/statistics/arima/stationary.png">
+<img src="{{  site.baseurl  }}/images/statistics/arima/stationary.png" loading="lazy" alt="Stationary and non-stationary time series">
 
 This doesn't mean we can only forecast time series that look like the green jumbled mess above. While most real-world time series aren't stationary, we can _transform_ a time series into one that is stationary, generate forecasts on the stationary data, then _un-transform_ the forecast to get the real-world values. Some common transformations include [differencing](https://machinelearningmastery.com/remove-trends-seasonality-difference-transform-python/) (and then possibly differencing again), taking the logarithm or square root of the data, or taking the percent change.
 
@@ -111,7 +111,7 @@ Because all $\epsilon_t$ values are independent, the time series described by th
 Below are three white noise time series drawn from normal distributions with increasing standard deviation. $c$ is zero and is therefore omitted from the equation.
 
 <center>
-<img src="{{  site.baseurl  }}/images/statistics/arima/white_noise.png" height="110%" width="110%">
+<img src="{{  site.baseurl  }}/images/statistics/arima/white_noise.png" height="110%" width="110%" loading="lazy" alt="White noise">
 </center>
 
 **A time series of random values we can't forecast is actually a useful tool to have.** It's an important null hypothesis for our analyses $-$ is there a pattern in the data that's sufficiently strong to distinguish the series from white noise? Our eyes love finding patterns $-$ even when none actually exist $-$ so a white noise comparison can protect against false positives.
@@ -128,20 +128,20 @@ $$y_t = c + \alpha_1y_{t-1} + \epsilon_t$$
 The value of $\alpha_1$ plays a defining role in what our time series looks like. If $\alpha_1 = 1$, we get a [**random walk**](https://www.sciencedirect.com/science/article/pii/S0370157317302946). Unlike white noise, our time series is free to wander away from its origin. Random walks are an incredibly useful model for stochastic processes across many applications, such as modeling [the movement of particles through a fluid](https://en.wikipedia.org/wiki/Brownian_motion), the [search path of a foraging animal](https://www.quantamagazine.org/random-search-wired-into-animals-may-help-them-hunt-20200611/), or [changes in stock prices](https://www.investopedia.com/terms/r/randomwalktheory.asp).
 
 <center>
-<img src="{{  site.baseurl  }}/images/statistics/arima/random_walk.png" height="110%" width="110%">
+<img src="{{  site.baseurl  }}/images/statistics/arima/random_walk.png" height="110%" width="110%" loading="lazy" alt="Random walk">
 </center>
 
 So when $\alpha_1$ = 0, we get white noise, and when $\alpha_1$ = 1, we get a random walk. When $0 < \alpha_1 < 1$, our time series exhibits [**mean reversion**](https://www.investopedia.com/terms/m/meanreversion.asp). It's subtle, but you'll notice that the values are correlated with one another _and_ they tend to hover around zero, like less chaotic white noise. A real-world example of this process is large changes in stock prices: sudden shifts [tend to be followed by mean reversion](https://decodingmarkets.com/mean-reversion-trading-strategy/).
 
-<img src="{{  site.baseurl  }}/images/statistics/arima/mean_reversion.png">
+<img src="{{  site.baseurl  }}/images/statistics/arima/mean_reversion.png" loading="lazy" alt="Mean reversion">
 
 When fitting an AR model, statistics packages typically [constrain the $\alpha$ parameter space](https://otexts.com/fpp2/AR.html) to $-1 \leq \alpha \leq 1$ when performing [maximum likelihood estimation](https://en.wikipedia.org/wiki/Maximum_likelihood_estimation). Unless you're modeling exponential growth or sharp oscillations, the time series described by these models are probably not what you're looking for.
 
-<img src="{{  site.baseurl  }}/images/statistics/arima/bad_arr.png">
+<img src="{{  site.baseurl  }}/images/statistics/arima/bad_arr.png" loading="lazy" alt="Exponential growth and oscillations">
 
 Finally, our interpretation of $c$ changes with an AR(1) model. In an AR(0) model, $c$ corresponded to where our time series was centered. But since an AR(1) model takes into account $y_{t-1}$, $c$ now represents a rate at which our time series trends upward (if $c > 0$) or downward (if $c < 0$).
 
-<img src="{{  site.baseurl  }}/images/statistics/arima/trend.png">
+<img src="{{  site.baseurl  }}/images/statistics/arima/trend.png" loading="lazy" alt="Time series with varying trend">
 
 ### AR(p): Higher-order terms
 Adding more lags to our model is just a matter of adding $\alpha_n y_{t-n}$ terms. Here's what an AR(2) model looks like, with the additional term highlighted in blue.
@@ -169,7 +169,7 @@ $$y_t = c + \sum_{n=1}^{q}\theta_n\epsilon_{t-n} + \epsilon_t$$
 
 Here are three MA(1) time series that vary in the value of $\theta_1$, the multiplier on $\epsilon_{t-1}$. Don't feel bad if you don't experience an "ah-ha" moment looking at these; they should look fairly similar to white noise.
 
-<img src="{{  site.baseurl  }}/images/statistics/arima/ma1.png">
+<img src="{{  site.baseurl  }}/images/statistics/arima/ma1.png" loading="lazy" alt="Moving average processes">
 
 Moving average processes are a lot less intuitive than autoregression $-$ what time series has no memory of its past behavior, but remembers it previous random noise? Yet a surprising number of [real-world time series _are_ moving average processes](https://stats.stackexchange.com/questions/45026/real-life-examples-of-moving-average-processes), from misalignment of store goods and sales, battery purchases in response to natural disasters, and low-pass filters such as the treble knobs on car stereos.
 
@@ -185,7 +185,7 @@ $$y_t = \color{royalblue}{10 - \epsilon_{t-1}} + \color{orange}{\epsilon_t}$$
 
 The thing to note here is that **this time series doesn't care about its own history** (the correct number of cupcakes); it is only affected by **external random noise that is remembered for a brief period** (the difference between the number of cupcakes and the number of party attendees). This is therefore a moving average process.
 
-<img src="{{  site.baseurl  }}/images/statistics/arima/cupcakes.jpg">
+<img src="{{  site.baseurl  }}/images/statistics/arima/cupcakes.jpg" loading="lazy" alt="Cupcakes">
 <span style="font-size: 12px"><i>Photo by <a href="https://unsplash.com/@brookelark">Brooke Lark</a> on <a href="https://unsplash.com">Unsplash</a></i></span>
 
 ## Putting it together
@@ -200,7 +200,7 @@ The ARMA equation simply states that the value at the current time step is a con
 
 Below are four ARMA(1,1) time series. As with the MA(1) plot above, it's difficult to look at any of the time series below and intuit the parameter values, or even that they're ARMA processes rather than AR or MA alone. We're at the point where our time series have become too complex to intuit the type of model or its parameters from eyeballing the raw data.
 
-<img src="{{  site.baseurl  }}/images/statistics/arima/arma.png">
+<img src="{{  site.baseurl  }}/images/statistics/arima/arma.png" loading="lazy" alt="ARMA time series">
 
 But that's ok. Moving forward, we'll start using [**AIC**](https://en.wikipedia.org/wiki/Akaike_information_criterion) to determine which model best describes our data, whether that's an AR, MA, or ARMA model, as well as the optimal number of lags for each component. We'll cover this process at the end of this post, but in the meantime let's cover the remaining pieces of the SARIMAX model.
 
@@ -454,7 +454,7 @@ Finally, the frequency of our seasonality, 7, came somewhat out of thin air $-$ 
 ### Why not deep learning?
 There's one final concept we haven't yet covered that provides an important perspective for this post. Classical statistics is great, but in the era of machine learning, is ARIMA a relic from the past? When open-source libraries like [Facebook's Prophet](https://facebook.github.io/prophet/) and [LinkedIn's Greykite](https://engineering.linkedin.com/blog/2021/greykite--a-flexible--intuitive--and-fast-forecasting-library) generate forecasts more accurate than a carefully-polished SARIMAX model, why even bother trying to understand [that moving average cupcake example from earlier](#ma-moving-average)?
 
-<img src="{{  site.baseurl  }}/images/statistics/arima/prophet.png">
+<img src="{{  site.baseurl  }}/images/statistics/arima/prophet.png" loading="lazy" alt="SARIMA vs. Prophet forecasts">
 
 This question touches on an important distinction between machine learning and statistics, and ultimately a tradeoff between accuracy and explainability. To choose which tool to use, you must understand whether your goal is to **generate the most accurate prediction possible**, or to **understand the underlying generative processes in your data.**
 
