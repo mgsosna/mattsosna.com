@@ -165,7 +165,7 @@ As before, we can concisely describe an MA(q) model with this summation:
 
 $$y_t = c + \sum_{n=1}^{q}\theta_n\epsilon_{t-n} + \epsilon_t$$
 
-Here's are three MA(1) time series that vary in the value of $\theta_1$, the multiplier on $\epsilon_{t-1}$. Don't feel bad if you don't experience an "ah-ha" moment looking at these; they should look fairly similar to white noise.
+Here are three MA(1) time series that vary in the value of $\theta_1$, the multiplier on $\epsilon_{t-1}$. Don't feel bad if you don't experience an "ah-ha" moment looking at these; they should look fairly similar to white noise.
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/ma1.png">
 
