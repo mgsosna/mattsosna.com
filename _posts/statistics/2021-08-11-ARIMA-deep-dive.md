@@ -476,7 +476,7 @@ Time series forecasting is a massive field, and we can fill dozens more blog pos
 Best,<br>
 Matt
 
-## Foonotes
+## Footnotes
 #### 1. [Intro](#)
 "We will never be able to perfectly predict the future" sounds obvious, but the reasoning behind it is actually fascinating. In the book [_Sapiens_](https://www.ynharari.com/book/sapiens-2/), Yuval Noah Harari talks about [two types of chaotic systems](https://www.goodreads.com/quotes/7426402-history-cannot-be-explained-deterministically-and-it-cannot-be-predicted). The first is chaos that doesn't react to predictions about it, such as the weather. Weather emerges via the nonlinear interactions of countless air molecules $-$ it's immensely difficult to predict but we can use stronger and stronger computer simulations to gradually improve our accuracy.
 
