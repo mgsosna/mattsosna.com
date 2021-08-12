@@ -35,6 +35,8 @@ Once we've built a model, we'll be able to predict the future of a time series l
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/example_forecast.png">
 
+(Obligatory note: this post does not constitute investment advice; all examples are just for illustrative purposes.)
+
 ## Table of contents
 * [**Getting started**](#getting-started)  
   - [Autocorrelation](#autocorrelation)
@@ -66,7 +68,7 @@ The correlation at lag zero is always 1: $y_t$ better be perfectly correlated wi
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/autocorrelation.png">
 
-Below we visualize the autocorrelation of [daily S&P 500 closing prices](https://finance.yahoo.com/quote/SPY/history?p=SPY) (left) and [daily maximum temperature at the Chicago Botanical Garden](https://www.ncdc.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND:USC00111497/detail) (right). The S&P 500 prices are so correlated that you have to look more than three months into the past to find uncorrelated values. The Chicago temperatures become uncorrelated faster, at about the two month mark, but then shoot out the other side and become _negatively correlated_ with temperatures from 4-7 months ago.
+Below we visualize the autocorrelation of [daily S&P 500 closing prices](https://www.marketwatch.com/investing/fund/spy) (left) and [daily maximum temperature at the Chicago Botanical Garden](https://www.ncdc.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND:USC00111497/detail) (right). The S&P 500 prices are so correlated that you have to look more than three months into the past to find uncorrelated values. The Chicago temperatures become uncorrelated faster, at about the two month mark, but then shoot out the other side and become _negatively correlated_ with temperatures from 4-7 months ago.
 
 <img src="{{  site.baseurl  }}/images/statistics/arima/autocorr_examples.png">
 
@@ -443,7 +445,11 @@ results = pmd.auto_arima(df['Close'],
 
 The code above says that a SARIMA(2,1,0)(1,0,0)<sub>7</sub> model best fits the last five years of S&P 500 data... with some important caveats! Before you gamble your life savings on the forecasts from this model, we should keep in mind that despite a convenient parameter scan, we still have a lot of accuracy we can squeeze out of modeling this data.
 
-For one, we didn't pre-process the data in any way, such as scanning for outliers or interpolating any gaps. Similarly, we didn't examine whether any transformations would make the data easier to forecast, such as taking the percent return or square root. Finally, the frequency of our seasonality, 7, came somewhat out of thin air $-$ there could be a seasonality such as monthly, quarterly, or yearly that significantly improves our model performance. Considerations like these are essential for delivering forecasts that won't later embarrass you!
+For one, we didn't pre-process the data in any way, such as scanning for outliers or interpolating any gaps. Similarly, we didn't examine whether any transformations would make the data easier to forecast, such as taking the percent return or square root.
+
+Finally, the frequency of our seasonality, 7, came somewhat out of thin air $-$ there could be a seasonality such as monthly, quarterly, or yearly that significantly improves our model performance. Considerations like these are essential for delivering forecasts that won't later embarrass you!
+
+(And one more reminder that this post is not investment advice! ;-))
 
 ### Why not deep learning?
 There's one final concept we haven't yet covered that provides an important perspective for this post. Classical statistics is great, but in the era of machine learning, is ARIMA a relic from the past? When open-source libraries like [Facebook's Prophet](https://facebook.github.io/prophet/) and [LinkedIn's Greykite](https://engineering.linkedin.com/blog/2021/greykite--a-flexible--intuitive--and-fast-forecasting-library) generate forecasts more accurate than a carefully-polished SARIMAX model, why even bother trying to understand [that moving average cupcake example from earlier](#ma-moving-average)?
