@@ -392,6 +392,7 @@ Rather than needing to write a bunch of `for` loops ourselves, we can rely on th
 
 Here's how we would identify the optimal SARIMA model on our S&P 500 daily closing prices from the start of this post.
 
+{% include header-python.html %}
 ```python
 import pandas as pd
 import pmdarima as pmd
@@ -483,7 +484,7 @@ A sharp drop at lag $n$ in the autocorrelation plot indicates an **MA(n)** proce
 #### 3. [Stationarity](#stationarity)
 I went down a long rabbit hole trying to understand what the assumption of stationarity really means. In the graphic of the stationary versus non-stationary processes, I use a noisy sine wave as the example of the stationary process. This dataset _does_ pass the [Augmented Dicky-Fuller test](https://en.wikipedia.org/wiki/Augmented_Dickey%E2%80%93Fuller_test), but if you extend the data out to 1000 samples, the ADF test no longer says the time series is stationary.
 
-This is because the ADF in essence measures reversion to the mean $-$ a non-stationary process has no problem drifting away, and previous lags don't provide relevant information. The lagged values of a stationary process, meanwhile, _do_ provide relvant info in predicting the next values.
+This is because the ADF in essence measures reversion to the mean $-$ a non-stationary process has no problem drifting away, and previous lags don't provide relevant information. The lagged values of a stationary process, meanwhile, _do_ provide relevant info in predicting the next values.
 
 #### 4. [AR(0): White noise](#ar0-white-noise)
 In our example, the $\epsilon_t$ values are sampled from a normal distribution, so this is **Gaussian white noise.** [We could easily use another distribution](https://ionides.github.io/531w20/03/notes03.pdf) to generate our values, though, such as a uniform, binary, or sinusoidal distribution.
