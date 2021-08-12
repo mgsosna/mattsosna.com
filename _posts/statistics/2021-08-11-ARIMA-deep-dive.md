@@ -217,7 +217,7 @@ In other words, **an ARIMA model is simply an ARMA model on the _differenced_ ti
 
 $$\color{red}{d_t} = c + \sum_{n=1}^{p}\alpha_n\color{red}{d_{t-n}} + \sum_{n=1}^{q}\theta_n\epsilon_{t-n} + \epsilon_t$$
 
-We can perform the differencing ourselves, but it gets cumbersome if $d$ is greater than 1, and most statistical packages will handle the differencing under the hood for us. Here's a demo in Python, for example, that shoes how the model coefficients in an ARIMA(1,1,1) model on the _raw_ data and ARMA(1,1) model on the _differenced_ data are equal.
+We can perform the differencing ourselves, but it gets cumbersome if $d$ is greater than 1, and most statistical packages will handle the differencing under the hood for us. Here's a demo in Python, for example, that shows how the model coefficients in an ARIMA(1,1,1) model on the _raw_ data and ARMA(1,1) model on the _differenced_ data are equal.
 
 {% include header-python.html %}
 ```python
