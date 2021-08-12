@@ -42,6 +42,7 @@ permalink: /blog/
 ### Statistics
 1. [Visualizing the danger of multiple t-test comparisons]({{ site.baseurl }}/T-tests-vs-ANOVA)
 2. [Linear regression via gradient descent]({{ site.baseurl }}/LR-grad-desc)
+3. [A deep dive on ARIMA models]({{  site.baseurl  }}/ARIMA-deep-dive)
 
 ### Theory
 1. [Fish schools as ensemble learning algorithms]({{  site.baseurl  }}/Collective-behavior)
