@@ -77,7 +77,9 @@ Autocorrelation plots are useful, but there can be substantial correlation "spil
 
 This is where [**partial autocorrelation**](https://online.stat.psu.edu/stat510/lesson/2/2.2) can be a useful measure. Partial autocorrelation is the correlation of $y_t$ and $y_{t-n}$, _controlling for the autocorrelation at earlier lags_.
 
-Let's say we want to measure the lag-2 autocorrelation without the lag-1 spillover. Rather than directly measure the correlation of $y_t$ and $y_{t-2}$, we'd fit a linear regression of $y_t \sim \beta_0 + \beta_1y_{t-1}$, then find the correlation between $y_t$ and the _residuals_ of the regression. The residuals quantify the amount of variation in $y_t$ that cannot be explained by $y_{t-1}$, granting us an unbiased look at the relationship between $y_t$ and lags after $y_{t-1}$. We can then repeat this process, fitting new regressions on the residuals of previous regressions, to find the partial autocorrelation for each lag.
+Let's say we want to measure the lag-2 autocorrelation without the lag-1 spillover. Rather than directly measure the correlation of $y_t$ and $y_{t-2}$, we'd fit a linear regression of $y_t \sim \beta_0 + \beta_1y_{t-1}$, a regression of $y_{t-2} \sim \beta_0 + \beta_1y_{t-1}$, and then find the correlation between the _residuals_ of these two regressions.
+
+The residuals quantify the amount of variation in $y_t$ and $y_{t-2}$ that cannot be explained by $y_{t-1}$, granting us an unbiased look at the relationship between $y_t$ and $y_{t-2}$. We can then repeat this process, measuring the correlation between the residuals of regressions on lags up to $n$, to find the partial autocorrelation for lag $n$. We'd measure the partial autocorrelation at lag-3, for example, by regressing the residuals of $y_t \sim \beta_0 + \beta_1y_{t-1} + \beta_2y_{t-2}$ against the residuals of $y_{t-3} \sim \beta_0 + \beta_1y_{t-1} + \beta_2y_{t-2}$.
 
 Here's how the partial autocorrelation plots look for the S&P 500 prices and Chicago temperatures. Notice how the lag-1 autocorrelation remains highly significant, but the following lags dive off a cliff.
 
