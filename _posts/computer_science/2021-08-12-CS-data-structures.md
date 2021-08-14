@@ -148,3 +148,23 @@ class DoublyLinkedList:
         head.next = self.head
         self.head = head
 ```
+
+Some common questions:
+* Find the middle
+* Find whether the list has a cycle
+* Reverse
+
+## Trees
+
+```python
+class TreeNode:
+    def __init__(self, val=None, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+```
+
+Traversal is a common question. There are different ways to do it, both with recursion and iteration.
+
+* Print values in pre-order, in-order, post-order, and level-order traversal
+* Determine whether tree is symmetric
