@@ -4,11 +4,61 @@ title: Fundamental data structures
 author: matt_sosna
 ---
 
-The difference between a good program and an excellent one is using the right tools for the job. Chief among these is choosing the right **data structure**, or way to organize data.
+A good program gets the job done, while an excellent program also sets you up for success as the amount of data grows or business needs evolve. A major differentiator between good and excellent is the choice in **data structure**, or method for organizing data.
+
+As a data scientist without a computer science background, I'm most familiar with dataframes. But as I was transitioning to machine learning engineering, I was exposed to much more fundamental structures.
+
+## Table of contents
+* [**Data structures**](#data-structures)
+  - [Big O](#big-o)
+  - [Abstract data structures](#abstract-data-structures)
+* [**Arrays**](#arrays)
+  - [Theory](#theory)
+  - [Implementation](#implementation)
+  - [Questions](#questions)
+* [**Linked lists**](#linked-lists)
+  - [Theory](#theory-1)
+  - [Implementation](#implementation-1)
+  - [Questions](#questions-1)
+* [**Trees**](#trees)
+  - [Theory](#theory-2)
+  - [Implementation](#implementation-2)
+  - [Questions](#questions-2)
+* [**Graphs**](#graphs)
+  - [Theory](#theory-3)
+  - [Implementation](#implementation-3)
+  - [Questions](#questions-3)
+* [**Hash maps**](#hash-maps)
+  - [Theory](#theory-4)
+  - [Implementation](#implementation)
+  - [Questions](#questions)
+
+## Data structures
+### Big-O notation
+What makes a data structure better or worse than another? A data structure is a way of structuring data.
+
+Here's a simple analogy. Imagine you have a hamper of clean laundry and need to put away the clothes. A method with _low write time_ but _high read time_ would be dump all the clothes into a pile on the ground. While this is blazing fast, it will then take extra time to actually find the shirt you want because you have to search through the pile.
+
+An alternate method would be to
+
+
+(Maybe recreate that common plot of the different time complexities)
+
+### Abstract data structures
+There are multiple ways to accomplish a task. Let's say you have a stack. How do you do this?
+
+* Stacks, queues
+
 
 ## Arrays
+### Theory
 Coming from Python, it's a little hard to understand the limitations of arrays. But their limitations are a central aspect of languages like Java and C. In Python, a `list` is actually a series of pointers to different locations in memory that can still be easily indexed. In terms of usability, it combines the best elements of arrays and linked lists.
 
+Reading from an array takes $O(1)$ time because we know exactly where in the array to go. Searching, meanwhile, is $O(n)$ because in the worst case, we need to scan through the entire array.
+
+### Implementation
+
+{% include header-python.html %}
 ```python
 class Array:
     def __init__(self, n: int):
@@ -48,6 +98,7 @@ class Array:
 
 We can play around with it a bit now.
 
+{% include header-python.html %}
 ```python
 arr = Array(10)
 arr
@@ -66,12 +117,33 @@ print(arr.length)
 # 40
 ```
 
+### Questions
+This is a little different if you're coming straight from Python. But in the spirit of a constant array size, we could have some questions like these:
+
+* Duplicate zeros
+* Two-sum
+
 ## Linked lists
+### Theory
 What if the elements of our array didn't need to be right next to each other in memory? And what if we didn't have to know beforehand how big our array would be $-$ we could just grow it dynamically without worrying?
+
+This is what a singly linked list looks like.
+
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/ll1.png" height="50%" width="50%">
+</center>
+
+Each node in a list consists of some data, as well as pointer to the location of the next node in the list. So technically, it looks something like the diagram below. The red line of blocks is a section of your computer's RAM. The blue blocks are the nodes of our list, which consist of some data (the number in each block) and an orange _pointer_ to the location in memory for the next node of the list. The last node's pointer points to nowhere, indicating the end of the list.
+
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/ll2.png">
+</center>
 
 * Singularly linked lists
 * Doubly linked lists
 
+### Implementation
+{% include header-python.html %}
 ```python
 class ListNode:
     def __init__(self, val=None, next=None):
@@ -107,6 +179,7 @@ class SinglyLinkedList:
 
 Then we can play around a bit with it.
 
+{% include header-python.html %}
 ```python
 LL = SinglyLinkedList(0)
 
@@ -120,6 +193,7 @@ LL
 
 Now for a doubly linked list, we just add a `prev` attribute to the `ListNode` that points to the previous node.
 
+{% include header-python.html %}
 ```python
 class ListNode:
     def __init__(self, val=None, prev=None, next=None):
@@ -149,13 +223,18 @@ class DoublyLinkedList:
         self.head = head
 ```
 
+### Questions
 Some common questions:
 * Find the middle
 * Find whether the list has a cycle
 * Reverse
 
 ## Trees
+### Theory
+There actually is no theory.
 
+### Implementation
+{% include header-python.html %}
 ```python
 class TreeNode:
     def __init__(self, val=None, left=None, right=None):
@@ -164,7 +243,31 @@ class TreeNode:
         self.right = right
 ```
 
+### Questions
 Traversal is a common question. There are different ways to do it, both with recursion and iteration.
 
 * Print values in pre-order, in-order, post-order, and level-order traversal
 * Determine whether tree is symmetric
+
+{% include header-python.html %}
+```python
+def
+
+```
+
+
+## Graphs
+### Theory
+
+### Implementation
+
+### Questions
+* Number of islands
+* Number of provinces
+
+## Hash maps
+### Theory
+
+### Implementation
+
+### Questions
