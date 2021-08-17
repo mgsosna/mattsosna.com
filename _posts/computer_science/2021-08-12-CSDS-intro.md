@@ -16,30 +16,34 @@ As a data scientist without a computer science background, I'm most familiar wit
   - [Theory](#theory)
   - [Implementation](#implementation)
   - [Questions](#questions)
-* [**Linked lists**](#linked-lists)
+* [**Stacks and queues**](#stacks-and-queues)
   - [Theory](#theory-1)
   - [Implementation](#implementation-1)
   - [Questions](#questions-1)
-* [**Trees**](#trees)
+* [**Linked lists**](#linked-lists)
   - [Theory](#theory-2)
   - [Implementation](#implementation-2)
   - [Questions](#questions-2)
-* [**Graphs**](#graphs)
+* [**Trees**](#trees)
   - [Theory](#theory-3)
   - [Implementation](#implementation-3)
   - [Questions](#questions-3)
-* [**Hash maps**](#hash-maps)
+* [**Graphs**](#graphs)
   - [Theory](#theory-4)
-  - [Implementation](#implementation)
-  - [Questions](#questions)
+  - [Implementation](#implementation-4)
+  - [Questions](#questions-4)
+* [**Hash maps**](#hash-maps)
+  - [Theory](#theory-5)
+  - [Implementation](#implementation-5)
+  - [Questions](#questions-5)
 
 ## Data structures
 ### Big-O notation
-What makes a data structure better or worse than another? A data structure is a way of structuring data.
+What makes a data structure better or worse than another? A data structure is a way of organizing data, and depending on how you're planning on interacting with that data, structures vary tremendously in how efficiently you can _read_ and _write_ to them.
 
-Here's a simple analogy. Imagine you have a hamper of clean laundry and need to put away the clothes. A method with _low write time_ but _high read time_ would be dump all the clothes into a pile on the ground. While this is blazing fast, it will then take extra time to actually find the shirt you want because you have to search through the pile.
+Here's a simple analogy. Imagine you have a hamper of clean laundry and need to put away the clothes. A method with _low write time_ but _high read time_ would be to dump all the clothes into a pile on the ground. While this is blazing fast, it will then take extra time to actually find the shirt you want because you have to search through the pile.
 
-An alternate method would be to
+An alternate method would be to neatly arrange your clothes in your dresser and closet. This method would have a _slow write time_ but _fast read time_, as it would take longer to put away your clothes (especially compared to dumping them on the ground), but when you need a particular item you know exactly where to find it and it's easy to access.
 
 
 (Maybe recreate that common plot of the different time complexities)
@@ -120,8 +124,27 @@ print(arr.length)
 ### Questions
 This is a little different if you're coming straight from Python. But in the spirit of a constant array size, we could have some questions like these:
 
-* Duplicate zeros
-* Two-sum
+{% include header-python.html %}
+```python
+def duplicate_zeros(arr: List[int]) -> None:
+    """
+    Duplicate all zeros in an array, maintaining the length
+    of the original array. e.g. [1, 0, 2, 3] -> [1, 0, 0, 2]
+    """
+    i = 0
+
+    while i < len(arr):
+        if arr[i] == 0:
+            arr.insert(i, 0)
+            arr.pop()
+            i += 1
+        i += 1
+```
+
+We use a `while` rather than a `for` loop because we're modifying the array as we move through it, so we want to manually control our index `i`. This is important when we're inserting zeros because we either will double-count our zero (if we insert into the array at or past our index), or the array will move without us if we insert it before. Our logic is therefore that we progress through our array like a normal `for` loop, incrementing `i` each time. But if we encounter a zero, we insert a zero and then increment `i` again, skipping the zero we added to avoid double-counting.
+
+We also don't return anything because we're modifying the array in-place.
+
 
 ## Linked lists
 ### Theory
@@ -229,9 +252,43 @@ Some common questions:
 * Find whether the list has a cycle
 * Reverse
 
+{% include header-python.html %}
+```python
+def find_middle(head: ListNode) -> Optional[ListNode]:
+    """
+    Return middle node of linked list. If even numbers, returns second
+    """
+    if not head:
+        return None
+
+    slow = head
+    fast = head.next
+
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+
+    return slow  
+```
+
+Whenever dealing with Leetcode questions, I like to draw out examples and make sure I'm doing what I think I'm doing. For example, it can be hard to remember if we should initialize `fast` to `head` or to `head.next`. If you draw out a simple list where you know what the middle should be, you can quickly confirm that `head.next` is the right option.
+
+```bash
+# List: A -> B -> C -> D -> E, middle = C
+
+# Start at same place: incorrect
+# Slow: A -> B -> C -> D
+# Fast: A -> C -> E -> null
+
+# Start apart: correct
+# Slow: A -> B -> C
+# Fast: B -> D -> null
+```
+
+
 ## Trees
 ### Theory
-There actually is no theory.
+A tree is similar to a linked list, but rather than having only one next node, you can have several. A common type of tree is a _binary_ tree, where each node has at most children.
 
 ### Implementation
 {% include header-python.html %}
@@ -251,22 +308,128 @@ Traversal is a common question. There are different ways to do it, both with rec
 
 {% include header-python.html %}
 ```python
-def
+def traverse_in_order(root: TreeNode) -> List[int]:
+    """
+    Traverse a binary tree, returning list of values in order
+    """
+    if not root:
+        return None
 
+    answer = []
+    stack = [(root, False)]
+
+    while stack:
+        node, visited = stack.pop()
+
+        if node:
+
+            if visited:
+                answer.append(node.val)
+            else:
+                stack.append(node.right, False)
+                stack.append(node, True)
+                stack.append(node.left, False)
+
+    return answer
 ```
+
+And the recursive method:
+
+{% include header-python.html %}
+```python
+class Solution:
+    def __init__(self):
+        self.answer = []
+
+    def traverse_inorder(self, root: TreeNode) -> List[int]:
+        """
+        Traverse a binary tree, returning list of values in-order
+        """
+        self.traverse(root)
+        return self.answer
+
+    def traverse(self, node: Optional[TreeNode]) -> None:
+        if not node:
+            return None
+
+        self.traverse(node.left)
+        self.answer.append(node.val)
+        self.traverse(node.right)
+```
+
+Changing the traversal between pre-order, in-order, and post-order is simply a matter of rearranging lines 16-18
 
 
 ## Graphs
 ### Theory
+Graphs often represented as adjacency matrices. Let's say you want to describe the network of friend connections on Facebook. A link between two people means they're friends. If you have 5 people, you'd have 5x5 matrix where the five people were on the rows and columns, and each cell corresponded to whether there was a link between the row and column person. More formally, we'd say $A_{ij} = 1$ if the individual in row $i$ and individual in column $j$ were connected, and $A_{ij} = 0$ if they're not.
 
 ### Implementation
+Implementation is straightforward since we're only dealing with a matrix of 1s and 0s.
+
+{% include header-python.html %}
+```python
+class Graph:
+    def __init__(self, n: int):
+        self.graph = [[0]*n for _ in range(n)]
+
+    def connect(self, a: int, b: int) -> List[List[int]]:
+        """
+        Updates self.graph to connect individuals A and B.
+        """
+        self.graph[a][b] = 1
+        self.graph[b][a] = 1
+        return self.graph
+
+    def disconnect(self, a: int, b: int) -> List[List[int]]:
+        """
+        Updates self.graph to disconnect individuals A and B.
+        """
+        self.graph[a][b] = 0
+        self.graph[b][a] = 0
+        return self.graph
+```
+
 
 ### Questions
-* Number of islands
-* Number of provinces
+A common graph question is to return the number
+
+{% include header-python.html %}
+```python
+def get_n_provinces(self, mat: List[List[int]]) -> int:
+    """
+    Given an adjacency matrix, returns the number of connected components
+    """
+    q = []
+    cities = [*range(len(mat))]
+
+    answer = 0
+
+    while q or cities:
+
+        if not q:
+            q.append(cities.pop(0))
+            answer += 1
+
+        focal = q.pop(0)
+        i = 0
+
+        while i < len(cities):
+            city = cities[i]
+
+            if mat[focal][city] == 1:
+                q.append(city)
+                cities.remove(city)
+            else:
+                i += 1
+
+    return answer
+```
+
 
 ## Hash maps
 ### Theory
+A hash map is a data structure with $O(1)$ retrieval time, pretty much regardless of how many elements there are (assuming you have a good hash function). The idea is that for any input, you pass it through a hash function to get some output. Then you look at a location in memory corresponding to that hashed output. If your hash function can produce enough unique hashes, you can instantly retrieve any key's value.
 
 ### Implementation
 
