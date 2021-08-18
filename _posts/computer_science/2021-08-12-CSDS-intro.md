@@ -4,9 +4,9 @@ title: Fundamental data structures
 author: matt_sosna
 ---
 
-A good program gets the job done, while an excellent program also sets you up for success as the amount of data grows or business needs evolve. A major differentiator between good and excellent is the choice in **data structure**, or method for organizing data.
+What makes a piece of software good versus great? It is straightforward to write a program that accomplishes our needs, but how do we write our code such that it can handle future needs, such as a 10x or 100x in the amount of data needed to be processed?
 
-As a data scientist without a computer science background, I'm most familiar with dataframes. But as I was transitioning to machine learning engineering, I was exposed to much more fundamental structures.
+One major differentiator is in the proper choice of **data structure**, or method for organizing data. This post will cover them.
 
 ## Table of contents
 * [**Data structures**](#data-structures)
@@ -46,7 +46,7 @@ Here's a simple analogy. Imagine you have a hamper of clean laundry and need to 
 An alternate method would be to neatly arrange your clothes in your dresser and closet. This method would have a _slow write time_ but _fast read time_, as it would take longer to put away your clothes (especially compared to dumping them on the ground), but when you need a particular item you know exactly where to find it and it's easy to access.
 
 
-(Maybe recreate that common plot of the different time complexities)
+<img src="{{  site.baseurl  }}/images/computer_science/big_o.png">
 
 ### Abstract data structures
 There are multiple ways to accomplish a task. Let's say you have a stack. How do you do this?
@@ -288,7 +288,11 @@ Whenever dealing with Leetcode questions, I like to draw out examples and make s
 
 ## Trees
 ### Theory
-A tree is similar to a linked list, but rather than having only one next node, you can have several. A common type of tree is a _binary_ tree, where each node has at most children.
+A tree is similar to a linked list, but rather than having only one next node, you can have several. A common type of tree is a _binary_ tree, where each node has at most two children.
+
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/tree1.png" height="75%" width="75%">
+</center>
 
 ### Implementation
 {% include header-python.html %}
