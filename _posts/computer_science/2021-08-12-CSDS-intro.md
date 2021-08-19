@@ -1,17 +1,17 @@
 ---
 layout: post
-title: Fundamental data structures
+title: Intro to data structures
 author: matt_sosna
 ---
 
-What makes a piece of software good versus great? It is straightforward to write a program that accomplishes our needs, but how do we write our code such that it can handle future needs, such as a 10x or 100x in the amount of data needed to be processed?
+What makes a piece of software good versus great? It's straightforward to write a program that accomplishes our needs, but how do we write our code such that it can handle _future_ needs, such as a 10x or 100x in the amount of data needed to be processed?
 
 One major differentiator is in the proper choice of **data structure**, or method for organizing data. This post will cover them.
 
 ## Table of contents
-* [**Data structures**](#data-structures)
-  - [Big O](#big-o)
-  - [Abstract data structures](#abstract-data-structures)
+* [**Getting started**](#getting-started)
+  - [Data structures vs. abstract data types](#data-structures-vs-abstract-data-types)
+  - [Big-O notation](#big-o-notation)
 * [**Arrays**](#arrays)
   - [Theory](#theory)
   - [Implementation](#implementation)
@@ -37,7 +37,16 @@ One major differentiator is in the proper choice of **data structure**, or metho
   - [Implementation](#implementation-5)
   - [Questions](#questions-5)
 
-## Data structures
+## Getting started
+Before we can cover the types of data structures, we need to understand what they are and how to compare them. 
+
+### Data structures vs. abstract data types
+There are multiple ways to accomplish a task. Let's say you have a stack. How do you do this?
+
+How will we actually use our data structure? A queue can be accomplished with a linked list or array, for example.
+
+* Stacks, queues
+
 ### Big-O notation
 What makes a data structure better or worse than another? A data structure is a way of organizing data, and depending on how you're planning on interacting with that data, structures vary tremendously in how efficiently you can _read_ and _write_ to them.
 
@@ -45,13 +54,23 @@ Here's a simple analogy. Imagine you have a hamper of clean laundry and need to 
 
 An alternate method would be to neatly arrange your clothes in your dresser and closet. This method would have a _slow write time_ but _fast read time_, as it would take longer to put away your clothes (especially compared to dumping them on the ground), but when you need a particular item you know exactly where to find it and it's easy to access.
 
+It's not enough to say how fast a certain operation or algorithm takes
+
+We need a common scale to
 
 <img src="{{  site.baseurl  }}/images/computer_science/big_o.png">
 
-### Abstract data structures
-There are multiple ways to accomplish a task. Let's say you have a stack. How do you do this?
+One example of a runtime on the high end is $O(2^n)$. Finding all subsets of an array is an algorithm with this time complexity. For each element in the set, we have two options: include or exclude the element. A set of three elements, e.g. `[A,B,C,D]`, will therefore have $2^4$, or sixteen, subsets:
+* `[]`, `[A]`, `[B]`, `[C]`, `[D]`
+* `[A,B]`, `[A,C]`, `[A,D]`, `[B,C]`, `[B,D]`, `[C,D]`
+* `[A,B,C]`, `[A,B,D]`, `[A,C,D]`, `[B,C,D]`
+* `[A,B,C,D]`
 
-* Stacks, queues
+But an even worse runtime is $O(n!)$. Permutations are a classic example of n-factorial complexity. For each element in the set, we can rearrange all following elements. Our previous array `[A,B,C,D]` will have $4 * 3 * 2 * 1$, or 24, permutations:
+* `[A,B,C,D]`, `[A,B,D,C]`, `[A,C,B,D]`, `[A,C,D,B]`, `[A,D,B,C]`, `[A,D,C,B]`
+* `[B,A,C,D]`, `[B,A,D,C]`, `[B,C,A,D]`, `[B,C,D,A]`, `[B,D,C,A]`, `[B,D,A,C]`
+* `[C,A,B,D]`, `[C,A,D,B]`, `[C,B,A,D]`, `[C,B,D,A]`, `[C,D,B,A]`, `[C,D,A,B]`
+* `[D,A,B,C]`, `[D,A,C,B]`, `[D,B,A,C]`, `[D,B,C,A]`, `[D,C,A,B]`, `[D,C,B,A]`
 
 
 ## Arrays
@@ -285,14 +304,45 @@ Whenever dealing with Leetcode questions, I like to draw out examples and make s
 # Fast: B -> D -> null
 ```
 
+Here's another example: whether the list has a cycle. We can't use `while fast and fast.next` anymore, since we would never exit the loop for a list with a cycle. Rather, we'll again instantiate `slow` and `fast` to the first and second nodes, then move them through the list at different speeds until they match. If we reach the end of the list, we return `False`; if the two pointers ever point to the same node, we return `True`.
+
+{% include header-python.html %}
+```python
+def has_cycle(head: ListNode) -> bool:
+    """
+    Determines whether a linked list has a cycle
+    """
+    if not head:
+        return False
+
+    slow = head
+    fast = head.next
+
+    while slow != fast:
+
+        # Reach end of list
+        if not fast or fast.next:
+            return False
+
+        slow = slow.next
+        fast = fast.next.next
+
+    return True
+```
+
+
 
 ## Trees
 ### Theory
 A tree is similar to a linked list, but rather than having only one next node, you can have several. A common type of tree is a _binary_ tree, where each node has at most two children.
 
+There are various types of binary trees. Below is a **binary search tree**. For every node in the tree, every node in its _left_ subtree must contain a smaller value, and every node in its _right_ subtree must contain a larger value.
+
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/tree1.png" height="75%" width="75%">
+<img src="{{  site.baseurl  }}/images/computer_science/tree1.png" height="65%" width="65%">
 </center>
+
+Searching a binary search tree for a value takes on average $O(logn)$ time, meaning they can find a given value among millions or billions of records very rapidly. Databases often use binary search on table indices to efficiently find queried terms.
 
 ### Implementation
 {% include header-python.html %}
@@ -436,5 +486,31 @@ def get_n_provinces(self, mat: List[List[int]]) -> int:
 A hash map is a data structure with $O(1)$ retrieval time, pretty much regardless of how many elements there are (assuming you have a good hash function). The idea is that for any input, you pass it through a hash function to get some output. Then you look at a location in memory corresponding to that hashed output. If your hash function can produce enough unique hashes, you can instantly retrieve any key's value.
 
 ### Implementation
+
+{% include header-python.html %}
+```python
+from string import ascii_lowercase as alphabet
+
+def hash_function(name: str) -> int:
+    """
+    Converts a string to a number distributed in the range 0-9
+    """
+    output = sum([alphabet.index(char.lower()) for char in name])
+
+    # Add depending on even/odd
+    output += 1 if len(name) % 2 == 0 else 0
+
+    # Multiply depending on first char
+    char_idx = alphabet.index(name[0].lower())
+
+    if char_idx < 10:
+        output *= 3
+    elif char_idx < 20:
+        output *= 4
+    else:
+        output *= 5
+
+    return output % 10
+```
 
 ### Questions
