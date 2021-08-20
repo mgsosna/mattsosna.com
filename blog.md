@@ -7,7 +7,9 @@ permalink: /blog/
 ## Topics
 - [**Data science**](#data-science)
   - [How to enter data science](#how-to-enter-data-science)
+  - [Careers](#careers)
   - [Statistics](#statistics)
+  - [Theory](#theory)
   - [External](#external)
   - [Projects](#projects)
   - [Data engineering](#data-engineering)
@@ -43,6 +45,7 @@ permalink: /blog/
 1. [Visualizing the danger of multiple t-test comparisons]({{ site.baseurl }}/T-tests-vs-ANOVA)
 2. [Linear regression via gradient descent]({{ site.baseurl }}/LR-grad-desc)
 3. [A deep dive on ARIMA models]({{  site.baseurl  }}/ARIMA-deep-dive)
+  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [August 19 editors' picks](https://towardsdatascience.com/which-data-science-skill-are-you-looking-to-level-up-cbe1d097624b)
 
 ### Theory
 1. [Fish schools as ensemble learning algorithms]({{  site.baseurl  }}/Collective-behavior)
