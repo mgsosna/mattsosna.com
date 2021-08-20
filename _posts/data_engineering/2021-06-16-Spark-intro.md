@@ -240,8 +240,8 @@ def calculate_pi(n_points, n_chunks=11):
 
     for _ in np.linspace(0, n_points, n_chunks):
 
-        x = np.random.rand(n_points)
-        y = np.random.rand(n_points)
+        x = np.random.rand(int(n_points/n_chunks))
+        y = np.random.rand(int(n_points/n_chunks))
 
         means.append(np.mean(np.sqrt(x**2 + y**2) < 1))
 
@@ -256,7 +256,7 @@ from pyspark.sql import SparkSession
 spark = SparkSession.builder.getOrCreate()
 
 n_estimators = 100
-n_samples = 100000
+n_samples = 1000000
 
 rdd = spark.sparkContext.parallelize(range(n_estimators))
 
