@@ -4,7 +4,7 @@ title: Intro to data structures
 author: matt_sosna
 ---
 
-What makes a piece of software good versus great? It's straightforward to write a program that accomplishes our needs, but how do we write our code such that it can handle _future_ needs, such as a 10x or 100x in the amount of data needed to be processed?
+What makes a piece of software good versus great? It's often straightforward to write a program that accomplishes some need, but how do we write our code such that it can handle _future_ needs, such as a 10x or 100x in the amount of data needed to be processed?
 
 One major differentiator is in the proper choice of **data structure**, or method for organizing data. This post will cover them.
 
@@ -38,7 +38,7 @@ One major differentiator is in the proper choice of **data structure**, or metho
   - [Questions](#questions-5)
 
 ## Getting started
-Before we can cover the types of data structures, we need to understand what they are and how to compare them. 
+Before we can cover the types of data structures, we need to understand what they are and how to compare them.
 
 ### Data structures vs. abstract data types
 There are multiple ways to accomplish a task. Let's say you have a stack. How do you do this?
@@ -54,9 +54,7 @@ Here's a simple analogy. Imagine you have a hamper of clean laundry and need to 
 
 An alternate method would be to neatly arrange your clothes in your dresser and closet. This method would have a _slow write time_ but _fast read time_, as it would take longer to put away your clothes (especially compared to dumping them on the ground), but when you need a particular item you know exactly where to find it and it's easy to access.
 
-It's not enough to say how fast a certain operation or algorithm takes
-
-We need a common scale to
+It's not enough to say how fast a certain operation or algorithm takes on our computer. What if your neighbor has a slower or faster computer? Rather, we need a common scale to be able to compare algorithms. For this, we use Big-O notation. This is a measure of the worst-case scenario.
 
 <img src="{{  site.baseurl  }}/images/computer_science/big_o.png">
 
