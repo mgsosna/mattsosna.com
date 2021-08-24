@@ -409,12 +409,21 @@ class Solution:
         self.traverse(node.right)
 ```
 
-Changing the traversal between pre-order, in-order, and post-order is simply a matter of rearranging lines 16-18
+Changing the traversal between pre-order, in-order, and post-order is simply a matter of rearranging lines 16-18. The `self.answer.append(node.val)` comes first in pre-order, second in in-order, and third in post-order. The rest of the code remains unchanged. Simple!
 
 
 ## Graphs
 ### Theory
 Graphs often represented as adjacency matrices. Let's say you want to describe the network of friend connections on Facebook. A link between two people means they're friends. If you have 5 people, you'd have 5x5 matrix where the five people were on the rows and columns, and each cell corresponded to whether there was a link between the row and column person. More formally, we'd say $A_{ij} = 1$ if the individual in row $i$ and individual in column $j$ were connected, and $A_{ij} = 0$ if they're not.
+
+Here's an example of a graph.
+
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/graph1.png" height="50%" width="50%">
+</center>
+
+We would represent this graph with the following adjacency matrix.
+
 
 ### Implementation
 Implementation is straightforward since we're only dealing with a matrix of 1s and 0s.
@@ -444,7 +453,12 @@ class Graph:
 
 
 ### Questions
-A common graph question is to return the number
+A common graph question is to return the number of connected components, or sub-clusters. For example, in the below graph, we can identify three distinct components.
+
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/graph2.png" height="40%" width="40%">
+</center>
+
 
 {% include header-python.html %}
 ```python
