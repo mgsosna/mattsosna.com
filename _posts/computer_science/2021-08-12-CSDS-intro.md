@@ -4,9 +4,9 @@ title: Intro to data structures
 author: matt_sosna
 ---
 
-What makes a piece of software good versus great? It's often straightforward to write a program that accomplishes some need, but how do we write our code such that it can handle _future_ needs, such as a 10x or 100x in the amount of data needed to be processed?
+What makes a piece of software good versus great? Solving for the present is usually straightforward $-$ there are usually dozens of ways to write a script that dutifully performs some task. But how do we write our code so that it's ready for the _future_, one where we may be faced with 10x or 100x the amount of data to process? And how do we create a program that someone else can quickly learn?
 
-One major differentiator is in the proper choice of **data structure**, or method for organizing data. This post will cover them.
+One major differentiator between good and great code is the proper choice of **data structures**, or methods for organizing data. Consider these a set of tools whose utility vary depending on how, specifically, we need to interact with data. In this post, we'll cover a set of data structures that can handle a range of use cases.
 
 ## Table of contents
 * [**Getting started**](#getting-started)
@@ -38,14 +38,12 @@ One major differentiator is in the proper choice of **data structure**, or metho
   - [Questions](#questions-5)
 
 ## Getting started
-Before we can cover the types of data structures, we need to understand what they are and how to compare them.
+Before we can cover the types of data structures, we need to understand what they are and how to compare them. We'll start by distinguishing between the tools (data structures) and how we use them (abstract data types), as well as Big-O notation, a metric for comparing the read and write speed of data structures and algorithms.
 
 ### Data structures vs. abstract data types
-There are multiple ways to accomplish a task. Let's say you have a stack. How do you do this?
+In programming $-$ as well as in real life! $-$ there are generally many ways to accomplish a task. Let's say, for example, that you want to visit your friend across town. You can ride a bike, scooter, or motorcycle to get there. Here, the _vehicle_ is an abstract data type $-$ a means of transportation. _How that's actually implemented_ is the data structure $-$ here the bike, scooter, or motorcycle.
 
-How will we actually use our data structure? A queue can be accomplished with a linked list or array, for example.
-
-* Stacks, queues
+We'll cover each of these concepts in a moment, but here's a programming example if you're itching for something more relevant. A queue is an abstract data type that can have elements added sequentially, as well as elements removed _in the order they were added_. There are multiple ways to actually implement this, such as with a linked list or array. 
 
 ### Big-O notation
 What makes a data structure better or worse than another? A data structure is a way of organizing data, and depending on how you're planning on interacting with that data, structures vary tremendously in how efficiently you can _read_ and _write_ to them.
