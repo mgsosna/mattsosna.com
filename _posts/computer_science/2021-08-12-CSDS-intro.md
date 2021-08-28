@@ -190,6 +190,8 @@ We use a `while` rather than a `for` loop because we're modifying the array as w
 
 We also don't return anything because we're modifying the array in-place.
 
+Also, we'll likely want to talk about stacks and queues.
+
 
 ## Linked lists
 ### Theory
