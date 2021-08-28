@@ -4,14 +4,17 @@ title: Intro to data structures
 author: matt_sosna
 ---
 
-What makes a piece of software good versus great? Solving for the present is usually straightforward $-$ there are usually dozens of ways to write a script that dutifully performs some task. But how do we write our code so that it's ready for the _future_, one where we may be faced with 10x or 100x the amount of data to process? And how do we create a program that someone else can quickly learn?
+What makes a piece of software good versus great? Solving for our _current_ needs is usually straightforward: there are often dozens of ways to write a script that dutifully performs some task. But how do we write code that is ready for the _future_, one where we may be faced with 10x or 100x the amount of data to process? And how do we create a program that someone else can quickly learn?
 
-One major differentiator between good and great code is the proper choice of **data structures**, or methods for organizing data. Consider these a set of tools whose utility vary depending on how, specifically, we need to interact with data. In this post, we'll cover a set of data structures that can handle a range of use cases.
+One major differentiator between good and great code is the proper choice of **data structures**, or methods for organizing data. Consider these a set of tools whose utility vary depending on how, specifically, we need to interact with data. In this post, we'll cover a set of data structures that can handle a range of use cases. We'll then implement each structure in Python and answer a few Leetcode questions involving each type.
+
+Note: this post is aimed at people who understand Python but don't necessarily have a computer science background.
 
 ## Table of contents
 * [**Getting started**](#getting-started)
   - [Data structures vs. abstract data types](#data-structures-vs-abstract-data-types)
   - [Big-O notation](#big-o-notation)
+  - [Data types](#data-types)
 * [**Arrays**](#arrays)
   - [Theory](#theory)
   - [Implementation](#implementation)
@@ -43,7 +46,7 @@ Before we can cover the types of data structures, we need to understand what the
 ### Data structures vs. abstract data types
 In programming $-$ as well as in real life! $-$ there are generally many ways to accomplish a task. Let's say, for example, that you want to visit your friend across town. You can ride a bike, scooter, or motorcycle to get there. Here, the _vehicle_ is an abstract data type $-$ a means of transportation. _How that's actually implemented_ is the data structure $-$ here the bike, scooter, or motorcycle.
 
-We'll cover each of these concepts in a moment, but here's a programming example if you're itching for something more relevant. A queue is an abstract data type that can have elements added sequentially, as well as elements removed _in the order they were added_. There are multiple ways to actually implement this, such as with a linked list or array. 
+We'll cover each of these concepts in a moment, but here's a programming example if you're itching for something more relevant. A queue is an abstract data type that can have elements added sequentially, as well as elements removed _in the order they were added_. There are multiple ways to actually implement this, such as with a linked list or array.
 
 ### Big-O notation
 What makes a data structure better or worse than another? A data structure is a way of organizing data, and depending on how you're planning on interacting with that data, structures vary tremendously in how efficiently you can _read_ and _write_ to them.
@@ -54,7 +57,9 @@ An alternate method would be to neatly arrange your clothes in your dresser and 
 
 It's not enough to say how fast a certain operation or algorithm takes on our computer. What if your neighbor has a slower or faster computer? Rather, we need a common scale to be able to compare algorithms. For this, we use Big-O notation. This is a measure of the worst-case scenario.
 
-<img src="{{  site.baseurl  }}/images/computer_science/big_o.png">
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/big_o.png" height="80%" width="80%">
+</center>
 
 One example of a runtime on the high end is $O(2^n)$. Finding all subsets of an array is an algorithm with this time complexity. For each element in the set, we have two options: include or exclude the element. A set of three elements, e.g. `[A,B,C,D]`, will therefore have $2^4$, or sixteen, subsets:
 * `[]`, `[A]`, `[B]`, `[C]`, `[D]`
@@ -68,10 +73,35 @@ But an even worse runtime is $O(n!)$. Permutations are a classic example of n-fa
 * `[C,A,B,D]`, `[C,A,D,B]`, `[C,B,A,D]`, `[C,B,D,A]`, `[C,D,B,A]`, `[C,D,A,B]`
 * `[D,A,B,C]`, `[D,A,C,B]`, `[D,B,A,C]`, `[D,B,C,A]`, `[D,C,A,B]`, `[D,C,B,A]`
 
+### Data types
+Finally, we should briefly mention the fundamental _data types_ before we cover data structures. If a data structure is a collection of data, what _types_ of data can we have in our structures? There are a few fundamental data types:
+
+**Integers** are whole numbers, like `1`, `-5`, and `256`. In languages besides Python, you can be more specific with the type of integer, such as signed or unsigned, and the number of bits an integer can hold. This corresponds to the amount of memory your program will reserve, and if you're not careful, you can _overflow_ or _underflow_.
+
+**Floats** are numbers with decimal places, like `1.2`, `0.14`. In Python, this includes numbers defined with scientific notation, like `1e5`.
+
+**Chars** are letters, like `a`, `b`, `c`. A collection of them is a string (which technically is an array of chars). Also includes the representations of non-alphabetical elements, like `0` or `?`.
+
+### Memory?
+
 
 ## Arrays
 ### Theory
-Coming from Python, it's a little hard to understand the limitations of arrays. But their limitations are a central aspect of languages like Java and C. In Python, a `list` is actually a series of pointers to different locations in memory that can still be easily indexed. In terms of usability, it combines the best elements of arrays and linked lists.
+Arrays are one of the most fundamental data structures in computer science: an ordered series of elements. When you assign a scalar variable, you point to one location in memory. An array, meanwhile, is a set of consecutive locations in memory. Below, the gray boxes are memory, while the orange region is our array of numbers.
+
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/array1.png" height="80%" width="80%">
+</center>
+
+We can define an array in C as such. Note how we specify the size of the array when we define it.
+
+{% include header-c.html %}
+```c
+int candidates[6] = [4, 8, 15, 16, 23, 42];
+```
+
+
+Python doesn't have a native array type, but they're a central data structure for lower-level languages like Java and C. In Python, a `list` is actually a series of pointers to different locations in memory that can still be easily indexed. In terms of usability, it combines the best elements of arrays and linked lists.
 
 Reading from an array takes $O(1)$ time because we know exactly where in the array to go. Searching, meanwhile, is $O(n)$ because in the worst case, we need to scan through the entire array.
 
