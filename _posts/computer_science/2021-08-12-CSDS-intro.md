@@ -4,9 +4,9 @@ title: Intro to data structures
 author: matt_sosna
 ---
 
-What makes a piece of software good versus great? Solving for our _current_ needs is usually straightforward: there are often dozens of ways to write a script that dutifully performs some task. But how do we write code that is ready for the _future_, one where we may be faced with 10x or 100x the amount of data to process? And how do we create a program that someone else can quickly learn?
+Retrieving and storing data are key components of any code we write. This data $-$ a list of IDs, pairs of names and addresses, sets of relationships between users, etc. $-$ can be stored in dozens of ways. But _how_ we organize our data will determine whether our script requires one hour to run, or one hundred.
 
-One major differentiator between good and great code is the proper choice of **data structures**, or methods for organizing data. Consider these a set of tools whose utility vary depending on how, specifically, we need to interact with data. In this post, we'll cover a set of data structures that can handle a range of use cases. We'll then implement each structure in Python and answer a few Leetcode questions involving each type.
+One major differentiator between code that "gets the job done" and code that can scale with our needs is the proper choice of **data structures**, or methods for organizing data. Consider these a set of tools whose utility vary depending on how, specifically, we need to interact with data. In this post, we'll cover a set of data structures that can handle a range of use cases. We'll then implement each structure in Python and answer a few Leetcode questions involving each type.
 
 Note: this post is aimed at people who understand Python but don't necessarily have a computer science background.
 
@@ -367,7 +367,7 @@ A tree is similar to a linked list, but rather than having only one next node, y
 There are various types of binary trees. Below is a **binary search tree**. For every node in the tree, every node in its _left_ subtree must contain a smaller value, and every node in its _right_ subtree must contain a larger value.
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/tree1.png" height="65%" width="65%">
+<img src="{{  site.baseurl  }}/images/computer_science/tree1.png" height="60%" width="60%">
 </center>
 
 Searching a binary search tree for a value takes on average $O(logn)$ time, meaning they can find a given value among millions or billions of records very rapidly. Databases often use binary search on table indices to efficiently find queried terms.
@@ -449,11 +449,19 @@ Graphs often represented as adjacency matrices. Let's say you want to describe t
 Here's an example of a graph.
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/graph1.png" height="50%" width="50%">
+<img src="{{  site.baseurl  }}/images/computer_science/graph1.png" height="40%" width="40%">
 </center>
 
-We would represent this graph with the following adjacency matrix.
+We would represent this graph with the following adjacency matrix. Note how the matrix is symmetric along the diagonal because connections are undirected: if A is connected to B, then B is connected to A. The diagonal is also all zeros because there are no self-connections: none of the nodes in this graph are connected to themselves.
 
+$$
+\begin{bmatrix}
+0 & 1 & 1 & 0\\
+1 & 0 & 1 & 0\\
+1 & 1 & 0 & 1\\
+0 & 0 & 1 & 0
+\end{bmatrix}
+$$
 
 ### Implementation
 Implementation is straightforward since we're only dealing with a matrix of 1s and 0s.
