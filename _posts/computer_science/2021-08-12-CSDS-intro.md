@@ -4,7 +4,7 @@ title: Intro to data structures
 author: matt_sosna
 ---
 
-Retrieving and storing data are key components of any code we write. This data $-$ a list of IDs, pairs of names and addresses, sets of relationships between users, etc. $-$ can be stored in dozens of ways. But _how_ we organize our data will determine whether our script requires one hour to run, or one hundred.
+Retrieving and storing data are key components of any code we write. This data $-$ a list of IDs, pairs of names and addresses, sets of relationships between users, etc. $-$ can be stored in dozens of ways. But _how_ we organize our data, especially when we're processing gigabytes or terabytes of information, may determine whether our script requires one hour to run, or one hundred.
 
 One major differentiator between code that "gets the job done" and code that can scale with our needs is the proper choice of **data structures**, or methods for organizing data. Consider these a set of tools whose utility vary depending on how, specifically, we need to interact with data. In this post, we'll cover a set of data structures that can handle a range of use cases. We'll then implement each structure in Python and answer a few Leetcode questions involving each type.
 
@@ -13,7 +13,7 @@ Note: this post is aimed at people who understand Python but don't necessarily h
 ## Table of contents
 * [**Getting started**](#getting-started)
   - [Data structures vs. abstract data types](#data-structures-vs-abstract-data-types)
-  - [Big-O notation](#big-o-notation)
+  - [Big O notation](#big-o-notation)
   - [Data types](#data-types)
 * [**Arrays**](#arrays)
   - [Theory](#theory)
@@ -41,22 +41,49 @@ Note: this post is aimed at people who understand Python but don't necessarily h
   - [Questions](#questions-5)
 
 ## Getting started
-Before we can cover the types of data structures, we need to understand what they are and how to compare them. We'll start by distinguishing between the tools (data structures) and how we use them (abstract data types), as well as Big-O notation, a metric for comparing the read and write speed of data structures and algorithms.
+Before we can dive into the differences between arrays and linked lists, we need to understand what exactly data structures are and how to compare them. We'll start by distinguishing between the tools (data structures) and how we use them (abstract data types), as well as Big-O notation, a metric for comparing the read and write speed of data structures and algorithms.
 
 ### Data structures vs. abstract data types
-In programming $-$ as well as in real life! $-$ there are generally many ways to accomplish a task. Let's say, for example, that you want to visit your friend across town. You can ride a bike, scooter, or motorcycle to get there. Here, the _vehicle_ is an abstract data type $-$ a means of transportation. _How that's actually implemented_ is the data structure $-$ here the bike, scooter, or motorcycle.
+In programming $-$ as well as in real life! $-$ there are generally many ways to accomplish a task. Let's say, for example, that you want to visit your friend across town. You have at your disposal a bike, scooter, and motorcycle. Here, the _vehicle_ is an **abstract data type**: a means of transportation. _How that's actually implemented_ is the data structure $-$ here the bike, scooter, or motorcycle.
 
-We'll cover each of these concepts in a moment, but here's a programming example if you're itching for something more relevant. A queue is an abstract data type that can have elements added sequentially, as well as elements removed _in the order they were added_. There are multiple ways to actually implement this, such as with a linked list or array.
-
-### Big-O notation
-What makes a data structure better or worse than another? A data structure is a way of organizing data, and depending on how you're planning on interacting with that data, structures vary tremendously in how efficiently you can _read_ and _write_ to them.
+### Big O notation
+When deciding between data structures to use for an abstract data type, or even the specific data type to use for a given task, we need a way to compare the efficiency of each tool. It's not enough to say how fast a certain operation or algorithm takes on our computer. What if your neighbor has a slower or faster computer? Rather, we need a common scale to be able to compare algorithms. For this, we use Big-O notation. This is a measure of the worst-case scenario.
 
 Here's a simple analogy. Imagine you have a hamper of clean laundry and need to put away the clothes. A method with _low write time_ but _high read time_ would be to dump all the clothes into a pile on the ground. While this is blazing fast, it will then take extra time to actually find the shirt you want because you have to search through the pile.
 
 An alternate method would be to neatly arrange your clothes in your dresser and closet. This method would have a _slow write time_ but _fast read time_, as it would take longer to put away your clothes (especially compared to dumping them on the ground), but when you need a particular item you know exactly where to find it and it's easy to access.
 
-It's not enough to say how fast a certain operation or algorithm takes on our computer. What if your neighbor has a slower or faster computer? Rather, we need a common scale to be able to compare algorithms. For this, we use Big-O notation. This is a measure of the worst-case scenario.
+We can use [**Big O notation**](https://en.wikipedia.org/wiki/Big_O_notation) to quantify how long an algorithm takes as a function of the amount of data it processes. An algorithm that takes 1 step for every element of data, for example, would have $O(n)$ time complexity $-$ the amount of time for the algorithm to run is a linear function of the amount of data. Here's an example of such an algorithm.
 
+{% include header-python.html %}
+```python
+# O(n) time complexity
+def print_num(arr):
+    for num in arr:
+        print(num)
+```
+
+If we processed every pair of elements in the array, meanwhile, our complexity would become $O(n^2)$.
+
+{% include header-python.html %}
+```python
+# O(n^2) time complexity
+def print_pairs(arr):
+    for num1 in arr:
+        for num2 in arr:
+            print(num1, num2)
+```
+
+That's pretty bad. In the best case, our algorithm takes _constant_ time, i.e. it has no dependence on the amount of data. For example, printing the first value of an array will always (in theory) take the same time, regardless of the size of the array. (This holds true for any index in the array - one major advantage of arrays is this constant lookup time by index.)
+
+{% include header-python.html %}
+```python
+# O(1) time
+def print_first(arr):
+    print(arr[0])
+```
+
+More broadly, we can use a plot like the one below to quantify the efficiency of various algorithms.
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/big_o.png" height="80%" width="80%">
 </center>
