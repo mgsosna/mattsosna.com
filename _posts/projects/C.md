@@ -6,6 +6,8 @@ author: matt_sosna
 
 Curious to see that you can see the values stored at a location in memory outside your array.
 
+If you're on a Mac, you can compile your code in the Terminal with `cc <filename.c> -o <program_name>` and then run it with `./<program_name>`.
+
 Here's the standard, what we should expect.
 
 {% include header-c.html %}
