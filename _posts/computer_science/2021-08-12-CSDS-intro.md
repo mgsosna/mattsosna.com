@@ -127,12 +127,12 @@ We can define an array in C as such. Note how we specify the size of the array w
 int candidates[6] = [4, 8, 15, 16, 23, 42];
 ```
 
-
 Python doesn't have a native array type, but they're a central data structure for lower-level languages like Java and C. In Python, a `list` is actually a series of pointers to different locations in memory that can still be easily indexed. In terms of usability, it combines the best elements of arrays and linked lists.
 
 Reading from an array takes $O(1)$ time because we know exactly where in the array to go. Searching, meanwhile, is $O(n)$ because in the worst case, we need to scan through the entire array.
 
 ### Implementation
+If we wanted to implement an array class in Python, we could do the following:
 
 {% include header-python.html %}
 ```python
@@ -213,9 +213,7 @@ def duplicate_zeros(arr: List[int]) -> None:
         i += 1
 ```
 
-We use a `while` rather than a `for` loop because we're modifying the array as we move through it, so we want to manually control our index `i`. This is important when we're inserting zeros because we either will double-count our zero (if we insert into the array at or past our index), or the array will move without us if we insert it before. Our logic is therefore that we progress through our array like a normal `for` loop, incrementing `i` each time. But if we encounter a zero, we insert a zero and then increment `i` again, skipping the zero we added to avoid double-counting.
-
-We also don't return anything because we're modifying the array in-place.
+We use a `while` rather than a `for` loop because we're modifying the array as we move through it, so we want to manually control our index `i`. This is important when we're inserting zeros because we either will double-count our zero (if we insert into the array at or past our index), or the array will move without us if we insert it before. Our logic is therefore that we progress through our array like a normal `for` loop, incrementing `i` each time. But if we encounter a zero, we insert a zero and then increment `i` again, skipping the zero we added to avoid double-counting. We also don't return anything because we're modifying the array in-place.
 
 Also, we'll likely want to talk about stacks and queues.
 
