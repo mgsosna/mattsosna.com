@@ -6,9 +6,12 @@ author: matt_sosna
 
 Retrieving and storing data are key components of any code we write. This data $-$ a list of IDs, pairs of names and addresses, sets of relationships between users, etc. $-$ can be stored in dozens of ways. But _how_ we organize our data, especially when we're processing gigabytes or terabytes of information, may determine whether our script requires one hour to run, or one hundred.
 
-One major differentiator between code that "gets the job done" and code that can scale with our needs is the proper choice of **data structures**, or methods for organizing data. Consider these a set of tools whose utility vary depending on how, specifically, we need to interact with data. In this post, we'll cover a set of data structures that can handle a range of use cases. We'll then implement each structure in Python and answer a few Leetcode questions involving each type.
+One major differentiator between code that works "for now" and code that can scale with our needs is the proper choice of **data structures**, or methods for organizing data. Data structures $-$ and the algorithms with which we interact with them $-$ are a set of tools whose utility depend on how, specifically, we need to interact with our data.
 
-Note: this post is aimed at people who understand Python but don't necessarily have a computer science background.
+There is no "perfect" structure: as with anything in life, there are tradeoffs we need to navigate. But understanding these tradeoffs will make you a stronger programmer, and you'll gain a better understanding of both your computer and how exactly to solve programming challenges.
+
+[Why should we care? Quora.](https://www.quora.com/What-is-the-importance-of-designing-the-right-data-structure)
+
 
 ## Table of contents
 * [**Getting started**](#getting-started)
