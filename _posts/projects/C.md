@@ -110,3 +110,35 @@ When we compile this, we get the warning for `lost4[3]`. But we can then move fo
 4 8 15 16 23 42
 4 8 15 0 6 0 %
 ```
+
+## Implementing a linked list
+This is a list of key-value pairs, where the key is a string and the value is an integer.
+
+{% include header-c.html %}
+```c
+struct node {
+    char key;
+    int value;
+    struct node *next;
+};
+
+struct node *head = NULL;
+struct node *curr = NULL;
+```
+
+We can build a list like this.
+
+```c
+void insertBack(char key, int value) {
+
+    // Traverse the list
+    struct node *ptr = head;
+
+    while(ptr->next != NULL) {
+        ptr = ptr->next
+    }
+
+    // more steps...
+    // ...
+}
+```
