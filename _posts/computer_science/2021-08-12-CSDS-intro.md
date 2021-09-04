@@ -6,12 +6,9 @@ author: matt_sosna
 
 Retrieving and storing data are key components of any code we write. This data $-$ a list of IDs, pairs of names and addresses, sets of relationships between users, etc. $-$ can be stored in dozens of ways. But _how_ we organize our data, especially when we're processing gigabytes or terabytes of information, may determine whether our script requires one hour to run, or one hundred.
 
-One major differentiator between code that works "for now" and code that can scale with our needs is the proper choice of **data structures**, or methods for organizing data. Data structures $-$ and the algorithms with which we interact with them $-$ are a set of tools whose utility depend on how, specifically, we need to interact with our data.
+One major differentiator between code that works "for now" versus code _that can scale with our needs_ is the proper choice of **data structures**, or methods for organizing data. Data structures $-$ and the algorithms with which we interact with them $-$ are a set of tools whose utility depend on how, specifically, we need to interact with our data.
 
-There is no "perfect" structure: as with anything in life, there are tradeoffs we need to navigate. But understanding these tradeoffs will make you a stronger programmer, and you'll gain a better understanding of both your computer and how exactly to solve programming challenges.
-
-[Why should we care? Quora.](https://www.quora.com/What-is-the-importance-of-designing-the-right-data-structure)
-
+There is no "perfect" structure: as with anything in life, there are tradeoffs we need to navigate. But understanding these tradeoffs will make you a stronger programmer, as you'll learn how exactly your machine interacts with your data. This post will cover the most common data structures in computer science, as well as implement them in C and Python. We'll then demonstrate their use cases with some [Leetcode](https://leetcode.com/) questions.<sup>[[1]](#1-intro)</sup>
 
 ## Table of contents
 * [**Getting started**](#getting-started)
@@ -44,17 +41,17 @@ There is no "perfect" structure: as with anything in life, there are tradeoffs w
   - [Questions](#questions-5)
 
 ## Getting started
-Before we can dive into the differences between arrays and linked lists, we need to understand what exactly data structures are and how to compare them. We'll start by distinguishing between the tools (data structures) and how we use them (abstract data types), as well as Big-O notation, a metric for comparing the read and write speed of data structures and algorithms.
+Before we can dive into the differences between arrays and linked lists, we need to understand what exactly data structures are and how to compare them. We'll start by distinguishing the tools (data structures) from how we use them (abstract data types), as well as Big-O notation, a metric for comparing the speed of operations on data structures.
 
 ### Data structures vs. abstract data types
 In programming $-$ as well as in real life! $-$ there are generally many ways to accomplish a task. Let's say, for example, that you want to visit your friend across town. You have at your disposal a bike, scooter, and motorcycle. Here, the _vehicle_ is an **abstract data type**: a means of transportation. _How that's actually implemented_ is the data structure $-$ here the bike, scooter, or motorcycle.
 
-### Big O notation
-When deciding between data structures to use for an abstract data type, or even the specific data type to use for a given task, we need a way to compare the efficiency of each tool. It's not enough to say how fast a certain operation or algorithm takes on our computer. What if your neighbor has a slower or faster computer? Rather, we need a common scale to be able to compare algorithms. For this, we use Big-O notation. This is a measure of the worst-case scenario.
-
-Here's a simple analogy. Imagine you have a hamper of clean laundry and need to put away the clothes. A method with _low write time_ but _high read time_ would be to dump all the clothes into a pile on the ground. While this is blazing fast, it will then take extra time to actually find the shirt you want because you have to search through the pile.
+Here's another analogy. Imagine you have a hamper of clean laundry and need to put away the clothes. A method with _low write time_ but _high read time_ would be to dump all the clothes into a pile on the ground. While this is blazing fast, it will then take extra time to actually find the shirt you want because you have to search through the pile.
 
 An alternate method would be to neatly arrange your clothes in your dresser and closet. This method would have a _slow write time_ but _fast read time_, as it would take longer to put away your clothes (especially compared to dumping them on the ground), but when you need a particular item you know exactly where to find it and it's easy to access.
+
+### Big O notation
+When deciding between data structures to use for an abstract data type, or even the specific data type to use for a given task, we need a way to compare the efficiency of each tool. It's not enough to say how fast a certain operation or algorithm takes on our computer. What if your neighbor has a slower or faster computer? Rather, we need a common scale to be able to compare algorithms. For this, we use Big-O notation. This is a measure of the worst-case scenario.
 
 We can use [**Big O notation**](https://en.wikipedia.org/wiki/Big_O_notation) to quantify how long an algorithm takes as a function of the amount of data it processes. An algorithm that takes 1 step for every element of data, for example, would have $O(n)$ time complexity $-$ the amount of time for the algorithm to run is a linear function of the amount of data. Here's an example of such an algorithm.
 
@@ -155,9 +152,16 @@ class Array:
                f"{non_null} non-null values"
 
     def get(self, i):
+        """
+        Return the value of the array at index i.
+        """
         return self.vals[i]
 
     def append(self, val):
+        """
+        Append a value to the end of the array. Array size is
+        doubled if no more room to append values.
+        """
         n = self.length
 
         for i in range(n):
@@ -241,6 +245,8 @@ Each node in a list consists of some data, as well as pointer to the location of
 * Doubly linked lists
 
 ### Implementation
+Here's how we can implement a linked list in Python.
+
 {% include header-python.html %}
 ```python
 class ListNode:
@@ -592,3 +598,9 @@ def hash_function(name: str) -> int:
 ```
 
 ### Questions
+
+## Footnotes
+#### [1. Intro](#)
+Especially if you're coming from a higher-level language like Python, it's easy to wonder why you should care about data structures.
+
+[Why should we care? Quora.](https://www.quora.com/What-is-the-importance-of-designing-the-right-data-structure)
