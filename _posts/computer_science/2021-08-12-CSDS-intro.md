@@ -4,11 +4,17 @@ title: Intro to data structures
 author: matt_sosna
 ---
 
-Retrieving and storing data are key components of any code we write. This data $-$ a list of IDs, pairs of names and addresses, sets of relationships between users, etc. $-$ can be stored in dozens of ways. But _how_ we organize our data, especially when we're processing gigabytes or terabytes of information, may determine whether our script requires one hour to run, or one hundred.
+Retrieving and storing data are key components of any code we write. This data $-$ a set of URLs, pairs of names and addresses, the relationships between users, etc. $-$ can be stored in a variety of **data structures** that vary in how data is organized. These differences determine if our code can scale as our data grows, or whether we'll need to rewrite everything from scratch in six months!
 
-One major differentiator between code that works "for now" versus code _that can scale with our needs_ is the proper choice of **data structures**, or methods for organizing data. Data structures $-$ and the algorithms with which we interact with them $-$ are a set of tools whose utility depend on how, specifically, we need to interact with our data.
+Consider a list of a billion user IDs. How could we store these in a way where we could retrieve any ID as quickly as possible? We could throw them into an unsorted array, but in the worst case we'll need to scan all billion elements to find what we're looking for. Sorting the array helps, but if we're searching from the start, a high-numbered ID may still take hundreds of millions of steps to find.
 
-There is no "perfect" structure: as with anything in life, there are tradeoffs we need to navigate. But understanding these tradeoffs will make you a stronger programmer, as you'll learn how exactly your machine interacts with your data. This post will cover the most common data structures in computer science, as well as implement them in C and Python. We'll then demonstrate their use cases with some [Leetcode](https://leetcode.com/) questions.<sup>[[1]](#1-intro)</sup>
+A better approach would be to arrange our data in a [**binary search tree**](https://en.wikipedia.org/wiki/Binary_search_tree), which would allow us to find any of our billion IDs, on average, in a meager _thirty steps_ (0.000003% of the IDs!). A [version of this data structure](https://en.wikipedia.org/wiki/B-tree), indeed, is one of the ways databases index records for lightning-fast retrieval.<sup>[[1]](#1-intro)</sup>
+
+<img src="{{site.baseurl}}/images/computer_science/arr_v_tree.png">
+
+As we'll see in this post, the right data structure can make a huge difference in the efficiency of our code. Data structures $-$ and the algorithms with which we interact with them $-$ are a set of tools whose utility depend on how, specifically, we need to interact with our data.
+
+There is no "perfect" structure: as with anything in life, there are tradeoffs we need to navigate. But understanding these tradeoffs will make you a stronger programmer, as you'll learn how exactly your machine interacts with your data. This post will cover the most common data structures in computer science, as well as implement them in Python. We'll then demonstrate their use cases with some [Leetcode](https://leetcode.com/) questions.<sup>[[2]](#2-intro)</sup>
 
 ## Table of contents
 * [**Getting started**](#getting-started)
@@ -601,6 +607,9 @@ def hash_function(name: str) -> int:
 
 ## Footnotes
 #### [1. Intro](#)
+Technically, we could use a sorted array as our data structure for the _abstract data structure_ that is our binary search tree. Our algorithm would become more complicated, however.
+
+#### [2. Intro](#)
 Especially if you're coming from a higher-level language like Python, it's easy to wonder why you should care about data structures.
 
 [Why should we care? Quora.](https://www.quora.com/What-is-the-importance-of-designing-the-right-data-structure)
