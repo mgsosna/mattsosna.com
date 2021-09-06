@@ -12,7 +12,7 @@ A better approach would be to arrange our data in a [**binary search tree**](htt
 
 <img src="{{site.baseurl}}/images/computer_science/arr_v_tree.png">
 
-As we'll see in this post, the right data structure can make a huge difference in the efficiency of our code. Data structures $-$ and the algorithms with which we interact with them $-$ are a set of tools whose utility depend on how, specifically, we need to interact with our data.
+As we'll see in this post, the right data structure can make a huge difference in the efficiency of our code. Think of data structures $-$ and the algorithms with which we interact with them $-$ as a set of tools optimized to answer different types of questions. Just how you'd probably rather use a shovel than a hammer to dig a hole, you'll learn to identify when to draw upon one structure versus another. 
 
 There is no "perfect" structure: as with anything in life, there are tradeoffs we need to navigate. But understanding these tradeoffs will make you a stronger programmer, as you'll learn how exactly your machine interacts with your data. This post will cover the most common data structures in computer science, as well as implement them in Python. We'll then demonstrate their use cases with some [Leetcode](https://leetcode.com/) questions.<sup>[[2]](#2-intro)</sup>
 
