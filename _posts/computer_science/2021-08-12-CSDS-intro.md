@@ -4,15 +4,18 @@ title: Intro to data structures
 author: matt_sosna
 ---
 
-Retrieving and storing data are key components of any code we write. This data $-$ a set of URLs, pairs of names and addresses, the relationships between users, etc. $-$ can be stored in a variety of **data structures** that vary in how data is organized. These differences determine if our code can scale as our data grows, or whether we'll need to rewrite everything from scratch in six months!
+Imagine you build a wildly popular app that is quickly growing towards a million users. (Congrats!) While users love the app, they're complaining that the app is becoming slower and slower, to the point that some users are starting to leave. You notice that the main bottleneck is how user info is retrieved during authentication: currently, your app searches through an unsorted `list` of Python `dict`'s until it finds the requested user ID.
 
-Consider a list of a billion user IDs. How could we store these in a way where we could retrieve any ID as quickly as possible? We could throw them into an unsorted array, but in the worst case we'll need to scan all billion elements to find what we're looking for. Sorting the array helps, but if we're searching from the start, a high-numbered ID may still take hundreds of millions of steps to find.
+Cursing your 3am self who wrote that code, you wonder how to fix the issue. **How can we store user IDs in a way that lets us retrieve any ID as quickly as possible?** Sorting the list by user ID might help, but if we're searching from the start of the list each time, newer customers with high-numbered IDs will take hundreds of thousands of steps to authenticate. We could start the search from the back of the list, but then customers who've been with us from the start would be punished.
 
-A better approach would be to arrange our data in a [**binary search tree**](https://en.wikipedia.org/wiki/Binary_search_tree), which would allow us to find any of our billion IDs, on average, in a meager _thirty steps_ (0.000003% of the IDs!). A [version of this data structure](https://en.wikipedia.org/wiki/B-tree), indeed, is one of the ways databases index records for lightning-fast retrieval.<sup>[[1]](#1-intro)</sup>
+A better approach, you realize, is to arrange user data in a [**binary search tree**](https://en.wikipedia.org/wiki/Binary_search_tree), which would allow us to find any of our million IDs, on average, in a meager _twenty steps_. A [version of this data structure](https://en.wikipedia.org/wiki/B-tree), indeed, is one of the ways databases index records for lightning-fast retrieval.<sup>[[1]](#1-intro)</sup> Quietly migrating user info to a database, your app's latency drops, everyone is happy, and you vow to never tell anyone about how you originally stored the data.
 
 <img src="{{site.baseurl}}/images/computer_science/arr_v_tree.png">
 
-As we'll see in this post, the right data structure can make a huge difference in the efficiency of our code. Think of data structures $-$ and the algorithms with which we interact with them $-$ as a set of tools optimized to answer different types of questions. Just how you'd probably rather use a shovel than a hammer to dig a hole, you'll learn to identify when to draw upon one structure versus another. 
+As we'll see in this post, the right **data structure** can determine whether our programs will scale as the amount of data grows, or whether we'll need to rewrite everything from scratch every six months. From processing requests so they're handled in the order they're received, to being able to instantly confirm whether a password matches our hashed version, to efficiently finding the shortest path between locations, our choice of data structure is critical for scalable code. 
+
+
+
 
 There is no "perfect" structure: as with anything in life, there are tradeoffs we need to navigate. But understanding these tradeoffs will make you a stronger programmer, as you'll learn how exactly your machine interacts with your data. This post will cover the most common data structures in computer science, as well as implement them in Python. We'll then demonstrate their use cases with some [Leetcode](https://leetcode.com/) questions.<sup>[[2]](#2-intro)</sup>
 
@@ -47,6 +50,10 @@ There is no "perfect" structure: as with anything in life, there are tradeoffs w
   - [Questions](#questions-5)
 
 ## Getting started
+Data structures $-$ and the algorithms with which we interact with them $-$ are tools optimized to answer different needs for retrieving and storing data. Just like how it's easier to dig a hole with a shovel than a hammer, certain problems are straightforward to solve with one data structure and a massive headache with another.
+
+
+
 Before we can dive into the differences between arrays and linked lists, we need to understand what exactly data structures are and how to compare them. We'll start by distinguishing the tools (data structures) from how we use them (abstract data types), as well as Big-O notation, a metric for comparing the speed of operations on data structures.
 
 ### Data structures vs. abstract data types
