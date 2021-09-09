@@ -8,16 +8,13 @@ Imagine you build a wildly popular app that is quickly growing towards a million
 
 Cursing your 3am self who wrote that code, you wonder how to fix the issue. **How can we store user IDs in a way that lets us retrieve any ID as quickly as possible?** Sorting the list by user ID might help, but if we're searching from the start of the list each time, newer customers with high-numbered IDs will take hundreds of thousands of steps to authenticate. We could start the search from the back of the list, but then customers who've been with us from the start would be punished.
 
-A better approach, you realize, is to arrange user data in a [**binary search tree**](https://en.wikipedia.org/wiki/Binary_search_tree), which would allow us to find any of our million IDs, on average, in a meager _twenty steps_. A [version of this data structure](https://en.wikipedia.org/wiki/B-tree), indeed, is one of the ways databases index records for lightning-fast retrieval.<sup>[[1]](#1-intro)</sup> Quietly migrating user info to a database, your app's latency drops, everyone is happy, and you vow to never tell anyone about how you originally stored the data.
+A better approach, you realize, is to arrange user data in a [**binary search tree**](https://en.wikipedia.org/wiki/Binary_search_tree), which would allow us to find any of our million IDs, on average, in a meager _twenty steps_. A [version of this data structure](https://en.wikipedia.org/wiki/B-tree), indeed, is one of the ways databases index records for lightning-fast retrieval. Quietly migrating user info to a database, your app's latency drops, everyone is happy, and you vow to never tell anyone about how you originally stored the data.
 
 <img src="{{site.baseurl}}/images/computer_science/arr_v_tree.png">
 
-As we'll see in this post, the right **data structure** can determine whether our programs will scale as the amount of data grows, or whether we'll need to rewrite everything from scratch every six months. From processing requests so they're handled in the order they're received, to being able to instantly confirm whether a password matches our hashed version, to efficiently finding the shortest path between locations, our choice of data structure is critical for scalable code. 
+The right **data structure** can determine whether our programs will scale as the amount of data grows, or whether we'll need to rewrite everything from scratch every six months. From guaranteeing to first serve the highest-priority requests among a constantly-changing list, to being able to instantly and securely confirm whether an inputted password is correct, to efficiently finding the shortest path between locations, choosing the right data structures is critical for scalable code.
 
-
-
-
-There is no "perfect" structure: as with anything in life, there are tradeoffs we need to navigate. But understanding these tradeoffs will make you a stronger programmer, as you'll learn how exactly your machine interacts with your data. This post will cover the most common data structures in computer science, as well as implement them in Python. We'll then demonstrate their use cases with some [Leetcode](https://leetcode.com/) questions.<sup>[[2]](#2-intro)</sup>
+In this post, we'll cover a few common data structures, discussing their strengths and weaknesses and when they're used. (A binary search tree is great for indexing databases but bad for generating password hashes, for example.) We'll implement the structures in Python, then demonstrate some use cases with [Leetcode](https://leetcode.com/) questions.<sup>[[1]](#1-intro)</sup>
 
 ## Table of contents
 * [**Getting started**](#getting-started)
@@ -614,9 +611,6 @@ def hash_function(name: str) -> int:
 
 ## Footnotes
 #### [1. Intro](#)
-Technically, we could use a sorted array as our data structure for the _abstract data structure_ that is our binary search tree. Our algorithm would become more complicated, however.
-
-#### [2. Intro](#)
 Especially if you're coming from a higher-level language like Python, it's easy to wonder why you should care about data structures.
 
 [Why should we care? Quora.](https://www.quora.com/What-is-the-importance-of-designing-the-right-data-structure)
