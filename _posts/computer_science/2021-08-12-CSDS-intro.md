@@ -26,16 +26,26 @@ In this post, we'll cover a few common data structures, discussing their strengt
 * [Hash maps](#hash-maps)
 
 ## Getting started
-Before we can start playing with any data structures, we need to understand what exactly data structures are and how to compare them. We'll start by distinguishing the tools (data structures) from how we use them ([abstract data types](https://en.wikipedia.org/wiki/Abstract_data_type)) before covering [Big O notation](https://en.wikipedia.org/wiki/Big_O_notation), a metric for comparing the speed of operations on data structures.
+Before we can start playing with any data structures, we need to understand what exactly data structures are and how to compare them. We'll start by distinguishing the tools (data structures) from their broader purpose ([abstract data types](https://en.wikipedia.org/wiki/Abstract_data_type)) before covering [Big O notation](https://en.wikipedia.org/wiki/Big_O_notation), a metric for comparing the speed of operations on data structures.
 
 ### Data structures vs. abstract data types
-In programming $-$ as well as in real life! $-$ there are generally many ways to accomplish a task. Let's say, for example, that you want to visit your friend across town. You have at your disposal a bike, scooter, and motorcycle. Here, the _vehicle_ is an **abstract data type**: a means of transportation. _How that's actually implemented_ is the data structure $-$ here the bike, scooter, or motorcycle.
+In programming $-$ as well as in real life! $-$ there are generally many ways to accomplish a task. Let's say, for example, that you want to dig a hole in your backyard. You have at your disposal a pitchfork, sledgehammer, saw, and a shovel. Each of these can be thought of as a "data structure" in the sense that **they are specific means for accomplishing your task.**
 
-Here's another analogy. Imagine you have a hamper of clean laundry and need to put away the clothes. A method with _low write time_ but _high read time_ would be to dump all the clothes into a pile on the ground. While this is blazing fast, it will then take extra time to actually find the shirt you want because you have to search through the pile.
+But if you separate out <i><u>the task</u></i> from <i><u>how you accomplish the task</u></i>, you can see that these specific tools are filling the role of "digging tool." This "digging tool" is your **abstract data type:** a means of digging. _How you actually dig_ is the data structure.
 
-An alternate method would be to neatly arrange your clothes in your dresser and closet. This method would have a _slow write time_ but _fast read time_, as it would take longer to put away your clothes (especially compared to dumping them on the ground), but when you need a particular item you know exactly where to find it and it's easy to access.
+Here's another example. Let's say you want to visit your friend across town. You have at your disposal a bike, car, and your feet. Here, the _vehicle_ is the abstract data type: a means of transportation. _How you actually travel_ is the data structure $-$ your bike, car, or feet.
 
 <img src="{{  site.baseurl  }}/images/computer_science/abstract_ds.png">
+
+This distinction is important because **there are multiple ways to accomplish a task, each with pros and cons that depend on your specific program.** In the case of digging a hole, a shovel is the clear winner. But for getting across town, the "right" data structure depends on external context: a car travels the fastest but requires roads, whereas we can walk through tall grass and on stairs with our shoes.
+
+The data structure is what we, the developer, care about, as it's the specific tool we use to accomplish a task. But our user is only concerned with the abstract data type. **Your friend doesn't care how you get to their house, for example, just that you arrive on time.**
+
+One more example to drive the point home. Imagine you need to put away some clean laundry. A data structure with _<u>low write time</u>_ but _<u>high read time</u>_ would be to dump all the clothes into a pile on the ground. This is blazing fast, but then retrieving any particular item will take time because you'll have to search through the unsorted pile.
+
+An alternate method would be to neatly arrange your clothes in your dresser and closet. This method would have a _<u>high write time</u>_ but _<u>low read time</u>_, as it will take longer to put away your clothes, but you'll be able to quickly access any particular item you're looking for.
+
+While this example might sound silly, it's actually not too far off from dumping data into [AWS S3](https://aws.amazon.com/s3/) versus a database, or to some degree storing it in a [highly-structured SQL vs. flexible NoSQL database]({{  site.baseurl  }}/SQL_vs_NoSQL). The dresser and closet isn't automatically the best approach $-$ logging data, for example, is written far more than it's read, so the "pile of clothes" data structure can actually work better there.
 
 ### Big O notation
 Data structures $-$ and the algorithms with which we interact with them $-$ are tools optimized to answer different needs for retrieving and storing data. Just like how it's easier to dig a hole with a shovel than a hammer, certain problems are straightforward to solve with one data structure and a massive headache with another.
