@@ -4,7 +4,7 @@ title: About
 permalink: /about/
 ---
 <img align="left" src="{{ site.avatar }}" height="22%" width="22%">
-My name is Matt. I'm an academic turned data scientist passionate about sustainability and data-driven decision-making. A brief summary of my CV is [below](#quick-timeline), or you can get more detail at my [LinkedIn](https://www.linkedin.com/in/matt-sosna-ph-d-b2a18b34/) profile.
+My name is Matt. I'm an academic turned machine learning engineer passionate about sustainability and data-driven decision-making. A brief summary of my CV is [below](#quick-timeline), or you can get more detail at my [LinkedIn](https://www.linkedin.com/in/matt-sosna-phd/) profile.
 
 **My goal with this site is to make it easier to understand programming, statistics, and science.** For much of my life, I thought computer science and statistics just "weren't my thing", despite how interested I was in those topics. It took being forced to code extensively during my Ph.D. to overcome that intimidation and realize that these topics _are_ accessible with a little patience. Hopefully this blog lowers the barrier of entry to others.
 
