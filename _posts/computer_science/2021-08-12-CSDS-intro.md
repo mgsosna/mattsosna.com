@@ -12,46 +12,21 @@ A better approach, you realize, is to arrange user data in a [**binary search tr
 
 <img src="{{site.baseurl}}/images/computer_science/arr_v_tree.png">
 
-The right **data structure** can determine whether our programs will scale as the amount of data grows, or whether we'll need to rewrite everything from scratch every six months. From guaranteeing to first serve the highest-priority requests among a constantly-changing list, to being able to instantly and securely confirm whether an inputted password is correct, to efficiently finding the shortest path between locations, choosing the right data structures is critical for scalable code.
+This example highlights an important point: **the <u>data structures</u> our programs use can determine whether our programs will scale as the amount of data grows, or whether we'll need to rewrite everything from scratch every six months.** From quickly finding the shortest path between locations, to always serving the highest-priority items in a constantly-changing list, to instantly and securely confirming whether an inputted password is correct, choosing the right data structures is critical for scalable code.
 
 In this post, we'll cover a few common data structures, discussing their strengths and weaknesses and when they're used. (A binary search tree is great for indexing databases but bad for generating password hashes, for example.) We'll implement the structures in Python, then demonstrate some use cases with [Leetcode](https://leetcode.com/) questions.<sup>[[1]](#1-intro)</sup>
 
 ## Table of contents
-* [**Getting started**](#getting-started)
-  - [Data structures vs. abstract data types](#data-structures-vs-abstract-data-types)
-  - [Big O notation](#big-o-notation)
-  - [Data types](#data-types)
-* [**Arrays**](#arrays)
-  - [Theory](#theory)
-  - [Implementation](#implementation)
-  - [Questions](#questions)
-* [**Stacks and queues**](#stacks-and-queues)
-  - [Theory](#theory-1)
-  - [Implementation](#implementation-1)
-  - [Questions](#questions-1)
-* [**Linked lists**](#linked-lists)
-  - [Theory](#theory-2)
-  - [Implementation](#implementation-2)
-  - [Questions](#questions-2)
-* [**Trees**](#trees)
-  - [Theory](#theory-3)
-  - [Implementation](#implementation-3)
-  - [Questions](#questions-3)
-* [**Graphs**](#graphs)
-  - [Theory](#theory-4)
-  - [Implementation](#implementation-4)
-  - [Questions](#questions-4)
-* [**Hash maps**](#hash-maps)
-  - [Theory](#theory-5)
-  - [Implementation](#implementation-5)
-  - [Questions](#questions-5)
+* [Getting started](#getting-started)
+* [Arrays](#arrays)
+* [Stacks and queues](#stacks-and-queues)
+* [Linked lists](#linked-lists)
+* [Trees](#trees)
+* [Graphs](#graphs)
+* [Hash maps](#hash-maps)
 
 ## Getting started
-Data structures $-$ and the algorithms with which we interact with them $-$ are tools optimized to answer different needs for retrieving and storing data. Just like how it's easier to dig a hole with a shovel than a hammer, certain problems are straightforward to solve with one data structure and a massive headache with another.
-
-
-
-Before we can dive into the differences between arrays and linked lists, we need to understand what exactly data structures are and how to compare them. We'll start by distinguishing the tools (data structures) from how we use them (abstract data types), as well as Big-O notation, a metric for comparing the speed of operations on data structures.
+Before we can start playing with any data structures, we need to understand what exactly data structures are and how to compare them. We'll start by distinguishing the tools (data structures) from how we use them ([abstract data types](https://en.wikipedia.org/wiki/Abstract_data_type)) before covering [Big O notation](https://en.wikipedia.org/wiki/Big_O_notation), a metric for comparing the speed of operations on data structures.
 
 ### Data structures vs. abstract data types
 In programming $-$ as well as in real life! $-$ there are generally many ways to accomplish a task. Let's say, for example, that you want to visit your friend across town. You have at your disposal a bike, scooter, and motorcycle. Here, the _vehicle_ is an **abstract data type**: a means of transportation. _How that's actually implemented_ is the data structure $-$ here the bike, scooter, or motorcycle.
@@ -60,7 +35,13 @@ Here's another analogy. Imagine you have a hamper of clean laundry and need to p
 
 An alternate method would be to neatly arrange your clothes in your dresser and closet. This method would have a _slow write time_ but _fast read time_, as it would take longer to put away your clothes (especially compared to dumping them on the ground), but when you need a particular item you know exactly where to find it and it's easy to access.
 
+<img src="{{  site.baseurl  }}/images/computer_science/abstract_ds.png">
+
 ### Big O notation
+Data structures $-$ and the algorithms with which we interact with them $-$ are tools optimized to answer different needs for retrieving and storing data. Just like how it's easier to dig a hole with a shovel than a hammer, certain problems are straightforward to solve with one data structure and a massive headache with another.
+
+But while we can intuitively tell that a shovel is better than a hammer for digging a hole, or that a `dict` is better than a `str` for storing key-value pairs, how do we _quantify_ the difference in performance?  
+
 When deciding between data structures to use for an abstract data type, or even the specific data type to use for a given task, we need a way to compare the efficiency of each tool. It's not enough to say how fast a certain operation or algorithm takes on our computer. What if your neighbor has a slower or faster computer? Rather, we need a common scale to be able to compare algorithms. For this, we use Big-O notation. This is a measure of the worst-case scenario.
 
 We can use [**Big O notation**](https://en.wikipedia.org/wiki/Big_O_notation) to quantify how long an algorithm takes as a function of the amount of data it processes. An algorithm that takes 1 step for every element of data, for example, would have $O(n)$ time complexity $-$ the amount of time for the algorithm to run is a linear function of the amount of data. Here's an example of such an algorithm.
