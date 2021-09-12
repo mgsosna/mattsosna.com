@@ -19,7 +19,6 @@ In this post, we'll cover a few common data structures, discussing their strengt
 ## Table of contents
 * [Getting started](#getting-started)
 * [Arrays](#arrays)
-* [Stacks and queues](#stacks-and-queues)
 * [Linked lists](#linked-lists)
 * [Trees](#trees)
 * [Graphs](#graphs)
@@ -29,32 +28,30 @@ In this post, we'll cover a few common data structures, discussing their strengt
 Before we can start playing with any data structures, we need to understand what exactly data structures are and how to compare them. We'll start by distinguishing the tools (data structures) from their broader purpose ([abstract data types](https://en.wikipedia.org/wiki/Abstract_data_type)) before covering [Big O notation](https://en.wikipedia.org/wiki/Big_O_notation), a metric for comparing the speed of operations on data structures.
 
 ### Data structures vs. abstract data types
-In programming $-$ as well as in real life! $-$ there are generally many ways to accomplish a task. Let's say, for example, that you want to dig a hole in your backyard. You have at your disposal a pitchfork, sledgehammer, saw, and a shovel. Each of these can be thought of as a "data structure" in the sense that **they are specific means for accomplishing your task.**
+In programming $-$ as well as in real life! $-$ there are generally many ways to accomplish a task. Let's say, for example, that you want to dig a hole in your backyard. You have at your disposal a pitchfork, sledgehammer, saw, and shovel. Each of these can be thought of as a "data structure" in the sense that **they are specific means for accomplishing your task.**
 
-But if you separate out <i><u>the task</u></i> from <i><u>how you accomplish the task</u></i>, you can see that these specific tools are filling the role of "digging tool." This "digging tool" is your **abstract data type:** a means of digging. _How you actually dig_ is the data structure.
+But if you separate out <i><u>the task</u></i> from <i><u>how you accomplish the task</u></i>, you can see that these specific tools are filling the role of "digging tool." This "digging tool" is your **abstract data type:** a means of digging. _<u>How you actually dig</u>_ is the data structure. The abstract data type is a theoretical entity, while the data structure is an actual _implementation_ of that entity.
 
-Here's another example. Let's say you want to visit your friend across town. You have at your disposal a bike, car, and your feet. Here, the _vehicle_ is the abstract data type: a means of transportation. _How you actually travel_ is the data structure $-$ your bike, car, or feet.
+Here's another example. Let's say you want to visit your friend across town. You have at your disposal your bike, car, and feet. Here, the _vehicle_ is the abstract data type: a means of transportation. _How you actually travel_ is the data structure $-$ your bike, car, or feet.
 
 <img src="{{  site.baseurl  }}/images/computer_science/abstract_ds.png">
 
-This distinction is important because **there are multiple ways to accomplish a task, each with pros and cons that depend on your specific program.** In the case of digging a hole, a shovel is the clear winner. But for getting across town, the "right" data structure depends on external context: a car travels the fastest but requires roads, whereas we can walk through tall grass and on stairs with our shoes.
+This distinction is important because **there are multiple ways to accomplish a task, each with pros and cons that depend on your specific program.** In the case of digging a hole, a shovel is the clear winner. But for getting across town, the "right" data structure depends on external context: a car travels the fastest but requires roads, whereas our feet are slow but can traverse tall grass and stairs.
 
-The data structure is what we, the developer, care about, as it's the specific tool we use to accomplish a task. But our user is only concerned with the abstract data type. **Your friend doesn't care how you get to their house, for example, just that you arrive on time.**
+The data structure is what we, the developer, care about, as it's the specific tool we use to accomplish a task. But our user is only concerned with the abstract data type. **Your friend doesn't care how you get to their house, just that you arrive on time.**
 
-One more example to drive the point home. Imagine you need to put away some clean laundry. A data structure with _<u>low write time</u>_ but _<u>high read time</u>_ would be to dump all the clothes into a pile on the ground. This is blazing fast, but then retrieving any particular item will take time because you'll have to search through the unsorted pile.
+One more example to drive the point home. Imagine you need to put away some clean laundry. A data structure with _<u>low write time</u>_ but _<u>high read time</u>_ would be a pile of clothes on the ground. Adding to this pile is blazing fast, but retrieving any particular item is slow because you have to search through the unsorted pile.
 
-An alternate method would be to neatly arrange your clothes in your dresser and closet. This method would have a _<u>high write time</u>_ but _<u>low read time</u>_, as it will take longer to put away your clothes, but you'll be able to quickly access any particular item you're looking for.
+An alternate method would be to neatly arrange your clothes in your dresser and closet. This method would have a _<u>high write time</u>_ but _<u>low read time</u>_, as it would take longer to put away your clothes, but you'd be able to quickly access any particular item you're looking for.
 
-While this example might sound silly, it's actually not too far off from dumping data into [AWS S3](https://aws.amazon.com/s3/) versus a database, or to some degree storing it in a [highly-structured SQL vs. flexible NoSQL database]({{  site.baseurl  }}/SQL_vs_NoSQL). The dresser and closet isn't automatically the best approach $-$ logging data, for example, is written far more than it's read, so the "pile of clothes" data structure can actually work better there.
+While this example might sound silly, it's actually not too far off from the strategies of dumping data into [AWS S3](https://aws.amazon.com/s3/) versus a database, or to some degree storing it in a [highly-structured SQL vs. flexible NoSQL database]({{  site.baseurl  }}/SQL_vs_NoSQL). The dresser and closet isn't automatically the best approach $-$ logging data, for example, is written far more than it's read, so a "pile of clothes" approach of saving raw output to S3 can actually work well.
 
 ### Big O notation
-Data structures $-$ and the algorithms with which we interact with them $-$ are tools optimized to answer different needs for retrieving and storing data. Just like how it's easier to dig a hole with a shovel than a hammer, certain problems are straightforward to solve with one data structure and a massive headache with another.
+While it makes intuitive sense that it's easier to dig a hole with a shovel than a hammer, how do we quantify the difference in performance? Timing how long it takes to dig is a good metric, but we'd probably want something like _seconds per cubic foot_ to account for holes of different sizes.
 
-But while we can intuitively tell that a shovel is better than a hammer for digging a hole, or that a `dict` is better than a `str` for storing key-value pairs, how do we _quantify_ the difference in performance?  
+This only gets us part of the way, though $-$ how do we account for differences in shovels, or the people doing the digging? A bodybuilder with a hammer would probably dig a hole faster than a toddler with a shovel. In computer terms, these two considerations can be reframed as the _amount of data_ being processed, and _the machine you're using._ When comparing data structures $-$ and the algorithms with which we interact with them $-$ we want a metric that measures how long an operation will take for a given amount of data, independent of what machine you're using.
 
-When deciding between data structures to use for an abstract data type, or even the specific data type to use for a given task, we need a way to compare the efficiency of each tool. It's not enough to say how fast a certain operation or algorithm takes on our computer. What if your neighbor has a slower or faster computer? Rather, we need a common scale to be able to compare algorithms. For this, we use Big-O notation. This is a measure of the worst-case scenario.
-
-We can use [**Big O notation**](https://en.wikipedia.org/wiki/Big_O_notation) to quantify how long an algorithm takes as a function of the amount of data it processes. An algorithm that takes 1 step for every element of data, for example, would have $O(n)$ time complexity $-$ the amount of time for the algorithm to run is a linear function of the amount of data. Here's an example of such an algorithm.
+We can turn to [**Big O notation**](https://en.wikipedia.org/wiki/Big_O_notation) to quantify how long an algorithm takes $-$ or how much memory it requires $-$ as a function of the amount of data it processes. An algorithm that takes 1 step for every element of data, for example, would have $O(n)$ time complexity: the amount of time for the algorithm to run is a linear function of the amount of data. Here's an example of such an algorithm.
 
 {% include header-python.html %}
 ```python
@@ -223,7 +220,7 @@ def duplicate_zeros(arr: List[int]) -> None:
 
 We use a `while` rather than a `for` loop because we're modifying the array as we move through it, so we want to manually control our index `i`. This is important when we're inserting zeros because we either will double-count our zero (if we insert into the array at or past our index), or the array will move without us if we insert it before. Our logic is therefore that we progress through our array like a normal `for` loop, incrementing `i` each time. But if we encounter a zero, we insert a zero and then increment `i` again, skipping the zero we added to avoid double-counting. We also don't return anything because we're modifying the array in-place.
 
-Also, we'll likely want to talk about stacks and queues.
+**Also, we'll likely want to talk about stacks and queues.**
 
 
 ## Linked lists
