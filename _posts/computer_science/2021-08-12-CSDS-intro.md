@@ -49,9 +49,18 @@ While this example might sound silly, it's actually not too far off from the str
 ### Big O notation
 While it makes intuitive sense that it's easier to dig a hole with a shovel than a hammer, how do we quantify the difference in performance? Timing how long it takes to dig is a good metric, but we'd probably want something like _seconds per cubic foot_ to account for holes of different sizes.
 
-This only gets us part of the way, though $-$ how do we account for differences in shovels, or the people doing the digging? A bodybuilder with a hammer would probably dig a hole faster than a toddler with a shovel. In computer terms, these two considerations can be reframed as the _amount of data_ being processed, and _the machine you're using._ When comparing data structures $-$ and the algorithms with which we interact with them $-$ we want a metric that measures how long an operation will take for a given amount of data, independent of what machine you're using.
+This only gets us part of the way, though $-$ how do we account for differences in shovels, or the people doing the digging? A bodybuilder with a hammer can dig a hole faster than a toddler with a shovel, but that doesn't mean the hammer is a better digging tool.
 
-We can turn to [**Big O notation**](https://en.wikipedia.org/wiki/Big_O_notation) to quantify how long an algorithm takes $-$ or how much memory it requires $-$ as a function of the amount of data it processes. An algorithm that takes 1 step for every element of data, for example, would have $O(n)$ time complexity: the amount of time for the algorithm to run is a linear function of the amount of data. Here's an example of such an algorithm.
+<center>
+<img src="{{  site.baseurl }}/images/computer_science/big-o.png" height="80%" width="80%">
+</center>
+
+In computer terms, these two considerations can be reframed as **_the amount of data_** being processed, and **_the machine you're using._** When comparing data structures $-$ and the algorithms with which we interact with them $-$ we want a metric that measures how long an operation will take for a given amount of data, independent of what machine you're using. We want to say, for example, how long it would take to retrieve a random element from a data structure, as a function of how much data that structure is holding, regardless of what computer we use.
+
+To do this, we can turn to [**Big O notation**](https://en.wikipedia.org/wiki/Big_O_notation) to quantify how long an operation on a given data structure takes $-$ or how much memory it requires $-$ as a function of the amount of data processed. The notation is $O(.)$, with the period replaced by how the
+
+
+An algorithm that takes 1 step for every element of data, for example, would have $O(n)$ time complexity: the amount of time for the algorithm to run is a linear function of the amount of data. Here's an example of such an algorithm.
 
 {% include header-python.html %}
 ```python
