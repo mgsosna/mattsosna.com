@@ -49,18 +49,19 @@ While this example might sound silly, it's actually not too far off from the str
 ### Big O notation
 While it makes intuitive sense that it's easier to dig a hole with a shovel than a hammer, how do we quantify the difference in performance? Timing how long it takes to dig is a good metric, but we'd probably want something like _seconds per cubic foot_ to account for holes of different sizes.
 
-This only gets us part of the way, though $-$ how do we account for differences in shovels, or the people doing the digging? A bodybuilder with a hammer can dig a hole faster than a toddler with a shovel, but that doesn't mean the hammer is a better digging tool.
+This only gets us part of the way, though $-$ how do we account for shovels that are different sizes, or the people doing the digging? A bodybuilder with a hammer can dig a hole faster than a toddler with a shovel, but that doesn't mean the hammer is a better digging tool.
 
 <center>
 <img src="{{  site.baseurl }}/images/computer_science/big-o.png" height="80%" width="80%">
 </center>
 
-In computer terms, these two considerations can be reframed as **_the amount of data_** being processed, and **_the machine you're using._** When comparing data structures $-$ and the algorithms with which we interact with them $-$ we want a metric that measures how long an operation will take for a given amount of data, independent of what machine you're using. We want to say, for example, how long it would take to retrieve a random element from a data structure, as a function of how much data that structure is holding, regardless of what computer we use.
+In computer terms, these two considerations can be reframed as **_the amount of data_** being processed, and **_the machine being using._** When comparing how well a data structure performs some operation $-$ like storing new data or retrieving a requested element $-$ we need a metric that measures how long an operation takes for a given amount of data, independent of what machine we use.
 
-To do this, we can turn to [**Big O notation**](https://en.wikipedia.org/wiki/Big_O_notation) to quantify how long an operation on a given data structure takes $-$ or how much memory it requires $-$ as a function of the amount of data processed. The notation is $O(.)$, with the period replaced by how the
+We want to be able to say, for example, how long it would take to retrieve a random element from an array versus binary search tree, as a function of how much data the array or tree holds, regardless of what computer we use.
 
+To do this, we can turn to [**Big O notation**](https://en.wikipedia.org/wiki/Big_O_notation) to quantify how long an operation on a given data structure takes $-$ or how much memory it requires. Specifically, we care about the _worst case scenario_: accessing a requested element that happens to be the last one in the list, for example. By using the upper bound of how much time an operation requires for different data structures, we can be confident in one being better than the other.
 
-An algorithm that takes 1 step for every element of data, for example, would have $O(n)$ time complexity: the amount of time for the algorithm to run is a linear function of the amount of data. Here's an example of such an algorithm.
+Here's an example of an algorithm with $O(n)$ time complexity. Displaying every element in a Python `list` takes more time depending on how many elements there are in the list. Specifically, the time it takes _grows linearly_: if you double the number of elements your list has, it will take double the time to print each element.
 
 {% include header-python.html %}
 ```python
@@ -70,7 +71,7 @@ def print_num(arr):
         print(num)
 ```
 
-If we processed every pair of elements in the array, meanwhile, our complexity would become $O(n^2)$.
+If we processed every _pair_ of elements in the array, meanwhile, our complexity becomes $O(n^2)$.
 
 {% include header-python.html %}
 ```python
@@ -91,9 +92,9 @@ def print_first(arr):
 ```
 
 More broadly, we can use a plot like the one below to quantify the efficiency of various algorithms.
-<center>
-<img src="{{  site.baseurl  }}/images/computer_science/big_o.png" height="80%" width="80%">
-</center>
+
+<img src="{{  site.baseurl  }}/images/computer_science/big_o.png">
+
 
 One example of a runtime on the high end is $O(2^n)$. Finding all subsets of an array is an algorithm with this time complexity. For each element in the set, we have two options: include or exclude the element. A set of three elements, e.g. `[A,B,C,D]`, will therefore have $2^4$, or sixteen, subsets:
 * `[]`, `[A]`, `[B]`, `[C]`, `[D]`
