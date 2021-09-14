@@ -71,7 +71,7 @@ def print_num(arr):
         print(num)
 ```
 
-If we processed every _pair_ of elements in the array, meanwhile, our complexity becomes $O(n^2)$.
+If we processed every _pair_ of elements in the array, meanwhile, our complexity becomes $O(n^2)$. An array of 4 elements requires 16 steps, a 10-element array requires 100 steps, and so on.
 
 {% include header-python.html %}
 ```python
@@ -82,14 +82,19 @@ def print_pairs(arr):
             print(num1, num2)
 ```
 
-That's pretty bad. In the best case, our algorithm takes _constant_ time, i.e. it has no dependence on the amount of data. For example, printing the first value of an array will always (in theory) take the same time, regardless of the size of the array. (This holds true for any index in the array - one major advantage of arrays is this constant lookup time by index.)
+That's pretty bad. In the best case, our algorithm takes _constant_ time: execution time has no dependence on the amount of data. For example, printing a random value of an array will always take the same time, regardless of the size of the array.
 
 {% include header-python.html %}
 ```python
 # O(1) time
-def print_first(arr):
-    print(arr[0])
+def print_idx(arr, i):
+    print(arr[i])
 ```
+
+We can quantify the efficiency of these functions with the `%%timeit` command in a Jupyter notebook. Below left, we can already see large increases in the execution time of the $O(n^2)$ `print_pairs`. We can also see the power of the $O(1)$ `print_idx`, whose execution hovers around 0.153 ms, regardless of the size of the array or whether we're requesting the first or last element.
+
+<img src="{{  site.baseurl  }}/images/computer_science/big-o-demo.png">
+
 
 More broadly, we can use a plot like the one below to quantify the efficiency of various algorithms.
 
