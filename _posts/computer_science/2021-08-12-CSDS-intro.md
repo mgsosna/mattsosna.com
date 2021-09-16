@@ -55,39 +55,39 @@ This only gets us part of the way, though $-$ how do we account for shovels that
 <img src="{{  site.baseurl }}/images/computer_science/big-o.png" height="80%" width="80%">
 </center>
 
-In computer terms, these two considerations can be reframed as **_the amount of data_** being processed, and **_the machine being using._** When comparing how well a data structure performs some operation $-$ like storing new data or retrieving a requested element $-$ we need a metric that measures how long an operation takes for a given amount of data, independent of what machine we use.
+In computer terms, these two considerations can be reframed as **_the amount of data_** being processed, and **_the machine being using._** When comparing how well data structures perform some operation $-$ like storing new data or retrieving a requested element $-$ we want a metric that quantifies how performance scales with the amount of data, independent of what machine we use.
 
-We want to be able to say, for example, how long it would take to retrieve a random element from an array versus binary search tree, as a function of how much data the array or tree holds, regardless of what computer we use.
+We want to be able to say, for example, how long it would take to retrieve a random element from an array versus binary search tree, _as a function of how much data the array or tree holds, regardless of what computer we use._
 
-To do this, we can turn to [**Big O notation**](https://en.wikipedia.org/wiki/Big_O_notation) to quantify how long an operation on a given data structure takes $-$ or how much memory it requires. Specifically, we care about the _worst case scenario_: accessing a requested element that happens to be the last one in the list, for example. By using the upper bound of how much time an operation requires for different data structures, we can be confident in one being better than the other.
+To do this, we can turn to [**Big O notation**](https://en.wikipedia.org/wiki/Big_O_notation), denoted as $O(&sdot;)$. Big O notation is a measure of the "worst-case" efficiency, an upper bound on how long it would take to accomplish a task, or how much memory it would require. Searching for a random element in an unsorted list is $O(n)$, for example, because in the worst case, you have to search the entire list.
 
-Here's an example of an algorithm with $O(n)$ time complexity. Displaying every element in a Python `list` takes more time depending on how many elements there are in the list. Specifically, the time it takes _grows linearly_: if you double the number of elements your list has, it will take double the time to print each element.
+Here's another example of an algorithm with $O(n)$ time complexity. Displaying every element in a Python `list` takes more time depending on how many elements there are in the list. Specifically, the time it takes _grows linearly_: if you double the number of elements your list has, it will take double the time to print each element.
 
 {% include header-python.html %}
 ```python
 # O(n) time complexity
-def print_num(arr):
+def print_num(arr: list):
     for num in arr:
         print(num)
 ```
 
-If we processed every _pair_ of elements in the array, meanwhile, our complexity becomes $O(n^2)$. An array of 4 elements requires 16 steps, a 10-element array requires 100 steps, and so on.
+If we process every _pair_ of elements in the array, meanwhile, our complexity becomes $O(n^2)$. An array of 4 elements requires 16 steps, a 10-element array requires 100 steps, and so on.
 
 {% include header-python.html %}
 ```python
 # O(n^2) time complexity
-def print_pairs(arr):
+def print_pairs(arr: list):
     for num1 in arr:
         for num2 in arr:
             print(num1, num2)
 ```
 
-That's pretty bad. In the best case, our algorithm takes _constant_ time: execution time has no dependence on the amount of data. For example, printing a random value of an array will always take the same time, regardless of the size of the array.
+That's pretty bad. The best an algorithm can do is _constant_ time, where the run time is independent on the amount of data. For example, printing a random value of an array will always take the same time, regardless of the size of the array.
 
 {% include header-python.html %}
 ```python
 # O(1) time
-def print_idx(arr, i):
+def print_idx(arr: list, i: int):
     print(arr[i])
 ```
 
@@ -98,8 +98,9 @@ We can quantify the efficiency of these functions with the `%%timeit` command in
 
 More broadly, we can use a plot like the one below to quantify the efficiency of various algorithms.
 
-<img src="{{  site.baseurl  }}/images/computer_science/big_o.png">
-
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/big_o.png" height="90%" width="90%">
+</center>
 
 One example of a runtime on the high end is $O(2^n)$. Finding all subsets of an array is an algorithm with this time complexity. For each element in the set, we have two options: include or exclude the element. A set of three elements, e.g. `[A,B,C,D]`, will therefore have $2^4$, or sixteen, subsets:
 * `[]`, `[A]`, `[B]`, `[C]`, `[D]`
