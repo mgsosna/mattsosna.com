@@ -115,16 +115,13 @@ But an even worse runtime is $O(n!)$. Permutations are a classic example of n-fa
 * `[D,A,B,C]`, `[D,A,C,B]`, `[D,B,A,C]`, `[D,B,C,A]`, `[D,C,A,B]`, `[D,C,B,A]`
 
 ### Data types
-Finally, we should briefly mention the fundamental _data types_ before we cover data structures. If a data structure is a collection of data, what _types_ of data can we have in our structures? There are a few fundamental data types:
+Finally, we should briefly mention the fundamental _data types_ before we cover data structures. If a data structure is a collection of data, what _types_ of data can we have in our structures? There are a few fundamental data types regardless of programming language:
 
 **Integers** are whole numbers, like `1`, `-5`, and `256`. In languages besides Python, you can be more specific with the type of integer, such as signed or unsigned, and the number of bits an integer can hold. This corresponds to the amount of memory your program will reserve, and if you're not careful, you can _overflow_ or _underflow_.
 
 **Floats** are numbers with decimal places, like `1.2`, `0.14`. In Python, this includes numbers defined with scientific notation, like `1e5`.
 
 **Chars** are letters, like `a`, `b`, `c`. A collection of them is a string (which technically is an array of chars). Also includes the representations of non-alphabetical elements, like `0` or `?`.
-
-### Memory?
-
 
 ## Arrays
 ### Theory
