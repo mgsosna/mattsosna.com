@@ -44,6 +44,10 @@ One more example to drive the point home. Imagine you need to put away some clea
 
 An alternate method would be to neatly arrange your clothes in your dresser and closet. This method would have a _<u>high write time</u>_ but _<u>low read time</u>_, as it would take longer to put away your clothes, but you'd be able to quickly access any particular item you're looking for.
 
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/pile.png" height="70%" width="70%">
+</center>
+
 While this example might sound silly, it's actually not too far off from the strategies of dumping data into [AWS S3](https://aws.amazon.com/s3/) versus a database, or to some degree storing it in a [highly-structured SQL vs. flexible NoSQL database]({{  site.baseurl  }}/SQL_vs_NoSQL). The dresser and closet isn't automatically the best approach $-$ logging data, for example, is written far more than it's read, so a "pile of clothes" approach of saving raw output to S3 can actually work well.
 
 ### Big O notation
