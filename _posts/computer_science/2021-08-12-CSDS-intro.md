@@ -61,8 +61,6 @@ This only gets us part of the way, though $-$ how do we account for shovels that
 
 In computer terms, these two considerations can be reframed as **_the amount of data_** being processed, and **_the machine being using._** When comparing how well data structures perform some operation $-$ like storing new data or retrieving a requested element $-$ we want a metric that quantifies how performance scales with the amount of data, independent of what machine we use.
 
-We want to be able to say, for example, how long it would take to retrieve a random element from an array versus binary search tree, _as a function of how much data the array or tree holds, regardless of what computer we use._
-
 To do this, we can turn to [**Big O notation**](https://en.wikipedia.org/wiki/Big_O_notation), denoted as $O(&sdot;)$. Big O notation is a measure of the "worst-case" efficiency, an upper bound on how long it would take to accomplish a task, or how much memory it would require. Searching for a random element in an unsorted list is $O(n)$, for example, because in the worst case, you have to search the entire list.
 
 Here's another example of an algorithm with $O(n)$ time complexity. Displaying every element in a Python `list` takes more time depending on how many elements there are in the list. Specifically, the time it takes _grows linearly_: if you double the number of elements your list has, it will take double the time to print each element.
