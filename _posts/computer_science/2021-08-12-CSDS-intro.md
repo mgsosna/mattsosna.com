@@ -61,9 +61,9 @@ This only gets us part of the way, though $-$ how do we account for shovels that
 
 In computer terms, these two considerations can be reframed as **_the amount of data_** being processed, and **_the machine being using._** When comparing how well data structures perform some operation $-$ like storing new data or retrieving a requested element $-$ we want a metric that quantifies how performance scales with the amount of data, independent of what machine we use.
 
-To do this, we can turn to [**Big O notation**](https://en.wikipedia.org/wiki/Big_O_notation), denoted as $O(&sdot;)$. Big O notation is a measure of the "worst-case" efficiency, an upper bound on how long it would take to accomplish a task, or how much memory it would require. Searching for a random element in an unsorted list is $O(n)$, for example, because in the worst case, you have to search the entire list.
+To do this, we can turn to [**Big O notation**](https://en.wikipedia.org/wiki/Big_O_notation), denoted as $O(&sdot;)$. Big O is a measure of the "worst-case" efficiency, an upper bound on how long it would take to accomplish a task (or how much memory it would require, which we won't cover here). Searching for an element in an unsorted list is $O(n)$, for example, because in the worst case, you have to search the entire list.
 
-Here's another example of an algorithm with $O(n)$ time complexity. Displaying every element in a Python `list` takes more time depending on how many elements there are in the list. Specifically, the time it takes _grows linearly_: if you double the number of elements your list has, it will take double the time to print each element.
+Here's another example of an algorithm with $O(n)$ time complexity. Displaying every element in a Python `list` takes more time depending on how many elements there are in the list. Specifically, the time it takes _grows linearly_: if you double the number of elements, you double the time to print all the elements.
 
 {% include header-python.html %}
 ```python
@@ -93,28 +93,29 @@ def print_idx(arr: list, i: int):
     print(arr[i])
 ```
 
-We can quantify the efficiency of these functions with the `%%timeit` command in a Jupyter notebook. Below left, we can already see large increases in the execution time of the $O(n^2)$ `print_pairs`. We can also see the power of the $O(1)$ `print_idx`, whose execution hovers around 0.153 ms, regardless of the size of the array or whether we're requesting the first or last element.
+We can quantify the efficiency of these functions with the `%%timeit` command in a Jupyter notebook. Below, we can already see dramatic increases in the execution time of the $O(n^2)$ `print_pairs`. We can also see the power of the $O(1)$ `print_idx`, whose execution hovers around 0.153 ms, regardless of the size of the array or whether we're requesting the first or last element.
 
 <img src="{{  site.baseurl  }}/images/computer_science/big-o-demo.png">
 
-
-More broadly, we can use a plot like the one below to quantify the efficiency of various algorithms.
+We can visualize the execution time of common efficiencies to better understand how they compare. The green region is ideal $-$ these are the most scalable runtimes, growing at a rate significantly slower than the amount of data. Gray is pretty good, avoid orange if you can, and find any way possible to avoid the red region.
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/big_o.png" height="90%" width="90%">
 </center>
 
-One example of a runtime on the high end is $O(2^n)$. Finding all subsets of an array is an algorithm with this time complexity. For each element in the set, we have two options: include or exclude the element. A set of three elements, e.g. `[A,B,C,D]`, will therefore have $2^4$, or sixteen, subsets:
+What problems could possibly require an algorithm in the red zone? **Red zone algorithms are often necessary for problems where you need to know _every possible answer to a question_.** One example of an $O(2^n)$ algorithm is finding all [**subsets**](https://en.wikipedia.org/wiki/Subset) of an array. For each element in the set, we have two options: include or exclude the element. A set of four elements like `[A,B,C,D]` will have $2^4$, or sixteen, subsets:
 * `[]`, `[A]`, `[B]`, `[C]`, `[D]`
 * `[A,B]`, `[A,C]`, `[A,D]`, `[B,C]`, `[B,D]`, `[C,D]`
 * `[A,B,C]`, `[A,B,D]`, `[A,C,D]`, `[B,C,D]`
 * `[A,B,C,D]`
 
-But an even worse runtime is $O(n!)$. Permutations are a classic example of n-factorial complexity. For each element in the set, we can rearrange all following elements. Our previous array `[A,B,C,D]` will have $4 * 3 * 2 * 1$, or 24, permutations:
+But an even worse runtime is $O(n!)$. [**Permutations**](https://en.wikipedia.org/wiki/Permutation) are a classic example of n-factorial complexity. For each element in the set, we can rearrange all following elements. Our previous array `[A,B,C,D]` will have 4 * 3 * 2 * 1, or 24, permutations:
 * `[A,B,C,D]`, `[A,B,D,C]`, `[A,C,B,D]`, `[A,C,D,B]`, `[A,D,B,C]`, `[A,D,C,B]`
 * `[B,A,C,D]`, `[B,A,D,C]`, `[B,C,A,D]`, `[B,C,D,A]`, `[B,D,C,A]`, `[B,D,A,C]`
 * `[C,A,B,D]`, `[C,A,D,B]`, `[C,B,A,D]`, `[C,B,D,A]`, `[C,D,B,A]`, `[C,D,A,B]`
 * `[D,A,B,C]`, `[D,A,C,B]`, `[D,B,A,C]`, `[D,B,C,A]`, `[D,C,A,B]`, `[D,C,B,A]`
+
+If your task is specifically to find all subsets or permutations of an inputted array, it's hard to avoid a $O(2^n)$ or $O(n!)$ runtime. But not all hope is lost $-$ there are some creative tricks you could employ to help smooth the burden.<sup>[[2]](#2-big-o-notation)</sup>
 
 ### Data types
 Finally, we should briefly mention the fundamental _data types_ before we cover data structures. If a data structure is a collection of data, what _types_ of data can we have in our structures? There are a few fundamental data types regardless of programming language:
@@ -617,3 +618,14 @@ def hash_function(name: str) -> int:
 Especially if you're coming from a higher-level language like Python, it's easy to wonder why you should care about data structures.
 
 [Why should we care? Quora.](https://www.quora.com/What-is-the-importance-of-designing-the-right-data-structure)
+
+#### [2. Big O notation](#big-o-notation)
+We probably can't do much for the _first_ user to request all permutations for a specific array. But we _can_ store the array and its answer in a hash table. For every subsequent user, we can check our hash table to see if that array has already been queried. (We'd want to sort the array, remove nulls, etc. that would otherwise make identical arrays look different.) If a user requests an array whose permutations have already been computed, we could respond with a lightning fast $O(1)$ runtime. If not... back to $O(n!)$.
+
+This concept is called caching, or memoizing. Here's what that would look like in Python.
+
+{% include header-python.html %}
+```python
+def memoize(arr):
+  pass
+```
