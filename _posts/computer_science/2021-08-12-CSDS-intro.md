@@ -6,13 +6,13 @@ author: matt_sosna
 
 Imagine you build a wildly popular app that is quickly growing towards a million users. (Congrats!) While users love the app, they're complaining that the app is becoming slower and slower, to the point that some users are starting to leave. You notice that the main bottleneck is how user info is retrieved during authentication: currently, your app searches through an unsorted `list` of Python `dict`'s until it finds the requested user ID.
 
-Cursing your 3am self who wrote that code, you wonder how to fix the issue. **How can we store user IDs in a way that lets us retrieve any ID as quickly as possible?** Sorting the list by user ID might help, but if we're searching from the start of the list each time, newer customers with high-numbered IDs will take hundreds of thousands of steps to authenticate. We could start the search from the back of the list, but then customers who've been with us from the start would be punished.
+Cursing your 3am self who wrote that code, you wonder how to fix the issue. **How can we store user IDs in a way that lets us retrieve any ID as fast as possible?** Sorting the list might help, but if we're searching from the start each time, newer customers with high-numbered IDs will take hundreds of thousands of steps to authenticate. We could start the search from the back of the list, but then customers who've been with us from the start would be punished.
 
 A better approach, you realize, is to arrange user data in a [**binary search tree**](https://en.wikipedia.org/wiki/Binary_search_tree), which would allow us to find any of our million IDs, on average, in a meager _twenty steps_. A [version of this data structure](https://en.wikipedia.org/wiki/B-tree), indeed, is one of the ways databases index records for lightning-fast retrieval. Quietly migrating user info to a database, your app's latency drops, everyone is happy, and you vow to never tell anyone about how you originally stored the data.
 
 <img src="{{site.baseurl}}/images/computer_science/arr_v_tree.png">
 
-This example highlights an important point: **the <u>data structures</u> our programs use can determine whether our programs will scale as the amount of data grows, or whether we'll need to rewrite everything from scratch every six months.** From quickly finding the shortest path between locations, to always serving the highest-priority items in a constantly-changing list, to instantly and securely confirming whether an inputted password is correct, choosing the right data structures is critical for scalable code.
+This example highlights an important point: **the <u>data structures</u> our programs use can determine whether our code will scale as the amount of data grows, or whether we'll need to rewrite everything from scratch every six months.** From quickly finding the shortest path between locations, to always serving the highest-priority items in a constantly-changing list, to instantly and securely confirming whether an inputted password is correct, choosing the right data structures is critical for scalable code.
 
 In this post, we'll cover a few common data structures, discussing their strengths and weaknesses and when they're used. (A binary search tree is great for indexing databases but bad for generating password hashes, for example.) We'll implement the structures in Python, then demonstrate some use cases with [Leetcode](https://leetcode.com/) questions.<sup>[[1]](#1-intro)</sup>
 
@@ -27,8 +27,10 @@ In this post, we'll cover a few common data structures, discussing their strengt
 ## Getting started
 Before we can start playing with any data structures, we need to understand what exactly data structures are and how to compare them. We'll start by distinguishing the tools (data structures) from their broader purpose ([abstract data types](https://en.wikipedia.org/wiki/Abstract_data_type)) before covering [Big O notation](https://en.wikipedia.org/wiki/Big_O_notation), a metric for comparing the speed of operations on data structures.
 
+We'll also regularly reiterate that **there is no "perfect" data structure**. _<u>The utility of a data structure is driven entirely by how it is used</u>._ It's essential, then, to understand your program's needs when choosing the right tool for the job.
+
 ### Data structures vs. abstract data types
-In programming $-$ as well as in real life! $-$ there are generally many ways to accomplish a task. Let's say, for example, that you want to dig a hole in your backyard. You have at your disposal a pitchfork, sledgehammer, saw, and shovel. Each of these can be thought of as a "data structure" in the sense that **they are specific means for accomplishing your task.**
+In programming $-$ as well as in real life! $-$ there are generally many ways to accomplish a task. Let's say, for example, that you want to dig a hole in your backyard. You have at your disposal a pitchfork, hammer, saw, and shovel. Each of these can be thought of as a "data structure" in the sense that **they are specific means for accomplishing your task.**
 
 But if you separate out <i><u>the task</u></i> from <i><u>how you accomplish the task</u></i>, you can see that these specific tools are filling the role of "digging tool." This "digging tool" is your **abstract data type:** a means of digging. _<u>How you actually dig</u>_ is the data structure. The abstract data type is a theoretical entity, while the data structure is an actual _implementation_ of that entity.
 
