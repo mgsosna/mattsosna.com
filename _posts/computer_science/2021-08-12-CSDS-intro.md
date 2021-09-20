@@ -44,7 +44,7 @@ The data structure is what we, the developer, care about, as it's the specific t
 
 One more example to drive the point home. Imagine you need to put away some clean laundry. A data structure with _<u>low write time</u>_ but _<u>high read time</u>_ would be a pile of clothes on the ground. Adding to this pile is blazing fast, but retrieving any particular item is slow because you have to search through the unsorted pile.
 
-An alternate method would be to neatly arrange your clothes in your dresser and closet. This method would have a _<u>high write time</u>_ but _<u>low read time</u>_, as it would take longer to put away your clothes, but you'd be able to quickly access any particular item you're looking for.
+An alternate method would be to neatly arrange your clothes in your dresser and closet. This method would have a _<u>high write time</u>_ but _<u>low read time</u>_, as it would take longer to put away your clothes, but you'd be able to more quickly access any item you're looking for.
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/pile.png" height="70%" width="70%">
@@ -53,7 +53,7 @@ An alternate method would be to neatly arrange your clothes in your dresser and 
 While this example might sound silly, it's actually not too far off from the strategies of dumping data into [AWS S3](https://aws.amazon.com/s3/) versus a database, or to some degree storing it in a [highly-structured SQL vs. flexible NoSQL database]({{  site.baseurl  }}/SQL_vs_NoSQL). The dresser and closet isn't automatically the best approach $-$ logging data, for example, is written far more than it's read, so a "pile of clothes" approach of saving raw output to S3 can actually work well.
 
 ### Big O notation
-While it makes intuitive sense that it's easier to dig a hole with a shovel than a hammer, how do we quantify the difference in performance? Timing how long it takes to dig is a good metric, but we'd probably want something like _seconds per cubic foot_ to account for holes of different sizes.
+While it makes intuitive sense that it's easier to dig a hole with a shovel than a hammer, how do we quantify the difference in performance? The _number of seconds_ it takes to dig is a good metric, but to deal with holes of differing sizes, we'd probably want something more like _seconds per cubic foot_.
 
 This only gets us part of the way, though $-$ how do we account for shovels that are different sizes, or the people doing the digging? A bodybuilder with a hammer can dig a hole faster than a toddler with a shovel, but that doesn't mean the hammer is a better digging tool.
 
@@ -65,7 +65,7 @@ In computer terms, these two considerations can be reframed as **_the amount of 
 
 To do this, we can turn to [**Big O notation**](https://en.wikipedia.org/wiki/Big_O_notation), denoted as $O(&sdot;)$. Big O is a measure of the "worst-case" efficiency, an upper bound on how long it would take to accomplish a task (or how much memory it would require, which we won't cover here). Searching for an element in an unsorted list is $O(n)$, for example, because in the worst case, you have to search the entire list.
 
-Here's another example of an algorithm with $O(n)$ time complexity. Displaying every element in a Python `list` takes more time depending on how many elements there are in the list. Specifically, the time it takes _grows linearly_: if you double the number of elements, you double the time to print all the elements.
+Here's another example of an operation with $O(n)$ time complexity. Displaying every element in a Python `list` takes more time depending on how many elements there are in the list. Specifically, the time it takes _grows linearly_: if you double the number of elements, you double the time to print all the elements.
 
 {% include header-python.html %}
 ```python
@@ -75,7 +75,7 @@ def print_num(arr: list):
         print(num)
 ```
 
-If we process every _pair_ of elements in the array, meanwhile, our complexity becomes $O(n^2)$. An array of 4 elements requires 16 steps, a 10-element array requires 100 steps, and so on.
+If we print every _pair_ of elements in the array, meanwhile, our complexity becomes $O(n^2)$. An array of 4 elements requires 16 steps, a 10-element array requires 100 steps, and so on.
 
 {% include header-python.html %}
 ```python
@@ -105,7 +105,7 @@ We can visualize the execution time of common efficiencies to better understand 
 <img src="{{  site.baseurl  }}/images/computer_science/big_o.png" height="90%" width="90%">
 </center>
 
-What problems could possibly require an algorithm in the red zone? **Red zone algorithms are often necessary for problems where you need to know _every possible answer to a question_.** One example of an $O(2^n)$ algorithm is finding all [**subsets**](https://en.wikipedia.org/wiki/Subset) of an array. For each element in the set, we have two options: include or exclude the element. A set of four elements like `[A,B,C,D]` will have $2^4$, or sixteen, subsets:
+What problems could possibly require an algorithm in the red zone? **Red zone algorithms are often necessary for problems where you need to know _every possible answer to a question_.** One example of an $O(2^n)$ algorithm is finding all [**subsets**](https://en.wikipedia.org/wiki/Subset) of an array. For each element in the set, we have two options: include or exclude the element. A set of four elements like `[A,B,C,D]` will have $2^4$, or 16, subsets:
 * `[]`, `[A]`, `[B]`, `[C]`, `[D]`
 * `[A,B]`, `[A,C]`, `[A,D]`, `[B,C]`, `[B,D]`, `[C,D]`
 * `[A,B,C]`, `[A,B,D]`, `[A,C,D]`, `[B,C,D]`
@@ -117,7 +117,9 @@ But an even worse runtime is $O(n!)$. [**Permutations**](https://en.wikipedia.or
 * `[C,A,B,D]`, `[C,A,D,B]`, `[C,B,A,D]`, `[C,B,D,A]`, `[C,D,B,A]`, `[C,D,A,B]`
 * `[D,A,B,C]`, `[D,A,C,B]`, `[D,B,A,C]`, `[D,B,C,A]`, `[D,C,A,B]`, `[D,C,B,A]`
 
-If your task is specifically to find all subsets or permutations of an inputted array, it's hard to avoid a $O(2^n)$ or $O(n!)$ runtime. But not all hope is lost $-$ there are some creative tricks you could employ to help smooth the burden.<sup>[[2]](#2-big-o-notation)</sup>
+The runtime of these problems expands at a shocking rate. An array of 10 elements has 1,024 subsets and 3,628,800 permutations, and an array of 20 has 1,048,576 subsets and 2,432,902,008,176,640,000 permutations!
+
+If your task is specifically to find all subsets or permutations of an inputted array, it's hard to avoid a $O(2^n)$ or $O(n!)$ runtime. But not all hope is lost $-$ there are some architectural tricks you can employ to lessen the burden.<sup>[[2]](#2-big-o-notation)</sup>
 
 ### Data types
 Finally, we should briefly mention the fundamental _data types_ before we cover data structures. If a data structure is a collection of data, what _types_ of data can we have in our structures? There are a few fundamental data types regardless of programming language:
