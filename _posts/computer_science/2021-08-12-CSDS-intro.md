@@ -132,7 +132,7 @@ Finally, we should briefly mention the fundamental _data types_ before we cover 
 
 ## Arrays
 ### Theory
-Arrays are one of the most fundamental data structures in computer science: an ordered series of elements. When you assign a scalar variable, you point to one location in memory. An array, meanwhile, is a set of consecutive locations in memory. Below, the gray boxes are memory, while the orange region is our array of numbers.
+Arrays are one of the most fundamental data structures in computer science: an ordered series of elements. When you type something like `x = 5`, your computer takes a location in memory, puts `5` in it, and then points the text `x` to that location. An array, meanwhile, is a set of consecutive locations in memory. Below, the gray boxes are memory, while the orange region is our array of numbers.
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/array1.png" height="80%" width="80%">
