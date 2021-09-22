@@ -150,73 +150,12 @@ Python doesn't have a native array type, but they're a central data structure fo
 Reading from an array takes $O(1)$ time because we know exactly where in the array to go. Searching, meanwhile, is $O(n)$ because in the worst case, we need to scan through the entire array.
 
 ### Implementation
-If we wanted to implement an array class in Python, we could do the following:
+Arrays are such a foundational data structure that they come built-in with essentially any programming language, even as low-level as [C](https://www.freecodecamp.org/news/what-is-the-c-programming-language-beginner-tutorial/) or [Assembly](https://en.wikipedia.org/wiki/Assembly_language). Python comes with a `list` data type, which is a bit of a blend between arrays and [linked lists](#linked-lists), which we'll learn about in the next section.
 
-{% include header-python.html %}
-```python
-class Array:
-    def __init__(self, n: int):
-        self.length = n
-        self.vals = [None] * n
+It's a little awkward to implement an array in Python, given lists accomplish the same thing, but we can still readily create an `Array` class that mimics the behavior of an array in C or Java. Check out this footnote <sup>[[3]](#3-implementation)</sup> for a deep dive.
 
-    def __repr__(self):
-        non_null = 0
+Rather, let's spend this section talking about **stacks** and **queues**.
 
-        for val in self.vals:
-            if val:
-                non_null += 1
-
-        return f"Array of length {len(self.vals)} with " + \
-               f"{non_null} non-null values"
-
-    def get(self, i):
-        """
-        Return the value of the array at index i.
-        """
-        return self.vals[i]
-
-    def append(self, val):
-        """
-        Append a value to the end of the array. Array size is
-        doubled if no more room to append values.
-        """
-        n = self.length
-
-        for i in range(n):
-            if not self.vals[i]:
-                self.vals[i] = val
-                return None
-
-        print(f"Insufficient space; doubling array size ({n} -> {2*n})")
-        self.vals = self.vals + [None] * n
-        self.length = 2 * n
-
-        for i in range(n, len(self.vals)):
-            if not self.vals[i]:
-                self.vals[i] = val
-                return None
-```
-
-We can play around with it a bit now.
-
-{% include header-python.html %}
-```python
-arr = Array(10)
-arr
-# Array of length 10 with 0 non-null values
-
-arr.append(5)
-arr
-# Array of length 10 with 1 non-null values
-
-for x in [10]*20:
-    arr.append(x)
-# Insufficient space; doubling array size (10 -> 20)
-# Insufficient space; doubling array size (20 -> 40)
-
-print(arr.length)
-# 40
-```
 
 ### Questions
 This is a little different if you're coming straight from Python. But in the spirit of a constant array size, we could have some questions like these:
@@ -632,4 +571,73 @@ This concept is called caching, or memoizing. Here's what that would look like i
 ```python
 def memoize(arr):
   pass
+```
+
+#### [3. Implementation](#implementation)
+Here's how to build an `Array` class in Python.
+
+{% include header-python.html %}
+```python
+class Array:
+    def __init__(self, n: int):
+        self.length = n
+        self.vals = [None] * n
+
+    def __repr__(self):
+        non_null = 0
+
+        for val in self.vals:
+            if val:
+                non_null += 1
+
+        return f"Array of length {len(self.vals)} with " + \
+               f"{non_null} non-null values"
+
+    def get(self, i):
+        """
+        Return the value of the array at index i.
+        """
+        return self.vals[i]
+
+    def append(self, val):
+        """
+        Append a value to the end of the array. Array size is
+        doubled if no more room to append values.
+        """
+        n = self.length
+
+        for i in range(n):
+            if not self.vals[i]:
+                self.vals[i] = val
+                return None
+
+        print(f"Insufficient space; doubling array size ({n} -> {2*n})")
+        self.vals = self.vals + [None] * n
+        self.length = 2 * n
+
+        for i in range(n, len(self.vals)):
+            if not self.vals[i]:
+                self.vals[i] = val
+                return None
+```
+
+We can play around with it a bit now.
+
+{% include header-python.html %}
+```python
+arr = Array(10)
+arr
+# Array of length 10 with 0 non-null values
+
+arr.append(5)
+arr
+# Array of length 10 with 1 non-null values
+
+for x in [10]*20:
+    arr.append(x)
+# Insufficient space; doubling array size (10 -> 20)
+# Insufficient space; doubling array size (20 -> 40)
+
+print(arr.length)
+# 40
 ```
