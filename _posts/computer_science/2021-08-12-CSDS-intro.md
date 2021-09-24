@@ -122,13 +122,15 @@ The runtime of these problems expands at a shocking rate. An array of 10 element
 If your task is specifically to find all subsets or permutations of an inputted array, it's hard to avoid a $O(2^n)$ or $O(n!)$ runtime. But not all hope is lost $-$ there are some architectural tricks you can employ to lessen the burden.<sup>[[2]](#2-big-o-notation)</sup>
 
 ### Data types
-Finally, we should briefly mention the fundamental _data types_ before we cover data structures. If a data structure is a collection of data, what _types_ of data can we have in our structures? There are a few fundamental data types regardless of programming language:
+Finally, we should briefly mention the fundamental _data types_. If a data structure is a collection of data, what _types_ of data can we have in our structures? There are a few fundamental data types regardless of programming language:
 
 **Integers** are whole numbers, like `1`, `-5`, and `256`. In languages besides Python, you can be more specific with the type of integer, such as signed or unsigned, and the number of bits an integer can hold. This corresponds to the amount of memory your program will reserve, and if you're not careful, you can _overflow_ or _underflow_.
 
-**Floats** are numbers with decimal places, like `1.2`, `0.14`. In Python, this includes numbers defined with scientific notation, like `1e5`.
+**Floats** are numbers with decimal places, like `1.2`, `0.14`. In Python, this includes numbers defined with scientific notation, like `1e5`. Lower-level languages like C or Java have a related _double_ type, referring to extra precision beyond the decimal place.
 
 **Chars** are letters, like `a`, `b`, `c`. A collection of them is a string (which technically is an array of chars). Also includes the representations of non-alphabetical elements, like `0` or `?`.
+
+**Void** is a null, like `None` in Python. This data type indicates a _lack_ of data.
 
 ## Arrays
 ### Theory
