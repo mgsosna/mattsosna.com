@@ -105,7 +105,7 @@ We can visualize the execution time of common efficiencies to better understand 
 <img src="{{  site.baseurl  }}/images/computer_science/big_o.png" height="90%" width="90%">
 </center>
 
-What problems could possibly require an algorithm in the red zone? **Red zone algorithms are often necessary for problems where you need to know _every possible answer to a question_.** One example of an $O(2^n)$ algorithm is finding all [**subsets**](https://en.wikipedia.org/wiki/Subset) of an array. For each element in the set, we have two options: include or exclude the element. A set of four elements like `[A,B,C,D]` will have $2^4$, or 16, subsets:
+What problems could possibly require an algorithm in the red zone? **Red zone algorithms are often necessary for problems where you need to know _every possible answer to a question_.** One example of an $O(2^n)$ algorithm is finding all [**subsets**](https://en.wikipedia.org/wiki/Subset) of an array. Each element in the set can be either included or excluded. A set of four elements like `[A,B,C,D]` will therefore have $2^4$, or 16, subsets:
 * `[]`, `[A]`, `[B]`, `[C]`, `[D]`
 * `[A,B]`, `[A,C]`, `[A,D]`, `[B,C]`, `[B,D]`, `[C,D]`
 * `[A,B,C]`, `[A,B,D]`, `[A,C,D]`, `[B,C,D]`
@@ -134,26 +134,17 @@ Finally, we should briefly mention the fundamental _data types_. If a data struc
 
 ## Arrays
 ### Theory
-Arrays are one of the most fundamental data structures in computer science: an ordered series of elements. When you type something like `x = 5`, your computer takes a location in memory, puts `5` in it, and then points the text `x` to that location. An array, meanwhile, is a set of consecutive locations in memory. Below, the gray boxes are memory, while the orange region is our array of numbers.
+Arrays are one of the most fundamental data structures in computer science, and they come built-in with languages even as low-level as [C](https://www.freecodecamp.org/news/what-is-the-c-programming-language-beginner-tutorial/) or [Assembly](https://en.wikipedia.org/wiki/Assembly_language). An array is a contiguous slice of computer memory, meaning each piece of data is physically next to each other. This proximity means we can access any index $-$ such as the third, first, or last element $-$ in $O(1)$ time.
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/array1.png" height="80%" width="80%">
 </center>
 
-We can define an array in C as such. Note how we specify the size of the array when we define it.
-
-{% include header-c.html %}
-```c
-int candidates[6] = [4, 8, 15, 16, 23, 42];
-```
-
-Python doesn't have a native array type, but they're a central data structure for lower-level languages like Java and C. In Python, a `list` is actually a series of pointers to different locations in memory that can still be easily indexed. In terms of usability, it combines the best elements of arrays and linked lists.
+Python doesn't have a native array type, but they're a central data structure for lower-level languages like Java and C. In Python, a `list` is actually a series of pointers to different locations in memory that can still be easily indexed. In terms of usability, it combines the best elements of arrays and [linked lists](#linked-lists), which we'll learn about in the next section.
 
 Reading from an array takes $O(1)$ time because we know exactly where in the array to go. Searching, meanwhile, is $O(n)$ because in the worst case, we need to scan through the entire array.
 
 ### Implementation
-Arrays are such a foundational data structure that they come built-in with essentially any programming language, even as low-level as [C](https://www.freecodecamp.org/news/what-is-the-c-programming-language-beginner-tutorial/) or [Assembly](https://en.wikipedia.org/wiki/Assembly_language). Python comes with a `list` data type, which is a bit of a blend between arrays and [linked lists](#linked-lists), which we'll learn about in the next section.
-
 It's a little awkward to implement an array in Python, given lists accomplish the same thing, but we can still readily create an `Array` class that mimics the behavior of an array in C or Java. Check out this footnote <sup>[[3]](#3-implementation)</sup> for a deep dive.
 
 Rather, let's spend this section talking about **stacks** and **queues**.
