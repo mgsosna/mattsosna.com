@@ -128,13 +128,13 @@ Finally, we should briefly mention the fundamental _data types_. If a data struc
 
 **Floats** are numbers with decimal places, like `1.2`, `0.14`. In Python, this includes numbers defined with scientific notation, like `1e5`. Lower-level languages like C or Java have a related _double_ type, referring to extra precision beyond the decimal place.
 
-**Chars** are letters, like `a`, `b`, `c`. A collection of them is a string (which technically is an array of chars). Also includes the representations of non-alphabetical elements, like `0` or `?`.
+**Chars** are letters, like `a`, `b`, `c`. A collection of them is a string (which is technically an array of chars). The string representations of numbers and symbols, like `5` or `?`, are also chars.
 
-**Void** is a null, like `None` in Python. This data type indicates a _lack_ of data.
+**Void** is a null, like `None` in Python. Voids explicitly indicate a _lack_ of data, which is a useful default when initializing an array that will be filled, or a function that performs an action but doesn't specifically return anything (e.g. sending an email).
 
 ## Arrays
 ### Theory
-Arrays are one of the most fundamental data structures in computer science, and they come built-in with languages even as low-level as [C](https://www.freecodecamp.org/news/what-is-the-c-programming-language-beginner-tutorial/) or [Assembly](https://en.wikipedia.org/wiki/Assembly_language). An array is a contiguous slice of computer memory, meaning each piece of data is physically next to each other. This proximity means we can access any index $-$ such as the third, first, or last element $-$ in $O(1)$ time.
+Arrays are one of the most fundamental data structures in computer science, and they come built-in with languages even as low-level as [C](https://www.freecodecamp.org/news/what-is-the-c-programming-language-beginner-tutorial/) or [Assembly](https://en.wikipedia.org/wiki/Assembly_language). An array is a group of elements, like `[5, 8, -1]`, located on a contiguous slice of computer memory. Because each element of the array is stored physically next to one another, we can access any index $-$ such as the first, third, or last element $-$ in $O(1)$ time.
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/array1.png" height="80%" width="80%">
