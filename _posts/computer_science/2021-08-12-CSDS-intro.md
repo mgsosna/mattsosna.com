@@ -153,14 +153,14 @@ from typing import Any
 
 class Array:
     def __init__(self, n: int, dtype: Any):
-        self.length = n
+        self.size = n
         self.slots = n
         self.vals = [None] * n
         self.index = 0
         self.dtype = dtype
 
     def __repr__(self):
-        return f"Array of length {self.length} with {self.index} " + \
+        return f"Array of size {self.size} with {self.index} " + \
                f"{self.dtype} values"
 
     def get(self, i: int) -> Any:
@@ -181,12 +181,12 @@ class Array:
             self.vals[self.index] = val
             self._move_index()
         else:
-            print(f"Reached end; doubling size " +
-                  f"({self.length} -> {2*self.length})")
-            self.vals = self.vals + [None] * self.n
+            print(f"Insufficient space; doubling size " +
+                  f"({self.size} -> {2*self.size})")
+            self.vals = self.vals + [None] * self.size
             self.vals[i] = val
-            self.slots = self.n
-            self.n = self.n * 2
+            self.slots = self.size
+            self.size *= 2
             self._move_index()
 
     def _move_index(self):
@@ -211,10 +211,10 @@ arr
 
 for x in [10]*20:
     arr.append(x)
-# Insufficient space; doubling array size (10 -> 20)
-# Insufficient space; doubling array size (20 -> 40)
+# Insufficient space; doubling size (10 -> 20)
+# Insufficient space; doubling size (20 -> 40)
 
-print(arr.n)
+print(arr.size)
 # 40
 ```
 
