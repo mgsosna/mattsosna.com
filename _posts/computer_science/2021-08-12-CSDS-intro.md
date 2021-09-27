@@ -147,6 +147,77 @@ Reading from an array takes $O(1)$ time because we know exactly where in the arr
 ### Implementation
 It's a little awkward to implement an array in Python, given lists accomplish the same thing, but we can still readily create an `Array` class that mimics the behavior of an array in C or Java. Check out this footnote <sup>[[3]](#3-implementation)</sup> for a deep dive.
 
+{% include header-python.html %}
+```python
+from typing import Any
+
+class Array:
+    def __init__(self, n: int, dtype: Any):
+        self.length = n
+        self.slots = n
+        self.vals = [None] * n
+        self.index = 0
+        self.dtype = dtype
+
+    def __repr__(self):
+        return f"Array of length {self.length} with {self.index} " + \
+               f"{self.dtype} values"
+
+    def get(self, i: int) -> Any:
+        """
+        Return the value at index i
+        """
+        return self.vals[i]
+
+    def append(self, val: Any) -> None:
+        """
+        Append a value to the first non-null index. Value must be same
+        type as self.dtype. If array is full, doubles the size
+        """
+        if not isinstance(val, self.dtype):
+            raise ValueError(f"val is {type(val)}; must be {self.dtype}")
+
+        if self.slots > 0:
+            self.vals[self.index] = val
+            self._move_index()
+        else:
+            print(f"Reached end; doubling size " +
+                  f"({self.length} -> {2*self.length})")
+            self.vals = self.vals + [None] * self.n
+            self.vals[i] = val
+            self.slots = self.n
+            self.n = self.n * 2
+            self._move_index()
+
+    def _move_index(self):
+        """
+        Update index and available slots
+        """
+        self.index += 1
+        self.slots -= 1
+```
+
+We can play around with it a bit now.
+
+{% include header-python.html %}
+```python
+arr = Array(10, int)
+arr
+# Array of length 10 with 0 <class 'int'> values
+
+arr.append(5)
+arr
+# Array of length 10 with 1 <class 'int'> values
+
+for x in [10]*20:
+    arr.append(x)
+# Insufficient space; doubling array size (10 -> 20)
+# Insufficient space; doubling array size (20 -> 40)
+
+print(arr.n)
+# 40
+```
+
 Rather, let's spend this section talking about **stacks** and **queues**.
 
 
@@ -564,73 +635,4 @@ This concept is called caching, or memoizing. Here's what that would look like i
 ```python
 def memoize(arr):
   pass
-```
-
-#### [3. Implementation](#implementation)
-Here's how to build an `Array` class in Python.
-
-{% include header-python.html %}
-```python
-class Array:
-    def __init__(self, n: int):
-        self.length = n
-        self.vals = [None] * n
-
-    def __repr__(self):
-        non_null = 0
-
-        for val in self.vals:
-            if val:
-                non_null += 1
-
-        return f"Array of length {len(self.vals)} with " + \
-               f"{non_null} non-null values"
-
-    def get(self, i):
-        """
-        Return the value of the array at index i.
-        """
-        return self.vals[i]
-
-    def append(self, val):
-        """
-        Append a value to the end of the array. Array size is
-        doubled if no more room to append values.
-        """
-        n = self.length
-
-        for i in range(n):
-            if not self.vals[i]:
-                self.vals[i] = val
-                return None
-
-        print(f"Insufficient space; doubling array size ({n} -> {2*n})")
-        self.vals = self.vals + [None] * n
-        self.length = 2 * n
-
-        for i in range(n, len(self.vals)):
-            if not self.vals[i]:
-                self.vals[i] = val
-                return None
-```
-
-We can play around with it a bit now.
-
-{% include header-python.html %}
-```python
-arr = Array(10)
-arr
-# Array of length 10 with 0 non-null values
-
-arr.append(5)
-arr
-# Array of length 10 with 1 non-null values
-
-for x in [10]*20:
-    arr.append(x)
-# Insufficient space; doubling array size (10 -> 20)
-# Insufficient space; doubling array size (20 -> 40)
-
-print(arr.length)
-# 40
 ```
