@@ -145,7 +145,9 @@ Python doesn't have a native array type, but they're a central data structure fo
 Reading from an array takes $O(1)$ time because we know exactly where in the array to go. Searching, meanwhile, is $O(n)$ because in the worst case, we need to scan through the entire array.
 
 ### Implementation
-It's a little awkward to implement an array in Python, given lists accomplish the same thing, but we can still readily create an `Array` class that mimics the behavior of an array in C or Java. Check out this footnote <sup>[[3]](#3-implementation)</sup> for a deep dive.
+We can implement a very basic `Array` class in Python that mimics the core functionality of arrays in C or Java. The main restrictions include:
+1. Once we've allocated the space for an array, we can't update it without creating a new array.
+2. All values in the array must be the same type.
 
 {% include header-python.html %}
 ```python
@@ -153,76 +155,45 @@ from typing import Any
 
 class Array:
     def __init__(self, n: int, dtype: Any):
-        self.length = n
-        self.slots = n
         self.vals = [None] * n
-        self.index = 0
         self.dtype = dtype
 
-    def __repr__(self):
-        return f"Array of length {self.length} with {self.index} " + \
-               f"{self.dtype} values"
-
-    def get(self, i: int) -> Any:
+    def get(self,
+            i: int) -> Any:
         """
         Return the value at index i
         """
         return self.vals[i]
 
-    def append(self, val: Any) -> None:
+    def put(self,            
+            i: int,
+            val: Any) -> None:
         """
-        Append a value to the first non-null index. Value must be same
-        type as self.dtype. If array is full, doubles the size
+        Update the array at index i with val. Val must be same type as
+        self.dtype
         """
         if not isinstance(val, self.dtype):
             raise ValueError(f"val is {type(val)}; must be {self.dtype}")
 
-        if self.slots > 0:
-            self.vals[self.index] = val
-            self._move_index()
-        else:
-            print(f"Reached end; doubling size " +
-                  f"({self.length} -> {2*self.length})")
-            self.vals = self.vals + [None] * self.n
-            self.vals[i] = val
-            self.slots = self.n
-            self.n = self.n * 2
-            self._move_index()
-
-    def _move_index(self):
-        """
-        Update index and available slots
-        """
-        self.index += 1
-        self.slots -= 1
+        self.vals[i] = val
 ```
 
-We can play around with it a bit now.
+We can now play around with our `Array` class. Below, we create an instance, confirm there's nothing in the first index, fill that slot with a string, then return it. We also confirm that our array rejects a non-string object. It's not the most exciting code in the world, but it works!
 
 {% include header-python.html %}
 ```python
-arr = Array(10, int)
-arr
-# Array of length 10 with 0 <class 'int'> values
+arr = Array(10, str)
 
-arr.append(5)
-arr
-# Array of length 10 with 1 <class 'int'> values
+arr.get(0)       # None
+arr.put(0, 'a')  # None
+arr.get(0)       # 'a'
 
-for x in [10]*20:
-    arr.append(x)
-# Insufficient space; doubling array size (10 -> 20)
-# Insufficient space; doubling array size (20 -> 40)
-
-print(arr.n)
-# 40
+arr.put(1, 5)    
+# ValueError: val is <class 'int'>; must be <class 'str'>
 ```
 
-Rather, let's spend this section talking about **stacks** and **queues**.
-
-
-### Questions
-This is a little different if you're coming straight from Python. But in the spirit of a constant array size, we could have some questions like these:
+### Example
+If you come across a question involving arrays, you'll most likely want to use Python's built-in `list` or a `numpy` array rather than our `Array` class. But in the spirit of maintaining an array that doesn't change size, let's take on [**LC 1089:** Duplicate Zeros](https://leetcode.com/problems/duplicate-zeros/). The goal of this question is to duplicate all zeros in an array, modifying it in-place so that elements are shifted downstream and popped off, rather than increasing the array size or creating a new one.
 
 {% include header-python.html %}
 ```python
@@ -235,15 +206,13 @@ def duplicate_zeros(arr: List[int]) -> None:
 
     while i < len(arr):
         if arr[i] == 0:
-            arr.insert(i, 0)
-            arr.pop()
+            arr.insert(i, 0)   # Insert a 0 at index i
+            arr.pop()          # Remove the last element
             i += 1
         i += 1
 ```
 
 We use a `while` rather than a `for` loop because we're modifying the array as we move through it, so we want to manually control our index `i`. This is important when we're inserting zeros because we either will double-count our zero (if we insert into the array at or past our index), or the array will move without us if we insert it before. Our logic is therefore that we progress through our array like a normal `for` loop, incrementing `i` each time. But if we encounter a zero, we insert a zero and then increment `i` again, skipping the zero we added to avoid double-counting. We also don't return anything because we're modifying the array in-place.
-
-**Also, we'll likely want to talk about stacks and queues.**
 
 
 ## Linked lists
@@ -619,6 +588,14 @@ def hash_function(name: str) -> int:
 ```
 
 ### Questions
+
+## Conclusions
+This post covered data structures, the fundamental ways of organizing data in computer science. We started by discussing data structures vs. abstract data types, using Big O notation to quantify the efficiency of operations on data structures, and the types of data we actually store in our structures. We then discussed the theory and implementation of arrays, linked lists, trees, graphs, and hash maps, as well as answered a Leetcode question for each.
+
+In the next post, we'll cover abstract data types. We'll discuss stacks and queues, caches, and more.
+
+Best,<br>
+Matt
 
 ## Footnotes
 #### [1. Intro](#)
