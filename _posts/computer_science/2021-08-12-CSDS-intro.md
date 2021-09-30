@@ -217,6 +217,7 @@ We use a `while` rather than a `for` loop because we're modifying the array as w
 
 ## Linked lists
 ### Theory
+Linked lists are another major data type.
 What if the elements of our array didn't need to be right next to each other in memory? And what if we didn't have to know beforehand how big our array would be $-$ we could just grow it dynamically without worrying?
 
 This is what a singly linked list looks like.
@@ -285,37 +286,7 @@ LL
 # SinglyLinkedList with vals [100, 0, 5, 10]
 ```
 
-Now for a doubly linked list, we just add a `prev` attribute to the `ListNode` that points to the previous node.
-
-{% include header-python.html %}
-```python
-class ListNode:
-    def __init__(self, val=None, prev=None, next=None):
-        self.val = val
-        self.prev = prev
-        self.next = next
-
-class DoublyLinkedList:
-    def __init__(self, head=None):
-        self.head = ListNode(head)
-
-    def insert_end(self, val):
-        node = self.head
-
-        while node.next:
-            node = node.next
-
-        node.next = ListNode(val)
-
-        prev_node = node
-        node = node.next
-        node.prev = prev_node
-
-    def insert_front(self, val):
-        head = ListNode(val)
-        head.next = self.head
-        self.head = head
-```
+We can create a doubly linked list by just adding a `prev` attribute to the `ListNode` that points to the previous node. The `prev` of the head of the doubly linked list, like the `next` of the tail, will point to null.
 
 ### Questions
 Some common questions:
