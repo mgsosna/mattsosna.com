@@ -134,7 +134,7 @@ Finally, we should briefly mention the fundamental _data types_. If a data struc
 
 ## Arrays
 ### Theory
-Arrays are one of the most fundamental data structures in computer science, and they come built-in with languages even as low-level as [C](https://www.freecodecamp.org/news/what-is-the-c-programming-language-beginner-tutorial/) or [Assembly](https://en.wikipedia.org/wiki/Assembly_language). An array is a group of elements, like `[5, 8, -1]`, located on a contiguous slice of computer memory. Because each element of the array is stored physically next to one another, we can access any index $-$ such as the first, third, or last element $-$ in $O(1)$ time.
+Arrays are one of the most fundamental data structures in computer science, and they come built-in with languages even as low-level as [C](https://www.freecodecamp.org/news/what-is-the-c-programming-language-beginner-tutorial/) or [Assembly](https://en.wikipedia.org/wiki/Assembly_language). An array is a group of elements of the same type, like `[5, 8, -1]` or `['a', 'b', 'c']`, located on a contiguous slice of computer memory. Because each element of the array is stored physically next to one another, we can access any index $-$ such as the first, third, or last element $-$ in $O(1)$ time.<sup>[[3]](#3-theory)</sup>
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/array1.png" height="80%" width="80%">
@@ -584,3 +584,11 @@ This concept is called caching, or memoizing. Here's what that would look like i
 def memoize(arr):
   pass
 ```
+
+#### [3. Theory](#theory)
+Array indexing takes $O(1)$ time because there are always only three pieces of information required:
+1. The location in memory of the start of the array
+2. The offset (from the start of the array)
+3. The type of data
+
+The offset points to why so many programming languages are 0-indexed: the first element of the array is 0 elements away from the start. The type of data is important, as data types differ in the number of bytes, or how much physical memory each element requires. A `char` is 1 byte, [for example](https://www.ibm.com/docs/en/ibm-mq/7.5?topic=platforms-standard-data-types), while an int is 4. 
