@@ -44,7 +44,7 @@ The data structure is what we, the developer, care about, as it's the specific t
 
 One more example to drive the point home. Imagine you need to put away some clean laundry. A data structure with _<u>low write time</u>_ but _<u>high read time</u>_ would be a pile of clothes on the ground. Adding to this pile is blazing fast, but retrieving any particular item is slow because you have to search through the unsorted pile.
 
-An alternate method would be to neatly arrange your clothes in your dresser and closet. This method would have a _<u>high write time</u>_ but _<u>low read time</u>_, as it would take longer to put away your clothes, but you'd be able to more quickly access any item you're looking for.
+An alternate method would be to neatly arrange your clothes in your dresser and closet. This method would have a _<u>high write time</u>_ but _<u>low read time</u>_, as it would take longer to put away your clothes, but you'd be able to more quickly access any item you searched for.
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/pile.png" height="70%" width="70%">
@@ -53,7 +53,7 @@ An alternate method would be to neatly arrange your clothes in your dresser and 
 While this example might sound silly, it's actually not too far off from the strategies of dumping data into [AWS S3](https://aws.amazon.com/s3/) versus a database, or to some degree storing it in a [highly-structured SQL vs. flexible NoSQL database]({{  site.baseurl  }}/SQL_vs_NoSQL). The dresser and closet isn't automatically the best approach $-$ logging data, for example, is written far more than it's read, so a "pile of clothes" approach of saving raw output to S3 can actually work well.
 
 ### Big O notation
-While it makes intuitive sense that it's easier to dig a hole with a shovel than a hammer, how do we quantify the difference in performance? The _number of seconds_ it takes to dig is a good metric, but to deal with holes of differing sizes, we'd probably want something more like _seconds per cubic foot_.
+While it makes sense that it's easier to dig a hole with a shovel than a hammer, how do we quantify the difference in performance? The _number of seconds_ it takes to dig is a good metric, but to deal with holes of differing sizes, we'd probably want something more like _seconds per cubic foot_.
 
 This only gets us part of the way, though $-$ how do we account for shovels that are different sizes, or the people doing the digging? A bodybuilder with a hammer can dig a hole faster than a toddler with a shovel, but that doesn't mean the hammer is a better digging tool.
 
@@ -61,11 +61,11 @@ This only gets us part of the way, though $-$ how do we account for shovels that
 <img src="{{  site.baseurl }}/images/computer_science/big-o.png" height="80%" width="80%">
 </center>
 
-In computer terms, these two considerations can be reframed as **_the amount of data_** being processed, and **_the machine being using._** When comparing how well data structures perform some operation $-$ like storing new data or retrieving a requested element $-$ we want a metric that quantifies how performance scales with the amount of data, independent of what machine we use.
+In computer terms, these two considerations can be reframed as **_the amount of data_** being processed, and **_the machine being using._** When comparing how well data structures perform some operation $-$ like storing new data or retrieving a requested element $-$ **we want a metric that quantifies how performance scales with the amount of data, independent of what machine we use.**
 
 To do this, we can turn to [**Big O notation**](https://en.wikipedia.org/wiki/Big_O_notation), denoted as $O(&sdot;)$. Big O is a measure of the "worst-case" efficiency, an upper bound on how long it would take to accomplish a task (or how much memory it would require, which we won't cover here). Searching for an element in an unsorted list is $O(n)$, for example, because in the worst case, you have to search the entire list.
 
-Here's another example of an operation with $O(n)$ time complexity. Displaying every element in a Python `list` takes more time depending on how many elements there are in the list. Specifically, the time it takes _grows linearly_: if you double the number of elements, you double the time to print all the elements.
+Here's another example of an operation with $O(n)$ time complexity. Printing every element in a Python list takes more time depending on how many elements there are in the list. Specifically, the time it takes _grows linearly_: if you double the number of elements, you double the time to display all elements.
 
 {% include header-python.html %}
 ```python
@@ -86,7 +86,7 @@ def print_pairs(arr: list):
             print(num1, num2)
 ```
 
-That's pretty bad. The best an algorithm can do is _constant_ time, where the run time is independent on the amount of data. For example, printing a random value of an array will always take the same time, regardless of the size of the array.
+An $O(n^2)$ algorithm isn't great. Ideally, we want an algorithm that works in _constant_ time, or $O(1)$, where the run time is independent on the amount of data. For example, printing a random value of an array will always take the same time, regardless of the size of the array.
 
 {% include header-python.html %}
 ```python
@@ -95,23 +95,23 @@ def print_idx(arr: list, i: int):
     print(arr[i])
 ```
 
-We can quantify the efficiency of these functions with the `%%timeit` command in a Jupyter notebook. Below, we can already see dramatic increases in the execution time of the $O(n^2)$ `print_pairs`. We can also see the power of the $O(1)$ `print_idx`, whose execution hovers around 0.153 ms, regardless of the size of the array or whether we're requesting the first or last element.
+We can quantify the efficiency of these functions with the `%%timeit` command in a Jupyter notebook. Below, we already see dramatic increases in the execution time of the $O(n^2)$ `print_pairs`. We also see the power of the $O(1)$ `print_idx`, whose execution hovers around 0.153 ms, regardless of the size of the array or whether we're requesting the first or last element.
 
 <img src="{{  site.baseurl  }}/images/computer_science/big-o-demo.png">
 
-We can visualize the execution time of common efficiencies to better understand how they compare. The green region is ideal $-$ these are the most scalable runtimes, growing at a rate significantly slower than the amount of data. Gray is pretty good, avoid orange if you can, and find any way possible to avoid the red region.
+We can use a plot like the one below to compare how algorithms of various efficiencies scale. The green region is ideal $-$ these are the most scalable runtimes, growing at a rate significantly slower than the amount of data. Gray is pretty good, avoid orange if you can, and find any way possible to avoid the red region.
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/big_o.png" height="90%" width="90%">
 </center>
 
-What problems could possibly require an algorithm in the red zone? **Red zone algorithms are often necessary for problems where you need to know _every possible answer to a question_.** One example of an $O(2^n)$ algorithm is finding all [**subsets**](https://en.wikipedia.org/wiki/Subset) of an array. Each element in the set can be either included or excluded. A set of four elements like `[A,B,C,D]` will therefore have $2^4$, or 16, subsets:
+What problems could possibly require an algorithm in the red zone? **Red zone algorithms are often necessary for problems where you need to know _every possible answer to a question_.** One example of an $O(2^n)$ algorithm is finding all [**subsets**](https://en.wikipedia.org/wiki/Subset) of an array. Each element in the set can be either 1) included or 2) excluded in a subset. A set of four elements like `[A,B,C,D]` will therefore have $2^4$, or 16, subsets:
 * `[]`, `[A]`, `[B]`, `[C]`, `[D]`
 * `[A,B]`, `[A,C]`, `[A,D]`, `[B,C]`, `[B,D]`, `[C,D]`
 * `[A,B,C]`, `[A,B,D]`, `[A,C,D]`, `[B,C,D]`
 * `[A,B,C,D]`
 
-But an even worse runtime is $O(n!)$. [**Permutations**](https://en.wikipedia.org/wiki/Permutation) are a classic example of n-factorial complexity. For each element in the set, we can rearrange all following elements. Our previous array `[A,B,C,D]` will have 4 * 3 * 2 * 1, or 24, permutations:
+But an even worse runtime is $O(n!)$. [**Permutations**](https://en.wikipedia.org/wiki/Permutation) are a classic example of n-factorial complexity. To find every possible arrangement of `[A, B, C, D]`, we start with one of the four letters in the first position, then one of the remaining three in the second position, and so on. There will therefore be 4 * 3 * 2 * 1, or 24, permutations:
 * `[A,B,C,D]`, `[A,B,D,C]`, `[A,C,B,D]`, `[A,C,D,B]`, `[A,D,B,C]`, `[A,D,C,B]`
 * `[B,A,C,D]`, `[B,A,D,C]`, `[B,C,A,D]`, `[B,C,D,A]`, `[B,D,C,A]`, `[B,D,A,C]`
 * `[C,A,B,D]`, `[C,A,D,B]`, `[C,B,A,D]`, `[C,B,D,A]`, `[C,D,B,A]`, `[C,D,A,B]`
@@ -119,7 +119,7 @@ But an even worse runtime is $O(n!)$. [**Permutations**](https://en.wikipedia.or
 
 The runtime of these problems expands at a shocking rate. An array of 10 elements has 1,024 subsets and 3,628,800 permutations, and an array of 20 has 1,048,576 subsets and 2,432,902,008,176,640,000 permutations!
 
-If your task is specifically to find all subsets or permutations of an inputted array, it's hard to avoid a $O(2^n)$ or $O(n!)$ runtime. But not all hope is lost $-$ there are some architectural tricks you can employ to lessen the burden.<sup>[[2]](#2-big-o-notation)</sup>
+If your task is specifically to find all subsets or permutations of an inputted array, it's hard to avoid a $O(2^n)$ or $O(n!)$ runtime. But not all hope is lost if you're running this operation more than once $-$ there are some architectural tricks you can employ to lessen the burden.<sup>[[2]](#2-big-o-notation)</sup>
 
 ### Data types
 Finally, we should briefly mention the fundamental _data types_. If a data structure is a collection of data, what _types_ of data can we have in our structures? There are a few fundamental data types regardless of programming language:
@@ -581,14 +581,41 @@ This concept is called caching, or memoizing. Here's what that would look like i
 
 {% include header-python.html %}
 ```python
-def memoize(arr):
-  pass
+class PermutationCalculator:
+  """
+  Methods for calculating permutations
+  """
+  def __init__(self):
+    self.seen = {}
+
+  def get_permutations(arr: list) -> list:
+    """
+    Returns permutations of list, first checking self.seen.
+    """
+    # Ensure [A, B, null] and [null, B, A] are treated the same
+    clean_str = sort_and_remove_nulls(arr)
+
+    # Don't perform calculation if we've seen it before!
+    if clean_str in self.seen:
+      return self.seen[clean_str]
+
+    # If new request, do the hard work
+    result = _permute(clean_str)
+
+    # Cache the result for instant retrieval next time
+    self.seen[clean_str] = result
+
+    return result
 ```
 
-#### [3. Theory](#theory)
-Array indexing takes $O(1)$ time because there are always only three pieces of information required:
-1. The location in memory of the start of the array
-2. The offset (from the start of the array)
-3. The type of data
+Another approach is [dynamic programming](https://www.geeksforgeeks.org/dynamic-programming/), which involves recursively breaking down a problem into as small a piece as possible, then caching the results to the pieces. For example, if our question was modified slightly to return _the number_ of permutations, rather than the actual permutations, it could be helpful to cache values like $5!$ or $10!$ to avoid having to calculate them each time.
 
-The offset points to why so many programming languages are 0-indexed: the first element of the array is 0 elements away from the start. The type of data is important, as data types differ in the number of bytes, or how much physical memory each element requires. A `char` is 1 byte, [for example](https://www.ibm.com/docs/en/ibm-mq/7.5?topic=platforms-standard-data-types), while an int is 4. 
+#### [3. Theory](#theory)
+Array indexing takes $O(1)$ time because there are always only three steps required:
+1. Find the location in memory of the start of the array
+2. Identify the type of data in the array (e.g. float)
+3. Return the value in memory at `array start` + `index * (size of data type)`
+
+Step 3 hints at why so many programming languages are 0-indexed: the first element of an array is 0 elements away from the start. Returning that value, then, is easy if `index * (size of data type)` is zero and we can just return `array start`.
+
+The type of data is important because data types differ in how much memory each element requires. A char is 1 byte, [for example](https://www.ibm.com/docs/en/ibm-mq/7.5?topic=platforms-standard-data-types), while an int is 4. Getting the element at index 3 of a char array means traversing three bytes from the start, while retrieving the same element of an int array of ints would mean traversing twelve bytes.
