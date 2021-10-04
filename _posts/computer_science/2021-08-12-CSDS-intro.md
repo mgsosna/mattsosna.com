@@ -142,8 +142,6 @@ Arrays are one of the most fundamental data structures in computer science, and 
 
 Python doesn't have a native array type, but they're a central data structure for lower-level languages like Java and C. In Python, a `list` is actually a series of pointers to different locations in memory that can still be easily indexed. In terms of usability, it combines the best elements of arrays and [linked lists](#linked-lists), which we'll learn about in the next section.
 
-Reading from an array takes $O(1)$ time because we know exactly where in the array to go. Searching, meanwhile, is $O(n)$ because in the worst case, we need to scan through the entire array.
-
 ### Implementation
 We can implement a very basic `Array` class in Python that mimics the core functionality of arrays in C or Java. The main restrictions include:
 1. Once we've allocated the space for an array, we can't update it without creating a new array.
@@ -193,7 +191,7 @@ arr.put(1, 5)
 ```
 
 ### Example
-If you come across a question involving arrays, you'll most likely want to use Python's built-in `list` or a `numpy` array rather than our `Array` class. But in the spirit of maintaining an array that doesn't change size, let's take on [**LC 1089:** Duplicate Zeros](https://leetcode.com/problems/duplicate-zeros/). The goal of this question is to duplicate all zeros in an array, modifying it in-place so that elements are shifted downstream and popped off, rather than increasing the array size or creating a new one.
+If you come across a question involving arrays, you'll most likely want to use Python's built-in `list` or a `numpy` array rather than our `Array` class. But in the spirit of using an array that doesn't change size, let's take on [**LC 1089:** Duplicate Zeros](https://leetcode.com/problems/duplicate-zeros/). The goal of this question is to duplicate all zeros in an array, modifying it in-place so that elements are shifted downstream and popped off, rather than increasing the array size or creating a new one.
 
 {% include header-python.html %}
 ```python
@@ -588,34 +586,40 @@ class PermutationCalculator:
   def __init__(self):
     self.seen = {}
 
-  def get_permutations(arr: list) -> list:
+  def get_permutations(self, arr: list) -> list:
     """
     Returns permutations of list, first checking self.seen.
     """
-    # Ensure [A, B, null] and [null, B, A] are treated the same
-    clean_str = sort_and_remove_nulls(arr)
+    # Ensure [A, B, null], [null, B, A], etc. are treated the same
+    clean_str = self.sort_and_remove_nulls(arr)
 
     # Don't perform calculation if we've seen it before!
     if clean_str in self.seen:
       return self.seen[clean_str]
 
     # If new request, do the hard work
-    result = _permute(clean_str)
+    result = self._permute(clean_str)
 
     # Cache the result for instant retrieval next time
     self.seen[clean_str] = result
 
     return result
+
+  def sort_and_remove_nulls(self, arr: list) -> str:
+    ...
+
+  def _permute(self, clean_str: str) -> list:
+    ...
 ```
 
 Another approach is [dynamic programming](https://www.geeksforgeeks.org/dynamic-programming/), which involves recursively breaking down a problem into as small a piece as possible, then caching the results to the pieces. For example, if our question was modified slightly to return _the number_ of permutations, rather than the actual permutations, it could be helpful to cache values like $5!$ or $10!$ to avoid having to calculate them each time.
 
 #### [3. Theory](#theory)
 Array indexing takes $O(1)$ time because there are always only three steps required:
-1. Find the location in memory of the start of the array
+1. Go to the location in memory of the start of the array
 2. Identify the type of data in the array (e.g. float)
 3. Return the value in memory at `array start` + `index * (size of data type)`
 
-Step 3 hints at why so many programming languages are 0-indexed: the first element of an array is 0 elements away from the start. Returning that value, then, is easy if `index * (size of data type)` is zero and we can just return `array start`.
+Step 3 hints at why so many programming languages are 0-indexed: the first element of an array is 0 elements away from the start. Returning that value, then, is easy if `index * (size of data type)` is zero and we can just return the value at `array start`.
 
-The type of data is important because data types differ in how much memory each element requires. A char is 1 byte, [for example](https://www.ibm.com/docs/en/ibm-mq/7.5?topic=platforms-standard-data-types), while an int is 4. Getting the element at index 3 of a char array means traversing three bytes from the start, while retrieving the same element of an int array of ints would mean traversing twelve bytes.
+The type of data is important because data types differ in how much memory they require. A char is one byte, [for example](https://www.ibm.com/docs/en/ibm-mq/7.5?topic=platforms-standard-data-types), while an int is four. Getting the element at index 3 means traversing three bytes from the start for a string, while traversing twelve bytes for an array of integers.
