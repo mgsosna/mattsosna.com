@@ -140,11 +140,11 @@ Arrays are one of the most fundamental data structures in computer science, and 
 <img src="{{  site.baseurl  }}/images/computer_science/array1.png" height="80%" width="80%">
 </center>
 
-Languages like C or Java require that an array's size and data type be specified up front. Python's `list` structure is able to circumvent these requirements by storing data as [pointers to the elements' locations in memory](https://docs.python.org/3/faq/design.html#how-are-lists-implemented-in-cpython) (which aren't necessarily next to each other), and automatically resizing the array when space runs out.
+Languages like C and Java require specifying an array's size and data type up front. Python's `list` structure is able to circumvent these requirements by storing data as [pointers to the elements' locations in memory](https://docs.python.org/3/faq/design.html#how-are-lists-implemented-in-cpython) (which aren't necessarily next to each other), and automatically resizing the array when space runs out.
 
 ### Implementation
-We can implement a very basic `Array` class in Python that mimics the core functionality of arrays in C or Java. The main restrictions include:
-1. Once we've allocated the space for an array, we can't update it without creating a new array.
+We can implement a very basic `Array` class in Python that mimics the core functionality of arrays in lower-level languages. The main restrictions include:
+1. Once we've allocated space for an array, we can't get more without creating a new array.
 2. All values in the array must be the same type.
 
 {% include header-python.html %}
@@ -173,7 +173,7 @@ class Array:
         self.vals[i] = val
 ```
 
-We can now play around with our `Array` class. Below, we create an instance, confirm there's nothing in the first index, fill that slot with a string, then return it. We also confirm that our array rejects a non-string object. It's not the most exciting code in the world, but it works!
+We can now play around with our `Array` class. Below, we create an instance, confirm there's nothing in the first index, fill that slot with a char, then return it. We also confirm that our array rejects a non-char value. It's not the most exciting code in the world, but it works!
 
 {% include header-python.html %}
 ```python
@@ -188,7 +188,7 @@ arr.put(1, 5)
 ```
 
 ### Example
-If you come across a question involving arrays, you'll most likely want to use Python's built-in `list` or a `numpy` array rather than our `Array` class. But in the spirit of using an array that doesn't change size, let's take on [**LC 1089:** Duplicate Zeros](https://leetcode.com/problems/duplicate-zeros/). The goal of this question is to duplicate all zeros in an array, modifying it in-place so that elements are shifted downstream and popped off, rather than increasing the array size or creating a new one.
+If you come across a question involving arrays, you'll most likely want to use Python's built-in `list` or a `numpy` array rather than our `Array` class. But in the spirit of using an array that doesn't change size, let's take on the Leetcode question [**LC 1089:** Duplicate Zeros](https://leetcode.com/problems/duplicate-zeros/). The goal of this question is to duplicate all zeros in an array, modifying it in-place so that elements are shifted downstream and popped off, rather than increasing the array size or creating a new one.
 
 {% include header-python.html %}
 ```python
@@ -207,25 +207,21 @@ def duplicate_zeros(arr: List[int]) -> None:
         i += 1
 ```
 
-We use a `while` rather than a `for` loop because we're modifying the array as we move through it, so we want to manually control our index `i`. This is important when we're inserting zeros because we either will double-count our zero (if we insert into the array at or past our index), or the array will move without us if we insert it before. Our logic is therefore that we progress through our array like a normal `for` loop, incrementing `i` each time. But if we encounter a zero, we insert a zero and then increment `i` again, skipping the zero we added to avoid double-counting. We also don't return anything because we're modifying the array in-place.
-
+In English, we iteratively move through the list until we find a zero. We then insert another zero and pop off the last element to maintain the array size. The trick is to use a `while` loop rather than `for`, as we're modifying the array as we move through it. The finer control over our index `i` lets us skip our inserted zero to avoid double-counting.
 
 ## Linked lists
 ### Theory
-Linked lists are another major data type.
-What if the elements of our array didn't need to be right next to each other in memory? And what if we didn't have to know beforehand how big our array would be $-$ we could just grow it dynamically without worrying?
+Linked lists are another key data structure in computer science. Like arrays, a linked list is a group of values. But unlike arrays, the values in a linked list don't have to be the same type, and we don't need to know how big the list needs to be ahead of time.
 
-This is what a singly linked list looks like.
+The core element of a linked list is a **node**, which contains 1) some data, and 2) a pointer to a location in memory. Specifically, _any_ location in memory. Here's a schematic for what that looks like. Note how the element sizes differ (four bytes for integers and floats, and one byte for chars), and how the last node points off into space (a [null pointer](https://en.wikipedia.org/wiki/Null_pointer)).
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/ll1.png" height="50%" width="50%">
+<img src="{{  site.baseurl  }}/images/computer_science/ll1.png">
 </center>
+
 
 Each node in a list consists of some data, as well as pointer to the location of the next node in the list. So technically, it looks something like the diagram below. The red line of blocks is a section of your computer's RAM. The blue blocks are the nodes of our list, which consist of some data (the number in each block) and an orange _pointer_ to the location in memory for the next node of the list. The last node's pointer points to nowhere, indicating the end of the list.
 
-<center>
-<img src="{{  site.baseurl  }}/images/computer_science/ll2.png">
-</center>
 
 * Singularly linked lists
 * Doubly linked lists
