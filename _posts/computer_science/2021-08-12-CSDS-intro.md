@@ -140,7 +140,7 @@ Arrays are one of the most fundamental data structures in computer science, and 
 <img src="{{  site.baseurl  }}/images/computer_science/array1.png" height="80%" width="80%">
 </center>
 
-Python doesn't have a native array type, but they're a central data structure for lower-level languages like Java and C. In Python, a `list` is actually a series of pointers to different locations in memory that can still be easily indexed. In terms of usability, it combines the best elements of arrays and [linked lists](#linked-lists), which we'll learn about in the next section.
+Languages like C or Java require that an array's size and data type be specified up front. Python's `list` structure is able to circumvent these requirements by storing data as [pointers to the elements' locations in memory](https://docs.python.org/3/faq/design.html#how-are-lists-implemented-in-cpython) (which aren't necessarily next to each other), and automatically resizing the array when space runs out.
 
 ### Implementation
 We can implement a very basic `Array` class in Python that mimics the core functionality of arrays in C or Java. The main restrictions include:
@@ -156,19 +156,16 @@ class Array:
         self.vals = [None] * n
         self.dtype = dtype
 
-    def get(self,
-            i: int) -> Any:
+    def get(self, i: int) -> Any:
         """
         Return the value at index i
         """
         return self.vals[i]
 
-    def put(self,            
-            i: int,
-            val: Any) -> None:
+    def put(self, i: int, val: Any) -> None:
         """
-        Update the array at index i with val. Val must be same type as
-        self.dtype
+        Update the array at index i with val. Val must be same type
+        as self.dtype
         """
         if not isinstance(val, self.dtype):
             raise ValueError(f"val is {type(val)}; must be {self.dtype}")
