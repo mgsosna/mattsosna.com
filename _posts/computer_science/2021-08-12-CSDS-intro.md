@@ -36,7 +36,9 @@ But if you separate out <i><u>the task</u></i> from <i><u>how you accomplish the
 
 Here's another example. Let's say you want to visit your friend across town. You have at your disposal your bike, car, and feet. Here, the _vehicle_ is the abstract data type: a means of transportation. _How you actually travel_ is the data structure $-$ your bike, car, or feet.
 
-<img src="{{  site.baseurl  }}/images/computer_science/abstract_ds.png">
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/abstract_ds.png" height="90%" width="90%">
+</center>
 
 This distinction is important because **there are multiple ways to accomplish a task, each with pros and cons that depend on your specific program.** In the case of digging a hole, a shovel is the clear winner. But for getting across town, the "right" data structure depends on external context: a car travels the fastest but requires roads, whereas our feet are slow but can traverse tall grass and stairs.
 
@@ -213,7 +215,7 @@ In English, we iteratively move through the list until we find a zero. We then i
 ### Theory
 Linked lists are another key data structure in computer science. Like arrays, a linked list is a group of values. But unlike arrays, the values in a linked list don't have to be the same type, and we don't need to know how big the list needs to be ahead of time.
 
-The core element of a linked list is a **node**, which contains 1) some data, and 2) a pointer to a location in memory. Specifically, _any_ location in memory. Below, note how the element sizes differ (four bytes for integers and floats, and one byte for chars), and how the last node points off into space (a [null pointer](https://en.wikipedia.org/wiki/Null_pointer)).
+The core element of a linked list is a **node**, which contains 1) some data, and 2) a pointer to a location in memory. Specifically, _any_ location in memory. Below, note how the element sizes differ (four bytes for integers and floats, and one byte for chars), and how the last node contains a [null pointer](https://en.wikipedia.org/wiki/Null_pointer) that points off into space.
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/ll1.png">
@@ -221,10 +223,10 @@ The core element of a linked list is a **node**, which contains 1) some data, an
 
 The flexibility of data types and list length make linked lists attractive, but this flexibility comes with a cost. **Typically only the _head_ of the list is exposed to a program, meaning there's no $O(1)$ retrieval** for any element besides the first node. This means that the 100th element requires 100 steps to reach, since we need to traverse the list from the start.
 
-If we want to get creative, we can make our linked lists more versatile by [adding pointers to the _previous_ nodes and exposing the tail](https://www.tutorialspoint.com/data_structures_algorithms/doubly_linked_list_algorithm.htm), or by [making the list circular](https://www.tutorialspoint.com/data_structures_algorithms/circular_linked_list_algorithm.htm). But overall, choosing linked lists over arrays means paying a cost for flexibility.
+We can make our linked lists more versatile by [adding pointers to the _previous_ nodes and exposing the tail](https://www.tutorialspoint.com/data_structures_algorithms/doubly_linked_list_algorithm.htm), or by [making the list circular](https://www.tutorialspoint.com/data_structures_algorithms/circular_linked_list_algorithm.htm). But overall, choosing linked lists over arrays means paying a cost for flexibility.
 
 ### Implementation
-To recreate a linked list in Python, we start with the node. There are only two pieces we need: the data the node holds, and a pointer to the next node in the list. We also add a `__repr__` method to make it easier to see what the node contains.
+To create a linked list in Python, we start by defining the node. There are only two pieces we need: the data the node holds, and a pointer to the next node in the list. We also add a `__repr__` method to make it easier to see what the node contains.
 
 {% include header-python.html %}
 ```python
@@ -237,7 +239,7 @@ class ListNode:
         return f"ListNode with val {self.val}"
 ```
 
-We can now play around with it like so. Note how the head of the list is our variable `head`, and how we have to traverse through the list to see nodes further in, since they're not exposed to us.
+We can now play around with it like so. Note how the head of the list is our variable `head`, and how we have to iteratively append `.next` to see deeper nodes, since we can't type an index like `[1]` or `[2]` to easily reach them.
 
 {% include header-python.html %}
 ```python
@@ -252,18 +254,45 @@ print(head.next.next)  # ListNode with val 4.815162342
 
 Adding a node to the start or end of the list require a little creativity. We can write functions to do so like this:
 
+{% include header-python.html %}
 ```python
-def insert_end(self, val):
-    node = self.head
+def add_to_end(head: ListNode, val: Any) -> None:
+    node = head
     while node.next:
         node = node.next
     node.next = ListNode(val)
 
-def insert_front(self, val):
-    head = ListNode(val)
-    head.next = self.head
-    self.head = head
+def add_to_front(head: ListNode, val: Any) -> ListNode:
+    node = ListNode(val)
+    node.next = head
+    return node
 ```
+
+In `add_to_end`, we create a variable called `node` that starts at `head` and traverses the list until it reaches the node whose `.next` attribute is a null pointer. We then simply set that node's `.next` value to a new `ListNode`. Notice how we don't need to return anything for our change to take effect.
+
+`add_to_front` is simpler: we create a new head, then set its `.next` pointer to the head of our existing linked list. However, we need to manually update `head` outside our function with this new node, because otherwise `head` still points to the old node.
+
+{% include header-python.html %}
+```python
+# Create and extend list
+head = ListNode(5)
+add_to_end(head, 'abc')
+add_to_end(head, 4.815162342)
+
+# Print the contents
+print(head)            # ListNode with val 5
+print(head.next)       # ListNode with val abc
+print(head.next.next)  # ListNode with val 4.815162342
+
+# Try to update head
+add_to_front(head, 0)  
+print(head)            # ListNode with val 5
+
+# Correctly update head
+head = add_to_front(head, 0)
+print(head)            # ListNode with val 0
+```
+
 
 ### Questions
 Some common questions:
