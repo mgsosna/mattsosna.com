@@ -213,21 +213,18 @@ In English, we iteratively move through the list until we find a zero. We then i
 ### Theory
 Linked lists are another key data structure in computer science. Like arrays, a linked list is a group of values. But unlike arrays, the values in a linked list don't have to be the same type, and we don't need to know how big the list needs to be ahead of time.
 
-The core element of a linked list is a **node**, which contains 1) some data, and 2) a pointer to a location in memory. Specifically, _any_ location in memory. Here's a schematic for what that looks like. Note how the element sizes differ (four bytes for integers and floats, and one byte for chars), and how the last node points off into space (a [null pointer](https://en.wikipedia.org/wiki/Null_pointer)).
+The core element of a linked list is a **node**, which contains 1) some data, and 2) a pointer to a location in memory. Specifically, _any_ location in memory. Below, note how the element sizes differ (four bytes for integers and floats, and one byte for chars), and how the last node points off into space (a [null pointer](https://en.wikipedia.org/wiki/Null_pointer)).
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/ll1.png">
 </center>
 
+The flexibility of data types and list length make linked lists attractive, but this flexibility comes with a cost. **Typically only the _head_ of the list is exposed to a program, meaning there's no $O(1)$ retrieval** for any element besides the first node. This means that the 100th element requires 100 steps to reach, since we need to traverse the list from the start.
 
-Each node in a list consists of some data, as well as pointer to the location of the next node in the list. So technically, it looks something like the diagram below. The red line of blocks is a section of your computer's RAM. The blue blocks are the nodes of our list, which consist of some data (the number in each block) and an orange _pointer_ to the location in memory for the next node of the list. The last node's pointer points to nowhere, indicating the end of the list.
-
-
-* Singularly linked lists
-* Doubly linked lists
+If we want to get creative, we can make our linked lists more versatile by [adding pointers to the _previous_ nodes and exposing the tail](https://www.tutorialspoint.com/data_structures_algorithms/doubly_linked_list_algorithm.htm), or by [making the list circular](https://www.tutorialspoint.com/data_structures_algorithms/circular_linked_list_algorithm.htm). But overall, choosing linked lists over arrays means paying a cost for flexibility.
 
 ### Implementation
-Here's how we can implement a linked list in Python.
+To recreate a linked list in Python, we start with the node. There are only two pieces we need: the data the node holds, and a pointer to the next node in the list. We also add a `__repr__` method to make it easier to see what the node contains.
 
 {% include header-python.html %}
 ```python
@@ -238,46 +235,35 @@ class ListNode:
 
     def __repr__(self):
         return f"ListNode with val {self.val}"
-
-class SinglyLinkedList:
-    def __init__(self, head=None):
-        self.head = ListNode(head)
-
-    def __repr__(self):
-        vals = []
-        node = self.head
-        while node:
-            vals.append(node.val)
-            node = node.next
-        return f"SinglyLinkedList with vals {vals}"
-
-    def insert_end(self, val):
-        node = self.head
-        while node.next:
-            node = node.next
-        node.next = ListNode(val)
-
-    def insert_front(self, val):
-        head = ListNode(val)
-        head.next = self.head
-        self.head = head
 ```
 
-Then we can play around a bit with it.
+We can now play around with it like so. Note how the head of the list is our variable `head`, and how we have to traverse through the list to see nodes further in, since they're not exposed to us.
 
 {% include header-python.html %}
 ```python
-LL = SinglyLinkedList(0)
+head = ListNode(5)
+head.next = ListNode('abc')
+head.next.next = ListNode(4.815162342)
 
-LL.insert_end(5)
-LL.insert_end(10)
-LL.insert_front(100)
-
-LL
-# SinglyLinkedList with vals [100, 0, 5, 10]
+print(head)            # ListNode with val 5
+print(head.next)       # ListNode with val abc
+print(head.next.next)  # ListNode with val 4.815162342
 ```
 
-We can create a doubly linked list by just adding a `prev` attribute to the `ListNode` that points to the previous node. The `prev` of the head of the doubly linked list, like the `next` of the tail, will point to null.
+Adding a node to the start or end of the list require a little creativity. We can write functions to do so like this:
+
+```python
+def insert_end(self, val):
+    node = self.head
+    while node.next:
+        node = node.next
+    node.next = ListNode(val)
+
+def insert_front(self, val):
+    head = ListNode(val)
+    head.next = self.head
+    self.head = head
+```
 
 ### Questions
 Some common questions:
