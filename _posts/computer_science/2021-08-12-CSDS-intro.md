@@ -213,7 +213,7 @@ In English, we iteratively move through the list until we find a zero. We then i
 
 ## Linked lists
 ### Theory
-Linked lists are another key data structure in computer science. Like arrays, a linked list is a group of values. But unlike arrays, the values in a linked list don't have to be the same type, and we don't need to know how big the list needs to be ahead of time.
+Linked lists are another key data structure in computer science. Like arrays, a linked list is a group of values. But unlike arrays, **the values in a linked list don't have to be the same type, and we don't need to know how big the list needs to be ahead of time.**
 
 The core element of a linked list is a **node**, which contains 1) some data, and 2) a pointer to a location in memory. Specifically, _any_ location in memory. Below, note how the element sizes differ (four bytes for integers and floats, and one byte for chars), and how the last node contains a [null pointer](https://en.wikipedia.org/wiki/Null_pointer) that points off into space.
 
@@ -257,10 +257,10 @@ Adding a node to the start or end of the list require a little creativity. We ca
 {% include header-python.html %}
 ```python
 def add_to_end(head: ListNode, val: Any) -> None:
-    node = head
-    while node.next:
-        node = node.next
-    node.next = ListNode(val)
+    ptr = head
+    while ptr.next:
+        ptr = ptr.next
+    ptr.next = ListNode(val)
 
 def add_to_front(head: ListNode, val: Any) -> ListNode:
     node = ListNode(val)
@@ -268,7 +268,7 @@ def add_to_front(head: ListNode, val: Any) -> ListNode:
     return node
 ```
 
-In `add_to_end`, we create a variable called `node` that starts at `head` and traverses the list until it reaches the node whose `.next` attribute is a null pointer. We then simply set that node's `.next` value to a new `ListNode`. Notice how we don't need to return anything for our change to take effect.
+In `add_to_end`, we create a variable called `ptr` ("pointer") that starts at `head` and traverses the list until it reaches the node whose `.next` attribute is a null pointer. We then simply set that node's `.next` value to a new `ListNode`. Notice how we don't need to return anything for our change to take effect.
 
 `add_to_front` is simpler: we create a new head, then set its `.next` pointer to the head of our existing linked list. However, we need to manually update `head` outside our function with this new node, because otherwise `head` still points to the old node.
 
@@ -293,25 +293,24 @@ head = add_to_front(head, 0)
 print(head)            # ListNode with val 0
 ```
 
-
 ### Questions
-Some common questions:
-* Find the middle
-* Find whether the list has a cycle
-* Reverse
+One common question with linked lists is to return the middle node. Because we typically only have the head of the list, there's no way for us to know ahead of time how long the list is. On first glance, it might therefore seem like we'd need to traverse the list twice: once to find how long the list is, and then again to go halfway.
+
+But there's actually a clever way to find the middle with one pass. Before, we used a pointer to traverse the list one node at a time until we reached the end. But what if we had _two_ pointers, one moving one node at a time and the other two at a time? When the fast pointer reached the end of the list, our slow pointer will be at the middle.
+
+Here's how we'd answer [**LC 876:** Middle of Linked List](https://leetcode.com/problems/middle-of-the-linked-list/) in Python.
 
 {% include header-python.html %}
 ```python
-def find_middle(head: ListNode) -> Optional[ListNode]:
+def find_middle(head: ListNode) -> ListNode:
     """
     Return middle node of linked list. If even numbers, returns second
     """
-    if not head:
-        return None
-
+    # Set slow and fast pointers
     slow = head
     fast = head.next
 
+    # Traverse the list
     while fast and fast.next:
         slow = slow.next
         fast = fast.next.next
@@ -324,16 +323,16 @@ Whenever dealing with Leetcode questions, I like to draw out examples and make s
 ```bash
 # List: A -> B -> C -> D -> E, middle = C
 
-# Start at same place: incorrect
+# Start at head: incorrect
 # Slow: A -> B -> C -> D
 # Fast: A -> C -> E -> null
 
-# Start apart: correct
+# Start at head.next: correct
 # Slow: A -> B -> C
 # Fast: B -> D -> null
 ```
 
-Here's another example: whether the list has a cycle. We can't use `while fast and fast.next` anymore, since we would never exit the loop for a list with a cycle. Rather, we'll again instantiate `slow` and `fast` to the first and second nodes, then move them through the list at different speeds until they match. If we reach the end of the list, we return `False`; if the two pointers ever point to the same node, we return `True`.
+[**LC 141:** Linked List Cycle](https://leetcode.com/problems/linked-list-cycle/) is another example of using slow and fast pointers. The idea here is to determine whether the list has a cycle. We can't use `while fast and fast.next` anymore, since we would never exit the loop for a list with a cycle. Rather, we'll again instantiate `slow` and `fast` to the first and second nodes, then move them through the list at different speeds until they match. If we reach the end of the list, we return `False`; if the two pointers ever point to the same node, we return `True`.
 
 {% include header-python.html %}
 ```python
@@ -341,16 +340,13 @@ def has_cycle(head: ListNode) -> bool:
     """
     Determines whether a linked list has a cycle
     """
-    if not head:
-        return False
-
     slow = head
     fast = head.next
 
     while slow != fast:
 
         # Reach end of list
-        if not fast or fast.next:
+        if not (fast or fast.next):
             return False
 
         slow = slow.next
