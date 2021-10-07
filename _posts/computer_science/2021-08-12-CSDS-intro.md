@@ -332,7 +332,9 @@ Whenever dealing with Leetcode questions, I like to draw out examples and make s
 # Fast: B -> D -> null
 ```
 
-[**LC 141:** Linked List Cycle](https://leetcode.com/problems/linked-list-cycle/) is another example of using slow and fast pointers. The idea here is to determine whether the list has a cycle. We can't use `while fast and fast.next` anymore, since we would never exit the loop for a list with a cycle. Rather, we'll again instantiate `slow` and `fast` to the first and second nodes, then move them through the list at different speeds until they match. If we reach the end of the list, we return `False`; if the two pointers ever point to the same node, we return `True`.
+[**LC 141:** Linked List Cycle](https://leetcode.com/problems/linked-list-cycle/) is another example of using slow and fast pointers. The idea here is to determine whether the list has a cycle. We can't use `while fast and fast.next` anymore, since we would never exit the loop for a list with a cycle.
+
+Rather, we'll again instantiate `slow` and `fast` to the first and second nodes, then move them through the list at different speeds until they match. If we reach the end of the list, we return `False`; if the two pointers ever point to the same node, we return `True`.
 
 {% include header-python.html %}
 ```python
@@ -355,11 +357,9 @@ def has_cycle(head: ListNode) -> bool:
     return True
 ```
 
-
-
 ## Trees
 ### Theory
-A tree is similar to a linked list, but rather than having only one next node, you can have several. A common type of tree is a _binary_ tree, where each node has at most two children.
+Trees are similar to linked lists in that pieces of data are connected to one another, and you have to traverse through the structure to find a certain element (as opposed to arrays, where you can access any element immediately). While linked lists have nodes arranged in a linear pattern, a tree node can have multiple children. A common type of tree is a _binary_ tree, where each node has at most two children.
 
 There are various types of binary trees. Below is a **binary search tree**. For every node in the tree, every node in its _left_ subtree must contain a smaller value, and every node in its _right_ subtree must contain a larger value.
 
