@@ -293,7 +293,7 @@ head = add_to_front(head, 0)
 print(head)            # ListNode with val 0
 ```
 
-### Questions
+### Examples
 One common question with linked lists is to return the middle node. Because we typically only have the head of the list, there's no way for us to know ahead of time how long the list is. On first glance, it might therefore seem like we'd need to traverse the list twice: once to find how long the list is, and then again to go halfway.
 
 But there's actually a clever way to find the middle with one pass. Before, we used a pointer to traverse the list one node at a time until we reached the end. But what if we had _two_ pointers, one moving one node at a time and the other two at a time? When the fast pointer reached the end of the list, our slow pointer will be at the middle.
@@ -367,7 +367,7 @@ There are various types of binary trees. Below is a **binary search tree**. For 
 <img src="{{  site.baseurl  }}/images/computer_science/tree1.png" height="60%" width="60%">
 </center>
 
-Searching a binary search tree for a value takes on average $O(logn)$ time, meaning they can find a given value among millions or billions of records very rapidly. Databases often use binary search on table indices to efficiently find queried terms.
+Searching for a value in a binary search tree takes at worst $O(logn)$ time, meaning we can find a requested value among millions or billions of records very rapidly. Databases often use binary search on table indices to efficiently find queried terms.
 
 ### Implementation
 {% include header-python.html %}
@@ -380,6 +380,10 @@ class TreeNode:
 ```
 
 ### Questions
+The foundations of tree questions involve various ways of traversing the tree.
+
+(include a graphic of the different types of traversal)
+
 Traversal is a common question. There are different ways to do it, both with recursion and iteration.
 
 * Print values in pre-order, in-order, post-order, and level-order traversal
