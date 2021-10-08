@@ -332,9 +332,15 @@ Whenever dealing with Leetcode questions, I like to draw out examples and make s
 # Fast: B -> D -> null
 ```
 
-[**LC 141:** Linked List Cycle](https://leetcode.com/problems/linked-list-cycle/) is another example of using slow and fast pointers. The idea here is to determine whether the list has a cycle. We can't use `while fast and fast.next` anymore, since we would never exit the loop for a list with a cycle.
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/ll_cycle.png" height="75%" width="75%">
+</center>
 
-Rather, we'll again instantiate `slow` and `fast` to the first and second nodes, then move them through the list at different speeds until they match. If we reach the end of the list, we return `False`; if the two pointers ever point to the same node, we return `True`.
+[**LC 141:** Linked List Cycle](https://leetcode.com/problems/linked-list-cycle/) is another example of using slow and fast pointers. The idea here is to determine whether the list has a cycle, which occurs when a node's `next` pointer points to an earlier node in the list.
+
+Traversing this list will continue forever, as we will never exit the cycle. A first guess might be to set some threshold on how long our traversal is running, or on how many repeated patterns we've seen over some time period, but a simpler approach is to again use two pointers.
+
+We can't use `while fast and fast.next` anymore, since this evaluates to False only when we've reached the end of the list. Rather, we'll again instantiate `slow` and `fast` to the first and second nodes, then move them through the list at different speeds until they match. If we reach the end of the list, we return `False`; if the two pointers ever point to the same node, we return `True`.
 
 {% include header-python.html %}
 ```python
@@ -359,15 +365,23 @@ def has_cycle(head: ListNode) -> bool:
 
 ## Trees
 ### Theory
-Trees are similar to linked lists in that pieces of data are connected to one another, and you have to traverse through the structure to find a certain element (as opposed to arrays, where you can access any element immediately). While linked lists have nodes arranged in a linear pattern, a tree node can have multiple children. A common type of tree is a _binary_ tree, where each node has at most two children.
+Trees extend the idea of a linked list by allowing for nodes to have more than one "next" node. Tree nodes can have one, two, or many _child_ nodes, allowing for data to be represented in a flexible branching pattern. By setting rules on how data is organized in a tree and how many children a node can have, we can store and retrieve data extremely efficiently.
 
-There are various types of binary trees. Below is a **binary search tree**. For every node in the tree, every node in its _left_ subtree must contain a smaller value, and every node in its _right_ subtree must contain a larger value.
+One type of tree is a **binary search tree** (BST); we briefly mentioned at the start of this post how efficiently BSTs can retrieve data. This efficiency stems from two important rules governing a BST's structure:
+1. A node can have at most two children.
+2. Every node in the _left subtree_ must contain a smaller value, and every node in the _right subtree_ must contain a larger value.
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/tree1.png" height="60%" width="60%">
 </center>
 
-Searching for a value in a binary search tree takes at worst $O(logn)$ time, meaning we can find a requested value among millions or billions of records very rapidly. Databases often use binary search on table indices to efficiently find queried terms.
+Searching for a value in a binary search tree takes at worst $O(logn)$ time<sup>[[4]](#4-theory)</sup>, meaning we can find a requested value among millions or billions of records very rapidly. Let's say we're looking for the node with the value `x`. We can use the following algorithm to quickly find this node in a BST.
+
+1. Start at the root of the tree.
+2. If x = the node value: stop.
+3. If x < the node value: go to the left child.
+4. If x > the node value: go to the right child.
+5. Go to Step 2.
 
 ### Implementation
 {% include header-python.html %}
@@ -631,3 +645,6 @@ Array indexing takes $O(1)$ time because there are always only three steps requi
 Step 3 hints at why so many programming languages are 0-indexed: the first element of an array is 0 elements away from the start. Returning that value, then, is easy if `index * (size of data type)` is zero and we can just return the value at `array start`.
 
 The type of data is important because data types differ in how much memory they require. A char is one byte, [for example](https://www.ibm.com/docs/en/ibm-mq/7.5?topic=platforms-standard-data-types), while an int is four. Getting the element at index 3 means traversing three bytes from the start for a string, while traversing twelve bytes for an array of integers.
+
+#### [4. Theory](#theory-2)
+Note that $O(logn)$ is $log_2$, not $log_{10}$ or the natural log. 
