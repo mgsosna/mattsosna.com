@@ -4,7 +4,7 @@ title: Intro to data structures
 author: matt_sosna
 ---
 
-Imagine you build a wildly popular app that is quickly growing towards a million users. (Congrats!) While users love the app, they're complaining that the app is becoming slower and slower, to the point that some users are starting to leave. You notice that the main bottleneck is how user info is retrieved during authentication: currently, your app searches through an unsorted `list` of Python `dict`'s until it finds the requested user ID.
+Imagine you build a wildly popular app that is quickly growing towards a million users. (Congrats!) While users love the app, they're complaining that the app is becoming slower and slower, to the point that some users are starting to leave. You notice that the main bottleneck is how user info is retrieved during authentication: currently, your app searches through an unsorted list of Python dictionaries until it finds the requested user ID.
 
 Cursing your 3am self who wrote that code, you wonder how to fix the issue. **How can we store user IDs in a way that lets us retrieve any ID as fast as possible?** Sorting the list might help, but if we're searching from the start each time, newer customers with high-numbered IDs will take hundreds of thousands of steps to authenticate. We could start the search from the back of the list, but then customers who've been with us from the start would be punished.
 
@@ -25,14 +25,14 @@ In this post, we'll cover a few common data structures, discussing their strengt
 * [Hash maps](#hash-maps)
 
 ## Getting started
-Before we can start playing with any data structures, we need to understand what exactly data structures are and how to compare them. We'll start by distinguishing the tools (data structures) from their broader purpose ([abstract data types](https://en.wikipedia.org/wiki/Abstract_data_type)) before covering [Big O notation](https://en.wikipedia.org/wiki/Big_O_notation), a metric for comparing the speed of operations on data structures.
+Before we can start playing with any data structures, we need to understand what exactly data structures are and how to compare them. We'll start by distinguishing the tools (data structures) from their broader purpose ([abstract data types](https://en.wikipedia.org/wiki/Abstract_data_type)) before covering [Big O notation](https://en.wikipedia.org/wiki/Big_O_notation), a metric for comparing the speed of operations on data structures. We'll then quickly go over the fundamental types of data that our data structures store.
 
-We'll also regularly reiterate that **there is no "perfect" data structure**. _<u>The utility of a data structure is driven entirely by how it is used</u>._ It's essential, then, to understand your program's needs when choosing the right tool for the job.
+Finally, we'll regularly reiterate that **there is no "perfect" data structure**. _<u>The utility of a data structure is driven entirely by how it is used</u>._ It is essential, then, to understand your program's needs to identify the right tool for the job.
 
 ### Data structures vs. abstract data types
-In programming $-$ as well as in real life! $-$ there are generally many ways to accomplish a task. Let's say, for example, that you want to dig a hole in your backyard. You have at your disposal a pitchfork, hammer, saw, and shovel. Each of these can be thought of as a "data structure" in the sense that **they are specific means for accomplishing your task.**
+In programming $-$ as well as in real life! $-$ there are often many ways to accomplish a task. Let's say, for example, that you want to dig a hole in your backyard. You have at your disposal a pitchfork, hammer, saw, and shovel. Each of these can be thought of as a "data structure" in the sense that **they are specific means for accomplishing your task.**
 
-But if you separate out <i><u>the task</u></i> from <i><u>how you accomplish the task</u></i>, you can see that these specific tools are filling the role of "digging tool." This "digging tool" is your **abstract data type:** a means of digging. _<u>How you actually dig</u>_ is the data structure. The abstract data type is a theoretical entity, while the data structure is an actual _implementation_ of that entity.
+But if you separate out <i><u>the task</u></i> from <i><u>how you accomplish the task</u></i>, you can see that these specific tools are filling the role of "digging tool." This "digging tool" is your **abstract data type:** a means of digging. _How you actually dig_ is the data structure. The abstract data type is a theoretical entity, while the data structure is an _implementation_ of that entity.
 
 Here's another example. Let's say you want to visit your friend across town. You have at your disposal your bike, car, and feet. Here, the _vehicle_ is the abstract data type: a means of transportation. _How you actually travel_ is the data structure $-$ your bike, car, or feet.
 
@@ -52,7 +52,7 @@ An alternate method would be to neatly arrange your clothes in your dresser and 
 <img src="{{  site.baseurl  }}/images/computer_science/pile.png" height="70%" width="70%">
 </center>
 
-While this example might sound silly, it's actually not too far off from the strategies of dumping data into [AWS S3](https://aws.amazon.com/s3/) versus a database, or to some degree storing it in a [highly-structured SQL vs. flexible NoSQL database]({{  site.baseurl  }}/SQL_vs_NoSQL). The dresser and closet isn't automatically the best approach $-$ logging data, for example, is written far more than it's read, so a "pile of clothes" approach of saving raw output to S3 can actually work well.
+While this example might sound silly, it's actually not too far off from the strategies of dumping data into [AWS S3](https://aws.amazon.com/s3/) versus a database, or to some degree storing it in a [highly-structured SQL vs. flexible NoSQL database]({{  site.baseurl  }}/SQL_vs_NoSQL). The dresser and closet isn't automatically the best approach $-$ transaction receipts for an e-commerce store are likely written far more often than read, so a "pile of clothes" approach of saving raw output to S3 can actually work well.
 
 ### Big O notation
 While it makes sense that it's easier to dig a hole with a shovel than a hammer, how do we quantify the difference in performance? The _number of seconds_ it takes to dig is a good metric, but to deal with holes of differing sizes, we'd probably want something more like _seconds per cubic foot_.
@@ -133,6 +133,10 @@ Finally, we should briefly mention the fundamental _data types_. If a data struc
 **Chars** are letters, like `a`, `b`, `c`. A collection of them is a string (which is technically an array of chars). The string representations of numbers and symbols, like `5` or `?`, are also chars.
 
 **Void** is a null, like `None` in Python. Voids explicitly indicate a _lack_ of data, which is a useful default when initializing an array that will be filled, or a function that performs an action but doesn't specifically return anything (e.g. sending an email).
+
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/data_types.png" heigh="70%" width="70%">
+</center>
 
 ## Arrays
 ### Theory
@@ -221,7 +225,7 @@ The core element of a linked list is a **node**, which contains 1) some data, an
 <img src="{{  site.baseurl  }}/images/computer_science/ll1.png">
 </center>
 
-The flexibility of data types and list length make linked lists attractive, but this flexibility comes with a cost. **Typically only the _head_ of the list is exposed to a program, meaning there's no $O(1)$ retrieval** for any element besides the first node. This means that the 100th element requires 100 steps to reach, since we need to traverse the list from the start.
+The lack of restrictions on data types and list length make linked lists attractive, but this flexibility comes with a cost. **Typically only the _head_ of the list is exposed to a program, meaning there's no $O(1)$ retrieval** for any element besides the first node. This means that the 100th element requires 100 steps to reach, since we need to traverse the list from the start.
 
 We can make our linked lists more versatile by [adding pointers to the _previous_ nodes and exposing the tail](https://www.tutorialspoint.com/data_structures_algorithms/doubly_linked_list_algorithm.htm), or by [making the list circular](https://www.tutorialspoint.com/data_structures_algorithms/circular_linked_list_algorithm.htm). But overall, choosing linked lists over arrays means paying a cost for flexibility.
 
@@ -239,7 +243,7 @@ class ListNode:
         return f"ListNode with val {self.val}"
 ```
 
-We can now play around with it like so. Note how the head of the list is our variable `head`, and how we have to iteratively append `.next` to see deeper nodes, since we can't type an index like `[1]` or `[2]` to easily reach them.
+We can now play around with it like so. Note how the head of the list is our variable `head`, and how we have to iteratively append `.next` to access deeper nodes, since we can't type an index like `[1]` or `[2]` to reach them.
 
 {% include header-python.html %}
 ```python
@@ -252,7 +256,7 @@ print(head.next)       # ListNode with val abc
 print(head.next.next)  # ListNode with val 4.815162342
 ```
 
-Adding a node to the start or end of the list require a little creativity. We can write functions to do so like this:
+We can write functions to make it easier to add a node to the end, as well as to the start. We'd do so like this:
 
 {% include header-python.html %}
 ```python
@@ -268,9 +272,9 @@ def add_to_front(head: ListNode, val: Any) -> ListNode:
     return node
 ```
 
-In `add_to_end`, we create a variable called `ptr` ("pointer") that starts at `head` and traverses the list until it reaches the node whose `.next` attribute is a null pointer. We then simply set that node's `.next` value to a new `ListNode`. Notice how we don't need to return anything for our change to take effect.
+In `add_to_end`, we create a variable called `ptr` ("pointer") that starts at `head` and traverses the list until it reaches the last node, whose `.next` attribute is a null pointer. We then simply set that node's `.next` value to a new `ListNode`. Notice how we don't need to return anything for our change to take effect.
 
-`add_to_front` is simpler: we create a new head, then set its `.next` pointer to the head of our existing linked list. However, we need to manually update `head` outside our function with this new node, because otherwise `head` still points to the old node.
+`add_to_front` is simpler: we create a new head, then set its `.next` pointer to the head of our existing linked list. However, we need to manually update `head` outside our function with this new node, because otherwise `head` still points to the old head.
 
 {% include header-python.html %}
 ```python
@@ -340,7 +344,7 @@ Whenever dealing with Leetcode questions, I like to draw out examples and make s
 
 Traversing this list will continue forever, as we will never exit the cycle. A first guess might be to set some threshold on how long our traversal is running, or on how many repeated patterns we've seen over some time period, but a simpler approach is to again use two pointers.
 
-We can't use `while fast and fast.next` anymore, since this evaluates to False only when we've reached the end of the list. Rather, we'll again instantiate `slow` and `fast` to the first and second nodes, then move them through the list at different speeds until they match. If we reach the end of the list, we return `False`; if the two pointers ever point to the same node, we return `True`.
+We can't use `while fast and fast.next` anymore, since this evaluates to `False` only when we've reached the end of the list. Rather, we'll again instantiate `slow` and `fast` to the first and second nodes, then move them through the list at different speeds until they match. If we reach the end of the list, we return `False`; if the two pointers ever point to the same node, we return `True`.
 
 {% include header-python.html %}
 ```python
@@ -365,7 +369,7 @@ def has_cycle(head: ListNode) -> bool:
 
 ## Trees
 ### Theory
-Trees extend the idea of a linked list by allowing for nodes to have more than one "next" node. Tree nodes can have one, two, or many _child_ nodes, allowing for data to be represented in a flexible branching pattern. By setting rules on how data is organized in a tree and how many children a node can have, we can store and retrieve data extremely efficiently.
+Trees extend the idea of a linked list by allowing for nodes to have more than one "next" node. Tree nodes can have one, two, or many _child_ nodes, allowing for data to be represented in a flexible branching pattern. By setting rules on how data is organized in a tree and how many children a node can have, we can store and retrieve data highly efficiently.
 
 One type of tree is a **binary search tree** (BST); we briefly mentioned at the start of this post how efficiently BSTs can retrieve data. This efficiency stems from two important rules governing a BST's structure:
 1. A node can have at most two children.
@@ -375,7 +379,7 @@ One type of tree is a **binary search tree** (BST); we briefly mentioned at the 
 <img src="{{  site.baseurl  }}/images/computer_science/tree1.png" height="60%" width="60%">
 </center>
 
-Searching for a value in a binary search tree takes at worst $O(logn)$ time<sup>[[4]](#4-theory)</sup>, meaning we can find a requested value among millions or billions of records very rapidly. Let's say we're looking for the node with the value `x`. We can use the following algorithm to quickly find this node in a BST.
+Searching for a value in a BST takes at worst $O(logn)$ time<sup>[[4]](#4-theory)</sup>, meaning we can find a requested value among millions or even billions of records very rapidly. Let's say we're searching for the node with the value `x`. We can use the following algorithm to quickly find this node in a BST.
 
 1. Start at the root of the tree.
 2. If x = the node value: stop.
@@ -383,7 +387,11 @@ Searching for a value in a binary search tree takes at worst $O(logn)$ time<sup>
 4. If x > the node value: go to the right child.
 5. Go to Step 2.
 
+If we're unsure whether the requested node exists in the tree, we'd just modify steps 3 and 4 to stop the search if we try to access a child that doesn't exist.
+
 ### Implementation
+Creating a `TreeNode` is nearly identical to creating a `ListNode`. The only difference is that rather than one `next` attribute, we have `left` and `right` attributes, which refer to the left and right children of the node. (If we're using a tree with more than two children, we can name these attributes `child1`, `child2`, `child3`, etc.)
+
 {% include header-python.html %}
 ```python
 class TreeNode:
@@ -391,12 +399,34 @@ class TreeNode:
         self.val = val
         self.left = left
         self.right = right
+
+    def __repr__(self):
+      return f"TreeNode with val {self.val}"
+```
+
+We can then create a tree with two levels as such. (Note that it's just a binary tree, not a BST, as the values aren't sorted.)
+
+{% include header-python.html %}
+```python
+# Level 0
+root = TreeNode('h')
+
+# Level 1
+root.left = TreeNode('i')
+root.right = TreeNode('t')
+
+# Level 2
+root.left.left = TreeNode('h')
+root.left.right = TreeNode('e')
+
+root.right.left = TreeNode('r')
+root.right.right = TreeNode('e')
 ```
 
 ### Questions
 The foundations of tree questions involve various ways of traversing the tree.
 
-(include a graphic of the different types of traversal)
+<img src="{{  site.baseurl  }}/images/computer_science/tree_traversals.png">
 
 Traversal is a common question. There are different ways to do it, both with recursion and iteration.
 
@@ -647,4 +677,4 @@ Step 3 hints at why so many programming languages are 0-indexed: the first eleme
 The type of data is important because data types differ in how much memory they require. A char is one byte, [for example](https://www.ibm.com/docs/en/ibm-mq/7.5?topic=platforms-standard-data-types), while an int is four. Getting the element at index 3 means traversing three bytes from the start for a string, while traversing twelve bytes for an array of integers.
 
 #### [4. Theory](#theory-2)
-Note that $O(logn)$ is $log_2$, not $log_{10}$ or the natural log. 
+Note that $O(logn)$ is $log_2$, not $log_{10}$ or the natural log.
