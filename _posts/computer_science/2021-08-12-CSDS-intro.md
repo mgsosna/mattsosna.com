@@ -424,14 +424,18 @@ root.right.right = TreeNode('e')
 ```
 
 ### Questions
-The foundations of tree questions involve various ways of traversing the tree.
+The foundations of tree questions involve various ways of traversing the tree. Traversal typically begins at the root node and then repeatedly processes the node and its children. But depending on the order in which we want to process the parent relative to the children $-$ before (**pre-order**), in between the left and right (**in-order**), or after (**post-order**) $-$ we move through the tree in completely different ways.
 
-<img src="{{  site.baseurl  }}/images/computer_science/tree_traversals.png">
+<img src="{{  site.baseurl  }}/images/computer_science/tree_traversals_1.png">
 
-Traversal is a common question. There are different ways to do it, both with recursion and iteration.
+We can also move through the tree in **level-order** traversal.
 
-* Print values in pre-order, in-order, post-order, and level-order traversal
-* Determine whether tree is symmetric
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/tree_traversals_2.png" height="35%" width="35%">
+</center>
+
+
+Traversal can occur with iteration (using a `while` loop) or with **recursion** (using a function that calls itself).
 
 {% include header-python.html %}
 ```python
