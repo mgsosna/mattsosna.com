@@ -404,50 +404,47 @@ class TreeNode:
       return f"TreeNode with val {self.val}"
 ```
 
-We can then create a tree with two levels as such. (Note that it's just a binary tree, not a BST, as the values aren't sorted.)
+We can then create a tree with two levels as such. Note that it's just a binary tree, not a BST, as the values aren't sorted.
 
 {% include header-python.html %}
 ```python
 # Level 0
-root = TreeNode('h')
+root = TreeNode('a')
 
 # Level 1
-root.left = TreeNode('i')
-root.right = TreeNode('t')
+root.left = TreeNode('b')
+root.right = TreeNode('c')
 
 # Level 2
-root.left.left = TreeNode('h')
+root.left.left = TreeNode('d')
 root.left.right = TreeNode('e')
 
-root.right.left = TreeNode('r')
-root.right.right = TreeNode('e')
+root.right.left = TreeNode('f')
+root.right.right = TreeNode('g')
 ```
 
-### Questions
-The foundations of tree questions involve various ways of traversing the tree. Traversal typically begins at the root node and then repeatedly processes the node and its children. But depending on the order in which we want to process the parent relative to the children $-$ before (**pre-order**), in between the left and right (**in-order**), or after (**post-order**) $-$ we move through the tree in completely different ways.
+### Examples
+Questions involving binary trees typically center around different ways of traversing the nodes. Traversal typically begins at the root node and then follows a set of steps for processing each node and its children. _But <u>the order in which nodes are processed</u> depends entirely on <u>the order in which we process the parent relative to the children</u>:_ before (**pre-order**), in between the left and right (**in-order**), or after (**post-order**). Each of the traversals below started at the root node, but the order that nodes _were processed_ was entirely different.
 
 <img src="{{  site.baseurl  }}/images/computer_science/tree_traversals_1.png">
 
-We can also move through the tree in **level-order** traversal.
+These three types of traversal can occur with **iteration** (using a `while` loop and a [stack](https://en.wikipedia.org/wiki/Stack_(abstract_data_type))) or with [**recursion**](https://en.wikipedia.org/wiki/Recursion_(computer_science)) (using a function that calls itself). There's also a fourth type of traversal, **level-order**, which utilizes a [queue](https://en.wikipedia.org/wiki/Queue_(abstract_data_type)).
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/tree_traversals_2.png" height="35%" width="35%">
 </center>
 
-
-Traversal can occur with iteration (using a `while` loop) or with **recursion** (using a function that calls itself).
+The patterns for the first three types of traversals are nearly identical, so we'll just choose in-order traversal and answer [**LC 94:** Binary Tree Inorder Traversal](https://leetcode.com/problems/binary-tree-inorder-traversal/). Below we code out the iterative and recursive methods, starting with the iterative version.
 
 {% include header-python.html %}
 ```python
+# Iterative traversal
 def traverse_in_order(root: TreeNode) -> List[int]:
     """
     Traverse a binary tree, returning list of values in order
     """
-    if not root:
-        return None
-
     answer = []
-    stack = [(root, False)]
+    stack = [(root, False)]   # (node, whether visited yet)
 
     while stack:
         node, visited = stack.pop()
@@ -464,10 +461,15 @@ def traverse_in_order(root: TreeNode) -> List[int]:
     return answer
 ```
 
-And the recursive method:
+In English, we instantiate a list for our answer, as well as a stack that contains a tuple of our root node and `False` indicating that we haven't visited this node yet. We then use a `while` loop that executes as long as any elements exist in `stack`. We remove the last element of the stack with `.pop`, then check if `node` exists (it won't later in the loop for nodes with no children, for example). If `node` exists and we've visited this node before, we append our node value to the answer. If we haven't visited this node yet, we add its right child (with a flag saying we haven't seen it yet), the current node (with a flag seeing we _have_ seen it already), and then the left child with a "haven't seen yet" flag. The process repeats until we've processed all nodes, and we then return a list of node values sorted in-order.
+
+Lines 17-19 might seem out of order $-$ shouldn't the left node come first? Because stacks are [Last In First Out](https://www.geeksforgeeks.org/lifo-last-in-first-out-approach-in-programming/), the first node we want to process needs to be the _last_ node we add to the stack.
+
+Now for the recursive method:
 
 {% include header-python.html %}
 ```python
+# Recursive traversal
 class Solution:
     def __init__(self):
         self.answer = []
@@ -488,8 +490,9 @@ class Solution:
         self.traverse(node.right)
 ```
 
-Changing the traversal between pre-order, in-order, and post-order is simply a matter of rearranging lines 16-18. The `self.answer.append(node.val)` comes first in pre-order, second in in-order, and third in post-order. The rest of the code remains unchanged. Simple!
+For the recursive method, changing the traversal method between pre-order, in-order, and post-order is simply a matter of rearranging lines 17-19. The `self.answer.append(node.val)` comes first in pre-order, second in in-order, and third in post-order. The rest of the code remains unchanged. Simple!
 
+Meanwhile for the iterative method, we follow the same logic but also set `stack` to `[(root, True)]` for pre-order traversal, indicating that we want the root to be appended to the answer immediately.
 
 ## Graphs
 ### Theory
