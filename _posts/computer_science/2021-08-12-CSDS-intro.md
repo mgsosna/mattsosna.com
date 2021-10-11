@@ -225,7 +225,7 @@ The core element of a linked list is a **node**, which contains 1) some data, an
 <img src="{{  site.baseurl  }}/images/computer_science/ll1.png">
 </center>
 
-The lack of restrictions on data types and list length make linked lists attractive, but this flexibility comes with a cost. **Typically only the _head_ of the list is exposed to a program, meaning there's no $O(1)$ retrieval** for any element besides the first node. This means that the 100th element requires 100 steps to reach, since we need to traverse the list from the start.
+The lack of restrictions on data types and list length make linked lists attractive, but this flexibility comes with a cost. **Typically only the _head_ of the list is exposed to a program, meaning we have to traverse the list to find any other node.** In other words, we lose that sweet $O(1)$ retrieval for any element besides the first node. If you request the 100th element, it'll take 100 steps to reach: an $O(n)$ pattern.
 
 We can make our linked lists more versatile by [adding pointers to the _previous_ nodes and exposing the tail](https://www.tutorialspoint.com/data_structures_algorithms/doubly_linked_list_algorithm.htm), or by [making the list circular](https://www.tutorialspoint.com/data_structures_algorithms/circular_linked_list_algorithm.htm). But overall, choosing linked lists over arrays means paying a cost for flexibility.
 
@@ -300,7 +300,7 @@ print(head)            # ListNode with val 0
 ### Examples
 One common question with linked lists is to return the middle node. Because we typically only have the head of the list, there's no way for us to know ahead of time how long the list is. On first glance, it might therefore seem like we'd need to traverse the list twice: once to find how long the list is, and then again to go halfway.
 
-But there's actually a clever way to find the middle with one pass. Before, we used a pointer to traverse the list one node at a time until we reached the end. But what if we had _two_ pointers, one moving one node at a time and the other two at a time? When the fast pointer reached the end of the list, our slow pointer will be at the middle.
+But there's actually a clever way to find the middle with one pass. Before, we used a pointer to traverse the list one node at a time until we reached the end. But what if we had _two_ pointers, one moving one node at a time and the other two at a time? When the fast pointer reached the end of the list, our slow pointer would be at the middle.
 
 Here's how we'd answer [**LC 876:** Middle of Linked List](https://leetcode.com/problems/middle-of-the-linked-list/) in Python.
 
@@ -308,7 +308,8 @@ Here's how we'd answer [**LC 876:** Middle of Linked List](https://leetcode.com/
 ```python
 def find_middle(head: ListNode) -> ListNode:
     """
-    Return middle node of linked list. If even numbers, returns second
+    Return middle node of linked list. If even number of nodes,
+    returns the second middle node.
     """
     # Set slow and fast pointers
     slow = head
@@ -337,7 +338,7 @@ Whenever dealing with Leetcode questions, I like to draw out examples and make s
 ```
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/ll_cycle.png" height="75%" width="75%">
+<img src="{{  site.baseurl  }}/images/computer_science/ll_cycle.png" height="70%" width="70%">
 </center>
 
 [**LC 141:** Linked List Cycle](https://leetcode.com/problems/linked-list-cycle/) is another example of using slow and fast pointers. The idea here is to determine whether the list has a cycle, which occurs when a node's `next` pointer points to an earlier node in the list.
@@ -369,9 +370,9 @@ def has_cycle(head: ListNode) -> bool:
 
 ## Trees
 ### Theory
-Trees extend the idea of a linked list by allowing for nodes to have more than one "next" node. Tree nodes can have one, two, or many _child_ nodes, allowing for data to be represented in a flexible branching pattern. By setting rules on how data is organized in a tree and how many children a node can have, we can store and retrieve data highly efficiently.
+Trees extend the idea of a linked list by allowing for nodes to have more than one "next" node. Tree nodes can have one, two, or many _child_ nodes, allowing for data to be represented in a flexible branching pattern. By setting rules on how data is organized, we can store and retrieve data highly efficiently.
 
-One type of tree is a **binary search tree** (BST); we briefly mentioned at the start of this post how efficiently BSTs can retrieve data. This efficiency stems from two important rules governing a BST's structure:
+One type of tree is a **binary search tree** (BST); at the start of this post we briefly mentioned how efficiently BSTs can retrieve data. This efficiency stems from two important rules governing a BST's structure:
 1. A node can have at most two children.
 2. Every node in the _left subtree_ must contain a smaller value, and every node in the _right subtree_ must contain a larger value.
 
@@ -379,7 +380,7 @@ One type of tree is a **binary search tree** (BST); we briefly mentioned at the 
 <img src="{{  site.baseurl  }}/images/computer_science/tree1.png" height="60%" width="60%">
 </center>
 
-Searching for a value in a BST takes at worst $O(logn)$ time<sup>[[4]](#4-theory)</sup>, meaning we can find a requested value among millions or even billions of records very rapidly. Let's say we're searching for the node with the value `x`. We can use the following algorithm to quickly find this node in a BST.
+Searching for a value in a BST takes at worst $O(log\ n)$ time<sup>[[4]](#4-theory)</sup>, meaning we can find a requested value among millions or even billions of records very rapidly. Let's say we're searching for the node with the value `x`. We can use the following algorithm to quickly find this node in a BST.
 
 1. Start at the root of the tree.
 2. If x = the node value: stop.
@@ -390,7 +391,7 @@ Searching for a value in a BST takes at worst $O(logn)$ time<sup>[[4]](#4-theory
 If we're unsure whether the requested node exists in the tree, we'd just modify steps 3 and 4 to stop the search if we try to access a child that doesn't exist.
 
 ### Implementation
-Creating a `TreeNode` is nearly identical to creating a `ListNode`. The only difference is that rather than one `next` attribute, we have `left` and `right` attributes, which refer to the left and right children of the node. (If we're using a tree with more than two children, we can name these attributes `child1`, `child2`, `child3`, etc.)
+Creating a `TreeNode` is nearly identical to creating a `ListNode`. The only difference is that rather than one `next` attribute, we have `left` and `right` attributes, which refer to the left and right children of the node. (If we're defining a tree with more than two children, we can name these attributes `child1`, `child2`, `child3`, etc.)
 
 {% include header-python.html %}
 ```python
@@ -404,7 +405,7 @@ class TreeNode:
       return f"TreeNode with val {self.val}"
 ```
 
-We can then create a tree with two levels as such. Note that it's just a binary tree, not a BST, as the values aren't sorted.
+We can then create a tree with two levels as such. Note that this tree is just a binary tree, not a BST, as the values aren't sorted.
 
 {% include header-python.html %}
 ```python
@@ -421,6 +422,12 @@ root.left.right = TreeNode('e')
 
 root.right.left = TreeNode('f')
 root.right.right = TreeNode('g')
+
+#            a
+#          /   \
+#         b     c
+#        / \   / \
+#       d   e f   g
 ```
 
 ### Examples
@@ -454,16 +461,24 @@ def traverse_in_order(root: TreeNode) -> List[int]:
             if visited:
                 answer.append(node.val)
             else:
-                stack.append(node.right, False)
-                stack.append(node, True)
-                stack.append(node.left, False)
+                stack.append((node.right, False))
+                stack.append((node, True))
+                stack.append((node.left, False))
 
     return answer
 ```
 
-In English, we instantiate a list for our answer, as well as a stack that contains a tuple of our root node and `False` indicating that we haven't visited this node yet. We then use a `while` loop that executes as long as any elements exist in `stack`. We remove the last element of the stack with `.pop`, then check if `node` exists (it won't later in the loop for nodes with no children, for example). If `node` exists and we've visited this node before, we append our node value to the answer. If we haven't visited this node yet, we add its right child (with a flag saying we haven't seen it yet), the current node (with a flag seeing we _have_ seen it already), and then the left child with a "haven't seen yet" flag. The process repeats until we've processed all nodes, and we then return a list of node values sorted in-order.
+In English, we perform these steps:
+1. Instantiate a list for our answer (`answer`) and a stack (`stack`) that contains a tuple of our root node and `False` indicating that we haven't visited this node yet.
+2. Start a `while` loop, which executes as long as any elements exist in `stack`.
+3. Remove the last element of the stack with `.pop`, then check if `node` exists.
+  - (`node` won't always exist in later iterations for nodes with no children).
+4. If `node` exists and we've visited this node before, append our node value to the answer.
+5. If we haven't visited this node yet, add its right child (with a flag saying we haven't seen it yet), the current node (with a flag seeing we _have_ seen it already), and then the left child with a "haven't seen yet" flag.
+6. Repeat steps 3-6 until we've processed all nodes.
+7. Return a list of node values sorted in-order.
 
-Lines 17-19 might seem out of order $-$ shouldn't the left node come first? Because stacks are [Last In First Out](https://www.geeksforgeeks.org/lifo-last-in-first-out-approach-in-programming/), the first node we want to process needs to be the _last_ node we add to the stack.
+Step 5 (lines 17-19) might seem out of order $-$ shouldn't the left node come first? Because stacks are [Last In First Out](https://www.geeksforgeeks.org/lifo-last-in-first-out-approach-in-programming/), the first node we want to process needs to be the _last_ node we add to the stack. Hence we add right first, then left.
 
 Now for the recursive method:
 
@@ -474,25 +489,48 @@ class Solution:
     def __init__(self):
         self.answer = []
 
-    def traverse_inorder(self, root: TreeNode) -> List[int]:
+    def traverse_inorder(self, root: TreeNode) -> List[Any]:
         """
         Traverse a binary tree, returning list of values in-order
         """
-        self.traverse(root)
+        self._traverse(root)
         return self.answer
 
-    def traverse(self, node: Optional[TreeNode]) -> None:
+    def _traverse(self, node: Optional[TreeNode]) -> None:
+      """
+      Recursive function for in-order traversal
+      """
         if not node:
             return None
 
-        self.traverse(node.left)
+        self._traverse(node.left)
         self.answer.append(node.val)
-        self.traverse(node.right)
+        self._traverse(node.right)
 ```
 
-For the recursive method, changing the traversal method between pre-order, in-order, and post-order is simply a matter of rearranging lines 17-19. The `self.answer.append(node.val)` comes first in pre-order, second in in-order, and third in post-order. The rest of the code remains unchanged. Simple!
+In English, we perform these steps:
+1. Create a class that initializes with a list for our answer (`self.answer`).
+2. Define a function, `traverse_inorder`, which takes the root node of a tree, calls the recursive function `self._traverse`, and then returns `self.answer`.
+3. Define a recursive function `self._traverse` that takes in a node. The function checks if `node` exists before calling itself on the node's left child, appending the node's value to `self.answer`, and then calling itself on the node's right child.
 
-Meanwhile for the iterative method, we follow the same logic but also set `stack` to `[(root, True)]` for pre-order traversal, indicating that we want the root to be appended to the answer immediately.
+How do we change from in-order to pre-order or post-order? For both methods, we simply rearrange the order in which `node` is processed relative to its children. The rest of the code remains unchanged.
+
+{% include header-python.html %}
+```python
+# Change to pre-order traversal
+def iterative(root):
+    ...
+    stack.append((node.right, False))
+    stack.append((node.left, False))
+    stack.append((node, True))     # <- change
+    ...
+
+def _traverse(self, node):
+    ...
+    self.answer.append(node.val)   # <- change
+    self._traverse(node.left)
+    self._traverse(node.right)
+```
 
 ## Graphs
 ### Theory
