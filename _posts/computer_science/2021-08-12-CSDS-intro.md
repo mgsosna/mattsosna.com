@@ -551,24 +551,13 @@ $$
 \end{bmatrix}
 $$
 
-Each row (or column, since the graph is symmetric) represents a node.
+Each row (or column, since the graph is symmetric) represents a node. A 1 at row $i$ and column $j$, or $A_{ij}=1$, represents a connection between node $i$ and node $j$. None of the nodes are connected to themselves, meaning the matrix diagonal is 0. Similarly, $A_{ij} = A_{ji}$ because connections are undirected.
+
+I find a bunch of 1s and 0s in a matrix a little hard to interpret, so here's that same graph and matrix with colors.
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/graph1a.png" height="80%" width="80%">
+<img src="{{  site.baseurl  }}/images/computer_science/graph1a.png" height="75%" width="75%">
 </center>
-
-
-
-
- Let's say you want to describe the network of friend connections on Facebook. A link between two people means they're friends. If you have 5 people, you'd have 5x5 matrix where the five people were on the rows and columns, and each cell corresponded to whether there was a link between the row and column person. More formally, we'd say $A_{ij} = 1$ if the individual in row $i$ and individual in column $j$ were connected, and $A_{ij} = 0$ if they're not.
-
-Here's an example of a graph.
-
-
-
-We would represent this graph with the following adjacency matrix. Note how the matrix is symmetric along the diagonal because connections are undirected: if A is connected to B, then B is connected to A. The diagonal is also all zeros because there are no self-connections: none of the nodes in this graph are connected to themselves.
-
-
 
 ### Implementation
 Implementation is straightforward since we're only dealing with a matrix of 1s and 0s.
