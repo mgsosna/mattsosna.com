@@ -551,7 +551,9 @@ $$
 \end{bmatrix}
 $$
 
-Each row (or column, since the graph is symmetric) represents a node. A 1 at row $i$ and column $j$, or $A_{ij}=1$, represents a connection between node $i$ and node $j$. None of the nodes are connected to themselves, meaning the matrix diagonal is 0. Similarly, $A_{ij} = A_{ji}$ because connections are undirected.
+Each row and column represent a node. A 1 at row $i$ and column $j$, or $A_{ij}=1$, represents a connection between node $i$ and node $j$. $A_{ij}=0$ means nodes $i$ and $j$ aren't connected.
+
+None of the nodes in this graph are connected to themselves, meaning the matrix diagonal is 0. Similarly, $A_{ij} = A_{ji}$ because connections are undirected: if A is connected to B, then B is connected to A. As a result, the adjacency matrix is symmetric along the diagonal.
 
 I find a bunch of 1s and 0s in a matrix a little hard to interpret, so here's that same graph and matrix with colors.
 
@@ -559,8 +561,14 @@ I find a bunch of 1s and 0s in a matrix a little hard to interpret, so here's th
 <img src="{{  site.baseurl  }}/images/computer_science/graph1a.png" height="75%" width="75%">
 </center>
 
+A _weighted_ graph with _directed_ edges would look something like this. Notice how the relationships are no longer symmetric $-$ the second row in the adjacency matrix is now empty because $B$ has no outbound connections. We also have numbers that range between 0 and 1, which reflect the strength of the connection. For example, $C$ feeds into $A$ more strongly than $A$ feeds into $C$.
+
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/graph1b.png" height="75%" width="75%">
+</center>
+
 ### Implementation
-Implementation is straightforward since we're only dealing with a matrix of 1s and 0s.
+For simplicity, let's implement a graph that is unweighted and undirected. The main structure in our class is a list of lists, which we instantiate to all zeros. We must specify the number of nodes, `n`, when we create the graph. We can then access a connection between nodes `a` and `b` with `self.graph[a][b]`.
 
 {% include header-python.html %}
 ```python
@@ -570,7 +578,7 @@ class Graph:
 
     def connect(self, a: int, b: int) -> List[List[int]]:
         """
-        Updates self.graph to connect individuals A and B.
+        Updates self.graph to connect nodes A and B.
         """
         self.graph[a][b] = 1
         self.graph[b][a] = 1
@@ -578,54 +586,86 @@ class Graph:
 
     def disconnect(self, a: int, b: int) -> List[List[int]]:
         """
-        Updates self.graph to disconnect individuals A and B.
+        Updates self.graph to disconnect nodes A and B.
         """
         self.graph[a][b] = 0
         self.graph[b][a] = 0
         return self.graph
 ```
 
+We can recreate the graph in the first example above like this:
 
-### Questions
-A common graph question is to return the number of connected components, or sub-clusters. For example, in the below graph, we can identify three distinct components.
+{% include header-python.html %}
+```python
+g = Graph(4)
+
+# A's connections
+g.connect(0, 1)
+g.connect(0, 2)
+
+# B's connections (not included by A)
+g.connect(1, 2)
+
+# C's connections (not included by B)
+g.connect(2, 3)
+```
+
+### Example
+One trickier graph question is identifying the number of connected components, or sub-clusters, within a graph. In the below graph, for example, we can identify three distinct components.
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/graph2.png" height="40%" width="40%">
 </center>
 
+To answer [**LC 323:** Number of Connected Components](https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/), we'll move through each node, appending each of its neighbors to a queue. We'll then move through the _neighbors'_ neighbors, continuing until we've processed each node in the cluster. We'll then return to our list of nodes we haven't seen yet $-$ if any exist, that means at least one more cluster exists, so we grab a node and repeat the process.
 
 {% include header-python.html %}
 ```python
-def get_n_provinces(self, mat: List[List[int]]) -> int:
+def get_n_components(self, mat: List[List[int]]) -> int:
     """
     Given an adjacency matrix, returns the number of connected components
     """
     q = []
-    cities = [*range(len(mat))]
+    nodes = [*range(len(mat))]
 
     answer = 0
 
-    while q or cities:
+    while q or nodes:
 
+        # If all neighbors exhausted, traverse a new cluster
         if not q:
-            q.append(cities.pop(0))
+            q.append(nodes.pop(0))
             answer += 1
 
+        # Pick a node from the current cluster
         focal = q.pop(0)
         i = 0
 
-        while i < len(cities):
-            city = cities[i]
+        # Search through all remaining nodes for connections
+        while i < len(nodes):
+            node = nodes[i]
 
-            if mat[focal][city] == 1:
-                q.append(city)
-                cities.remove(city)
+            # If node connected to focal, add node to queue to search
+            # through its neighbors, and remove from nodes to avoid
+            # infinite loop
+            if mat[focal][node] == 1:
+                q.append(node)
+                nodes.remove(node)
             else:
                 i += 1
 
     return answer
 ```
 
+In English:
+1. Lines 5-8: Instantiate a queue (`q`), list of nodes (`nodes`), and our answer (`answer`).
+2. Line 10: Start a `while` loop that executes as long as there are either nodes to be processed in the queue, or nodes that we haven't visited yet.
+3. Lines 13-15: If the queue is empty, remove the first node from `nodes` and increment the number of components.
+4. Lines 18-19: Pick the next available node in the queue (`focal`).
+5. Line 22: Start a `while` loop that executes as long as we haven't processed all remaining nodes.
+6. Line 23: Name the node we're currently on to make the next lines more readable.
+7. Line 28-30: If the node we're on is connected to `focal`, add it to our queue of nodes in the current cluster, and remove it from our list of nodes that could be in another cluster (`nodes`).
+8. Lines 31-32: If the node we're on _isn't_ connected to `focal`, continue onto the next potential node.
 
 ## Hash maps
 ### Theory
@@ -662,7 +702,13 @@ def hash_function(name: str) -> int:
 ### Questions
 
 ## Conclusions
-This post covered data structures, the fundamental ways of organizing data in computer science. We started by discussing data structures vs. abstract data types, using Big O notation to quantify the efficiency of operations on data structures, and the types of data we actually store in our structures. We then discussed the theory and implementation of arrays, linked lists, trees, graphs, and hash maps, as well as answered a Leetcode question for each.
+This post covered a few fundamental data structures, the ways of organizing data in computer science.
+
+There's plenty more to cover: we didn't mention hash maps, a blazing fast $O(1)$ key-value retrieval, or tries, useful for autocomplete, etc.
+
+It's important again to distinguish _data structures_ from _abstract data types_. We didn't cover stacks, queues, or heaps, as there are multiple ways to implement those. A stack, for example, can be implemented with an array or linked list depending on your needs.
+
+We started by discussing data structures vs. abstract data types, using Big O notation to quantify the efficiency of operations on data structures, and the types of data we actually store in our structures. We then discussed the theory and implementation of arrays, linked lists, trees, graphs, and hash maps, as well as answered a Leetcode question for each.
 
 In the next post, we'll cover abstract data types. We'll discuss stacks and queues, caches, and more.
 
