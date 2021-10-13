@@ -22,7 +22,7 @@ In this post, we'll cover a few common data structures, discussing their strengt
 * [Linked lists](#linked-lists)
 * [Trees](#trees)
 * [Graphs](#graphs)
-* [Hash maps](#hash-maps)
+* [Hash tables](#hash-tables)
 
 ## Getting started
 Before we can start playing with any data structures, we need to understand what exactly data structures are and how to compare them. We'll start by distinguishing the tools (data structures) from their broader purpose ([abstract data types](https://en.wikipedia.org/wiki/Abstract_data_type)) before covering [Big O notation](https://en.wikipedia.org/wiki/Big_O_notation), a metric for comparing the speed of operations on data structures. We'll then quickly go over the fundamental types of data that our data structures store.
@@ -431,11 +431,11 @@ root.right.right = TreeNode('g')
 ```
 
 ### Examples
-Questions involving binary trees typically center around different ways of traversing the nodes. Traversal typically begins at the root node and then follows a set of steps for processing each node and its children. _But <u>the order in which nodes are processed</u> depends entirely on <u>the order in which we process the parent relative to the children</u>:_ before (**pre-order**), in between the left and right (**in-order**), or after (**post-order**). Each of the traversals below started at the root node, but the order that nodes _were processed_ was entirely different.
+Questions involving binary trees typically center around different ways of traversing the nodes. Traversal typically begins at the root node and then follows a set of steps for processing each node and its children. _But <u>the order in which nodes are processed</u> depends entirely on <u>the order in which we process the parent relative to the children</u>:_ before (**pre-order**), in between the left and right (**in-order**), or after (**post-order**). Each of the traversals below started at the root node, but the order that nodes _were processed_ differed entirely.
 
 <img src="{{  site.baseurl  }}/images/computer_science/tree_traversals_1.png">
 
-These three types of traversal can occur with **iteration** (using a `while` loop and a [stack](https://en.wikipedia.org/wiki/Stack_(abstract_data_type))) or with [**recursion**](https://en.wikipedia.org/wiki/Recursion_(computer_science)) (using a function that calls itself). There's also a fourth type of traversal, **level-order**, which utilizes a [queue](https://en.wikipedia.org/wiki/Queue_(abstract_data_type)).
+These three types of traversal can occur with **iteration** (using a `while` loop and a [**stack**](https://en.wikipedia.org/wiki/Stack_(abstract_data_type))) or with [**recursion**](https://en.wikipedia.org/wiki/Recursion_(computer_science)) (using a function that calls itself). There's also a fourth type of traversal, **level-order**, which utilizes a [**queue**](https://en.wikipedia.org/wiki/Queue_(abstract_data_type)). We won't cover stacks and queues in this post, but just think of them as lists where you can only add or remove from the end (stacks) or the start (queues).
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/tree_traversals_2.png" height="35%" width="35%">
@@ -469,16 +469,16 @@ def traverse_in_order(root: TreeNode) -> List[int]:
 ```
 
 In English, we perform these steps:
-1. Instantiate a list for our answer (`answer`) and a stack (`stack`) that contains a tuple of our root node and `False` indicating that we haven't visited this node yet.
-2. Start a `while` loop, which executes as long as any elements exist in `stack`.
-3. Remove the last element of the stack with `.pop`, then check if `node` exists.
+1. **Lines 6-7:** Instantiate a list for our answer (`answer`) and a stack (`stack`) that contains a tuple of our root node and `False` indicating that we haven't visited this node yet.
+2. **Line 9:** Start a `while` loop, which executes as long as any elements exist in `stack`.
+3. **Lines 10-12:** Remove the last element of the stack with `.pop`, then check if `node` exists.
   - (`node` won't always exist in later iterations for nodes with no children).
-4. If `node` exists and we've visited this node before, append our node value to the answer.
-5. If we haven't visited this node yet, add its right child (with a flag saying we haven't seen it yet), the current node (with a flag seeing we _have_ seen it already), and then the left child with a "haven't seen yet" flag.
-6. Repeat steps 3-6 until we've processed all nodes.
-7. Return a list of node values sorted in-order.
+4. **Lines 14-15:** If `node` exists and we've visited this node before, append our node value to the answer.
+5. **Lines 16-19:** If we haven't visited this node yet, add its right child (with a flag saying we haven't seen it yet), the current node (with a flag seeing we _have_ seen it already), and then the left child with a "haven't seen yet" flag.
+6. **Lines 9-19:** Repeat steps 3-6 until we've processed all nodes.
+7. **Line 21:** Return a list of node values sorted in-order.
 
-Step 5 (lines 17-19) might seem out of order $-$ shouldn't the left node come first? Because stacks are [Last In First Out](https://www.geeksforgeeks.org/lifo-last-in-first-out-approach-in-programming/), the first node we want to process needs to be the _last_ node we add to the stack. Hence we add right first, then left.
+The way we append nodes to the stack (lines 17-19) might seem out of order $-$ shouldn't the left node come first? But because stacks are [Last In First Out](https://www.geeksforgeeks.org/lifo-last-in-first-out-approach-in-programming/), the first node we want to process needs to be the _last_ node we add to the stack. Hence we add right first, then left.
 
 Now for the recursive method:
 
@@ -509,9 +509,9 @@ class Solution:
 ```
 
 In English, we perform these steps:
-1. Create a class that initializes with a list for our answer (`self.answer`).
-2. Define a function, `traverse_inorder`, which takes the root node of a tree, calls the recursive function `self._traverse`, and then returns `self.answer`.
-3. Define a recursive function `self._traverse` that takes in a node. The function checks if `node` exists before calling itself on the node's left child, appending the node's value to `self.answer`, and then calling itself on the node's right child.
+1. **Lines 2-4:** Create a class that initializes with a list for our answer (`self.answer`).
+2. **Lines 6-11:** Define a function, `traverse_inorder`, which takes the root node of a tree, calls the recursive function `self._traverse`, and then returns `self.answer`.
+3. **Lines 13-22:** Define a recursive function `self._traverse` that takes in a node. The function checks if `node` exists before calling itself on the node's left child, appending the node's value to `self.answer`, and then calling itself on the node's right child.
 
 How do we change from in-order to pre-order or post-order? For both methods, we simply rearrange the order in which `node` is processed relative to its children. The rest of the code remains unchanged.
 
@@ -534,7 +534,7 @@ def _traverse(self, node):
 
 ## Graphs
 ### Theory
-We expanded scope from linked lists to trees by allowing for more than one child per node. With graphs, we expand scope again by loosening trees' strict parent-child relationship. The nodes in a graph have no implicit hierarchy, and any node can be connected to any other node.
+Trees expand the scope of linked lists by allowing for more than one child per node. With graphs, we expand scope again by loosening trees' strict parent-child relationship. The nodes in a graph have no implicit hierarchy, and any node can be connected to any other node.
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/graph1.png" height="40%" width="40%">
@@ -561,14 +561,14 @@ I find a bunch of 1s and 0s in a matrix a little hard to interpret, so here's th
 <img src="{{  site.baseurl  }}/images/computer_science/graph1a.png" height="75%" width="75%">
 </center>
 
-A _weighted_ graph with _directed_ edges would look something like this. Notice how the relationships are no longer symmetric $-$ the second row in the adjacency matrix is now empty because $B$ has no outbound connections. We also have numbers that range between 0 and 1, which reflect the strength of the connection. For example, $C$ feeds into $A$ more strongly than $A$ feeds into $C$.
+A _weighted_ graph with _directed_ edges would look something like this. Notice how the relationships are no longer symmetric $-$ the second row in the adjacency matrix is now empty, for example, because $B$ has no outbound connections. We also have numbers that range between 0 and 1, which reflect the strength of the connection. For example, $C$ feeds into $A$ more strongly than $A$ feeds into $C$.
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/graph1b.png" height="75%" width="75%">
 </center>
 
 ### Implementation
-For simplicity, let's implement a graph that is unweighted and undirected. The main structure in our class is a list of lists, which we instantiate to all zeros. We must specify the number of nodes, `n`, when we create the graph. We can then access a connection between nodes `a` and `b` with `self.graph[a][b]`.
+For simplicity, let's implement a graph that is unweighted and undirected. The main structure in our class is a list of lists: each list is a row, with the indices in the list representing columns. We must specify the number of nodes, `n`, when we create the graph to be able to create the list of lists. We can then access a connection between nodes `a` and `b` with `self.graph[a][b]`.
 
 {% include header-python.html %}
 ```python
@@ -617,7 +617,7 @@ One trickier graph question is identifying the number of connected components, o
 <img src="{{  site.baseurl  }}/images/computer_science/graph2.png" height="40%" width="40%">
 </center>
 
-To answer [**LC 323:** Number of Connected Components](https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/), we'll move through each node, appending each of its neighbors to a queue. We'll then move through the _neighbors'_ neighbors, continuing until we've processed each node in the cluster. We'll then return to our list of nodes we haven't seen yet $-$ if any exist, that means at least one more cluster exists, so we grab a node and repeat the process.
+To answer [**LC 323:** Number of Connected Components](https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/), we'll examine each node in the graph, visiting its neighbors, its _neighbors'_ neighbors, and so on, until we only encounter nodes we've already seen. We'll then check if there are any nodes in the graph that we haven't visited $-$ if any exist, that means there's at least one more cluster, so we grab a new node and repeat the process.
 
 {% include header-python.html %}
 ```python
@@ -658,18 +658,23 @@ def get_n_components(self, mat: List[List[int]]) -> int:
 ```
 
 In English:
-1. Lines 5-8: Instantiate a queue (`q`), list of nodes (`nodes`), and our answer (`answer`).
-2. Line 10: Start a `while` loop that executes as long as there are either nodes to be processed in the queue, or nodes that we haven't visited yet.
-3. Lines 13-15: If the queue is empty, remove the first node from `nodes` and increment the number of components.
-4. Lines 18-19: Pick the next available node in the queue (`focal`).
-5. Line 22: Start a `while` loop that executes as long as we haven't processed all remaining nodes.
-6. Line 23: Name the node we're currently on to make the next lines more readable.
-7. Line 28-30: If the node we're on is connected to `focal`, add it to our queue of nodes in the current cluster, and remove it from our list of nodes that could be in another cluster (`nodes`).
-8. Lines 31-32: If the node we're on _isn't_ connected to `focal`, continue onto the next potential node.
+1. **Lines 5-8:** Instantiate a queue (`q`), list of nodes (`nodes`), and number of components (`answer`).
+2. **Line 10:** Start a `while` loop that executes as long as there are either nodes to be processed in the queue, or nodes we haven't visited yet.
+3. **Lines 13-15:** If the queue is empty, remove the first node from `nodes` and increment the number of components.
+4. **Lines 18-19:** Pick the next available node in the queue (`focal`).
+5. **Line 22:** Start a `while` loop that executes as long as we haven't processed all remaining nodes.
+6. **Line 23:** Name the node we're currently on to make the next lines more readable.
+7. **Line 28-30:** If the node we're on is connected to `focal`, add it to our queue of nodes in the current cluster, and remove it from our list of nodes that could be in another cluster (`nodes`).
+8. **Lines 31-32:** If the node we're on _isn't_ connected to `focal`, continue onto the next potential node.
 
-## Hash maps
+## Hash tables
 ### Theory
-A hash map is a data structure with $O(1)$ retrieval time, pretty much regardless of how many elements there are (assuming you have a good hash function). The idea is that for any input, you pass it through a hash function to get some output. Then you look at a location in memory corresponding to that hashed output. If your hash function can produce enough unique hashes, you can instantly retrieve any key's value.
+Let's finish this post with one more foundational data structure: the hash table, also often called a hash map.<sup>[[5]](#5-theory)</sup> When we moved on from arrays, we left the enviable $O(1)$ retrieval time. But what if we could get that lightning-fast efficiency again, even for a set of values that differ in size and location in memory?
+
+This is where hash tables come in. A hash table consists of a [**hash function**](https://en.wikipedia.org/wiki/Hash_function) that can map inputs to one of a fixed set of outputs. The [modulo operator](https://en.wikipedia.org/wiki/Modulo_operation) is an example of this $-$ no matter what number you put in front of `% 10`, you'll get a value back that's somewhere between 0 and 9.
+
+
+The idea is that for any input, you pass it through a hash function to get some output. Then you look at a location in memory corresponding to that hashed output. If your hash function can produce enough unique hashes, you can instantly retrieve any key's value.
 
 ### Implementation
 
@@ -775,3 +780,6 @@ The type of data is important because data types differ in how much memory they 
 
 #### [4. Theory](#theory-2)
 Note that $O(logn)$ is $log_2$, not $log_{10}$ or the natural log.
+
+#### [5. Theory](#theory-4)
+This [Stack Overflow post](https://stackoverflow.com/questions/32274953/difference-between-hashmap-and-hashtable-purely-in-data-structures) is a good explanation for the difference between hash maps and hash tables. A hash map is technically an abstract data type.
