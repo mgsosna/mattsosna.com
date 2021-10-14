@@ -669,9 +669,59 @@ In English:
 
 ## Hash tables
 ### Theory
-Let's finish this post with one more foundational data structure: the hash table, also often called a hash map.<sup>[[5]](#5-theory)</sup> When we moved on from arrays, we left the enviable $O(1)$ retrieval time. But what if we could get that lightning-fast efficiency again, even for a set of values that differ in size and location in memory?
+Let's finish this post with one more foundational data structure: the **hash table**, also often called **hash map.**<sup>[[5]](#5-theory)</sup> When we moved on from arrays, we left behind the enviable $O(1)$ index retrieval time to gain flexibility in data types and array size. But what if we could get that lightning-fast efficiency again, even for data that differs in type and memory location?
 
-This is where hash tables come in. A hash table consists of a [**hash function**](https://en.wikipedia.org/wiki/Hash_function) that can map inputs to one of a fixed set of outputs. The [modulo operator](https://en.wikipedia.org/wiki/Modulo_operation) is an example of this $-$ no matter what number you put in front of `% 10`, you'll get a value back that's somewhere between 0 and 9.
+This is where hash tables come in. Data in these tables is associated with key-value pairs $-$ input the key, and a [**hash function**](https://en.wikipedia.org/wiki/Hash_function) will take you to the associated value in $O(1)$ time. This efficiency holds true regardless of the amount or type(s) of data in the table.
+
+Here's a
+
+```python
+def hash_function():
+  return 'hi'
+```
+
+
+
+This might sound familiar to Python dictionaries, and [indeed the Python `dict` is a hash table](https://stackoverflow.com/questions/114830/is-a-python-dictionary-an-example-of-a-hash-table)! Note the flexibility in data types and how we can easily add and remove keys.
+
+{% include header-python.html %}
+```python
+d = {'key1': 1,
+     'key2': ['Matt', 'Mike'],
+     'key3': 'abc'}
+
+# Retrieve a key's value
+d['key1']  # 1
+
+# Add new key-value pair
+d['key4'] = 42.99
+
+# Remove key
+del d['key1']
+```
+
+
+
+The [modulo operator](https://en.wikipedia.org/wiki/Modulo_operation) could serve as a very basic hash function. For modulo 10, for example, any inputted number maps to a value between 0 and 9. 21 would map to 1, 5819 would map to 9, and so on.
+
+{% include header-python.html %}
+```python
+def modulo_hash(number: int) -> int:
+  return number % 10
+```
+
+Notice how multiple inputs can have the same output, i.e. a **collision**. This might not be an issue $-$ [load balancers](https://www.f5.com/services/resources/glossary/load-balancer), for example, can rotate incoming requests to servers with a modulo operator.
+
+A function that maps any input to one of only 10 outputs might be sufficient for your
+
+
+is an example of this $-$ no matter what number you put in front of `% 10`, you'll get a value back that's somewhere between 0 and 9.
+
+
+
+
+
+The
 
 
 The idea is that for any input, you pass it through a hash function to get some output. Then you look at a location in memory corresponding to that hashed output. If your hash function can produce enough unique hashes, you can instantly retrieve any key's value.
