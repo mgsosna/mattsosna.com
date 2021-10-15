@@ -669,20 +669,38 @@ In English:
 
 ## Hash tables
 ### Theory
-Let's finish this post with one more foundational data structure: the **hash table**, also often called **hash map.**<sup>[[5]](#5-theory)</sup> When we moved on from arrays, we left behind the enviable $O(1)$ index retrieval time to gain flexibility in data types and array size. But what if we could get that lightning-fast efficiency again, even for data that differs in type and memory location?
+Let's finish this post with one more foundational data structure: the **hash table**, also often called **hash map.**<sup>[[5]](#5-theory)</sup> When we moved on from arrays, we left behind the enviable $O(1)$ retrieval time to gain flexibility in data types and array size. But what if we could get that lightning-fast efficiency again, even for data that differ in type and memory location?
 
-This is where hash tables come in. Data in these tables is associated with key-value pairs $-$ input the key, and a [**hash function**](https://en.wikipedia.org/wiki/Hash_function) will take you to the associated value in $O(1)$ time. This efficiency holds true regardless of the amount or type(s) of data in the table.
+This is where hash tables come in. Data in these tables are associated with key-value pairs $-$ input the key, and a [**hash function**](https://en.wikipedia.org/wiki/Hash_function) will take you to the associated value in $O(1)$ time. This efficiency holds true regardless of the amount or type(s) of data in the table.
 
-Here's a
+Revisiting our linked list diagram for earlier, below is how the list would look as a hash table. The green box is our table, which stores the keys `key1`, `key2`, and `key3`. When a user passes in one of these keys to the table, the key is sent through the hash function to find the location of the key's value. This value is then returned to the user.
 
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/hash_map.png" height="90%" width="90%">
+</center>
+
+The main workhorse of the table is the hash function, which takes an input and returns outputs _within some range._ While there are infinite possible inputs, there are _finite_ possible outputs $-$ there's only so much memory on your computer.
+
+When two distinct inputs have the same hashed _output_, that's called a **collision.** Collisions aren't inherently bad $-$ sometimes you _want_ different inputs to receive the same output. If your cool app from earlier has four servers handling traffic, you could have a very basic hash function like the one below to [balance the load](https://www.f5.com/services/resources/glossary/load-balancer) among your servers.
+
+{% include header-python.html %}
 ```python
-def hash_function():
-  return 'hi'
+def choose_server_for_request(request_id: int) -> int:
+  """
+  Returns the server ID (0, 1, 2, or 3) to send a request to.
+  """
+  return request_id % 4
 ```
 
+Above, our hash function returns four possible values. We'll want something a lot stronger for a service like storing passwords or your credit card information. The cryptographic has [SHA-256](https://www.movable-type.co.uk/scripts/sha256.html), for example, has $2^{256}$ possible outputs. Even if you knew someone's hashed password, those $10^77$ combinations would take a _long_ time to crack. (Computerphile has [an excellent YouTube video](https://www.youtube.com/watch?v=7U-RbOKanYs) on this.)
 
 
-This might sound familiar to Python dictionaries, and [indeed the Python `dict` is a hash table](https://stackoverflow.com/questions/114830/is-a-python-dictionary-an-example-of-a-hash-table)! Note the flexibility in data types and how we can easily add and remove keys.
+
+One important thing is that the keys are _hashable_. In other words, a key has to be immutable - there should always be unequivocally one output for that input.
+
+
+
+This might sound familiar to Python dictionaries, and indeed the Python `dict` [_is_ a hash table](https://stackoverflow.com/questions/114830/is-a-python-dictionary-an-example-of-a-hash-table)! Note the flexibility in data types and how we can easily add and remove keys.
 
 {% include header-python.html %}
 ```python
