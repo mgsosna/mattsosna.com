@@ -671,7 +671,13 @@ In English:
 ### Theory
 Let's finish this post with one more foundational data structure: the **hash table**, also often called **hash map.**<sup>[[5]](#5-theory)</sup> When we moved on from arrays, we left behind the enviable $O(1)$ retrieval time to gain flexibility in data types and array size. But what if we could get that lightning-fast efficiency again, even for data that differ in type and memory location?
 
-This is where hash tables come in. Data in these tables are associated with key-value pairs $-$ input the key, and a [**hash function**](https://en.wikipedia.org/wiki/Hash_function) will take you to the associated value in $O(1)$ time. This efficiency holds true regardless of the amount or type(s) of data in the table.
+This is where hash tables come in. Data in these tables are associated with key-value pairs $-$ input the key, and a [**hash function**](https://en.wikipedia.org/wiki/Hash_function) will take you to the associated value in $O(1)$ time.
+
+
+Mention array step.
+
+
+This efficiency holds true regardless of the amount or type(s) of data in the table.
 
 Revisiting our linked list diagram for earlier, below is how the list would look as a hash table. The green box is our table, which stores the keys `key1`, `key2`, and `key3`. When a user passes in one of these keys to the table, the key is sent through the hash function to find the location of the key's value. This value is then returned to the user.
 
