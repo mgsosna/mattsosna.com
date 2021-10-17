@@ -669,25 +669,23 @@ In English:
 
 ## Hash tables
 ### Theory
-Let's finish this post with one more foundational data structure: the **hash table**, also often called **hash map.**<sup>[[5]](#5-theory)</sup> When we moved on from arrays, we left behind the enviable $O(1)$ retrieval time to gain flexibility in data types and array size. But what if we could get that lightning-fast efficiency again, even for data that differ in type and memory location?
+Let's finish this post with one more foundational data structure: the **hash table**, also called **hash map.**<sup>[[5]](#5-theory)</sup> When we moved on from arrays, we left behind the enviable $O(1)$ retrieval time to gain flexibility in data types and array size. But what if we could get that lightning-fast efficiency again, even for data that differ in type and memory location?
 
-This is where hash tables come in. Data in these tables are associated with key-value pairs $-$ input the key, and a [**hash function**](https://en.wikipedia.org/wiki/Hash_function) will take you to the associated value in $O(1)$ time.
+This is where hash tables come in. Data in these tables are associated with key-value pairs $-$ input the key, and a [**hash function**](https://en.wikipedia.org/wiki/Hash_function) takes you to the associated value in $O(1)$ time. Hash tables actually use an array of pointers to achieve this speed; the job of the hash function is to identify the index in the array that holds the pointer to a key's value.
 
+Below is how our linked list from earlier would look as a hash table. The green box is our table, which stores the keys `key1`, `key2`, and `key3`. When a user passes in one of these keys to the table, the key is sent through the hash function to find an index in the array of pointers (purple). That pointer then takes us to the area in memory storing the actual value. Each pointer in our array is four bytes, while the size of the values they point to can vary.
 
-Mention array step.
+<img src="{{  site.baseurl  }}/images/computer_science/hash_map.png">
 
+The main workhorse of the table is the hash function, which maps an input to an output _within some range._ Python's `hash` function, for example, outputs values [between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807](https://stackoverflow.com/questions/19132927/determining-the-range-of-values-returned-by-pythons-hash). We then _bucket_ the hashed value $-$ often by dividing by the length of our array and taking the remainder $-$ to return an index in our array of pointers. In the above example, the output would be 0, 1, or 2: the indices of the pointer array.
 
-This efficiency holds true regardless of the amount or type(s) of data in the table.
+Since our array won't have infinite indices, it's possible $-$ and even likely $-$ that two distinct inputs will receive the same hashed _output_. This **collision** would mean that two user IDs, like `1005778` and `9609217`, could both land on the pointer that returns `Jane Reader`, even if they're separate users. We don't want that!
 
-Revisiting our linked list diagram for earlier, below is how the list would look as a hash table. The green box is our table, which stores the keys `key1`, `key2`, and `key3`. When a user passes in one of these keys to the table, the key is sent through the hash function to find the location of the key's value. This value is then returned to the user.
+The first fix is to ensure our hash function distributes outputs _uniformally_. Each array index should have an equal probability of being selected $-$ if certain indices are more likely than others, we'll run into collisions more frequently than we need to.
 
-<center>
-<img src="{{  site.baseurl  }}/images/computer_science/hash_map.png" height="90%" width="90%">
-</center>
+A more involved solution involves bringing in another data structure: linked lists. Rather than having each pointer point to an exact value in memory, **each pointer could instead point to a linked list.** If we tried saving a new key-value pair where the hashed key collides with an existing key, we'd simply append another node to the list at that location in memory. Add a little logic for traversing the list and knowing when to stop, and you're good to go!
 
-The main workhorse of the table is the hash function, which takes an input and returns outputs _within some range._ While there are infinite possible inputs, there are _finite_ possible outputs $-$ there's only so much memory on your computer.
-
-When two distinct inputs have the same hashed _output_, that's called a **collision.** Collisions aren't inherently bad $-$ sometimes you _want_ different inputs to receive the same output. If your cool app from earlier has four servers handling traffic, you could have a very basic hash function like the one below to [balance the load](https://www.f5.com/services/resources/glossary/load-balancer) among your servers.
+But collisions also aren't inherently bad $-$ sometimes we _want_ different inputs to receive the same output. If your cool app from the start of this post has four servers handling traffic, you could use a basic hash function like the one below to [balance the load](https://www.f5.com/services/resources/glossary/load-balancer) among your servers.
 
 {% include header-python.html %}
 ```python
@@ -695,90 +693,68 @@ def choose_server_for_request(request_id: int) -> int:
   """
   Returns the server ID (0, 1, 2, or 3) to send a request to.
   """
-  return request_id % 4
+  return hash(str(request_id)) % 4
+
+choose_server_for_request(2877448)   # Sends to server 2
+choose_server_for_request(2877449)   # Sends to server 1
+choose_server_for_request(2877450)   # Sends to server 3
+choose_server_for_request(2877451)   # Sends to server 0
 ```
-
-Above, our hash function returns four possible values. We'll want something a lot stronger for a service like storing passwords or your credit card information. The cryptographic has [SHA-256](https://www.movable-type.co.uk/scripts/sha256.html), for example, has $2^{256}$ possible outputs. Even if you knew someone's hashed password, those $10^77$ combinations would take a _long_ time to crack. (Computerphile has [an excellent YouTube video](https://www.youtube.com/watch?v=7U-RbOKanYs) on this.)
-
-
-
-One important thing is that the keys are _hashable_. In other words, a key has to be immutable - there should always be unequivocally one output for that input.
-
-
-
-This might sound familiar to Python dictionaries, and indeed the Python `dict` [_is_ a hash table](https://stackoverflow.com/questions/114830/is-a-python-dictionary-an-example-of-a-hash-table)! Note the flexibility in data types and how we can easily add and remove keys.
-
-{% include header-python.html %}
-```python
-d = {'key1': 1,
-     'key2': ['Matt', 'Mike'],
-     'key3': 'abc'}
-
-# Retrieve a key's value
-d['key1']  # 1
-
-# Add new key-value pair
-d['key4'] = 42.99
-
-# Remove key
-del d['key1']
-```
-
-
-
-The [modulo operator](https://en.wikipedia.org/wiki/Modulo_operation) could serve as a very basic hash function. For modulo 10, for example, any inputted number maps to a value between 0 and 9. 21 would map to 1, 5819 would map to 9, and so on.
-
-{% include header-python.html %}
-```python
-def modulo_hash(number: int) -> int:
-  return number % 10
-```
-
-Notice how multiple inputs can have the same output, i.e. a **collision**. This might not be an issue $-$ [load balancers](https://www.f5.com/services/resources/glossary/load-balancer), for example, can rotate incoming requests to servers with a modulo operator.
-
-A function that maps any input to one of only 10 outputs might be sufficient for your
-
-
-is an example of this $-$ no matter what number you put in front of `% 10`, you'll get a value back that's somewhere between 0 and 9.
-
-
-
-
-
-The
-
-
-The idea is that for any input, you pass it through a hash function to get some output. Then you look at a location in memory corresponding to that hashed output. If your hash function can produce enough unique hashes, you can instantly retrieve any key's value.
 
 ### Implementation
+Hash maps might sound similar to Python dictionaries, and indeed the Python `dict` [_is_ a hash table](https://stackoverflow.com/questions/114830/is-a-python-dictionary-an-example-of-a-hash-table)! But if we had to create one from scratch, we could do so like below.
 
 {% include header-python.html %}
 ```python
-from string import ascii_lowercase as alphabet
+class HashTable:
+    def __init__(self, n: int):
+        self.array = [[] * n]
 
-def hash_function(name: str) -> int:
-    """
-    Converts a string to a number distributed in the range 0-9
-    """
-    output = sum([alphabet.index(char.lower()) for char in name])
+    def put(self, key: str, value: Any) -> bool:
+        """
+        Saves a key-value pair to the corresponding list in
+        self.array. If key-value pair already present, updates
+        key's value.
+        """
+        slot = self._calculate_slot(key)
 
-    # Add depending on even/odd
-    output += 1 if len(name) % 2 == 0 else 0
+        # Update value if key already present
+        for i in range(self.array[slot]):
+            if self.array[slot][i][0] == key:
+                self.array[slot][i][1] = value
+                return True
 
-    # Multiply depending on first char
-    char_idx = alphabet.index(name[0].lower())
+        # Otherwise add a new tuple
+        self.array[slot].append((key, value))
+        return True
 
-    if char_idx < 10:
-        output *= 3
-    elif char_idx < 20:
-        output *= 4
-    else:
-        output *= 5
+    def get(self, key: str) -> Any:
+        """
+        Retrieves a key-value pair. Raises error if key not present.
+        """
+        slot = self._calculate_slot(key)
 
-    return output % 10
+        for k, v in self.array[slot]:
+            if key == k:
+                return v
+
+        raise ValueError(f"key {key} not present.")
+
+    def _calculate_slot(self, key: str) -> int:
+        """
+        Return the corresponding list in self.array.
+        """
+        return hash(key) % len(self.array)
 ```
 
-### Questions
+To deal with hash collisions, we use a list of lists for `self.array`, then traverse the list when retrieving or adding values. We store both the key and value in our list to be able to identify the key-value pair we're looking for, given that multiple keys will have the same array index.
+
+
+
+### Example
+As with arrays, we'll probably want to use Python's built-in `dict` class rather than our own hash map.
+
+
 
 ## Conclusions
 This post covered a few fundamental data structures, the ways of organizing data in computer science.
