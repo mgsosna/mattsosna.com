@@ -707,8 +707,8 @@ Hash maps might sound similar to Python dictionaries, and indeed the Python `dic
 {% include header-python.html %}
 ```python
 class HashTable:
-    def __init__(self, n: int):
-        self.array = [[] * n]
+    def __init__(self, n_slots: int):
+        self.array = [[] * n_slots]
 
     def put(self, key: str, value: Any) -> bool:
         """
@@ -749,12 +749,42 @@ class HashTable:
 
 To deal with hash collisions, we use a list of lists for `self.array`, then traverse the list when retrieving or adding values. We store both the key and value in our list to be able to identify the key-value pair we're looking for, given that multiple keys will have the same array index.
 
-
-
 ### Example
-As with arrays, we'll probably want to use Python's built-in `dict` class rather than our own hash map.
+To finish off this post, let's answer the classic Leetcode problem [**LC 1:** Two Sum](https://leetcode.com/problems/two-sum/). Like we did with arrays, we'll just use the Python built-in class (`dict`). The question is as follows: _given an array of integers and a target, return the indices of numbers that add up to target._ With the array `[1, 2, 3]` and target `4`, for example, we'd return `[0, 2]`, as 1 + 3 = 4.
 
+There are multiple approaches to this problem, humorously outlined in [this parody of a technical interview](https://www.youtube.com/watch?v=kVgy1GSDHG8). The first is to brute force compare every pair of numbers (e.g. `1+2`, `1+3`, `2+3`), which will definitely work but will take $O(n^2)$ time. A better approach is to sort the array and then use two pointers, one at the start and one at the end, and iteratively move the left or right pointer if their sum is less than or greater than the target, respectively. This approach takes $O(nlogn)$ time due to sorting.
 
+But we can actually achieve $O(n)$ time, visiting each element at most once, by using a hashmap. The key concept here is that for each number `num`, we need to see if there's some _other_ number that equals `target - num`. We can use a Python dictionary (i.e. hashmap) to store numbers we've already seen, then use that sweet $O(1)$ lookup time to see if we've already seen a number that matches `target - num`. If there's a match, we return the indices of the two numbers.
+
+{% include header-python.html %}
+```python
+def two_sum(arr: List[int], target: int) -> List[int]:
+    seen = {}
+    for i, num in enumerate(arr):
+      	if target-num in seen:
+            return [i, seen[target-num]]
+        seen[num] = i
+```
+
+Here's how this would look for our array `[1, 2, 3]` with target `4`. Here we write out the logic for each iteration of the `for` loop.
+
+{% include header-python.html %}
+```python
+# seen = {}
+# On: 1
+# Match: 4 - 1 = 3
+# 3 not in seen; continue
+
+# seen = {1: 0}
+# On: 2
+# Match: 4 - 2 = 2
+# 2 not in seen; continue
+
+# seen = {1: 0, 2: 1}
+# On: 3
+# Match: 4 - 3 = 1
+# 1 in seen; return indices [2, 0]
+```
 
 ## Conclusions
 This post covered a few fundamental data structures, the ways of organizing data in computer science.
