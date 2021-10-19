@@ -14,7 +14,9 @@ A better approach, you realize, is to arrange user data in a [**binary search tr
 
 This example highlights an important point: **the <u>data structures</u> our programs use can determine whether our code will scale as the amount of data grows, or whether we'll need to rewrite everything from scratch every six months.** From quickly finding the shortest path between locations, to always serving the highest-priority items in a constantly-changing list, to instantly and securely confirming whether an inputted password is correct, choosing the right data structures is critical for scalable code.
 
-In this post, we'll cover a few common data structures, discussing their strengths and weaknesses and when they're used. (A binary search tree is great for indexing databases but bad for generating password hashes, for example.) We'll implement the structures in Python, then demonstrate some use cases with [Leetcode](https://leetcode.com/) questions.<sup>[[1]](#1-intro)</sup>
+In this post, we'll cover a few common data structures, discussing their strengths and weaknesses and when they're used. (A binary search tree is great for indexing databases but bad for generating password hashes, for example.) We'll implement the structures in Python, then demonstrate some use cases with [Leetcode](https://leetcode.com/) questions.
+
+Even if your daily work never ventures into languages low enough to worry about memory management, you'll learn how R and Python store your data under the hood. And on a more blunt level, this post will give you foundational knowledge for the coding sections of [FAANG](https://en.wikipedia.org/wiki/Big_Tech#FAANG) tech interviews, if that's something that interests you!
 
 ## Table of contents
 * [Getting started](#getting-started)
@@ -52,7 +54,7 @@ An alternate method would be to neatly arrange your clothes in your dresser and 
 <img src="{{  site.baseurl  }}/images/computer_science/pile.png" height="70%" width="70%">
 </center>
 
-While this example might sound silly, it's actually not too far off from the strategies of dumping data into [AWS S3](https://aws.amazon.com/s3/) versus a database, or to some degree storing it in a [highly-structured SQL vs. flexible NoSQL database]({{  site.baseurl  }}/SQL_vs_NoSQL). The dresser and closet isn't automatically the best approach $-$ transaction receipts for an e-commerce store are likely written far more often than read, so a "pile of clothes" approach of saving raw output to S3 can actually work well.
+While this example might sound silly, it's actually not too far off from the strategies of dumping data into [AWS S3](https://aws.amazon.com/s3/) versus a database, or to some degree storing it in a [highly-structured SQL vs. flexible NoSQL database]({{  site.baseurl  }}/SQL_vs_NoSQL). The dresser and closet isn't automatically the best approach $-$ transaction logs for an e-commerce store are likely written far more often than read, so a "pile of clothes" approach of saving raw output to S3 can actually work well.
 
 ### Big O notation
 While it makes sense that it's easier to dig a hole with a shovel than a hammer, how do we quantify the difference in performance? The _number of seconds_ it takes to dig is a good metric, but to deal with holes of differing sizes, we'd probably want something more like _seconds per cubic foot_.
@@ -119,14 +121,14 @@ But an even worse runtime is $O(n!)$. [**Permutations**](https://en.wikipedia.or
 * `[C,A,B,D]`, `[C,A,D,B]`, `[C,B,A,D]`, `[C,B,D,A]`, `[C,D,B,A]`, `[C,D,A,B]`
 * `[D,A,B,C]`, `[D,A,C,B]`, `[D,B,A,C]`, `[D,B,C,A]`, `[D,C,A,B]`, `[D,C,B,A]`
 
-The runtime of these problems expands at a shocking rate. An array of 10 elements has 1,024 subsets and 3,628,800 permutations, and an array of 20 has 1,048,576 subsets and 2,432,902,008,176,640,000 permutations!
+The runtime of these problems expands at a shocking rate. An array of 10 elements has 1,024 subsets and 3,628,800 permutations. An array of 20 elements has 1,048,576 subsets and 2,432,902,008,176,640,000 permutations!
 
-If your task is specifically to find all subsets or permutations of an inputted array, it's hard to avoid a $O(2^n)$ or $O(n!)$ runtime. But not all hope is lost if you're running this operation more than once $-$ there are some architectural tricks you can employ to lessen the burden.<sup>[[2]](#2-big-o-notation)</sup>
+If your task is specifically to find all subsets or permutations of an inputted array, it's hard to avoid a $O(2^n)$ or $O(n!)$ runtime. But not all hope is lost if you're running this operation more than once $-$ there are some architectural tricks you can employ to lessen the burden.<sup>[[1]](#1-big-o-notation)</sup>
 
 ### Data types
-Finally, we should briefly mention the fundamental _data types_. If a data structure is a collection of data, what _types_ of data can we have in our structures? There are a few fundamental data types regardless of programming language:
+Finally, we should briefly mention the fundamental _data types_. If a data structure is a collection of data, what _types_ of data can we have in our structures? There are a few data types universal across programming languages:
 
-**Integers** are whole numbers, like `1`, `-5`, and `256`. In languages besides Python, you can be more specific with the type of integer, such as signed or unsigned, and the number of bits an integer can hold. This corresponds to the amount of memory your program will reserve, and if you're not careful, you can _overflow_ or _underflow_.
+**Integers** are whole numbers, like `1`, `-5`, and `256`. In languages besides Python, you can be more specific with the type of integer, such as signed (`+`/`-`) or unsigned (only `+`), and the number of bits an integer can hold.
 
 **Floats** are numbers with decimal places, like `1.2`, `0.14`. In Python, this includes numbers defined with scientific notation, like `1e5`. Lower-level languages like C or Java have a related _double_ type, referring to extra precision beyond the decimal place.
 
@@ -138,9 +140,11 @@ Finally, we should briefly mention the fundamental _data types_. If a data struc
 <img src="{{  site.baseurl  }}/images/computer_science/data_types.png" heigh="70%" width="70%">
 </center>
 
+With abstract data types, Big O notation, and the fundamental data types behind us, let's get started on the actual data structures! We'll first cover arrays.
+
 ## Arrays
 ### Theory
-Arrays are one of the most fundamental data structures in computer science, and they come built-in with languages even as low-level as [C](https://www.freecodecamp.org/news/what-is-the-c-programming-language-beginner-tutorial/) or [Assembly](https://en.wikipedia.org/wiki/Assembly_language). An array is a group of elements of the same type, like `[5, 8, -1]` or `['a', 'b', 'c']`, located on a contiguous slice of computer memory. Because each element of the array is stored physically next to one another, we can access any index $-$ such as the first, third, or last element $-$ in $O(1)$ time.<sup>[[3]](#3-theory)</sup>
+Arrays are one of the most fundamental data structures in computer science, and they come built-in with languages even as low-level as [C](https://www.freecodecamp.org/news/what-is-the-c-programming-language-beginner-tutorial/) or [Assembly](https://en.wikipedia.org/wiki/Assembly_language). An **array** is a group of elements of the same type, like `[5, 8, -1]` or `['a', 'b', 'c']`, located on _a contiguous slice of computer memory_. Because the array elements are physically next to each another, we can access any index $-$ such as the first, third, or last element $-$ in $O(1)$ time.<sup>[[2]](#2-theory)</sup>
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/array1.png" height="80%" width="80%">
@@ -198,7 +202,7 @@ If you come across a question involving arrays, you'll most likely want to use P
 
 {% include header-python.html %}
 ```python
-def duplicate_zeros(arr: List[int]) -> None:
+def duplicate_zeros(arr: list) -> None:
     """
     Duplicate all zeros in an array, maintaining the length
     of the original array. e.g. [1, 0, 2, 3] -> [1, 0, 0, 2]
@@ -213,13 +217,15 @@ def duplicate_zeros(arr: List[int]) -> None:
         i += 1
 ```
 
-In English, we iteratively move through the list until we find a zero. We then insert another zero and pop off the last element to maintain the array size. The trick is to use a `while` loop rather than `for`, as we're modifying the array as we move through it. The finer control over our index `i` lets us skip our inserted zero to avoid double-counting.
+In English, we iteratively move through the list until we find a zero. We then insert another zero and pop off the last element to maintain the array size.
+
+An important detail here is to use a `while` loop rather than `for`, as we're modifying the array as we move through it. The finer control over our index `i` lets us skip our inserted zero to avoid double-counting.
 
 ## Linked lists
 ### Theory
-Linked lists are another key data structure in computer science. Like arrays, a linked list is a group of values. But unlike arrays, **the values in a linked list don't have to be the same type, and we don't need to know how big the list needs to be ahead of time.**
+Linked lists are another key data structure in computer science. Like arrays, a linked list is a group of values. But unlike arrays, **the values in a linked list don't have to be the same type, and we don't need to specify the list size ahead of time.**
 
-The core element of a linked list is a **node**, which contains 1) some data, and 2) a pointer to a location in memory. Specifically, _any_ location in memory. Below is a linked list with the values `[1, 'a', 0.3]` $-$ note how the element sizes differ (four bytes for integers and floats, one byte for chars), each node has a four-byte pointer, and how the last node contains a [null pointer](https://en.wikipedia.org/wiki/Null_pointer) that points off into space.
+The core element of a linked list is a **node**, which contains 1) some data, and 2) a pointer to a location in memory. Specifically, _any_ location in memory. Below is a linked list with the values `[1, 'a', 0.3]` $-$ note how the element sizes differ (four bytes for integers and floats, one byte for chars), each node has a four-byte pointer, the distance between nodes varies, and that the last node contains a [null pointer](https://en.wikipedia.org/wiki/Null_pointer) that points off into space.
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/ll1.png">
@@ -243,7 +249,7 @@ class ListNode:
         return f"ListNode with val {self.val}"
 ```
 
-We can now play around with it like so. Note how the head of the list is our variable `head`, and how we have to iteratively append `.next` to access deeper nodes, since we can't type an index like `[1]` or `[2]` to reach them.
+We can now play around with our `ListNode` class. Notice how the head of the list is our variable `head`, and how we have to iteratively append `.next` to access deeper nodes, since we can't type an index like `[1]` or `[2]` to reach them.
 
 {% include header-python.html %}
 ```python
@@ -272,7 +278,7 @@ def add_to_front(head: ListNode, val: Any) -> ListNode:
     return node
 ```
 
-In `add_to_end`, we create a variable called `ptr` ("pointer") that starts at `head` and traverses the list until it reaches the last node, whose `.next` attribute is a null pointer. We then simply set that node's `.next` value to a new `ListNode`. Notice how we don't need to return anything for our change to take effect.
+In `add_to_end`, we create a variable called `ptr` ("pointer") that starts at `head` and traverses the list until it reaches the last node, whose `.next` attribute is a null pointer. We then simply set that node's `.next` value to a new `ListNode`. We don't need to return anything for our change to take effect.
 
 `add_to_front` is simpler: we create a new head, then set its `.next` pointer to the head of our existing linked list. However, we need to manually update `head` outside our function with this new node, because otherwise `head` still points to the old head.
 
@@ -302,7 +308,7 @@ One common question with linked lists is to return the middle node. Because we t
 
 But there's actually a clever way to find the middle with one pass. Before, we used a pointer to traverse the list one node at a time until we reached the end. But what if we had _two_ pointers, one moving one node at a time and the other two at a time? When the fast pointer reached the end of the list, our slow pointer would be at the middle.
 
-Here's how we'd answer [**LC 876:** Middle of Linked List](https://leetcode.com/problems/middle-of-the-linked-list/) in Python.
+Here's how we'd answer [**LC 876:** Middle of Linked List](https://leetcode.com/problems/middle-of-the-linked-list/).
 
 {% include header-python.html %}
 ```python
@@ -323,17 +329,18 @@ def find_middle(head: ListNode) -> ListNode:
     return slow  
 ```
 
-Whenever dealing with Leetcode questions, I like to draw out examples and make sure I'm doing what I think I'm doing. For example, it can be hard to remember if we should initialize `fast` to `head` or to `head.next`. If you draw out a simple list where you know what the middle should be, you can quickly confirm that `head.next` is the right option.
+Whenever I work on Leetcode questions, I like to draw out examples and make sure I'm doing what I think I'm doing. For example, it can be hard to remember if we should initialize `fast` to `head` or to `head.next`. If you draw out a simple list where you know what the middle should be, you can quickly confirm that `head.next` is the right option.
 
 ```bash
-# List: A -> B -> C -> D -> E, middle = C
+# List: A -> B -> C -> D -> E
+# Middle: C
 
 # Start at head: incorrect
-# Slow: A -> B -> C -> D
+# Slow: A -> B -> C -> D  ==> Middle: D
 # Fast: A -> C -> E -> null
 
 # Start at head.next: correct
-# Slow: A -> B -> C
+# Slow: A -> B -> C       ==> Middle: C
 # Fast: B -> D -> null
 ```
 
@@ -370,7 +377,7 @@ def has_cycle(head: ListNode) -> bool:
 
 ## Trees
 ### Theory
-Trees extend the idea of a linked list by allowing for nodes to have more than one "next" node. Tree nodes can have one, two, or many _child_ nodes, allowing for data to be represented in a flexible branching pattern. By setting rules on how data is organized, we can store and retrieve data highly efficiently.
+Trees extend the idea of a linked list by allowing for nodes to have more than one "next" node. Tree nodes can have one, two, or many _child_ nodes, allowing for data to be represented in a flexible branching pattern. By setting rules on how data is organized, we can store and retrieve data very efficiently.
 
 One type of tree is a **binary search tree** (BST); at the start of this post we briefly mentioned how efficiently BSTs can retrieve data. This efficiency stems from two important rules governing a BST's structure:
 1. A node can have at most two children.
@@ -380,7 +387,7 @@ One type of tree is a **binary search tree** (BST); at the start of this post we
 <img src="{{  site.baseurl  }}/images/computer_science/tree1.png" height="60%" width="60%">
 </center>
 
-Searching for a value in a BST takes at worst $O(log\ n)$ time<sup>[[4]](#4-theory)</sup>, meaning we can find a requested value among millions or even billions of records very rapidly. Let's say we're searching for the node with the value `x`. We can use the following algorithm to quickly find this node in a BST.
+Searching for a value in a BST takes at worst $O(log\ n)$ time<sup>[[3]](#3-theory)</sup>, meaning we can find a requested value among millions or even billions of records very rapidly. Let's say we're searching for the node with the value `x`. We can use the following algorithm to quickly find this node in a BST.
 
 1. Start at the root of the tree.
 2. If x = the node value: stop.
@@ -388,7 +395,7 @@ Searching for a value in a BST takes at worst $O(log\ n)$ time<sup>[[4]](#4-theo
 4. If x > the node value: go to the right child.
 5. Go to Step 2.
 
-If we're unsure whether the requested node exists in the tree, we'd just modify steps 3 and 4 to stop the search if we try to access a child that doesn't exist.
+If we're unsure whether the requested node exists in the tree, we just modify steps 3 and 4 to stop the search if we try to access a child that doesn't exist.
 
 ### Implementation
 Creating a `TreeNode` is nearly identical to creating a `ListNode`. The only difference is that rather than one `next` attribute, we have `left` and `right` attributes, which refer to the left and right children of the node. (If we're defining a tree with more than two children, we can name these attributes `child1`, `child2`, `child3`, etc.)
@@ -431,7 +438,7 @@ root.right.right = TreeNode('g')
 ```
 
 ### Examples
-Questions involving binary trees typically center around different ways of traversing the nodes. Traversal typically begins at the root node and then follows a set of steps for processing each node and its children. _But <u>the order in which nodes are processed</u> depends entirely on <u>the order in which we process the parent relative to the children</u>:_ before (**pre-order**), in between the left and right (**in-order**), or after (**post-order**). Each of the traversals below started at the root node, but the order that nodes _were processed_ differed entirely.
+Questions involving binary trees often center on different ways of traversing the nodes. Traversal typically begins at the root node and then follows a set of steps for processing each node and its children. _But <u>the order in which nodes are processed</u> depends entirely on <u>the order in which we process the parent relative to the children</u>:_ before (**pre-order**), in between the left and right (**in-order**), or after (**post-order**). Each of the traversals below started at the root node, but the order that nodes _were processed_ differed entirely.
 
 <img src="{{  site.baseurl  }}/images/computer_science/tree_traversals_1.png">
 
@@ -441,7 +448,7 @@ These three types of traversal can occur with **iteration** (using a `while` loo
 <img src="{{  site.baseurl  }}/images/computer_science/tree_traversals_2.png" height="35%" width="35%">
 </center>
 
-The patterns for the first three types of traversals are nearly identical, so we'll just choose in-order traversal and answer [**LC 94:** Binary Tree Inorder Traversal](https://leetcode.com/problems/binary-tree-inorder-traversal/). Below we code out the iterative and recursive methods, starting with the iterative version.
+The patterns for the first three types of traversals are nearly identical, so we'll just choose in-order traversal. Below we code out the iterative and recursive methods for [**LC 94:** Binary Tree Inorder Traversal](https://leetcode.com/problems/binary-tree-inorder-traversal/), starting with the iterative version.
 
 {% include header-python.html %}
 ```python
@@ -510,8 +517,8 @@ class Solution:
 
 In English, we perform these steps:
 1. **Lines 2-4:** Create a class that initializes with a list for our answer (`self.answer`).
-2. **Lines 6-11:** Define a function, `traverse_inorder`, which takes the root node of a tree, calls the recursive function `self._traverse`, and then returns `self.answer`.
-3. **Lines 13-22:** Define a recursive function `self._traverse` that takes in a node. The function checks if `node` exists before calling itself on the node's left child, appending the node's value to `self.answer`, and then calling itself on the node's right child.
+2. **Lines 6-11:** Define a function, `traverse_inorder`, which takes the root node of a tree, calls the recursive function `_traverse`, and then returns `self.answer`.
+3. **Lines 13-22:** Define a recursive function `_traverse` that takes in a node. The function checks if `node` exists before calling itself on the node's left child, appending the node's value to `self.answer`, and then calling itself on the node's right child.
 
 How do we change from in-order to pre-order or post-order? For both methods, we simply rearrange the order in which `node` is processed relative to its children. The rest of the code remains unchanged.
 
@@ -534,7 +541,7 @@ def _traverse(self, node):
 
 ## Graphs
 ### Theory
-Trees expand the scope of linked lists by allowing for more than one child per node. With graphs, we expand scope again by loosening trees' strict parent-child relationship. The nodes in a graph have no implicit hierarchy, and any node can be connected to any other node.
+Trees expand the scope of linked lists by allowing for more than one child per node. With graphs, we expand scope again by loosening trees' strict parent-child relationship. The nodes in a graph have no explicit hierarchy, and any node can be connected to any other node.
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/graph1.png" height="40%" width="40%">
@@ -568,10 +575,12 @@ A _weighted_ graph with _directed_ edges would look something like this. Notice 
 </center>
 
 ### Implementation
-For simplicity, let's implement a graph that is unweighted and undirected. The main structure in our class is a list of lists: each list is a row, with the indices in the list representing columns. We must specify the number of nodes, `n`, when we create the graph to be able to create the list of lists. We can then access a connection between nodes `a` and `b` with `self.graph[a][b]`.
+For simplicity, let's implement a graph that is unweighted and undirected. The main structure in our class is a list of lists: each list is a row, with the indices in the list representing columns. Instantiating a `Graph` object requires specifying the number of nodes, `n`, to create our list of lists. We can then access a connection between nodes `a` and `b` with `self.graph[a][b]`.
 
 {% include header-python.html %}
 ```python
+from typing import List
+
 class Graph:
     def __init__(self, n: int):
         self.graph = [[0]*n for _ in range(n)]
@@ -593,7 +602,7 @@ class Graph:
         return self.graph
 ```
 
-We can recreate the graph in the first example above like this:
+We can recreate the graph in the first example in this section like this:
 
 {% include header-python.html %}
 ```python
@@ -623,18 +632,19 @@ To answer [**LC 323:** Number of Connected Components](https://leetcode.com/prob
 ```python
 def get_n_components(self, mat: List[List[int]]) -> int:
     """
-    Given an adjacency matrix, returns the number of connected components
+    Given an adjacency matrix, returns the number of connected
+    components
     """
     q = []
-    nodes = [*range(len(mat))]
+    unseen = [*range(len(mat))]
 
     answer = 0
 
-    while q or nodes:
+    while q or unseen:
 
         # If all neighbors exhausted, traverse a new cluster
         if not q:
-            q.append(nodes.pop(0))
+            q.append(unseen.pop(0))
             answer += 1
 
         # Pick a node from the current cluster
@@ -642,15 +652,15 @@ def get_n_components(self, mat: List[List[int]]) -> int:
         i = 0
 
         # Search through all remaining nodes for connections
-        while i < len(nodes):
-            node = nodes[i]
+        while i < len(unseen):
+            node = unseen[i]
 
-            # If node connected to focal, add node to queue to search
-            # through its neighbors, and remove from nodes to avoid
-            # infinite loop
+            # If node connected to focal, add node to queue
+            # to search through its neighbors, and remove
+            # from unseen nodes to avoid infinite loop
             if mat[focal][node] == 1:
                 q.append(node)
-                nodes.remove(node)
+                unseen.remove(node)
             else:
                 i += 1
 
@@ -658,18 +668,18 @@ def get_n_components(self, mat: List[List[int]]) -> int:
 ```
 
 In English:
-1. **Lines 5-8:** Instantiate a queue (`q`), list of nodes (`nodes`), and number of components (`answer`).
+1. **Lines 5-8:** Instantiate a queue (`q`), list of nodes (`unseen`), and number of components (`answer`).
 2. **Line 10:** Start a `while` loop that executes as long as there are either nodes to be processed in the queue, or nodes we haven't visited yet.
-3. **Lines 13-15:** If the queue is empty, remove the first node from `nodes` and increment the number of components.
+3. **Lines 13-15:** If the queue is empty, remove the first node from `unseen` and increment the number of components.
 4. **Lines 18-19:** Pick the next available node in the queue (`focal`).
 5. **Line 22:** Start a `while` loop that executes as long as we haven't processed all remaining nodes.
 6. **Line 23:** Name the node we're currently on to make the next lines more readable.
-7. **Line 28-30:** If the node we're on is connected to `focal`, add it to our queue of nodes in the current cluster, and remove it from our list of nodes that could be in another cluster (`nodes`).
+7. **Line 28-30:** If the node we're on is connected to `focal`, add it to our queue of nodes in the current cluster, and remove it from our list of nodes that could be in another cluster (`unseen`).
 8. **Lines 31-32:** If the node we're on _isn't_ connected to `focal`, continue onto the next potential node.
 
 ## Hash tables
 ### Theory
-Let's finish this post with one more foundational data structure: the **hash table**, also called **hash map.**<sup>[[5]](#5-theory)</sup> When we moved on from arrays, we left behind the enviable $O(1)$ retrieval time to gain flexibility in data types and array size. But what if we could get that lightning-fast efficiency again, even for data that differ in type and memory location?
+Let's finish this post with one more foundational data structure: the **hash table**, also called **hash map.**<sup>[[4]](#4-theory)</sup> When we moved on from arrays, we left behind the enviable $O(1)$ retrieval time to gain flexibility in data types and array size. But what if we could get that lightning-fast efficiency again, even for data that differ in type and memory location?
 
 This is where hash tables come in. Data in these tables are associated with key-value pairs $-$ input the key, and a [**hash function**](https://en.wikipedia.org/wiki/Hash_function) takes you to the associated value in $O(1)$ time. Hash tables actually use an array of pointers to achieve this speed; the job of the hash function is to identify the index in the array that holds the pointer to a key's value.
 
@@ -679,7 +689,7 @@ Below is how our linked list from earlier would look as a hash table. The green 
 
 The main workhorse of the table is the hash function, which maps an input to an output _within some range._ Python's `hash` function, for example, outputs values [between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807](https://stackoverflow.com/questions/19132927/determining-the-range-of-values-returned-by-pythons-hash). We then _bucket_ the hashed value $-$ often by dividing by the length of our array and taking the remainder $-$ to return an index in our array of pointers. In the above example, the output would be 0, 1, or 2: the indices of the pointer array.
 
-Since our array won't have infinite indices, it's possible $-$ and even likely $-$ that two distinct inputs will receive the same hashed _output_. This **collision** would mean that two user IDs, like `1005778` and `9609217`, could both land on the pointer that returns `Jane Reader`, even if they're separate users. We don't want that!
+Since our array won't have infinite indices, it's possible $-$ and even likely $-$ that two distinct inputs will receive the same hashed _output_. This **collision** would mean that two inputs, like user IDs `1005778` and `9609217`, would both land on the pointer that returns `Jane Reader`, even if they're separate users. We don't want that!
 
 The first fix is to ensure our hash function distributes outputs _uniformally_. Each array index should have an equal probability of being selected $-$ if certain indices are more likely than others, we'll run into collisions more frequently than we need to.
 
@@ -719,9 +729,9 @@ class HashTable:
         slot = self._calculate_slot(key)
 
         # Update value if key already present
-        for i in range(self.array[slot]):
-            if self.array[slot][i][0] == key:
-                self.array[slot][i][1] = value
+        for k, v in self.array[slot]:
+            if k == key:
+                v = value
                 return True
 
         # Otherwise add a new tuple
@@ -749,12 +759,36 @@ class HashTable:
 
 To deal with hash collisions, we use a list of lists for `self.array`, then traverse the list when retrieving or adding values. We store both the key and value in our list to be able to identify the key-value pair we're looking for, given that multiple keys will have the same array index.
 
+Below, we implement a _very_ basic login system. We hash user passwords before they're stored in `self.array[slot]`, meaning that even if the passwords were hacked, the time it would take to crack them might give users long enough to change them. ([This excellent video by Computerphile](https://www.youtube.com/watch?v=7U-RbOKanYs) is a deep dive on this, and it should motivate you to never use a password like `password`!)
+
+{% include header-python.html %}
+```python
+# Create our hash table
+ht = HashTable(3)
+
+# User registers with email and password
+email = 'omar@example.com'
+password = 'password'
+ht.put(key=email, value=hash(password))
+
+# View hashed password
+ht.get(email)  # 2710932929137326597
+
+# Login attempts
+wrong_password = '12345678'
+right_password = 'password'
+
+hash(wrong_password) == ht.get(email)  # False
+hash(right_password) == ht.get(email)  # True
+```
+
+
 ### Example
 To finish off this post, let's answer the classic Leetcode problem [**LC 1:** Two Sum](https://leetcode.com/problems/two-sum/). Like we did with arrays, we'll just use the Python built-in class (`dict`). The question is as follows: _given an array of integers and a target, return the indices of two array elements that sum to the target. Assume there is only one answer._ With the array `[1, 2, 3]` and target `4`, for example, we'd return `[0, 2]`, as 1 + 3 = 4.
 
 There are multiple approaches to this problem, humorously outlined in [this parody of a technical interview](https://www.youtube.com/watch?v=kVgy1GSDHG8). The first is to brute force compare every pair of numbers (e.g. `1+2`, `1+3`, `2+3`), which will definitely work but will take $O(n^2)$ time. A better approach is to sort the array and then use two pointers, one at the start and one at the end, and iteratively move the left or right pointer if their sum is less than or greater than the target, respectively. This approach takes $O(nlogn)$ time due to sorting.
 
-But we can actually achieve $O(n)$ time, visiting each element at most once, by using a hashmap. The key concept here is that for each number `num`, we need to see if there's some _other_ number that equals `target-num`. We can use a Python dictionary (i.e. hashmap) to store numbers we've already seen, then use that sweet $O(1)$ lookup time to see if we've already seen a number that matches `target-num`. If there's a match, we return the indices of the two numbers.
+But we can actually achieve $O(n)$ time, visiting each element at most once, by using a hash map. The key concept here is that for each number `num`, we need to see if there's some _other_ number that equals `target-num`. We can use a Python dictionary (i.e. hash map) to store numbers we've already seen, then use that sweet $O(1)$ lookup time to see if we've already seen a number that matches `target-num`. If there's a match, we return the indices of the two numbers.
 
 {% include header-python.html %}
 ```python
@@ -787,81 +821,72 @@ Here's how this would look for our array `[1, 2, 3]` with target `4`. Here we wr
 ```
 
 ## Conclusions
-This post covered a few fundamental data structures, or ways of organizing data in programming. We started by discussing [data structures vs. abstract data types](#data-structures-vs-abstract-data-types), using [Big O notation](#big-o-notation) to quantify the efficiency of operations on data structures, and finally the [types of data](#data-types) we store in our structures. We then discussed the theory and implementation of arrays, linked lists, trees, graphs, and hash maps, as well as answered a Leetcode question or two for each.
+This post took on the humble task of introducing data structures, the ways that programming languages store data. We started by distinguishing the [task (abstract data type) from the implementation (data structure)](#data-structures-vs-abstract-data-types), using [Big O notation](#big-o-notation) to quantify the efficiency of operations on data structures, and finally the [types of data](#data-types) we store in our structures. We then covered the theory of [arrays](#arrays), [linked lists](#linked-lists), [trees](#trees), [graphs](#graphs), and [hash maps](#hash-tables), as well as implemented each in Python and answered a Leetcode question or two.
 
+Despite how massive this post is, there's still plenty to learn about data structures. Trees, for example, can be reshaped to solve dozens of use cases, such as [representing two-dimensional space](https://en.wikipedia.org/wiki/Quadtree), [autocompleting inputted strings](https://en.wikipedia.org/wiki/Trie), [quickly running calculations on interval data](https://en.wikipedia.org/wiki/Segment_tree), and more. Check out [this page](https://www.geeksforgeeks.org/advanced-data-structures/) for some advanced structures and their common use cases if you're interested.
 
+Finally, it's important to again distinguish _data structures_ from _abstract data types_. We didn't cover stacks, queues, or heaps in this post, as there are multiple ways to implement each. A stack, for example, can be implemented with an array or linked list depending on your needs. Keep an eye on upcoming post on some of these more common abstract data types.
 
-There's plenty more to cover: we didn't mention tries, useful for autocomplete, or quad trees, useful for representing two-dimensional space.
-
-It's important again to distinguish _data structures_ from _abstract data types_. We didn't cover stacks, queues, or heaps, as there are multiple ways to implement those. A stack, for example, can be implemented with an array or linked list depending on your needs.
-
-
-
-In the next post, we'll cover abstract data types. We'll discuss stacks and queues, caches, and more.
+That's it for now. See you next time!
 
 Best,<br>
 Matt
 
 ## Footnotes
-#### [1. Intro](#)
-Especially if you're coming from a higher-level language like Python, it's easy to wonder why you should care about data structures.
-
-[Why should we care? Quora.](https://www.quora.com/What-is-the-importance-of-designing-the-right-data-structure)
-
-#### [2. Big O notation](#big-o-notation)
-We probably can't do much for the _first_ user to request all permutations for a specific array. But we _can_ store the array and its answer in a hash table. For every subsequent user, we can check our hash table to see if that array has already been queried. (We'd want to sort the array, remove nulls, etc. that would otherwise make identical arrays look different.) If a user requests an array whose permutations have already been computed, we could respond with a lightning fast $O(1)$ runtime. If not... back to $O(n!)$.
+#### [1. Big O notation](#big-o-notation)
+We probably can't do much for the _first_ user to request all permutations for a specific array. But we _can_ store the array and its answer in a [hash table](#hash-tables). For every subsequent user, we can check our table to see if that array has already been queried. (We'd want to sort the array, remove nulls, etc. that would otherwise make identical arrays look different.) If a user requests an array whose permutations have already been computed, we could respond with a lightning fast $O(1)$ runtime. If not... back to $O(n!)$.
 
 This concept is called caching, or memoizing. Here's what that would look like in Python.
 
 {% include header-python.html %}
 ```python
 class PermutationCalculator:
-  """
-  Methods for calculating permutations
-  """
-  def __init__(self):
-    self.seen = {}
-
-  def get_permutations(self, arr: list) -> list:
     """
-    Returns permutations of list, first checking self.seen.
+    Methods for calculating permutations
     """
-    # Ensure [A, B, null], [null, B, A], etc. are treated the same
-    clean_str = self.sort_and_remove_nulls(arr)
+    def __init__(self):
+        self.seen = {}
 
-    # Don't perform calculation if we've seen it before!
-    if clean_str in self.seen:
-      return self.seen[clean_str]
+    def get_permutations(self, arr: list) -> list:
+        """"
+        Returns permutations of list, first checking self.seen.
+        """
+        # Ensure [A, B, null], [null, B, A], etc. are treated the same
+        clean_str = self._sort_and_remove_nulls(arr)
 
-    # If new request, do the hard work
-    result = self._permute(clean_str)
+        # Don't perform calculation if we've seen it before!
+        if clean_str in self.seen:
+            return self.seen[clean_str]
 
-    # Cache the result for instant retrieval next time
-    self.seen[clean_str] = result
+        # If new request, do the hard work
+        result = self._permute(clean_str)
 
-    return result
+        # Cache the result for instant retrieval next time
+        self.seen[clean_str] = result
 
-  def sort_and_remove_nulls(self, arr: list) -> str:
-    ...
+        return result
 
-  def _permute(self, clean_str: str) -> list:
-    ...
+    def _sort_and_remove_nulls(self, arr: list) -> str:
+        ...
+
+    def _permute(self, clean_str: str) -> list:
+        ...
 ```
 
 Another approach is [dynamic programming](https://www.geeksforgeeks.org/dynamic-programming/), which involves recursively breaking down a problem into as small a piece as possible, then caching the results to the pieces. For example, if our question was modified slightly to return _the number_ of permutations, rather than the actual permutations, it could be helpful to cache values like $5!$ or $10!$ to avoid having to calculate them each time.
 
-#### [3. Theory](#theory)
+#### [2. Theory](#theory)
 Array indexing takes $O(1)$ time because there are always only three steps required:
 1. Go to the location in memory of the start of the array
 2. Identify the type of data in the array (e.g. float)
 3. Return the value in memory at `array start` + `index * (size of data type)`
 
-Step 3 hints at why so many programming languages are 0-indexed: the first element of an array is 0 elements away from the start. Returning that value, then, is easy if `index * (size of data type)` is zero and we can just return the value at `array start`.
-
 The type of data is important because data types differ in how much memory they require. A char is one byte, [for example](https://www.ibm.com/docs/en/ibm-mq/7.5?topic=platforms-standard-data-types), while an int is four. Getting the element at index 3 means traversing three bytes from the start for a string, while traversing twelve bytes for an array of integers.
 
-#### [4. Theory](#theory-2)
-Note that $O(logn)$ is $log_2$, not $log_{10}$ or the natural log.
+Step 3 hints at why so many programming languages are 0-indexed: the first element of an array is 0 elements away from the start. Returning that value, then, is easy if `index * (size of data type)` is zero and we can just return the value at `array start`.
 
-#### [5. Theory](#theory-4)
-This [Stack Overflow post](https://stackoverflow.com/questions/32274953/difference-between-hashmap-and-hashtable-purely-in-data-structures) is a good explanation for the difference between hash maps and hash tables. A hash map is technically an abstract data type.
+#### [3. Theory](#theory-2)
+Note that $O(logn)$ is $log_2$, not $log_{10}$ or the natural log. This pattern is easy to see in a binary tree, as with every step we take in our search, we reduce the remaining nodes to search by half.
+
+#### [4. Theory](#theory-4)
+This [Stack Overflow post](https://stackoverflow.com/questions/32274953/difference-between-hashmap-and-hashtable-purely-in-data-structures) is a good explanation for the difference between hash maps and hash tables. A hash map is technically an abstract data type, but the terms are used largely interchangeably.
