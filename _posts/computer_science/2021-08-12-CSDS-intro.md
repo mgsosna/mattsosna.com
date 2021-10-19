@@ -219,7 +219,7 @@ In English, we iteratively move through the list until we find a zero. We then i
 ### Theory
 Linked lists are another key data structure in computer science. Like arrays, a linked list is a group of values. But unlike arrays, **the values in a linked list don't have to be the same type, and we don't need to know how big the list needs to be ahead of time.**
 
-The core element of a linked list is a **node**, which contains 1) some data, and 2) a pointer to a location in memory. Specifically, _any_ location in memory. Below, note how the element sizes differ (four bytes for integers and floats, and one byte for chars), and how the last node contains a [null pointer](https://en.wikipedia.org/wiki/Null_pointer) that points off into space.
+The core element of a linked list is a **node**, which contains 1) some data, and 2) a pointer to a location in memory. Specifically, _any_ location in memory. Below is a linked list with the values `[1, 'a', 0.3]` $-$ note how the element sizes differ (four bytes for integers and floats, one byte for chars), each node has a four-byte pointer, and how the last node contains a [null pointer](https://en.wikipedia.org/wiki/Null_pointer) that points off into space.
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/ll1.png">
@@ -750,11 +750,11 @@ class HashTable:
 To deal with hash collisions, we use a list of lists for `self.array`, then traverse the list when retrieving or adding values. We store both the key and value in our list to be able to identify the key-value pair we're looking for, given that multiple keys will have the same array index.
 
 ### Example
-To finish off this post, let's answer the classic Leetcode problem [**LC 1:** Two Sum](https://leetcode.com/problems/two-sum/). Like we did with arrays, we'll just use the Python built-in class (`dict`). The question is as follows: _given an array of integers and a target, return the indices of numbers that add up to target._ With the array `[1, 2, 3]` and target `4`, for example, we'd return `[0, 2]`, as 1 + 3 = 4.
+To finish off this post, let's answer the classic Leetcode problem [**LC 1:** Two Sum](https://leetcode.com/problems/two-sum/). Like we did with arrays, we'll just use the Python built-in class (`dict`). The question is as follows: _given an array of integers and a target, return the indices of two array elements that sum to the target. Assume there is only one answer._ With the array `[1, 2, 3]` and target `4`, for example, we'd return `[0, 2]`, as 1 + 3 = 4.
 
 There are multiple approaches to this problem, humorously outlined in [this parody of a technical interview](https://www.youtube.com/watch?v=kVgy1GSDHG8). The first is to brute force compare every pair of numbers (e.g. `1+2`, `1+3`, `2+3`), which will definitely work but will take $O(n^2)$ time. A better approach is to sort the array and then use two pointers, one at the start and one at the end, and iteratively move the left or right pointer if their sum is less than or greater than the target, respectively. This approach takes $O(nlogn)$ time due to sorting.
 
-But we can actually achieve $O(n)$ time, visiting each element at most once, by using a hashmap. The key concept here is that for each number `num`, we need to see if there's some _other_ number that equals `target - num`. We can use a Python dictionary (i.e. hashmap) to store numbers we've already seen, then use that sweet $O(1)$ lookup time to see if we've already seen a number that matches `target - num`. If there's a match, we return the indices of the two numbers.
+But we can actually achieve $O(n)$ time, visiting each element at most once, by using a hashmap. The key concept here is that for each number `num`, we need to see if there's some _other_ number that equals `target-num`. We can use a Python dictionary (i.e. hashmap) to store numbers we've already seen, then use that sweet $O(1)$ lookup time to see if we've already seen a number that matches `target-num`. If there's a match, we return the indices of the two numbers.
 
 {% include header-python.html %}
 ```python
@@ -771,29 +771,31 @@ Here's how this would look for our array `[1, 2, 3]` with target `4`. Here we wr
 {% include header-python.html %}
 ```python
 # seen = {}
-# On: 1
-# Match: 4 - 1 = 3
+# num: 1
+# target - num: 4 - 1 = 3
 # 3 not in seen; continue
 
 # seen = {1: 0}
-# On: 2
-# Match: 4 - 2 = 2
+# num: 2
+# target - num: 4 - 2 = 2
 # 2 not in seen; continue
 
 # seen = {1: 0, 2: 1}
-# On: 3
-# Match: 4 - 3 = 1
+# num: 3
+# target - num: 4 - 3 = 1
 # 1 in seen; return indices [2, 0]
 ```
 
 ## Conclusions
-This post covered a few fundamental data structures, the ways of organizing data in computer science.
+This post covered a few fundamental data structures, or ways of organizing data in programming. We started by discussing [data structures vs. abstract data types](#data-structures-vs-abstract-data-types), using [Big O notation](#big-o-notation) to quantify the efficiency of operations on data structures, and finally the [types of data](#data-types) we store in our structures. We then discussed the theory and implementation of arrays, linked lists, trees, graphs, and hash maps, as well as answered a Leetcode question or two for each.
 
-There's plenty more to cover: we didn't mention hash maps, a blazing fast $O(1)$ key-value retrieval, or tries, useful for autocomplete, etc.
+
+
+There's plenty more to cover: we didn't mention tries, useful for autocomplete, or quad trees, useful for representing two-dimensional space.
 
 It's important again to distinguish _data structures_ from _abstract data types_. We didn't cover stacks, queues, or heaps, as there are multiple ways to implement those. A stack, for example, can be implemented with an array or linked list depending on your needs.
 
-We started by discussing data structures vs. abstract data types, using Big O notation to quantify the efficiency of operations on data structures, and the types of data we actually store in our structures. We then discussed the theory and implementation of arrays, linked lists, trees, graphs, and hash maps, as well as answered a Leetcode question for each.
+
 
 In the next post, we'll cover abstract data types. We'll discuss stacks and queues, caches, and more.
 
