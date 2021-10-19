@@ -412,7 +412,7 @@ class TreeNode:
       return f"TreeNode with val {self.val}"
 ```
 
-We can then create a tree with two levels as such. Note that this tree is just a binary tree, not a BST, as the values aren't sorted.
+We can then create a tree with three levels as such. Note that this tree is just a binary tree, not a BST, as the values aren't sorted.
 
 {% include header-python.html %}
 ```python
