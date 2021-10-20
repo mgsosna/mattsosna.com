@@ -759,7 +759,7 @@ class HashTable:
 
 To deal with hash collisions, we use a list of lists for `self.array`, then traverse the list when retrieving or adding values. We store both the key and value in our list to be able to identify the key-value pair we're looking for, given that multiple keys will have the same array index.
 
-Below, we implement a _very_ basic login system. We hash user passwords before they're stored in `self.array[slot]`, meaning that even if the passwords were hacked, the time it would take to crack them might give users long enough to change them. ([This excellent video by Computerphile](https://www.youtube.com/watch?v=7U-RbOKanYs) is a deep dive on this, and it should motivate you to never use a password like `password`!)
+Below, we implement a _very_ basic login system. We hash user passwords before they're stored in `self.array[slot]`, meaning that even if the passwords were hacked, the time it would take to crack them might give users enough time to change them. ([This excellent video by Computerphile](https://www.youtube.com/watch?v=7U-RbOKanYs) is a deep dive on this, and it should motivate you to never use a password like `password`!)
 
 {% include header-python.html %}
 ```python
