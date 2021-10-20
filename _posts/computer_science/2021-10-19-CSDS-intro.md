@@ -442,7 +442,7 @@ Questions involving binary trees often center on different ways of traversing th
 
 <img src="{{  site.baseurl  }}/images/computer_science/tree_traversals_1.png">
 
-These three types of traversal can occur with **iteration** (using a `while` loop and a [**stack**](https://en.wikipedia.org/wiki/Stack_(abstract_data_type))) or with [**recursion**](https://en.wikipedia.org/wiki/Recursion_(computer_science)) (using a function that calls itself). There's also a fourth type of traversal, **level-order**, which utilizes a [**queue**](https://en.wikipedia.org/wiki/Queue_(abstract_data_type)). We won't cover stacks and queues in this post, but just think of them as lists where you can only add or remove from the end (stacks) or the start (queues).
+These three types of traversal can occur with **iteration** (using a `while` loop and a [**stack**](https://en.wikipedia.org/wiki/Stack_(abstract_data_type))) or with [**recursion**](https://en.wikipedia.org/wiki/Recursion_(computer_science)) (using a function that calls itself). There's also a fourth type of traversal, **level-order**, which utilizes a [**queue**](https://en.wikipedia.org/wiki/Queue_(abstract_data_type)). We won't cover stacks and queues in this post, but just think of them as lists where you can only remove from the end (stacks) or the start (queues).
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/tree_traversals_2.png" height="35%" width="35%">
