@@ -13,6 +13,27 @@ Why should you care about stacks and queues?
 A **stack** is an array-like object where
 
 ## Stacks
+We can create a simple stack implementation in Python like below. The main methods are adding an item to the top of the stack, removing an item from the top, or peeking at the top item.
+
+```python
+class Stack:
+    def __init__(self):
+        self.vals = []
+        self.count = 0
+
+    def insert(self, val: Any):
+        self.vals.append(val)
+        self.count += 1
+
+    def pop(self) -> Any:
+        if self.vals:
+            self.count -= 1
+            return self.vals.pop()
+        raise ValueError("Stack is empty")
+
+    def peek(self):
+        return self.vals[-1]
+```
 
 ## Queues
 One common question regarding trees is level-order traversal. How could you print out the value of every node in a tree, moving level by level? You just have the root node.
