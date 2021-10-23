@@ -32,10 +32,41 @@ class Stack:
         raise ValueError("Stack is empty")
 
     def peek(self):
-        return self.vals[-1]
+        if self.vals:
+            return self.vals[-1]
+        raise ValueError("Stack is empty")
+
+    def __len__(self):
+        return self.count
 ```
 
 ## Queues
+
+Let's implement a queue in Python. Notice how `insert` is identical to `Stack`.
+
+```python
+class Queue:
+    def __init__(self):
+        self.vals = []
+        self.count = 0
+
+    def insert(self, val: Any):
+        self.vals.append(val)
+        self.count += 1
+
+    def pop(self) -> Any:
+        if self.vals:
+            self.count -= 1
+            return self.vals.pop(0)
+        raise ValueError("Queue is empty")
+
+    def peek(self):
+        if self.vals:
+            return self.vals[0]
+        raise ValueError("Queue is empty")
+```
+
+### Questions
 One common question regarding trees is level-order traversal. How could you print out the value of every node in a tree, moving level by level? You just have the root node.
 
 <center>
