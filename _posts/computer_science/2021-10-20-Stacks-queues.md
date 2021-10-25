@@ -66,6 +66,8 @@ class Queue:
         raise ValueError("Queue is empty")
 ```
 
+You'll notice that the code for a queue is almost identical to our `Stack` class. The only difference is where we remove elements from: the front (queue) or back (stack).
+
 ### Questions
 One common question regarding trees is level-order traversal. How could you print out the value of every node in a tree, moving level by level? You just have the root node.
 
