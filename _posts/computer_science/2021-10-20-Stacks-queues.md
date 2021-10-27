@@ -12,6 +12,16 @@ Why should you care about stacks and queues?
 
 A **stack** is an array-like object where
 
+This is what a stack looks like. On the left we have adding to a stack, and on the right we have removing. We see that this is a [**Last In First Out**](https://www.geeksforgeeks.org/lifo-last-in-first-out-approach-in-programming/) pattern: the last element to be added to the stack is the first to be removed. The classic analogy is a stack of plates: the plate on top was the last one added, and it'll be the first one removed.
+
+<img src="{{  site.baseurl  }}/images/computer_science/stack.png">
+
+Meanwhile, a queue is [**First In First Out**](https://www.geeksforgeeks.org/fifo-first-in-first-out-approach-in-programming/). The first element added to the queue will be the first one to leave. Keeping with the stack visual, a queue would look more like this:
+
+<img src="{{  site.baseurl  }}/images/computer_science/queue.png">
+
+A more common example of a queue would be the checkout line at a grocery store $-$ of all the people waiting in line, the person who was there the earliest will be the one who's seen next (i.e. "first come first served").
+
 ## Stacks
 We can create a simple stack implementation in Python like below. The main methods are adding an item to the top of the stack, removing an item from the top, or peeking at the top item.
 
@@ -21,23 +31,109 @@ class Stack:
         self.vals = []
         self.count = 0
 
-    def insert(self, val: Any):
+    def insert(self, val: Any) -> None:
+        """
+        Insert a value onto the stack
+        """
         self.vals.append(val)
         self.count += 1
 
+    def peek(self):
+        """
+        Return the top value of the stack
+        """
+        if self.vals:
+            return self.vals[-1]
+        raise ValueError("Stack is empty")
+
     def pop(self) -> Any:
+        """
+        Remove the top value from the stack
+        """
         if self.vals:
             self.count -= 1
             return self.vals.pop()
         raise ValueError("Stack is empty")
 
-    def peek(self):
-        if self.vals:
-            return self.vals[-1]
-        raise ValueError("Stack is empty")
-
     def __len__(self):
         return self.count
+```
+
+### Questions
+A great example of a stack is a code inspector for parentheses. [**LC 20:** Valid Parentheses](https://leetcode.com/problems/valid-parentheses/) looks something like this:
+> Given a string consisting of parentheses determine whether the string is valid.
+
+The string `{[]}` would be fine, for example, but `{[}` wouldn't.
+
+We'll start with a dictionary that keeps track of the correct matching pair for each item.
+
+{% include header-python.html %}
+```python
+def is_valid(string: str) -> bool:
+    """
+    Determines whether string has correct matching parentheses
+    """
+    stack = []
+
+    matches = {
+        ')': '(',
+        ']': '[',
+        '}': '{'
+    }
+
+    for char in string:
+
+        # Open chars: (, [, {
+        if char in matches.values():
+            stack.insert(char)
+
+        # Close chars: ), ], }
+        elif char in matches:
+            if stack:
+                last_open = stack.pop()
+            else:
+                return False  # stack is empty
+
+            # Confirm closing char matches open char
+            if matches[char] != last_open:
+                return False
+
+    # Confirm no extra chars
+    return len(stack) == 0
+```
+
+Here's a slightly tougher variation on that question. [**LC 1249:** Minimum Remove to Make Valid Parentheses](https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/). The strings here only have parentheses, but they also have chars.
+
+Examples:
+* `ab(c)de` -> `ab(c)de` (no change needed).
+* `ab(cde` -> `abcde` (remove the open parenthesis).
+* `ab(c))de` -> `ab(c)de` (remove the close parenthesis).
+
+Here's how we'd do it. We'll actually store the _indices_ of open parentheses, rather than the parentheses themselves.
+
+{% include header-python.html %}
+```python
+def is_valid(string: str) -> str:
+    """
+    Determine if string has correct matching parentheses.
+    """
+    s = list(string)
+    stack = []
+
+    for i, char in enumerate(s):
+        if char == '(':
+            stack.insert(i)
+        elif char == ')':
+            if stack:
+                stack.pop()
+            else:
+                s[i] = ''  # Remove the ) if no corresponding (
+
+    # Remaining ( to remove since no )
+    while stack:
+        s[stack.pop()] = ''
+
+    return ''.join(s)
 ```
 
 ## Queues
