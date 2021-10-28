@@ -30,13 +30,13 @@ permalink: /blog/
 ### How to enter data science
 1. [The target]({{ site.baseurl }}/DS-transition-1)
 2. [The statistics]({{  site.baseurl  }}/DS-transition-2)
-  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [May 13 editors' picks](https://towardsdatascience.com/what-problem-is-your-data-solving-f39ae1daa6e9)</span>
+  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [5/13/21 editors' picks](https://towardsdatascience.com/what-problem-is-your-data-solving-f39ae1daa6e9)</span>
 3. [The analytics]({{  site.baseurl  }}/DS-transition-3)
-  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [May 27 editors' picks](https://towardsdatascience.com/how-to-snap-out-of-a-data-science-slump-82314a9e4644)</span>
+  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [5/27/21 editors' picks](https://towardsdatascience.com/how-to-snap-out-of-a-data-science-slump-82314a9e4644)</span>
 4. [The engineering]({{  site.baseurl  }}/DS-transition-4)
-  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [June 3 editors' picks](https://towardsdatascience.com/how-do-you-measure-success-as-a-data-scientist-11bc7f1ed608)
+  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [6/3/21 editors' picks](https://towardsdatascience.com/how-do-you-measure-success-as-a-data-scientist-11bc7f1ed608)
 5. [The people]({{  site.baseurl  }}/DS-transition-5)
-  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [March 25 editors' picks](https://towardsdatascience.com/careers-in-machine-learning-python-music-and-ais-brain-connection-a40a3fd7fab1)</span>
+  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [3/25/21 editors' picks](https://towardsdatascience.com/careers-in-machine-learning-python-music-and-ais-brain-connection-a40a3fd7fab1)</span>
 
 ### Careers
 1. [Transitioning to data science from academia]({{  site.baseurl  }}/Academia-to-DS)
@@ -46,11 +46,11 @@ permalink: /blog/
 1. [Visualizing the danger of multiple t-test comparisons]({{ site.baseurl }}/T-tests-vs-ANOVA)
 2. [Linear regression via gradient descent]({{ site.baseurl }}/LR-grad-desc)
 3. [A deep dive on ARIMA models]({{  site.baseurl  }}/ARIMA-deep-dive)
-  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [August 19 editors' picks](https://towardsdatascience.com/which-data-science-skill-are-you-looking-to-level-up-cbe1d097624b)
+  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [8/19/21 editors' picks](https://towardsdatascience.com/which-data-science-skill-are-you-looking-to-level-up-cbe1d097624b)
 
 ### Theory
 1. [Fish schools as ensemble learning algorithms]({{  site.baseurl  }}/Collective-behavior)
-  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [June 17 editors' picks](https://towardsdatascience.com/can-ai-transform-the-way-we-recycle-our-trash-75a91bd9e0c6)</span>
+  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [6/17/21 editors' picks](https://towardsdatascience.com/can-ai-transform-the-way-we-recycle-our-trash-75a91bd9e0c6)</span>
 
 ### External
 1. [Data quality at Aquicore](https://aquicore.com/blog/how-aquicore-built-the-ultimate-data-quality-safeguard/)
@@ -64,12 +64,13 @@ permalink: /blog/
 
 ### Data engineering
 1. [SQL vs. NoSQL databases in Python]({{  site.baseurl  }}/SQL_vs_NoSQL/)
-  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [April 15 editors' picks](https://towardsdatascience.com/math-animations-irreproducible-research-and-telling-stories-with-data-d9b55aa3887b)</span>
+  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [4/15/21 editors' picks](https://towardsdatascience.com/math-animations-irreproducible-research-and-telling-stories-with-data-d9b55aa3887b)</span>
 2. [3 levels of technical abstraction when sharing your code]({{ site.baseurl }}/Sharing-projects)
 3. [A hands-on demo of big data with Spark]({{  site.baseurl  }}/Spark-intro)
 
 ## Computer science
 1. [Intro to data structures]({{  site.baseurl  }}/CSDS-Intro)
+  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [10/28/21 editors' picks](https://towardsdatascience.com/why-eliminating-bias-in-ai-systems-is-so-hard-97e4f60ffe93)
 
 ## Python
 ### Random Python
