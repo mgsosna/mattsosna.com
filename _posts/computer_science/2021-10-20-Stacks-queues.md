@@ -4,9 +4,13 @@ title: A deep dive on stacks and queues
 author: matt_sosna
 ---
 
-In an [earlier post]({{  site.baseurl  }}/CSDS-intro), we covered _data structures_, or the ways that programming languages store data in memory. We touched upon **abstract data types**, an abstract "task" to be implemented by a specific data structure. A vehicle is an abstract data type, for example, while a car is a data structure that implements the concept of "vehicle."
+In an [earlier post]({{  site.baseurl  }}/CSDS-intro), we covered _data structures_, or the ways that programming languages store data in memory. We touched upon **abstract data types**, an abstract entity that is actually implemented by a data structure. A vehicle is an abstract data type, for example, while a car is a data structure that _implements_ the concept of "vehicle." Similarly, a "digging tool" abstract data type can be implemented with a pitchfork, hammer, saw, or shovel.
 
-In this post, we'll do a deep dive on two common abstract data types for arrays and linked lists: **stacks** and **queues**. We'll again visit some Leetcode questions that seem challenging at the outset but solve simply when using a stack or queue, and we'll do other stuff too.
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/abstract_ds.png" height="90%" width="90%">
+</center>
+
+In this post, we'll do a deep dive on two common abstract data types: **stacks** and **queues**. We'll again visit some Leetcode questions that seem challenging at the outset but solve simply when using a stack or queue, and we'll do other stuff too.
 
 Why should you care about stacks and queues?
 
