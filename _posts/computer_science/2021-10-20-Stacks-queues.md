@@ -4,27 +4,25 @@ title: A deep dive on stacks and queues
 author: matt_sosna
 ---
 
-In an [earlier post]({{  site.baseurl  }}/CSDS-intro), we covered _data structures_, or the ways that programming languages store data in memory. We touched upon **abstract data types**, an abstract entity that is actually implemented by a data structure. A vehicle is an abstract data type, for example, while a car is a data structure that _implements_ the concept of "vehicle." Similarly, a "digging tool" abstract data type can be implemented with a pitchfork, hammer, saw, or shovel.
+In an [earlier post]({{  site.baseurl  }}/CSDS-intro), we covered _data structures_, or the ways that programming languages store data in memory. We touched upon **abstract data types**, a theoretical entity that can be _realized_ in multiple ways 
 
-<center>
-<img src="{{  site.baseurl  }}/images/computer_science/abstract_ds.png" height="90%" width="90%">
-</center>
+
+such as "vehicle" that is then _implemented_ by a data structure, like a car.
 
 In this post, we'll do a deep dive on two common abstract data types: **stacks** and **queues**. We'll again visit some Leetcode questions that seem challenging at the outset but solve simply when using a stack or queue, and we'll do other stuff too.
 
-Why should you care about stacks and queues?
-
-A **stack** is an array-like object where
-
-This is what a stack looks like. On the left we have adding to a stack, and on the right we have removing. We see that this is a [**Last In First Out**](https://www.geeksforgeeks.org/lifo-last-in-first-out-approach-in-programming/) pattern: the last element to be added to the stack is the first to be removed. The classic analogy is a stack of plates: the plate on top was the last one added, and it'll be the first one removed.
+## Overview
+Stacks and queues both deal with an array-like collection of values, like `[1, 2, 3]` or `[a, b, c]`. But while arrays can access any element in $O(1)$ time, with queues and stacks we can only access the first or last element, respectively, in $O(1)$ time.
 
 <img src="{{  site.baseurl  }}/images/computer_science/stack.png">
 
-Meanwhile, a queue is [**First In First Out**](https://www.geeksforgeeks.org/fifo-first-in-first-out-approach-in-programming/). The first element added to the queue will be the first one to leave. Keeping with the stack visual, a queue would look more like this:
+Visuals can be helpful here. Above, we see the process of adding and removing a value from a **stack**. We notice that block C is added to the stack, then popped off. The term for this is [**Last In First Out**](https://www.geeksforgeeks.org/lifo-last-in-first-out-approach-in-programming/) pattern: the last element to be added to the stack is the first to be removed. The classic analogy is a stack of plates: the plate on top was the last one added, and it'll be the first one removed.
 
 <img src="{{  site.baseurl  }}/images/computer_science/queue.png">
 
-A more common example of a queue would be the checkout line at a grocery store $-$ of all the people waiting in line, the person who was there the earliest will be the one who's seen next (i.e. "first come first served").
+Meanwhile, a **queue** is [**First In First Out**](https://www.geeksforgeeks.org/fifo-first-in-first-out-approach-in-programming/). Block A was added first, so it's the first to leave. A common example of a queue would be the checkout line at a grocery store $-$ of all the people waiting in line, the person who was there the earliest will be the one who's seen next (i.e. "first come first served"). (An even more common example of a queue, if you speak British English, is just a literal queue!)
+
+
 
 ## Stacks
 We can create a simple stack implementation in Python like below. The main methods are adding an item to the top of the stack, removing an item from the top, or peeking at the top item.
