@@ -4,23 +4,46 @@ title: A deep dive on stacks and queues
 author: matt_sosna
 ---
 
-In an [earlier post]({{  site.baseurl  }}/CSDS-intro), we covered _data structures_, or the ways that programming languages store data in memory. We touched upon **abstract data types**, a theoretical entity that can be _realized_ in multiple ways 
+In an [earlier post]({{  site.baseurl  }}/CSDS-intro), we covered _data structures_, or the ways that programming languages store data in memory. We touched upon **abstract data types**, a theoretical entity that can be _implemented_ via a data structure. The concept of a "vehicle" could be viewed as an abstract data type, for example, with a "bike" being the data structure.
 
-
-such as "vehicle" that is then _implemented_ by a data structure, like a car.
-
-In this post, we'll do a deep dive on two common abstract data types: **stacks** and **queues**. We'll again visit some Leetcode questions that seem challenging at the outset but solve simply when using a stack or queue, and we'll do other stuff too.
+In this post, we'll do a deep dive on two common abstract data types: **stacks** and **queues**. We'll start with the theory behind these abstract types before implementing them in Python. Finally, we'll visit some [Leetcode](https://leetcode.com/) questions that may initially seem challenging, but which neatly unravel into a clean solution when using a stack or queue. Let's get started!
 
 ## Overview
-Stacks and queues both deal with an array-like collection of values, like `[1, 2, 3]` or `[a, b, c]`. But while arrays can access any element in $O(1)$ time, with queues and stacks we can only access the first or last element, respectively, in $O(1)$ time.
+Stacks and queues are an array-like collections of values, like `[1, 2, 3]` or `[a, b, c]`. But unlike an array, where any value in the collection can be accessed in $O(1)$ time, stacks and queues have the restriction that only _one_ value is immediately available: the first element (for queues) or last element (for stacks). For both stacks and queues, values are always added to the end.
 
-<img src="{{  site.baseurl  }}/images/computer_science/stack.png">
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/stack2.png" height="70%" width="70%">
+</center>
 
-Visuals can be helpful here. Above, we see the process of adding and removing a value from a **stack**. We notice that block C is added to the stack, then popped off. The term for this is [**Last In First Out**](https://www.geeksforgeeks.org/lifo-last-in-first-out-approach-in-programming/) pattern: the last element to be added to the stack is the first to be removed. The classic analogy is a stack of plates: the plate on top was the last one added, and it'll be the first one removed.
+Visuals can be helpful here. Above, we see the process of adding and removing a value from a **stack**. Block C is added to the stack, then popped off. Stacks follow a [**Last In First Out**](https://www.geeksforgeeks.org/lifo-last-in-first-out-approach-in-programming/) pattern: the last element to be added to the stack is the first to be removed. The classic analogy is a stack of plates: the plate on top was the last one added, and it'll be the first one removed.
 
-<img src="{{  site.baseurl  }}/images/computer_science/queue.png">
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/queue2.png" height="70%" width="70%">
+</center>
 
 Meanwhile, a **queue** is [**First In First Out**](https://www.geeksforgeeks.org/fifo-first-in-first-out-approach-in-programming/). Block A was added first, so it's the first to leave. A common example of a queue would be the checkout line at a grocery store $-$ of all the people waiting in line, the person who was there the earliest will be the one who's seen next (i.e. "first come first served"). (An even more common example of a queue, if you speak British English, is just a literal queue!)
+
+Being unable to access only the first or last element in $O(1)$ time seems like a real disadvantage compared to arrays. Why restrict ourselves? Well, this is where the distinction between a data structure and an abstract data type becomes important.
+
+We _can_ implement a stack or queue with an array. But in languages like Java or C, when we run out of space in an array, we need to find a larger region of memory and copy everything over. (This happens with Python lists too, I believe.) And if we're specifically choosing to use a stack or queue, we might not _want_ to be able to access any element in $O(1)$ time $-$ the code may be cleaner by using an object that is tailored exactly to how we plan to use it.
+
+Linked lists.
+
+
+
+Stack use cases include:
+* Undo mechanisms in text editors
+* Compiler syntax checking for matching brackets and braces
+* Behind the scenes to support recursion by keeping track of previous function calls
+   * Once a function call is actually executed, pop it off the stack and go to the next call to be made
+* Depth-first search (DFS) on a graph
+
+Queue use cases include:
+* Modeling real-world waiting lines
+* Web server request management for first come first serve
+* Keeping track of `N` most recently added elements
+   * Say you only want to look at 5 most recent news stories. As new one comes in, dequeue the oldest one
+* Breadth-first graph traversal
 
 
 
