@@ -15,21 +15,13 @@ Stacks and queues are an array-like collections of values, like `[1, 2, 3]` or `
 <img src="{{  site.baseurl  }}/images/computer_science/stack2.png" height="70%" width="70%">
 </center>
 
-Visuals can be helpful here. Above, we see the process of adding and removing a value from a **stack**. Block C is added to the stack, then popped off. Stacks follow a [**Last In First Out**](https://www.geeksforgeeks.org/lifo-last-in-first-out-approach-in-programming/) pattern: the last element to be added to the stack is the first to be removed. The classic analogy is a stack of plates: the plate on top was the last one added, and it'll be the first one removed.
+Visuals can help explain. Above, we see the process of adding and removing a value from a **stack**. Block C is added to the stack, then popped off. Stacks follow a [**Last In First Out**](https://www.geeksforgeeks.org/lifo-last-in-first-out-approach-in-programming/) pattern: the last element to be added to the stack is the first to be removed. The classic analogy is a stack of plates: the plate on top was the last one added, and it'll be the first one removed.
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/queue2.png" height="70%" width="70%">
 </center>
 
 Meanwhile, a **queue** is [**First In First Out**](https://www.geeksforgeeks.org/fifo-first-in-first-out-approach-in-programming/). Block A was added first, so it's the first to leave. A common example of a queue would be the checkout line at a grocery store $-$ of all the people waiting in line, the person who was there the earliest will be the one who's seen next (i.e. "first come first served"). (An even more common example of a queue, if you speak British English, is just a literal queue!)
-
-Being unable to access only the first or last element in $O(1)$ time seems like a real disadvantage compared to arrays. Why restrict ourselves? Well, this is where the distinction between a data structure and an abstract data type becomes important.
-
-We _can_ implement a stack or queue with an array. But in languages like Java or C, when we run out of space in an array, we need to find a larger region of memory and copy everything over. (This happens with Python lists too, I believe.) And if we're specifically choosing to use a stack or queue, we might not _want_ to be able to access any element in $O(1)$ time $-$ the code may be cleaner by using an object that is tailored exactly to how we plan to use it.
-
-Linked lists.
-
-
 
 Stack use cases include:
 * Undo mechanisms in text editors
@@ -45,9 +37,75 @@ Queue use cases include:
    * Say you only want to look at 5 most recent news stories. As new one comes in, dequeue the oldest one
 * Breadth-first graph traversal
 
+## Implementation
+Being unable to access only the first or last element in $O(1)$ time seems like a real disadvantage compared to arrays. Why restrict ourselves? Well, this is where the distinction between a data structure and an abstract data type becomes important.
+
+We _can_ implement a stack or queue with an array. But in languages like Java or C, when we run out of space in an array, we need to find a larger region of memory and copy everything over. (This happens with Python lists too, I believe.) And if we're specifically choosing to use a stack or queue, we might not _want_ to be able to access any element in $O(1)$ time $-$ the code may be cleaner by using an object that is tailored exactly to how we plan to use it.
+
+It may be simpler to implement a stack or queue with a linked list.
+
+We start by defining the node in a linked list.
+
+{% include header-python.html %}
+```python
+class ListNode:
+  	def __init__(self, val, next=None):
+      	self.val = val
+        self.next = next
+```
+
+We'll then define a stack like this:
+
+{% include header-python.html %}
+```python
+class Stack:
+  	def __init__(self):
+      	self._stack = None
+
+    def add(self, val: Any) -> None:
+        """
+        Add a value to the stack
+        """
+      	top = ListNode(val)
+        top.next = self._stack
+        self._stack = top
+
+    def peek(self) -> Any:
+        """
+        Return the top value of the stack. Does not modify
+        the stack.
+        """
+      	node = self._stack
+
+        if not node:
+          	return None
+
+        return node.val
+
+    def pop(self) -> Any:
+        """
+        Return the top value of the stack, modifying the stack.
+        """
+        node = self.peek()
+
+        if node:
+          	self._stack = self._stack.next
+            return node.val
+```
+
+We can play with it like this:
+
+```python
+s = Stack()
+s.add(1)
+s.add('abc')
+s.peek()  # 'abc'
+s.pop()   # 'abc'
+s.peek()  # 1
+```
 
 
-## Stacks
+### Stacks
 We can create a simple stack implementation in Python like below. The main methods are adding an item to the top of the stack, removing an item from the top, or peeking at the top item.
 
 ```python
@@ -84,7 +142,8 @@ class Stack:
         return self.count
 ```
 
-### Questions
+## Questions
+### Stacks
 A great example of a stack is a code inspector for parentheses. [**LC 20:** Valid Parentheses](https://leetcode.com/problems/valid-parentheses/) looks something like this:
 > Given a string consisting of parentheses determine whether the string is valid.
 
@@ -161,7 +220,7 @@ def is_valid(string: str) -> str:
     return ''.join(s)
 ```
 
-## Queues
+### Queues
 
 Let's implement a queue in Python. Notice how `insert` is identical to `Stack`.
 
