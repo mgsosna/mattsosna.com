@@ -23,50 +23,22 @@ Meanwhile, a **queue** is [**First In First Out**](https://www.geeksforgeeks.org
 <img src="{{  site.baseurl  }}/images/computer_science/queue2.png" height="70%" width="70%">
 </center>
 
-Immediate access to _only_ the first or last element seems like a major disadvantage over arrays. Yet we don't always _want_ to be able to access any element immediately. **There's often a distinct order we want to process elements, meaning we only care about $O(1)$ access to the _next_ element.**
+Immediate access to _only_ the first or last element seems like a major disadvantage over arrays. Yet we don't always _want_ access to every element. **There's often a distinct order that we want to process elements, meaning we only care about $O(1)$ access to the _next_ element.**
 
-We can see this in the major use cases for stacks and queues. Stacks are used for [_undo_ and _redo_ operations in text editors](https://www.geeksforgeeks.org/implement-undo-and-redo-features-of-a-text-editor/), [compiler syntax checking](https://users.ece.cmu.edu/~koopman/stack_computers/sec1_4.html), [carrying out recursive function calls](https://users.ece.cmu.edu/~koopman/stack_computers/sec1_4.html), and other times where we care about the _last_ action performed.
+We can see this in the major use cases for stacks and queues. Stacks are used for [_undo_ and _redo_ operations in text editors](https://www.geeksforgeeks.org/implement-undo-and-redo-features-of-a-text-editor/), [compiler syntax checking](https://users.ece.cmu.edu/~koopman/stack_computers/sec1_4.html), [carrying out recursive function calls](https://users.ece.cmu.edu/~koopman/stack_computers/sec1_4.html), [depth-first search](https://en.wikipedia.org/wiki/Depth-first_search), and other cases where we care about **the _last_ action performed.**
 
-Queues, meanwhile, are used for [asynchronous web service communication](https://aws.amazon.com/message-queue/)
-
-web server request management, breadth-first tree and graph traversal, and more.
-
-
-
-As we'll see [during implementation](#implementation), this means a linked list might actually be a better structure for creating a stack or queue.
-
-When do we see stacks and queues?
-
-Stacks can be used for [_undo_ and _redo_ operations in text editors](https://www.geeksforgeeks.org/implement-undo-and-redo-features-of-a-text-editor/), [compiler syntax checking](https://users.ece.cmu.edu/~koopman/stack_computers/sec1_4.html)
-
-Stack use cases include:
-* Undo mechanisms in text editors
-* Compiler syntax checking for matching brackets and braces
-* Behind the scenes to support recursion by keeping track of previous function calls
-   * Once a function call is actually executed, pop it off the stack and go to the next call to be made
-* Depth-first search (DFS) on a graph
-
-Queue use cases include:
-* Modeling real-world waiting lines
-* Web server request management for first come first serve
-* Keeping track of `N` most recently added elements
-   * Say you only want to look at 5 most recent news stories. As new one comes in, dequeue the oldest one
-* Breadth-first graph traversal
+Queues, meanwhile, are used for [asynchronous web service communication](https://aws.amazon.com/message-queue/), [scheduling CPU processes](https://en.wikipedia.org/wiki/Scheduling_(computing)), [tracking the `N` most recently added elements](https://stackoverflow.com/questions/5498865/size-limited-queue-that-holds-last-n-elements-in-java), [breadth-first search](https://en.wikipedia.org/wiki/Breadth-first_search), and any time we care about servicing requests **in the order they're received.**
 
 ## Implementation
-Being unable to access only the first or last element in $O(1)$ time seems like a real disadvantage compared to arrays. Why restrict ourselves? Well, this is where the distinction between a data structure and an abstract data type becomes important.
-
-We _can_ implement a stack or queue with an array. But in languages like Java or C, when we run out of space in an array, we need to find a larger region of memory and copy everything over. (This happens with Python lists too, I believe.) And if we're specifically choosing to use a stack or queue, we might not _want_ to be able to access any element in $O(1)$ time $-$ the code may be cleaner by using an object that is tailored exactly to how we plan to use it.
-
-It may be simpler to implement a stack or queue with a linked list.
+Since we don't need immediate access to every element, let's actually use a linked list rather than an array to create Python `Stack` and `Queue` classes.
 
 We start by defining the node in a linked list.
 
 {% include header-python.html %}
 ```python
 class ListNode:
-  	def __init__(self, val, next=None):
-      	self.val = val
+    def __init__(self, val, next=None):
+        self.val = val
         self.next = next
 ```
 
@@ -75,7 +47,7 @@ We'll then define a stack like this:
 {% include header-python.html %}
 ```python
 class Stack:
-  	def __init__(self):
+    def __init__(self):
       	self._stack = None
 
     def add(self, val: Any) -> None:
@@ -120,43 +92,11 @@ s.pop()   # 'abc'
 s.peek()  # 1
 ```
 
+Visualizing the above, it would look something like this (do horizontal)
 
-### Stacks
-We can create a simple stack implementation in Python like below. The main methods are adding an item to the top of the stack, removing an item from the top, or peeking at the top item.
+(image)
 
-```python
-class Stack:
-    def __init__(self):
-        self.vals = []
-        self.count = 0
 
-    def insert(self, val: Any) -> None:
-        """
-        Insert a value onto the stack
-        """
-        self.vals.append(val)
-        self.count += 1
-
-    def peek(self):
-        """
-        Return the top value of the stack
-        """
-        if self.vals:
-            return self.vals[-1]
-        raise ValueError("Stack is empty")
-
-    def pop(self) -> Any:
-        """
-        Remove the top value from the stack
-        """
-        if self.vals:
-            self.count -= 1
-            return self.vals.pop()
-        raise ValueError("Stack is empty")
-
-    def __len__(self):
-        return self.count
-```
 
 ## Questions
 ### Stacks
