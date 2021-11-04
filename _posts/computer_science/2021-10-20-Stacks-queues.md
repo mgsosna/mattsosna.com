@@ -14,13 +14,13 @@ Stacks and queues are array-like collections of values, like `[1, 2, 3]` or `[a,
 Visuals can help explain. Below, we see the process of adding and removing a value from a **stack**. Block C is added to the stack, then popped off. Stacks follow a [**Last In First Out**](https://www.geeksforgeeks.org/lifo-last-in-first-out-approach-in-programming/) pattern: the last element to be added to the stack is the first to be removed. The classic analogy is a stack of plates: the plate on top was the last one added, and it's the first one removed.
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/stack2.png" height="70%" width="70%">
+<img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/stack.png" height="70%" width="70%">
 </center>
 
 Meanwhile, a **queue** is [**First In First Out**](https://www.geeksforgeeks.org/fifo-first-in-first-out-approach-in-programming/). Below, we see that Block C is again added to the end of the queue. But this time, Block A leaves: it was the first one in, so it's the first one out. A common example of a queue is the checkout line at a grocery store $-$ of all the people waiting in line, the person who was there the earliest will be the one who's seen next (i.e. "first come first served").
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/queue2.png" height="70%" width="70%">
+<img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/queue.png" height="70%" width="70%">
 </center>
 
 Immediate access to _only_ the first or last element seems like a major disadvantage over arrays. Yet we don't always _want_ access to every element. **There's often a distinct order that we want to process elements, meaning we only care about $O(1)$ access to the _next_ element.**
@@ -42,19 +42,24 @@ class ListNode:
         self.next = next
 ```
 
-We'll then define a stack like this:
+With this structure in place, we have the central building block for our classes. Let's build them in the following sections.
+
+### Stack
+We define a `Stack` class with `add`, `peek`, and `pop` methods. We also add a `__repr__` method to easily visualize the contents of the stack.
 
 {% include header-python.html %}
 ```python
+from typing import Any
+
 class Stack:
     def __init__(self):
-      	self._stack = None
+        self._stack = None
 
     def add(self, val: Any) -> None:
         """
         Add a value to the stack
         """
-      	top = ListNode(val)
+        top = ListNode(val)
         top.next = self._stack
         self._stack = top
 
@@ -63,10 +68,10 @@ class Stack:
         Return the top value of the stack. Does not modify
         the stack.
         """
-      	node = self._stack
+        node = self._stack
 
         if not node:
-          	return None
+            return None
 
         return node.val
 
@@ -77,33 +82,126 @@ class Stack:
         node = self.peek()
 
         if node:
-          	self._stack = self._stack.next
-            return node.val
+            self._stack = self._stack.next
+            return node
+
+    def __repr__(self) -> str:
+        """
+        Visualize stack contents
+        """
+        vals = []
+        node = self._stack
+
+        while node:
+            vals.append(str(node.val))
+            node = node.next
+
+        return "Stack: [" + ", ".join(vals) + "]"
 ```
 
 We can play with it like this:
 
+{% include header-python.html %}
 ```python
+# Create and add to stack
 s = Stack()
 s.add(1)
 s.add('abc')
-s.peek()  # 'abc'
-s.pop()   # 'abc'
-s.peek()  # 1
+
+# Visualize contents
+print(s.peek())  # 'abc'
+print(s)         # 'Stack: [abc, 1]'
+
+# Modify stack
+print(s.pop())   # 'abc'
+print(s)         # 'Stack: [1]'
 ```
 
-Visualizing the above, it would look something like this (do horizontal)
+### Queue
+We define a queue with `enqueue`, `peek`, and `dequeue` methods. Unlike with the `Stack` class, we'll have an additional instance variable corresponding to the end of the queue.
 
-(image)
+{% include header-python.html %}
+```python
+class Queue:
+    def __init__(self):
+        self._queue = None
 
+    def enqueue(self, val: Any) -> None:
+        """
+        Add an element to the end of the queue
+        """
+        node = self._queue
 
+        if not node:
+            self._queue = ListNode(val)
+            return None
+
+        while node.next:
+            node = node.next
+
+        node.next = ListNode(val)
+        return None
+
+    def dequeue(self) -> Any:
+        """
+        Remove an element from the front of the queue
+        """
+        node = self._queue
+
+        if node:
+            self._queue = self._queue.next
+
+        return node.val
+
+    def peek(self) -> Any:
+        """
+        View the next element to be dequeued
+        """
+        if self._queue:
+            return self._queue.val
+        return None
+
+    def __repr__(self) -> str:
+        """
+        Visualize the contents of the queue
+        """
+        vals = []
+        node = self._queue
+
+        while node:
+            vals.append(str(node.val))
+            node = node.next
+
+        return "Queue: [" + ", ".join(vals) + "]"
+```
+
+We can now play with our `Queue` class like this:
+
+{% include header-python.html %}
+```python
+# Create and add to queue
+q = Queue()
+q.enqueue(1)
+q.enqueue('abc')
+
+# Visualize queue
+print(q.peek())     # 1
+print(q)            # 'Queue: [1, abc]'
+
+# Modify queue
+print(q.dequeue())  # 1
+print(q)            # 'Queue: [abc]'
+```
 
 ## Questions
 ### Stacks
-A great example of a stack is a code inspector for parentheses. [**LC 20:** Valid Parentheses](https://leetcode.com/problems/valid-parentheses/) looks something like this:
-> Given a string consisting of parentheses determine whether the string is valid.
+A great example of a stack is a code inspector for parentheses. [**LC 20:** Valid Parentheses](https://leetcode.com/problems/valid-parentheses/) looks something like this: _Given a string consisting of parentheses, determine whether the string is valid._
 
 The string `{[]}` would be fine, for example, but `{[}` wouldn't.
+
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/parentheses.png" height="80%" width="80%">
+</center>
 
 We'll start with a dictionary that keeps track of the correct matching pair for each item.
 
@@ -149,6 +247,10 @@ Examples:
 * `ab(cde` -> `abcde` (remove the open parenthesis).
 * `ab(c))de` -> `ab(c)de` (remove the close parenthesis).
 
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/parentheses2.png" height="70%" width="70%">
+</center>
+
 Here's how we'd do it. We'll actually store the _indices_ of open parentheses, rather than the parentheses themselves.
 
 {% include header-python.html %}
@@ -177,38 +279,10 @@ def is_valid(string: str) -> str:
 ```
 
 ### Queues
-
-Let's implement a queue in Python. Notice how `insert` is identical to `Stack`.
-
-```python
-class Queue:
-    def __init__(self):
-        self.vals = []
-        self.count = 0
-
-    def insert(self, val: Any):
-        self.vals.append(val)
-        self.count += 1
-
-    def pop(self) -> Any:
-        if self.vals:
-            self.count -= 1
-            return self.vals.pop(0)
-        raise ValueError("Queue is empty")
-
-    def peek(self):
-        if self.vals:
-            return self.vals[0]
-        raise ValueError("Queue is empty")
-```
-
-You'll notice that the code for a queue is almost identical to our `Stack` class. The only difference is where we remove elements from: the front (queue) or back (stack).
-
-### Questions
 One common question regarding trees is level-order traversal. How could you print out the value of every node in a tree, moving level by level? You just have the root node.
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/tree_traversals_2.png" height="35%" width="35%">
+<img src="{{  site.baseurl  }}/images/computer_science/intro/tree_traversals_2.png" height="35%" width="35%">
 </center>
 
 Again, we use the following implementation for a tree node:
@@ -248,4 +322,28 @@ def level_order_traversal(root: TreeNode) -> List[int]:
     return answer
 ```
 
+Notice how all we're doing is iteratively adding a tree's children to the queue. Because we always add to the end and dequeue from the front, we're guaranteed that all nodes on a level will be processed before nodes from lower levels.
+
 Trickier questions will play with variations on this theme, such as having the nodes listed from right to left, or seeing if the tree is symmetric.
+
+Here's another one: determining the maximum depth of the tree. In other words, what's the largest distane
+
+```python
+def max_depth(root: TreeNode) -> int:
+    """
+    Determine the longest path between the root and a leaf node
+    """
+    answer = 1
+
+    q = [(root, 1)]
+
+    while q:
+      	node, level = q.pop(0)
+
+        if node:
+            answer = max(answer, level)
+            q.append((node.left, level+1))
+            q.append((node.right, level+1))
+
+    return answer
+```
