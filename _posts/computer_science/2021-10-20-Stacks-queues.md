@@ -8,6 +8,8 @@ In our [last post]({{  site.baseurl  }}/CSDS-intro), we covered _data structures
 
 In this post, we'll explore two common abstract data types: **stacks** and **queues**. We'll start with the theory behind these abstract types before implementing them in Python. Finally, we'll visit some [Leetcode](https://leetcode.com/) questions that may initially seem challenging, but which neatly unravel into a clean solution when using a stack or queue. Let's get started!
 
+<img src="{{  site.baseurl  }}/images/computer_science/intro/abstract_ds.png">
+
 ## Overview
 Stacks and queues are array-like collections of values, like `[1, 2, 3]` or `[a, b, c]`. But unlike an array, where any value in the collection can be accessed in $O(1)$ time, stacks and queues have the restriction that only _one_ value is immediately available: the first element (for queues) or last element (for stacks). For both stacks and queues, values are always added to the end.
 
@@ -32,12 +34,14 @@ Queues, meanwhile, are used for [asynchronous web service communication](https:/
 ## Implementation
 Since we don't need immediate access to every element, let's actually use a linked list rather than an array to create Python `Stack` and `Queue` classes.
 
-We start by defining the node in a linked list.
+We start by defining the node in a linked list. The node consists of a value (`self.val`) and pointer to the next node in the list (`self.next`).
 
 {% include header-python.html %}
 ```python
+from typing import Any
+
 class ListNode:
-    def __init__(self, val, next=None):
+    def __init__(self, val: Any, next=None):
         self.val = val
         self.next = next
 ```
@@ -49,8 +53,6 @@ We define a `Stack` class with `add`, `peek`, and `pop` methods. We also add a `
 
 {% include header-python.html %}
 ```python
-from typing import Any
-
 class Stack:
     def __init__(self):
         self._stack = None
