@@ -120,7 +120,7 @@ print(s)         # 'Stack: [1]'
 ```
 
 ### Queue
-We define a queue with `enqueue`, `peek`, and `dequeue` methods. Unlike with the `Stack` class, we'll have an additional instance variable corresponding to the end of the queue.
+We define a queue with `enqueue`, `peek`, and `dequeue` methods. (_enqueue_ and _dequeue_ are fancy ways of saying "add" and "remove".)
 
 {% include header-python.html %}
 ```python
