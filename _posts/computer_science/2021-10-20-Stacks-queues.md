@@ -32,6 +32,7 @@ We can see this in the major use cases for stacks and queues. Stacks are used fo
 Queues, meanwhile, are used for [asynchronous web service communication](https://aws.amazon.com/message-queue/), [scheduling CPU processes](https://en.wikipedia.org/wiki/Scheduling_(computing)), [tracking the `N` most recently added elements](https://stackoverflow.com/questions/5498865/size-limited-queue-that-holds-last-n-elements-in-java), [breadth-first search](https://en.wikipedia.org/wiki/Breadth-first_search), and any time we care about servicing requests **in the order they're received.**
 
 ## Implementation
+### Linked list
 Since we don't need immediate access to every element, let's actually use a linked list rather than an array to create Python `Stack` and `Queue` classes.
 
 We start by defining the node in a linked list. The node consists of a value (`self.val`) and pointer to the next node in the list (`self.next`).
@@ -46,7 +47,16 @@ class ListNode:
         self.next = next
 ```
 
-With this structure in place, we have the central building block for our classes. Let's build them in the following sections.
+We can create linked lists by chaining `ListNode` instances together. Here's a simple example of a chain with the values `1`, `2`, and `3`.
+
+{% include header-python.html %}
+```python
+head = ListNode(1)
+head.next = ListNode(2)
+head.next.next = ListNode(3)
+```
+
+With the list node structure in place, we have the central building block for our stack and queue classes.
 
 ### Stack
 We define a `Stack` class with `add`, `peek`, and `pop` methods. We also add a `__repr__` method to easily visualize the contents of the stack.
