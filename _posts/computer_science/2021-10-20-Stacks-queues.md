@@ -8,8 +8,6 @@ In our [last post]({{  site.baseurl  }}/CSDS-intro), we covered _data structures
 
 In this post, we'll explore two common abstract data types: **stacks** and **queues**. We'll start with the theory behind these abstract types before implementing them in Python. Finally, we'll visit some [Leetcode](https://leetcode.com/) questions that may initially seem challenging, but which neatly unravel into a clean solution when using a stack or queue. Let's get started!
 
-<img src="{{  site.baseurl  }}/images/computer_science/intro/abstract_ds.png">
-
 ## Overview
 Stacks and queues are array-like collections of values, like `[1, 2, 3]` or `[a, b, c]`. But unlike an array, where any value in the collection can be accessed in $O(1)$ time, stacks and queues have the restriction that only _one_ value is immediately available: the first element (for queues) or last element (for stacks). For both stacks and queues, values are always added to the end.
 
