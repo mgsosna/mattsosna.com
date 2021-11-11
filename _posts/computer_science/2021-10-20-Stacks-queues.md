@@ -71,10 +71,9 @@ while node:
 With the list node structure in place, we have the central building block for our stack and queue classes.
 
 ### Stack
-The main operations on stacks include
+As we've already seen, a main operation for stacks is adding or removing the most recent element, which we'll call "pushing" and "popping". It's also often helpful to view the top element in the stack without immediately removing it, a concept called "peeking."
 
-
-We define a `Stack` class with `push`, `peek`, and `pop` methods. We also add a `__repr__` method to easily visualize the contents of the stack.
+Let's start building it. Below, we define a `Stack` class with one attribute, `_stack`, which contains our linked list. We then define our `push`, `peek`, and `pop` methods. To achieve these operations in $O(1)$ time, we place the most recent element in the stack at the _head_ of the linked list in our `Stack` class, so it's always easy to access.
 
 {% include header-python.html %}
 ```python
@@ -82,11 +81,46 @@ class Stack:
     def __init__(self):
         self._stack = None
 
-    def is_empty(self) -> bool:
+    def push(self, val: Any) -> None:
         """
-        Return whether the stack is empty
+        Add a value to the stack
         """
-        return self._stack is None
+        top = ListNode(val)
+        top.next = self._stack
+        self._stack = top
+
+    def peek(self) -> Any:
+        """
+        Return the top value of the stack. Does not modify
+        the stack.
+        """
+        node = self._stack
+
+        if node:
+            return node.val
+
+    def pop(self) -> Any:
+        """
+        Return the top value of the stack, modifying the stack.
+        """
+        node = self.peek()
+
+        if node:
+            self._stack = self._stack.next
+            return node
+```
+
+Our `push` method creates a node for the new value, sets the existing `self._stack` to the new node's `next` attribute, then points `self._stack` to the new head of the list.
+
+`peek` and `pop` require some control flow to avoid raising an error if you call them on an empty stack. Both only allow us to call the `val` and `next` attributes if `self._stack` isn't empty, which would otherwise throw an error.<sup>[[1]](#1-stack)</sup>
+
+Our methods return `None` if the stack is empty, but it'd be convenient to know explicitly if we have any values. Let's therefore add an `is_empty` method. We'll also add methods that traverse the list: one for searching (`contains`), and one for printing the list contents (`__repr__`).
+
+{% include header-python.html %}
+```python
+class Stack:
+    def __init__(self):
+        self._stack = None
 
     def push(self, val: Any) -> None:
         """
@@ -118,6 +152,24 @@ class Stack:
             self._stack = self._stack.next
             return node
 
+
+    def is_empty(self) -> bool:
+        """
+        Return whether the stack is empty
+        """
+        return self._stack is None
+
+    def contains(self, val: Any) -> bool:
+        """
+        Returns whether the stack contains the requested value
+        """
+        node = self._stack
+        while node:
+            if node.val == val:
+                return True
+            node = node.next
+        return False
+
     def __repr__(self) -> str:
         """
         Visualize stack contents
@@ -130,17 +182,6 @@ class Stack:
             node = node.next
 
         return "Stack: [" + ", ".join(vals) + "]"
-
-    def contains(self, val: Any) -> bool:
-        """
-        Returns whether the stack contains the requested value
-        """
-        node = self._stack
-        while node:
-            if node.val == val:
-                return True
-            node = node.next
-        return False
 ```
 
 We can play with it like this:
@@ -398,4 +439,55 @@ def max_depth(root: TreeNode) -> int:
             q.append((node.right, level+1))
 
     return answer
+```
+
+## Footnotes
+#### [1. Stack](#stack)
+The linked list in our `Stack` class has an underscore in front, signaling to other developers that this attribute should be considered [private](https://stackoverflow.com/questions/2620699/why-private-methods-in-the-object-oriented) and not called direclty outside the class. But Python doesn't enforce this rule; we can easily modify the contents and wreak havoc.
+
+{% include header-python.html %}
+```python
+class BankAccount:
+    def __init__(self, password):
+        self._password = password
+
+b = BankAccount(password='abc123')
+print(b._password)   # 'abc123'
+
+b._password = 'something else'
+print(b._password)   # 'something else'
+```
+
+There's actually no real way to protect against this in Python. The closest we can get is to obfuscate a bit using the `@property` decorator. We can write rules for how the user can access an _alias_ of `_password`, such as by blocking read access or requiring that the input meet some criteria before it overwrites `_password`. But if the user requests `_password` directly, we can't stop them from viewing or modifying it.
+
+{% include header-python.html %}
+```python
+import logging
+
+class BankAccount:
+    def __init__(self, password):
+        self._password = password
+
+    @property
+    def password(self):
+        logging.error("Not authorized to access password")
+        return None
+
+    @password.setter
+    def password(self, value: str):
+        if not isinstance(value, str):
+            logging.error("Password must be string")
+            return None
+        self._password = value
+
+# Create a new account
+ba = BankAccount(password='abc123')
+
+# Our getter and setter are working...
+print(ba.password)  # Not authorized to access password
+ba.password = 123   # Password must be string
+
+# ...but then the user "hacks" their way in
+ba._password = 123  
+print(ba._password)  # 123
 ```
