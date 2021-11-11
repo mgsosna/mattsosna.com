@@ -33,7 +33,7 @@ Queues, meanwhile, are used for [asynchronous web service communication](https:/
 ### Linked list
 Since we don't need immediate access to every element, let's actually use a linked list rather than an array to create Python `Stack` and `Queue` classes.
 
-We start by defining the node in a linked list. The node consists of a value (`self.val`) and pointer to the next node in the list (`self.next`).
+We start by defining the node in a linked list. The node consists of a value (`self.val`) and pointer to the next node in the list (`self.next`). We also add a `__repr__` magic method to make it easier to visualize the node contents.
 
 {% include header-python.html %}
 ```python
@@ -43,21 +43,38 @@ class ListNode:
     def __init__(self, val: Any, next=None):
         self.val = val
         self.next = next
+
+    def __repr__(self):
+        return f"ListNode with val {self.val}"
 ```
 
-We can create linked lists by chaining `ListNode` instances together. Here's a simple example of a chain with the values `1`, `2`, and `3`.
+We can create linked lists by chaining `ListNode` instances together. Here's a simple example of creating and visualizing a list with the values `1`, `2`, and `3`.
 
 {% include header-python.html %}
 ```python
+# Create list
 head = ListNode(1)
 head.next = ListNode(2)
 head.next.next = ListNode(3)
+
+# Visualize list
+node = head
+while node:
+    print(node)
+    node = node.next
+
+# ListNode with val 1
+# ListNode with val 2
+# ListNode with val 3
 ```
 
 With the list node structure in place, we have the central building block for our stack and queue classes.
 
 ### Stack
-We define a `Stack` class with `add`, `peek`, and `pop` methods. We also add a `__repr__` method to easily visualize the contents of the stack.
+The main operations on stacks include
+
+
+We define a `Stack` class with `push`, `peek`, and `pop` methods. We also add a `__repr__` method to easily visualize the contents of the stack.
 
 {% include header-python.html %}
 ```python
@@ -65,7 +82,13 @@ class Stack:
     def __init__(self):
         self._stack = None
 
-    def add(self, val: Any) -> None:
+    def is_empty(self) -> bool:
+        """
+        Return whether the stack is empty
+        """
+        return self._stack is None
+
+    def push(self, val: Any) -> None:
         """
         Add a value to the stack
         """
@@ -107,25 +130,44 @@ class Stack:
             node = node.next
 
         return "Stack: [" + ", ".join(vals) + "]"
+
+    def contains(self, val: Any) -> bool:
+        """
+        Returns whether the stack contains the requested value
+        """
+        node = self._stack
+        while node:
+            if node.val == val:
+                return True
+            node = node.next
+        return False
 ```
 
 We can play with it like this:
 
 {% include header-python.html %}
 ```python
-# Create and add to stack
+# Create stack
 s = Stack()
+print(s.is_empty())  # True
+
+# Add to stack
 s.add(1)
 s.add('abc')
+print(s.is_empty())  # False
 
 # Visualize contents
-print(s.peek())  # 'abc'
-print(s)         # 'Stack: [abc, 1]'
+print(s.peek())      # 'abc'
+print(s)             # 'Stack: [abc, 1]'
 
 # Modify stack
-print(s.pop())   # 'abc'
-print(s)         # 'Stack: [1]'
+print(s.pop())       # 'abc'
+print(s)             # 'Stack: [1]'
+print(s.pop())       # 1
+print(s.is_empty())  # True
 ```
+
+<img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/stack_example.png">
 
 ### Queue
 We define a queue with `enqueue`, `peek`, and `dequeue` methods. (_enqueue_ and _dequeue_ are fancy ways of saying "add" and "remove".)
