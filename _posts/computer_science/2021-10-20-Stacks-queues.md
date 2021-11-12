@@ -30,17 +30,17 @@ We can see this in the major use cases for stacks and queues. Stacks are used fo
 Queues, meanwhile, are used for [asynchronous web service communication](https://aws.amazon.com/message-queue/), [scheduling CPU processes](https://en.wikipedia.org/wiki/Scheduling_(computing)), [tracking the `N` most recently added elements](https://stackoverflow.com/questions/5498865/size-limited-queue-that-holds-last-n-elements-in-java), [breadth-first search](https://en.wikipedia.org/wiki/Breadth-first_search), and any time we care about servicing requests **in the order they're received.**
 
 ## Implementation
-### Linked list
+### Creating a linked list
 Since we don't need immediate access to every element, let's actually use a linked list rather than an array to create Python `Stack` and `Queue` classes.
 
 We start by defining the node in a linked list. The node consists of a value (`self.val`) and pointer to the next node in the list (`self.next`). We also add a `__repr__` magic method to make it easier to visualize the node contents.
 
 {% include header-python.html %}
 ```python
-from typing import Any
+from typing import Any, Optional
 
 class ListNode:
-    def __init__(self, val: Any, next=None):
+    def __init__(self, val: Any, next: Optional[ListNode]=None):
         self.val = val
         self.next = next
 
@@ -70,10 +70,14 @@ while node:
 
 With the list node structure in place, we have the central building block for our stack and queue classes.
 
-### Stack
-As we've already seen, a main operation for stacks is adding or removing the most recent element, which we'll call "pushing" and "popping". It's also often helpful to view the top element in the stack without immediately removing it, a concept called "peeking."
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/linked_list.png" height="70%" width="70%">
+</center>
 
-Let's start building it. Below, we define a `Stack` class with one attribute, `_stack`, which contains our linked list. We then define our `push`, `peek`, and `pop` methods. To achieve these operations in $O(1)$ time, we place the most recent element in the stack at the _head_ of the linked list in our `Stack` class, so it's always easy to access.
+### Creating a stack
+As we've already seen, a main operation for stacks is adding or removing the most recent element, also called [**pushing** and **popping**](https://en.wikipedia.org/wiki/Stack_(abstract_data_type)). It's also often helpful to view the top element in the stack without immediately removing it, a concept called "peeking."
+
+Let's get started. Below, we define a `Stack` class with one attribute, `_stack`, which contains our linked list. We then define our `push`, `peek`, and `pop` methods. To achieve these operations in $O(1)$ time, we place the most recent element in the stack at the _head_ of the linked list in our `Stack` class, so it's always easy to access.
 
 {% include header-python.html %}
 ```python
@@ -85,36 +89,36 @@ class Stack:
         """
         Add a value to the stack
         """
-        top = ListNode(val)
-        top.next = self._stack
-        self._stack = top
+        new_head = ListNode(val)
+        new_head.next = self._stack
+        self._stack = new_head
 
     def peek(self) -> Any:
         """
         Return the top value of the stack. Does not modify
         the stack.
         """
-        node = self._stack
+        head = self._stack
 
-        if node:
-            return node.val
+        if head:
+            return head.val
 
     def pop(self) -> Any:
         """
         Return the top value of the stack, modifying the stack.
         """
-        node = self.peek()
+        head = self.peek()
 
-        if node:
+        if head:
             self._stack = self._stack.next
-            return node
+            return head
 ```
 
 Our `push` method creates a node for the new value, sets the existing `self._stack` to the new node's `next` attribute, then points `self._stack` to the new head of the list.
 
-`peek` and `pop` require some control flow to avoid raising an error if you call them on an empty stack. Both only allow us to call the `val` and `next` attributes if `self._stack` isn't empty, which would otherwise throw an error.<sup>[[1]](#1-stack)</sup>
+`peek` and `pop` require some control flow to avoid raising an error if you call them on an empty stack. Both only allow us to call the `val` and `next` attributes if `self._stack` isn't empty, which would otherwise throw an error.<sup>[[1]](#1-creating-a-stack)</sup>
 
-Our methods return `None` if the stack is empty, but it'd be convenient to know explicitly if we have any values. Let's therefore add an `is_empty` method. We'll also add methods that traverse the list: one for searching (`contains`), and one for printing the list contents (`__repr__`).
+Our methods return `None` if the stack is empty, but it'd be convenient to have a way to explicitly state if the stack has data. Let's therefore add an `is_empty` method. We'll also add methods that traverse the list: one that determines if the stack contains a requested value (`contains`), and one that prints the list contents (`__repr__`). Note that the traversal methods will execute in $O(n)$ time $-$ the longer the list, the longer it takes to scan or print all elements.<sup>[[2]](#2-creating-a-stack)</sup>
 
 {% include header-python.html %}
 ```python
@@ -126,32 +130,29 @@ class Stack:
         """
         Add a value to the stack
         """
-        top = ListNode(val)
-        top.next = self._stack
-        self._stack = top
+        new_head = ListNode(val)
+        new_head.next = self._stack
+        self._stack = new_head
 
     def peek(self) -> Any:
         """
         Return the top value of the stack. Does not modify
         the stack.
         """
-        node = self._stack
+        head = self._stack
 
-        if not node:
-            return None
-
-        return node.val
+        if head:
+            return head.val
 
     def pop(self) -> Any:
         """
         Return the top value of the stack, modifying the stack.
         """
-        node = self.peek()
+        head = self.peek()
 
-        if node:
+        if head:
             self._stack = self._stack.next
-            return node
-
+            return head
 
     def is_empty(self) -> bool:
         """
@@ -184,7 +185,9 @@ class Stack:
         return "Stack: [" + ", ".join(vals) + "]"
 ```
 
-We can play with it like this:
+`is_empty` simply checks whether `self._stack` has any values. `contains` and `__repr__` use a `while` loop to iteratively move through the list, setting `node` to its `next` attribute after either checking whether the value is equal to the value we're searching for, or appending the value to a list.
+
+Below, we play around with our class and confirm it works as expected.
 
 {% include header-python.html %}
 ```python
@@ -210,8 +213,22 @@ print(s.is_empty())  # True
 
 <img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/stack_example.png">
 
-### Queue
+### Creating a queue
 We define a queue with `enqueue`, `peek`, and `dequeue` methods. (_enqueue_ and _dequeue_ are fancy ways of saying "add" and "remove".)
+
+We'll actually want a doubly-linked list for this one.
+
+{% include header-python.html %}
+```python
+class ListNode:
+    def __init__(self, val: Any, prev: Optional[ListNode]=None, next: Optional[ListNode]=None):
+        self.val = val
+        self.prev = prev
+        self.next = next
+
+    def __repr__(self):
+        return f"ListNode with value {self.val}"
+```
 
 {% include header-python.html %}
 ```python
@@ -442,7 +459,7 @@ def max_depth(root: TreeNode) -> int:
 ```
 
 ## Footnotes
-#### [1. Stack](#stack)
+#### [1. Creating a stack](#creating-a-stack)
 The linked list in our `Stack` class has an underscore in front, signaling to other developers that this attribute should be considered [private](https://stackoverflow.com/questions/2620699/why-private-methods-in-the-object-oriented) and not called direclty outside the class. But Python doesn't enforce this rule; we can easily modify the contents and wreak havoc.
 
 {% include header-python.html %}
@@ -491,3 +508,8 @@ ba.password = 123   # Password must be string
 ba._password = 123  
 print(ba._password)  # 123
 ```
+
+#### 2. [Creating a stack](#creating-a-stack)
+You might wonder why searching for a value in a stack takes $O(n)$ time. If the value we're looking for is randomly distributed throughout the list, it would take on average _half_ the list length to find, or $O(\frac{n}{2})$.
+
+However, we ignore constants like $\frac{1}{2}$ in big O notation. The idea is that as $n$ approaches infinity, constants that are added or multiplied to $n$ become irrelevant. Big O notation also cares about the _worst case_ efficiency, not the average. The worst case in searching for an element is that the element is the last element we check, meaning we need to check all $n$ elements to find it.
