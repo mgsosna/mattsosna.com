@@ -120,6 +120,8 @@ Our `push` method creates a node for the new value, sets the existing `self._sta
 
 Our methods return `None` if the stack is empty, but it'd be convenient to have a way to explicitly state if the stack has data. Let's therefore add an `is_empty` method. We'll also add methods that traverse the list: one that determines if the stack contains a requested value (`contains`), and one that prints the list contents (`__repr__`). Note that the traversal methods will execute in $O(n)$ time $-$ the longer the list, the longer it takes to scan or print all elements.<sup>[[2]](#2-creating-a-stack)</sup>
 
+(We could get fancy and achieve $O(1)$ time for `contains` by referencing a `dict` that keeps track of the number of instances of each value we add, but let's keep things simple for now.)
+
 {% include header-python.html %}
 ```python
 class Stack:
@@ -214,14 +216,21 @@ print(s.is_empty())  # True
 <img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/stack_example.png">
 
 ### Creating a queue
-We define a queue with `enqueue`, `peek`, and `dequeue` methods. (_enqueue_ and _dequeue_ are fancy ways of saying "add" and "remove".)
+As with stacks, our `Queue` class will need a way to quickly add and remove elements. But while both element addition and removal occur at the _head_ of the list for stacks, these operations occur on _opposite ends_ of the list for queues.
 
-We'll actually want a doubly-linked list for this one.
+So should the head of our linked list be the newest or oldest element in the queue? If it's the newest, then addition will take $O(1)$ time but removal will take $O(n)$. If the head is the oldest element, then removal will be fast but addition slow.
+
+This is actually a false dichotomy $-$ we can actually achieve both in $O(1)$ time if we store pointers to both the head and tail of our list. We'll also need to modify our list nodes to store a pointer to the _previous_ list node, not just the next one.
+
+Let's start by defining our [doubly-linked list](https://en.wikipedia.org/wiki/Doubly_linked_list) node. The class is identical to our previous `ListNode`, but it now contains a `prev` attribute that points to the previous node in the list.
 
 {% include header-python.html %}
 ```python
 class ListNode:
-    def __init__(self, val: Any, prev: Optional[ListNode]=None, next: Optional[ListNode]=None):
+    def __init__(self,
+                 val: Any,
+                 prev: Optional[ListNode] = None,
+                 next: Optional[ListNode] = None):
         self.val = val
         self.prev = prev
         self.next = next
@@ -230,53 +239,67 @@ class ListNode:
         return f"ListNode with value {self.val}"
 ```
 
+We're now ready to start building our `Queue` class. We'll start with enqueing (adding), peeking, and dequeing (removing) elements.
+
 {% include header-python.html %}
 ```python
 class Queue:
     def __init__(self):
-        self._queue = None
+        self._head = None
+        self._tail = None
 
     def enqueue(self, val: Any) -> None:
         """
         Add an element to the end of the queue
         """
-        node = self._queue
+        new_tail = ListNode(val)
 
-        if not node:
-            self._queue = ListNode(val)
-            return None
+        # If empty, set pointers to new node
+        if not self._head:
+            self._head = new_tail
+            self._tail = new_tail
 
-        while node.next:
-            node = node.next
+        # Otherwise connect nodes and update tail
+        else:            
+            new_tail.prev = self._tail
 
-        node.next = ListNode(val)
-        return None
+            if self._head is self._tail:
+                self._head.next = new_tail
+
+            self._tail.next = new_tail
+            self._tail = new_tail
 
     def dequeue(self) -> Any:
         """
         Remove an element from the front of the queue
         """
-        node = self._queue
+        if not self._head:
+            return None
 
-        if node:
-            self._queue = self._queue.next
+        # Get value
+        val = self._head.val
 
-        return node.val
+        # Update the head
+        self._head = self._head.next
+
+        if self._head:
+            self._head.prev = None
+
+        return val
 
     def peek(self) -> Any:
         """
         View the next element to be dequeued
         """
-        if self._queue:
-            return self._queue.val
-        return None
+        if self._head:
+            return self._head.val
 
     def __repr__(self) -> str:
         """
         Visualize the contents of the queue
         """
         vals = []
-        node = self._queue
+        node = self._head
 
         while node:
             vals.append(str(node.val))
@@ -284,6 +307,93 @@ class Queue:
 
         return "Queue: [" + ", ".join(vals) + "]"
 ```
+
+These operations are a little more complicated than our stack, as we have to update both the `prev` and `next` pointers when modifying the head or tail.
+
+```python
+class Queue:
+    def __init__(self):
+        self._head = None
+        self._tail = None
+
+    def enqueue(self, val: Any) -> None:
+        """
+        Add an element to the end of the queue
+        """
+        new_tail = ListNode(val)
+
+        # If empty, set pointers to new node
+        if not self._head:
+            self._head = new_tail
+            self._tail = new_tail
+
+        # Otherwise connect nodes and update tail
+        else:            
+            new_tail.prev = self._tail
+
+            if self._head is self._tail:
+                self._head.next = new_tail
+
+            self._tail.next = new_tail
+            self._tail = new_tail
+
+    def dequeue(self) -> Any:
+        """
+        Remove an element from the front of the queue
+        """
+        if not self._head:
+            return None
+
+        # Get value
+        val = self._head.val
+
+        # Update the head
+        self._head = self._head.next
+
+        if self._head:
+            self._head.prev = None
+
+        return val
+
+    def peek(self) -> Any:
+        """
+        View the next element to be dequeued
+        """
+        if self._head:
+            return self._head.val
+
+    def is_empty(self) -> bool:
+        """
+        Return whether the queue is empty
+        """
+        return self._head is None
+
+    def contains(self, val: Any) -> bool:
+        """
+        Returns whether the queue contains the requested value
+        """
+        node = self._head
+        while node:
+            if node.val == val:
+                return True
+            node = node.next
+        return False
+
+    def __repr__(self) -> str:
+        """
+        Visualize the contents of the queue
+        """
+        vals = []
+        node = self._head
+
+        while node:
+            vals.append(str(node.val))
+            node = node.next
+
+        return "Queue: [" + ", ".join(vals) + "]"
+```
+
+Notice how the `is_empty`, `contains`, and `__repr__` methods are identical to our `Stack` class. The one difference is that `__repr__` will print our elements in the order they were received for a queue, versus printing in reverse order for the stack. In either case, they're still printed in the order they will be removed.
 
 We can now play with our `Queue` class like this:
 
