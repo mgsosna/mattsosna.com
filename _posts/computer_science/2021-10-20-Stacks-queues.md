@@ -187,7 +187,7 @@ class Stack:
         return "Stack: [" + ", ".join(vals) + "]"
 ```
 
-`is_empty` simply checks whether `self._stack` has any values. `contains` and `__repr__` use a `while` loop to iteratively move through the list, setting `node` to its `next` attribute after either checking whether the value is equal to the value we're searching for, or appending the value to a list.
+`is_empty` simply checks whether `self._stack` has any values. `contains` and `__repr__` use a `while` loop to iteratively move through the list, setting `node` to its `next` attribute after either checking whether the node's value is equal to the value we're searching for, or appending the value to a list.
 
 Below, we play around with our class and confirm it works as expected.
 
@@ -198,8 +198,8 @@ s = Stack()
 print(s.is_empty())  # True
 
 # Add to stack
-s.add(1)
-s.add('abc')
+s.push(1)
+s.push('abc')
 print(s.is_empty())  # False
 
 # Visualize contents
@@ -220,26 +220,7 @@ As with stacks, our `Queue` class will need a way to quickly add and remove elem
 
 So should the head of our linked list be the newest or oldest element in the queue? If it's the newest, then addition will take $O(1)$ time but removal will take $O(n)$. If the head is the oldest element, then removal will be fast but addition slow.
 
-This is actually a false dichotomy $-$ we can actually achieve both in $O(1)$ time if we store pointers to both the head and tail of our list. We'll also need to modify our list nodes to store a pointer to the _previous_ list node, not just the next one.
-
-Let's start by defining our [doubly-linked list](https://en.wikipedia.org/wiki/Doubly_linked_list) node. The class is identical to our previous `ListNode`, but it now contains a `prev` attribute that points to the previous node in the list.
-
-{% include header-python.html %}
-```python
-class ListNode:
-    def __init__(self,
-                 val: Any,
-                 prev: Optional[ListNode] = None,
-                 next: Optional[ListNode] = None):
-        self.val = val
-        self.prev = prev
-        self.next = next
-
-    def __repr__(self):
-        return f"ListNode with value {self.val}"
-```
-
-We're now ready to start building our `Queue` class. We'll start with enqueing (adding), peeking, and dequeing (removing) elements.
+**This is actually a false dichotomy** $-$ we can achieve both in $O(1)$ time if we store pointers to both the head and tail of our list. We'll therefore initialize our `Queue` class with a `_head` and `_tail` attribute. Below, we kick off our class with methods for enqueing (adding), peeking, and dequeing (removing) elements.
 
 {% include header-python.html %}
 ```python
@@ -261,7 +242,6 @@ class Queue:
 
         # Otherwise connect nodes and update tail
         else:            
-            new_tail.prev = self._tail
 
             if self._head is self._tail:
                 self._head.next = new_tail
@@ -276,14 +256,9 @@ class Queue:
         if not self._head:
             return None
 
-        # Get value
+        # Save head's val before it disappears, then update head
         val = self._head.val
-
-        # Update the head
         self._head = self._head.next
-
-        if self._head:
-            self._head.prev = None
 
         return val
 
@@ -293,22 +268,9 @@ class Queue:
         """
         if self._head:
             return self._head.val
-
-    def __repr__(self) -> str:
-        """
-        Visualize the contents of the queue
-        """
-        vals = []
-        node = self._head
-
-        while node:
-            vals.append(str(node.val))
-            node = node.next
-
-        return "Queue: [" + ", ".join(vals) + "]"
 ```
 
-These operations are a little more complicated than our stack, as we have to update both the `prev` and `next` pointers when modifying the head or tail.
+These operations are a little more complicated than our stack, especially when our `_head` and `_tail` pointers point to the same node. We therefore have additional logic for handling when the queue is empty or has only one element.
 
 ```python
 class Queue:
@@ -329,7 +291,6 @@ class Queue:
 
         # Otherwise connect nodes and update tail
         else:            
-            new_tail.prev = self._tail
 
             if self._head is self._tail:
                 self._head.next = new_tail
@@ -344,14 +305,9 @@ class Queue:
         if not self._head:
             return None
 
-        # Get value
+        # Save head's val before it disappears, then update head
         val = self._head.val
-
-        # Update the head
         self._head = self._head.next
-
-        if self._head:
-            self._head.prev = None
 
         return val
 
@@ -399,31 +355,43 @@ We can now play with our `Queue` class like this:
 
 {% include header-python.html %}
 ```python
-# Create and add to queue
+# Create queue
 q = Queue()
+print(q.is_empty())  # True
+
+# Add values
 q.enqueue(1)
 q.enqueue('abc')
+print(q.is_empty())  # False
 
 # Visualize queue
-print(q.peek())     # 1
-print(q)            # 'Queue: [1, abc]'
+print(q.peek())      # 1
+print(q)             # 'Queue: [1, abc]'
 
 # Modify queue
-print(q.dequeue())  # 1
-print(q)            # 'Queue: [abc]'
+print(q.dequeue())   # 1
+print(q)             # 'Queue: [abc]'
+print(q.dequeue())   # 'abc'
+print(q.is_empty())  # True
 ```
 
-## Questions
-### Stacks
-A great example of a stack is a code inspector for parentheses. [**LC 20:** Valid Parentheses](https://leetcode.com/problems/valid-parentheses/) looks something like this: _Given a string consisting of parentheses, determine whether the string is valid._
+<img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/queue_example.png">
 
-The string `{[]}` would be fine, for example, but `{[}` wouldn't.
+## Use cases
+Above, we defined Python classes for stacks and queues, using linked lists to store the objects' contents. In this section, we'll demonstrate the power of these abstract data types by solving a few Leetcode questions. At least to me, these questions seemed like an impossible puzzle when I first saw them. Once I understood how stacks and queues work, though, the puzzle neatly unfolded into a clean solution. Hopefully I can share some of that "ah-ha" feeling in this post.
+
+### Stacks
+One area where stacks are incredibly useful is code inspection. As you undoubtedly know if you're still reading this blog post, programming languages utilize parentheses (`( )`), square brackets (`[ ]`), and curly brackets (`{ }`) for functions, indexing, loops, and more depending on the language. Every open bracket needs a matching closed bracket, and you can't have a closed bracket before an open bracket.
+
+How do you keep track of all the open and closed brackets, and whether they're curved, square, or curly, without going crazy? How can we automatically tell that the brackets on the below left are correct, but the ones on the right are wrong?
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/parentheses.png" height="80%" width="80%">
 </center>
 
-We'll start with a dictionary that keeps track of the correct matching pair for each item.
+This question, [**LC 20:** Valid Parentheses](https://leetcode.com/problems/valid-parentheses/), is painful without a stack, and trivial with one. Below, we'll write a function that takes in a string of parentheses and returns a boolean of whether the parentheses are valid.
+
+Our function will work like this at a high level: any time we see an open bracket, we'll add it to the stack. Any time we see a closing bracket, we'll check if the last open bracket we saw matches the closing bracket. If it doesn't, we know the string isn't valid. If it does, we pop that element off the stack and continue scanning the string. If we make it to the end, the final check is to confirm the stack is empty, i.e. there are no unmatched open brackets.
 
 {% include header-python.html %}
 ```python
@@ -459,6 +427,11 @@ def is_valid(string: str) -> bool:
     # Confirm no extra chars
     return len(stack) == 0
 ```
+
+For simplicity, we use a built-in Python `list` for our stack, remembering to always push and pop from the end. We also utilize a Python `dict` that serves as a lookup for our closing brackets.
+
+We'll start with a dictionary that keeps track of the correct matching pair for each item.
+
 
 Here's a slightly tougher variation on that question. [**LC 1249:** Minimum Remove to Make Valid Parentheses](https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/). The strings here only have parentheses, but they also have chars.
 
