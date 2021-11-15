@@ -428,10 +428,9 @@ def is_valid(string: str) -> bool:
     return len(stack) == 0
 ```
 
-For simplicity, we use a built-in Python `list` for our stack, remembering to always push and pop from the end. We also utilize a Python `dict` that serves as a lookup for our closing brackets.
+For simplicity, we use a built-in Python `list` for our stack, remembering to always push and pop from the end. We also utilize a Python `dict` that serves as a lookup for our closing brackets $-$ anytime we get a closing bracket, we quickly look up its corresponding open bracket.
 
-We'll start with a dictionary that keeps track of the correct matching pair for each item.
-
+We need to keep track of two cases where we can exit the `for` loop and declare that the string is invalid: if we come across a closing bracket and the stack is empty, and if the last open bracket doesn't match our closing bracket. The final check is to ensure the stack is empty once we've made it through the string. If it's empty, then the string has passed all checks and is valid code.
 
 Here's a slightly tougher variation on that question. [**LC 1249:** Minimum Remove to Make Valid Parentheses](https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/). The strings here only have parentheses, but they also have chars.
 
