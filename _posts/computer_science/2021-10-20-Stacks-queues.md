@@ -381,7 +381,7 @@ print(q.is_empty())  # True
 Above, we defined Python classes for stacks and queues, using linked lists to store the objects' contents. In this section, we'll demonstrate the power of these abstract data types by solving a few Leetcode questions. At least to me, these questions seemed like an impossible puzzle when I first saw them. Once I understood how stacks and queues work, though, the puzzle neatly unfolded into a clean solution. Hopefully I can share some of that "ah-ha" feeling in this post.
 
 ### Stacks
-One area where stacks are incredibly useful is code inspection. As you undoubtedly know if you're still reading this blog post, programming languages utilize parentheses (`( )`), square brackets (`[ ]`), and curly brackets (`{ }`) for functions, indexing, loops, and more depending on the language. Every open bracket needs a matching closed bracket, and you can't have a closed bracket before an open bracket.
+One area where stacks are incredibly useful is code inspection. As you undoubtedly know if you're still reading this blog post, programming languages utilize parentheses (`( )`), square brackets (`[ ]`), and curly brackets (`{ }`) for functions, indexing, loops, and more. Every open bracket needs a matching closed bracket, and you can't have a closed bracket before an open bracket.
 
 How do you keep track of all the open and closed brackets, and whether they're curved, square, or curly, without going crazy? How can we automatically tell that the brackets on the below left are correct, but the ones on the right are wrong?
 
@@ -389,9 +389,9 @@ How do you keep track of all the open and closed brackets, and whether they're c
 <img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/parentheses.png" height="80%" width="80%">
 </center>
 
-This question, [**LC 20:** Valid Parentheses](https://leetcode.com/problems/valid-parentheses/), is painful without a stack, and trivial with one. Below, we'll write a function that takes in a string of parentheses and returns a boolean of whether the parentheses are valid.
+This question, [**LC 20:** Valid Parentheses](https://leetcode.com/problems/valid-parentheses/), is painful without a stack, and trivial with one. Below, we'll write a function that takes in a string of brackets and returns a boolean of whether the brackets are valid.
 
-Our function will work like this at a high level: any time we see an open bracket, we'll add it to the stack. Any time we see a closing bracket, we'll check if the last open bracket we saw matches the closing bracket. If it doesn't, we know the string isn't valid. If it does, we pop that element off the stack and continue scanning the string. If we make it to the end, the final check is to confirm the stack is empty, i.e. there are no unmatched open brackets.
+Our solution works like this at a high level: any time we see an open bracket, we add it to the stack. Any time we see a closing bracket, we check if the last open bracket we saw matches the closing bracket. If it doesn't, we know the string isn't valid. If it does, we pop that element off the stack and continue scanning the string. If we make it to the end, the final check is to confirm the stack is empty, i.e. there are no unmatched open brackets.
 
 {% include header-python.html %}
 ```python
@@ -407,18 +407,19 @@ def is_valid(string: str) -> bool:
         '}': '{'
     }
 
+    # Iterate through string
     for char in string:
 
-        # Open chars: (, [, {
+        # If open bracket - (, [, { - add to stack
         if char in matches.values():
             stack.insert(char)
 
-        # Close chars: ), ], }
+        # If closed bracket - ), ], } - inspect stack
         elif char in matches:
             if stack:
                 last_open = stack.pop()
             else:
-                return False  # stack is empty
+                return False  # Stack is empty
 
             # Confirm closing char matches open char
             if matches[char] != last_open:
@@ -428,7 +429,7 @@ def is_valid(string: str) -> bool:
     return len(stack) == 0
 ```
 
-For simplicity, we use a built-in Python `list` for our stack, remembering to always push and pop from the end. We also utilize a Python `dict` that serves as a lookup for our closing brackets $-$ anytime we get a closing bracket, we quickly look up its corresponding open bracket.
+For simplicity, we use a built-in Python `list` for our stack, remembering to always push and pop from the end. We also utilize a Python `dict` as a lookup for our closing brackets $-$ whenever we see a closing bracket, we can quickly look up its corresponding open bracket.
 
 We need to keep track of two cases where we can exit the `for` loop and declare that the string is invalid: if we come across a closing bracket and the stack is empty, and if the last open bracket doesn't match our closing bracket. The final check is to ensure the stack is empty once we've made it through the string. If it's empty, then the string has passed all checks and is valid code.
 
