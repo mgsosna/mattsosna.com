@@ -74,7 +74,7 @@ With the list node structure in place, we have the central building block for ou
 <img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/linked_list.png" height="70%" width="70%">
 </center>
 
-### Creating a stack
+### Creating stacks
 As we've already seen, a main operation for stacks is adding or removing the most recent element, also called [**pushing** and **popping**](https://en.wikipedia.org/wiki/Stack_(abstract_data_type)). It's also often helpful to view the top element in the stack without immediately removing it, a concept called "peeking."
 
 Let's get started. Below, we define a `Stack` class with one attribute, `_stack`, which contains our linked list. We then define our `push`, `peek`, and `pop` methods. To achieve these operations in $O(1)$ time, we place the most recent element in the stack at the _head_ of the linked list in our `Stack` class, so it's always easy to access.
@@ -116,9 +116,9 @@ class Stack:
 
 Our `push` method creates a node for the new value, sets the existing `self._stack` to the new node's `next` attribute, then points `self._stack` to the new head of the list.
 
-`peek` and `pop` require some control flow to avoid raising an error if you call them on an empty stack. Both only allow us to call the `val` and `next` attributes if `self._stack` isn't empty, which would otherwise throw an error.<sup>[[1]](#1-creating-a-stack)</sup>
+`peek` and `pop` require some control flow to avoid raising an error if you call them on an empty stack. Both only allow us to call the `val` and `next` attributes if `self._stack` isn't empty, which would otherwise throw an error.<sup>[[1]](#1-creating-stacks)</sup>
 
-Our methods return `None` if the stack is empty, but it'd be convenient to have a way to explicitly state if the stack has data. Let's therefore add an `is_empty` method. We'll also add methods that traverse the list: one that determines if the stack contains a requested value (`contains`), and one that prints the list contents (`__repr__`). Note that the traversal methods will execute in $O(n)$ time $-$ the longer the list, the longer it takes to scan or print all elements.<sup>[[2]](#2-creating-a-stack)</sup>
+Our methods return `None` if the stack is empty, but it'd be convenient to have a way to explicitly state if the stack has data. Let's therefore add an `is_empty` method. We'll also add methods that traverse the list: one that determines if the stack contains a requested value (`contains`), and one that prints the list contents (`__repr__`). Note that the traversal methods will execute in $O(n)$ time $-$ the longer the list, the longer it takes to scan or print all elements.<sup>[[2]](#2-creating-stacks)</sup>
 
 (We could get fancy and achieve $O(1)$ time for `contains` by referencing a `dict` that keeps track of the number of instances of each value we add, but let's keep things simple for now.)
 
@@ -215,12 +215,12 @@ print(s.is_empty())  # True
 
 <img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/stack_example.png">
 
-### Creating a queue
+### Creating queues
 As with stacks, our `Queue` class will need a way to quickly add and remove elements. But while both element addition and removal occur at the _head_ of the list for stacks, these operations occur on _opposite ends_ of the list for queues.
 
 So should the head of our linked list be the newest or oldest element in the queue? If it's the newest, then addition will take $O(1)$ time but removal will take $O(n)$. If the head is the oldest element, then removal will be fast but addition slow.
 
-**This is actually a false dichotomy** $-$ we can achieve both in $O(1)$ time if we store pointers to both the head and tail of our list. We'll therefore initialize our `Queue` class with a `_head` and `_tail` attribute. Below, we kick off our class with methods for enqueing (adding), peeking, and dequeing (removing) elements.
+**This is actually a false dichotomy** $-$ we can achieve both in $O(1)$ time if we store pointers to both the head and tail of our list. Below, we kick off our `Queue` class with `_head` and `_tail` attributes, as well as methods to `enqueue` (add), `peek`, and `dequeue` (remove) elements.
 
 {% include header-python.html %}
 ```python
@@ -270,7 +270,7 @@ class Queue:
             return self._head.val
 ```
 
-These operations are a little more complicated than our stack, especially when our `_head` and `_tail` pointers point to the same node. We therefore have additional logic for handling when the queue is empty or has only one element.
+These operations are a little more complicated than our stack, especially when our `_head` and `_tail` pointers point to the same node. We therefore use additional logic to handle when the queue is empty or has only one element.
 
 ```python
 class Queue:
@@ -349,7 +349,7 @@ class Queue:
         return "Queue: [" + ", ".join(vals) + "]"
 ```
 
-Notice how the `is_empty`, `contains`, and `__repr__` methods are identical to our `Stack` class. The one difference is that `__repr__` will print our elements in the order they were received for a queue, versus printing in reverse order for the stack. In either case, they're still printed in the order they will be removed.
+Notice how the `is_empty`, `contains`, and `__repr__` methods are identical to our `Stack` class. The one difference is that `__repr__` will print our elements in the order they were received for a queue, versus printing in reverse order for the stack. In either case, they're printed in the order they will be removed.
 
 We can now play with our `Queue` class like this:
 
@@ -397,7 +397,7 @@ Our solution works like this at a high level: any time we see an open bracket, w
 ```python
 def is_valid(string: str) -> bool:
     """
-    Determines whether string has correct matching parentheses
+    Determines whether string has correct matching brackets
     """
     stack = []
 
@@ -414,43 +414,38 @@ def is_valid(string: str) -> bool:
         if char in matches.values():
             stack.insert(char)
 
-        # If closed bracket - ), ], } - inspect stack
+        # If close bracket - ), ], } - inspect stack
         elif char in matches:
             if stack:
                 last_open = stack.pop()
             else:
                 return False  # Stack is empty
 
-            # Confirm closing char matches open char
+            # Confirm close bracket matches open bracket
             if matches[char] != last_open:
                 return False
 
-    # Confirm no extra chars
+    # Confirm no extra open brackets
     return len(stack) == 0
 ```
 
 For simplicity, we use a built-in Python `list` for our stack, remembering to always push and pop from the end. We also utilize a Python `dict` as a lookup for our closing brackets $-$ whenever we see a closing bracket, we can quickly look up its corresponding open bracket.
 
-We need to keep track of two cases where we can exit the `for` loop and declare that the string is invalid: if we come across a closing bracket and the stack is empty, and if the last open bracket doesn't match our closing bracket. The final check is to ensure the stack is empty once we've made it through the string. If it's empty, then the string has passed all checks and is valid code.
-
-Here's a slightly tougher variation on that question. [**LC 1249:** Minimum Remove to Make Valid Parentheses](https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/). The strings here only have parentheses, but they also have chars.
-
-Examples:
-* `ab(c)de` -> `ab(c)de` (no change needed).
-* `ab(cde` -> `abcde` (remove the open parenthesis).
-* `ab(c))de` -> `ab(c)de` (remove the close parenthesis).
+We keep track of two cases where we can exit the `for` loop and declare that the string is invalid: 1) if we come across a closing bracket and the stack is empty, and 2) if the last open bracket doesn't match our closing bracket. The final check is to ensure the stack is empty once we've made it through the string. If it's empty, then the string has passed all checks and is valid code.
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/parentheses2.png" height="70%" width="70%">
 </center>
 
-Here's how we'd do it. We'll actually store the _indices_ of open parentheses, rather than the parentheses themselves.
+Let's try a slightly tougher variation of this question. In [**LC 1249:** Minimum Remove to Make Valid Parentheses](https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/), rather than output a simple "yes/no" boolean for whether the string is valid, **we need to _make_ the string valid by removing the misplaced brackets.** The strings will also contain a mixture of letters and brackets, but as a minor concession, we only have to deal with parentheses. In the image above, you can see the number of brackets we'd need to remove to make each string valid.
+
+Here's how we'd do it. At a high level, we'll move through the string, adding to the stack when we see an open bracket and removing from the stack when we see a closing bracket. If we encounter a closing bracket with no open bracket, we immediately remove it $-$ there's no open bracket later on that could match this closed bracket. Once we've gone through the string, we remove all remaining open brackets, since they had no matching closing brackets.
 
 {% include header-python.html %}
 ```python
-def is_valid(string: str) -> str:
+def make_valid(string: str) -> str:
     """
-    Determine if string has correct matching parentheses.
+    Return a string 'fixed' of misplaced parentheses
     """
     s = list(string)
     stack = []
@@ -471,14 +466,20 @@ def is_valid(string: str) -> str:
     return ''.join(s)
 ```
 
+Let's look at the code more closely. We start by converting the string to a list, since it's much easier to modify elements in [mutable](https://medium.com/@meghamohan/mutable-and-immutable-side-of-python-c2145cf72747) lists than immutable strings. (We'd have to create a new string each time, versus modifying the list in-place.)
+
+We then actually store the _indices_ of open brackets in our stack, rather than the brackets themselves, as we'll need to know where exactly to remove a misplaced bracket. We address misplaced closing brackets as we move through the string, as we know from the empty stack that there are no matching open brackets from earlier in the string. For open brackets, we need to pass through the entire string before knowing if they have a matching closing bracket.
+
+"Removal" occurs by replacing the bracket with an empty string $-$ because we're tracking the index of misplaced brackets, shifting the indices of existing elements while we're moving through the list could cause a huge headache. Instead, we remove all empty strings in the final step, when we convert the list to a string with `''.join(s)`.
+
 ### Queues
-One common question regarding trees is level-order traversal. How could you print out the value of every node in a tree, moving level by level? You just have the root node.
+Let's now shift our attention to use cases for queues. One common question where queues are useful is **level-order traversal** for trees. How can we print the value of every node in a tree, level by level? We're usually provided only the root node, so we have no idea ahead of time what the tree looks like. We therefore want to process the tree correctly _as we're exploring it._
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/intro/tree_traversals_2.png" height="35%" width="35%">
 </center>
 
-Again, we use the following implementation for a tree node:
+As in our [previous post]({{  site.baseurl  }}/CSDS-Intro), we'll use the following implementation for a tree node. This node will be a _binary_ node in that it has at most two children, but our level-order traversal algorithm can easily extend to nodes with any number of children.
 
 {% include header-python.html %}
 ```python
@@ -489,7 +490,7 @@ class TreeNode:
         self.right = right
 ```
 
-The solution is delightfully simple if you use a queue.
+The solution is delightfully simple if you use a queue. As with stack questions, we'll again use a built-in `list`, this time remembering to always enqueue at the end (i.e. `.append`) and dequeue from the front (i.e. `.pop(0)`).
 
 {% include header-python.html %}
 ```python
@@ -500,7 +501,6 @@ def level_order_traversal(root: TreeNode) -> List[int]:
     Return a list of tree node values from a level-order
     traversal
     """
-
     q = [root]
     answer = []
 
@@ -515,7 +515,8 @@ def level_order_traversal(root: TreeNode) -> List[int]:
     return answer
 ```
 
-Notice how all we're doing is iteratively adding a tree's children to the queue. Because we always add to the end and dequeue from the front, we're guaranteed that all nodes on a level will be processed before nodes from lower levels.
+At a high level, we simply iteratively add nodes' children to a queue, saving their parent's value to our answer. Because we always enqueue at the end and dequeue from the front, we're guaranteed that all nodes on a level are processed before nodes from lower levels.
+
 
 Trickier questions will play with variations on this theme, such as having the nodes listed from right to left, or seeing if the tree is symmetric.
 
@@ -541,8 +542,14 @@ def max_depth(root: TreeNode) -> int:
     return answer
 ```
 
+## Conclusions
+This post looked at a lot. Thanks for reading.
+
+Best,<br>
+Matt
+
 ## Footnotes
-#### [1. Creating a stack](#creating-a-stack)
+#### [1. Creating stacks](#creating-stacks)
 The linked list in our `Stack` class has an underscore in front, signaling to other developers that this attribute should be considered [private](https://stackoverflow.com/questions/2620699/why-private-methods-in-the-object-oriented) and not called direclty outside the class. But Python doesn't enforce this rule; we can easily modify the contents and wreak havoc.
 
 {% include header-python.html %}
@@ -592,7 +599,7 @@ ba._password = 123
 print(ba._password)  # 123
 ```
 
-#### 2. [Creating a stack](#creating-a-stack)
+#### 2. [Creating stacks](#creating-stacks)
 You might wonder why searching for a value in a stack takes $O(n)$ time. If the value we're looking for is randomly distributed throughout the list, it would take on average _half_ the list length to find, or $O(\frac{n}{2})$.
 
 However, we ignore constants like $\frac{1}{2}$ in big O notation. The idea is that as $n$ approaches infinity, constants that are added or multiplied to $n$ become irrelevant. Big O notation also cares about the _worst case_ efficiency, not the average. The worst case in searching for an element is that the element is the last element we check, meaning we need to check all $n$ elements to find it.
