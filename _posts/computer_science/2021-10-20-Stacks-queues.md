@@ -71,7 +71,7 @@ while node:
 With the list node structure in place, we have the central building block for our stack and queue classes.
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/linked_list.png" height="70%" width="70%">
+<img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/linked_list.png" height="55%" width="55%">
 </center>
 
 ### Creating stacks
@@ -378,7 +378,7 @@ print(q.is_empty())  # True
 <img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/queue_example.png">
 
 ## Use cases
-Above, we defined Python classes for stacks and queues, using linked lists to store the objects' contents. In this section, we'll demonstrate the power of these abstract data types by solving a few Leetcode questions. At least to me, these questions seemed like an impossible puzzle when I first saw them. Once I understood how stacks and queues work, though, the puzzle neatly unfolded into a clean solution. Hopefully I can share some of that "ah-ha" feeling in this post.
+Above, we defined Python classes for stacks and queues, using linked lists to store the objects' contents. In this section, we'll demonstrate the power of these abstract data types by solving a few [Leetcode](https://leetcode.com/) questions. At least to me, these questions seemed like an impossible puzzle when I first saw them. Once I understood how stacks and queues work, though, the puzzle neatly unfolded into a clean solution. Hopefully I can share some of that "ah-ha" feeling in this post.
 
 ### Stacks
 One area where stacks are incredibly useful is code inspection. As you undoubtedly know if you're still reading this blog post, programming languages utilize parentheses (`( )`), square brackets (`[ ]`), and curly brackets (`{ }`) for functions, indexing, loops, and more. Every open bracket needs a matching closed bracket, and you can't have a closed bracket before an open bracket.
@@ -391,7 +391,7 @@ How do you keep track of all the open and closed brackets, and whether they're c
 
 This question, [**LC 20:** Valid Parentheses](https://leetcode.com/problems/valid-parentheses/), is painful without a stack, and trivial with one. Below, we'll write a function that takes in a string of brackets and returns a boolean of whether the brackets are valid.
 
-Our solution works like this at a high level: any time we see an open bracket, we add it to the stack. Any time we see a closing bracket, we check if the last open bracket we saw matches the closing bracket. If it doesn't, we know the string isn't valid. If it does, we pop that element off the stack and continue scanning the string. If we make it to the end, the final check is to confirm the stack is empty, i.e. there are no unmatched open brackets.
+Our solution works like this at a high level: any time we see an open bracket, we add it to the stack. Any time we see a closing bracket, we check if _the last open bracket we saw_ matches the closing bracket. If it doesn't, we know the string isn't valid. If it does, we pop that open bracket off the stack and continue scanning the string. If we make it to the end, the final check is to confirm the stack is empty, i.e. that there are no unmatched open brackets.
 
 {% include header-python.html %}
 ```python
@@ -431,13 +431,13 @@ def is_valid(string: str) -> bool:
 
 For simplicity, we use a built-in Python `list` for our stack, remembering to always push and pop from the end. We also utilize a Python `dict` as a lookup for our closing brackets $-$ whenever we see a closing bracket, we can quickly look up its corresponding open bracket.
 
-We keep track of two cases where we can exit the `for` loop and declare that the string is invalid: 1) if we come across a closing bracket and the stack is empty, and 2) if the last open bracket doesn't match our closing bracket. The final check is to ensure the stack is empty once we've made it through the string. If it's empty, then the string has passed all checks and is valid code.
+We keep track of two cases where we can exit the `for` loop and declare that the string is invalid: 1) if we come across a closing bracket and the stack is empty, and 2) if the last open bracket doesn't match our closing bracket. The final check is to ensure the stack is empty once we've made it through the string.
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/parentheses2.png" height="70%" width="70%">
 </center>
 
-Let's try a slightly tougher variation of this question. In [**LC 1249:** Minimum Remove to Make Valid Parentheses](https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/), rather than output a simple "yes/no" boolean for whether the string is valid, **we need to _make_ the string valid by removing the misplaced brackets.** The strings will also contain a mixture of letters and brackets, but as a minor concession, we only have to deal with parentheses. In the image above, you can see the number of brackets we'd need to remove to make each string valid.
+Let's try a slightly tougher variation of this question. In [**LC 1249:** Minimum Remove to Make Valid Parentheses](https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/), rather than output a simple "yes/no" boolean for whether the string is valid, **we need to _make_ the string valid by removing the misplaced brackets.** The strings will also contain a mixture of letters and brackets, but as a minor concession, we only have to deal with parentheses. In the image above, we need to remove the red brackets to make each string valid.
 
 Here's how we'd do it. At a high level, we'll move through the string, adding to the stack when we see an open bracket and removing from the stack when we see a closing bracket. If we encounter a closing bracket with no open bracket, we immediately remove it $-$ there's no open bracket later on that could match this closed bracket. Once we've gone through the string, we remove all remaining open brackets, since they had no matching closing brackets.
 
@@ -490,7 +490,9 @@ class TreeNode:
         self.right = right
 ```
 
-With our `TreeNode` defined, let's write a function that provides level-order traversal, given the root node of a tree. The solution is delightfully short if you use a queue. At a high level, we start by enqueuing the root node. We dequeue the node, append its value to our answer, then enqueue its children. Then we simply repeat this process until we've processed all nodes. That's it!
+With our `TreeNode` defined, let's write a function that provides level-order traversal, given the root node of a tree. The solution is delightfully short if you use a queue.
+
+At a high level, we start by enqueuing the root node. We dequeue the node, append its value to our answer, then enqueue its children. Then we simply repeat this process until we've processed all nodes. That's it!
 
 {% include header-python.html %}
 ```python
@@ -515,10 +517,7 @@ def level_order_traversal(root: TreeNode) -> List[int]:
     return answer
 ```
 
-As with our stack examples, we again use a built-in `list`, this time remembering to always enqueue at the end (i.e. `.append`) and dequeue from the front (i.e. `.pop(0)`).
-
-Because we always enqueue at the end and dequeue from the front, we're guaranteed that all nodes on a level are processed before nodes from lower levels.
-
+As with our stack examples, we again use a built-in `list`, this time remembering to always enqueue at the end (i.e. `.append`) and dequeue from the front (i.e. `.pop(0)`). Because we always enqueue at the end and dequeue from the front, we're guaranteed that all nodes on a level are processed before nodes from lower levels.
 
 Trickier questions will play with variations on this theme, such as having the nodes listed from right to left, or seeing if the tree is symmetric.
 
@@ -545,14 +544,14 @@ def max_depth(root: TreeNode) -> int:
 ```
 
 ## Conclusions
-This post looked at a lot. Thanks for reading.
+In this post, we did a deep dive on two of the most common abstract data types: stacks and queues. 
 
 Best,<br>
 Matt
 
 ## Footnotes
 #### [1. Creating stacks](#creating-stacks)
-The linked list in our `Stack` class has an underscore in front, signaling to other developers that this attribute should be considered [private](https://stackoverflow.com/questions/2620699/why-private-methods-in-the-object-oriented) and not called direclty outside the class. But Python doesn't enforce this rule; we can easily modify the contents and wreak havoc.
+The linked list in our `Stack` class has an underscore in front, signaling to other developers that this attribute should be considered [private](https://stackoverflow.com/questions/2620699/why-private-methods-in-the-object-oriented) and not called directly outside the class. But Python doesn't enforce this rule; we can easily modify the contents and wreak havoc.
 
 {% include header-python.html %}
 ```python
@@ -561,8 +560,11 @@ class BankAccount:
         self._password = password
 
 b = BankAccount(password='abc123')
+
+# Print it
 print(b._password)   # 'abc123'
 
+# Change it
 b._password = 'something else'
 print(b._password)   # 'something else'
 ```
@@ -579,13 +581,13 @@ class BankAccount:
 
     @property
     def password(self):
-        logging.error("Not authorized to access password")
+        logging.error("Error: Not authorized to access password")
         return None
 
     @password.setter
     def password(self, value: str):
         if not isinstance(value, str):
-            logging.error("Password must be string")
+            logging.error("Error: Password must be string")
             return None
         self._password = value
 
@@ -593,8 +595,8 @@ class BankAccount:
 ba = BankAccount(password='abc123')
 
 # Our getter and setter are working...
-print(ba.password)  # Not authorized to access password
-ba.password = 123   # Password must be string
+print(ba.password)  # Error: Not authorized to access password
+ba.password = 123   # Error: Password must be string
 
 # ...but then the user "hacks" their way in
 ba._password = 123  
@@ -602,6 +604,4 @@ print(ba._password)  # 123
 ```
 
 #### 2. [Creating stacks](#creating-stacks)
-You might wonder why searching for a value in a stack takes $O(n)$ time. If the value we're looking for is randomly distributed throughout the list, it would take on average _half_ the list length to find, or $O(\frac{n}{2})$.
-
-However, we ignore constants like $\frac{1}{2}$ in big O notation. The idea is that as $n$ approaches infinity, constants that are added or multiplied to $n$ become irrelevant. Big O notation also cares about the _worst case_ efficiency, not the average. The worst case in searching for an element is that the element is the last element we check, meaning we need to check all $n$ elements to find it.
+It's important to remember that Big O notation quantifies the _worst case_ efficiency. In the _worst_ case, our search will require scanning the entire stack to find the value we're looking for (i.e. all $n$ values). This is different from the _average_ case: if the values we search for are randomly distributed throughout the stack, we should expect search to take on average $\frac{n}{2}$ steps.
