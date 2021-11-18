@@ -490,7 +490,7 @@ class TreeNode:
         self.right = right
 ```
 
-The solution is delightfully simple if you use a queue. As with stack questions, we'll again use a built-in `list`, this time remembering to always enqueue at the end (i.e. `.append`) and dequeue from the front (i.e. `.pop(0)`).
+With our `TreeNode` defined, let's write a function that provides level-order traversal, given the root node of a tree. The solution is delightfully short if you use a queue. At a high level, we start by enqueuing the root node. We dequeue the node, append its value to our answer, then enqueue its children. Then we simply repeat this process until we've processed all nodes. That's it!
 
 {% include header-python.html %}
 ```python
@@ -515,7 +515,9 @@ def level_order_traversal(root: TreeNode) -> List[int]:
     return answer
 ```
 
-At a high level, we simply iteratively add nodes' children to a queue, saving their parent's value to our answer. Because we always enqueue at the end and dequeue from the front, we're guaranteed that all nodes on a level are processed before nodes from lower levels.
+As with our stack examples, we again use a built-in `list`, this time remembering to always enqueue at the end (i.e. `.append`) and dequeue from the front (i.e. `.pop(0)`).
+
+Because we always enqueue at the end and dequeue from the front, we're guaranteed that all nodes on a level are processed before nodes from lower levels.
 
 
 Trickier questions will play with variations on this theme, such as having the nodes listed from right to left, or seeing if the tree is symmetric.
