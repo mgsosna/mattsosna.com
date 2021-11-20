@@ -272,6 +272,7 @@ class Queue:
 
 These operations are a little more complicated than our stack, especially when our `_head` and `_tail` pointers point to the same node. We therefore use additional logic to handle when the queue is empty or has only one element.
 
+{% include header-python.html %}
 ```python
 class Queue:
     def __init__(self):
