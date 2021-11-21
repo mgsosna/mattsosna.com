@@ -518,7 +518,13 @@ def level_order_traversal(root: TreeNode) -> List[int]:
     return answer
 ```
 
-As with our stack examples, we again use a built-in `list`, this time remembering to always enqueue at the end (i.e. `.append`) and dequeue from the front (i.e. `.pop(0)`). Because new child nodes are always added to the end, we're guaranteed that all nodes on a level are processed before nodes from lower levels. Trickier questions will play with variations on this theme, such as returning the nodes in reverse order, determining whether the tree is symmetric, or returning the answer as a [doubly linked list](https://en.wikipedia.org/wiki/Doubly_linked_list).
+As with our stack examples, we again use a built-in `list`, this time remembering to always enqueue at the end (i.e. `.append`) and dequeue from the front (i.e. `.pop(0)`). Because new child nodes are always added to the end, we're guaranteed that all nodes on a level are processed before nodes from lower levels. Below we visualize the process of dequeing node `B`, appending its value to the answer, and enqueuing its child nodes.
+
+<center>
+<img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/lot_example.png" height="80%" width="80%">
+</center>
+
+Trickier questions will play with variations on this theme, such as returning the nodes in reverse order or determining whether the tree is symmetric. Solving these would involve reversing the order that we append children to the queue, or keeping track of two `answer` lists (populated left to right and right to left) and comparing their results at the end.
 
 Here's another one: determining the maximum depth of the tree. In other words, how many nodes lie between the root and the furthest child?
 
