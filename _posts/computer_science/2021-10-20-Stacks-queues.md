@@ -524,30 +524,41 @@ As with our stack examples, we again use a built-in `list`, this time rememberin
 <img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/lot_example.png" height="80%" width="80%">
 </center>
 
-Trickier questions will play with variations on this theme, such as returning the nodes in reverse order or determining whether the tree is symmetric. Solving these would involve reversing the order that we append children to the queue, or keeping track of two `answer` lists (populated left to right and right to left) and comparing their results at the end.
-
-Here's another one: determining the maximum depth of the tree. In other words, how many nodes lie between the root and the furthest child?
+A trickier version of this question is to return only the _rightmost_ node at every level in a tree. In the tree in the diagram above, for example, we'd want to return `[A, C, E]`. The general structure to answering [**LC 199:** Binary Tree Right Side View](https://leetcode.com/problems/binary-tree-right-side-view/) is similar to our answer above, but we need additional logic to check if we're at the rightmost node.
 
 {% include header-python.html %}
 ```python
-def max_depth(root: TreeNode) -> int:
+def get_rightside(root: TreeNode) -> List[int]:
     """
-    Determine the longest path between the root and a leaf node
+    Return list of rightmost nodes in a binary tree
     """
-    answer = 1
-
-    q = [(root, 1)]
+    q = [root]
+    answer = []
 
     while q:
-      	node, level = q.pop(0)
+      	level_len = len(q)
 
-        if node:
-            answer = max(answer, level)
-            q.append((node.left, level+1))
-            q.append((node.right, level+1))
+        # Iteratively remove from left side
+        for i in range(level_len):
+
+            node = q.pop(0)
+
+            # Add node if rightmost
+            if i == level_len - 1:
+              	answer.append(node.val)
+
+            # Either way, append children
+            if node.left:
+              	q.append(node.left)
+            if node.right:
+              	q.append(node.right)
 
     return answer
 ```
+
+Notice that there are now two loops: a `while` loop that iterates through the queue until its empty, and a `for` loop that processes all nodes at a given level. The "trick" to this question is realizing that if we take a snapshot of the queue (line 9) before we start processing its nodes (line 12), we're able to see all nodes at a given level, allowing us to identify the rightmost node. This snapshot is critical, as we modify the queue as we move through it (lines 21-24).
+
+<img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/snapshot.png">
 
 ## Conclusions
 In this post, we did a deep dive on two of the most common abstract data types: stacks and queues.
