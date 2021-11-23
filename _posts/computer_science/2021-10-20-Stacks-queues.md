@@ -4,9 +4,9 @@ title: Exploring stacks and queues
 author: matt_sosna
 ---
 
-In our [last post]({{  site.baseurl  }}/CSDS-intro), we covered _data structures_, or the ways that programming languages store data in memory. We touched upon **abstract data types**, a theoretical entity that can be _implemented_ via a data structure. The concept of a "vehicle" can be viewed as an abstract data type, for example, with a "bike" being the data structure.
+In our [last post]({{  site.baseurl  }}/CSDS-intro), we covered _data structures_, or the ways that programming languages store data in memory. We touched upon **abstract data types**, theoretical entities that are _implemented_ via data structures. The concept of a "vehicle" can be viewed as an abstract data type, for example, with a "bike" being the data structure.
 
-In this post, we'll explore two common abstract data types: **stacks** and **queues**. We'll start with the theory behind these abstract types before implementing them in Python. Finally, we'll visit some [Leetcode](https://leetcode.com/) questions that may initially seem challenging, but which neatly unravel into a clean solution when using a stack or queue. Let's get started!
+In this post, we'll explore two common abstract data types: **stacks** and **queues**. We'll start with the theory behind these abstract types before implementing them in Python. Finally, we'll visit some [Leetcode](https://leetcode.com/) questions that may initially seem challenging, but neatly unravel into clean solutions when using a stack or queue. Let's get started!
 
 ## Overview
 Stacks and queues are array-like collections of values, like `[1, 2, 3]` or `[a, b, c]`. But unlike an array, where any value in the collection can be accessed in $O(1)$ time, stacks and queues have the restriction that only _one_ value is immediately available: the first element (for queues) or last element (for stacks). For both stacks and queues, values are always added to the end.
@@ -29,18 +29,20 @@ We can see this in the major use cases for stacks and queues. Stacks are used fo
 
 Queues, meanwhile, are used for [asynchronous web service communication](https://aws.amazon.com/message-queue/), [scheduling CPU processes](https://en.wikipedia.org/wiki/Scheduling_(computing)), [tracking the `N` most recently added elements](https://stackoverflow.com/questions/5498865/size-limited-queue-that-holds-last-n-elements-in-java), [breadth-first search](https://en.wikipedia.org/wiki/Breadth-first_search), and any time we care about servicing requests **in the order they're received.**
 
+Since stacks and queues don't need immediate access to every element, they're often implemented with the [linked list](https://en.wikipedia.org/wiki/Linked_list) data structure rather than arrays. This lets the stack or queue grow indefinitely, as well as be comprised of multiple data types if we need.
+
 ## Implementation
 ### Creating a linked list
-Since we don't need immediate access to every element, let's actually use a linked list rather than an array to create Python `Stack` and `Queue` classes.
-
-We start by defining the node in a linked list. The node consists of a value (`self.val`) and pointer to the next node in the list (`self.next`). We also add a `__repr__` magic method to make it easier to visualize the node contents.
+Let's build `Stack` and `Queue` Python classes that utilize linked lists. We'll start by defining the list node, which consists of a value (`self.val`) and pointer to the next node in the list (`self.next`). We'll also add a `__repr__` magic method to make it easier to visualize the node contents.
 
 {% include header-python.html %}
 ```python
 from typing import Any, Optional
 
 class ListNode:
-    def __init__(self, val: Any, next: Optional[ListNode]=None):
+    def __init__(self,
+                 val: Any,
+                 next: Optional[ListNode] = None):
         self.val = val
         self.next = next
 
@@ -536,7 +538,7 @@ def get_rightside(root: TreeNode) -> List[int]:
     answer = []
 
     while q:
-      	level_len = len(q)
+        level_len = len(q)
 
         # Iteratively remove from left side
         for i in range(level_len):
@@ -545,13 +547,13 @@ def get_rightside(root: TreeNode) -> List[int]:
 
             # Add node if rightmost
             if i == level_len - 1:
-              	answer.append(node.val)
+                answer.append(node.val)
 
             # Either way, append children
             if node.left:
-              	q.append(node.left)
+                q.append(node.left)
             if node.right:
-              	q.append(node.right)
+                q.append(node.right)
 
     return answer
 ```
