@@ -77,9 +77,11 @@ With the list node structure in place, we have the central building block for ou
 </center>
 
 ### Creating stacks
-As we've already seen, a main operation for stacks is adding or removing the most recent element, also called [**pushing** and **popping**](https://en.wikipedia.org/wiki/Stack_(abstract_data_type)). It's also often helpful to view the top element in the stack without immediately removing it, a concept called "peeking."
+As we've seen, a main operation for stacks is adding or removing the most recent element, also called [**pushing** and **popping**](https://en.wikipedia.org/wiki/Stack_(abstract_data_type)). It's also often helpful to view the top element in the stack without immediately removing it, a concept called "peeking."
 
-Let's get started. Below, we define a `Stack` class with one attribute, `_stack`, which contains our linked list. We then define our `push`, `peek`, and `pop` methods. To achieve these operations in $O(1)$ time, we place the most recent element in the stack at the _head_ of the linked list in our `Stack` class, so it's always easy to access.
+Let's get started. Below, we define a `Stack` class with one attribute, `_stack`, which contains our linked list. The attribute starts with an underscore, signaling to other developers that this attribute should be considered [private](https://stackoverflow.com/questions/2620699/why-private-methods-in-the-object-oriented) and not called directly outside the class.
+
+Rather, we'll only interact with `_stack` through our `push`, `peek`, and `pop` methods.<sup>[[1]](#1-creating-stacks)</sup> To achieve these operations in $O(1)$ time, we'll place the most recent element in the stack at the _head_ of the linked list in our `Stack` class, so it's always easy to access.
 
 {% include header-python.html %}
 ```python
@@ -101,7 +103,6 @@ class Stack:
         the stack.
         """
         head = self._stack
-
         if head:
             return head.val
 
@@ -110,15 +111,14 @@ class Stack:
         Return the top value of the stack, modifying the stack.
         """
         head = self.peek()
-
         if head:
             self._stack = self._stack.next
             return head
 ```
 
-Our `push` method creates a node for the new value, sets the existing `self._stack` to the new node's `next` attribute, then points `self._stack` to the new head of the list.
+Our `push` method creates a node for the new value, points the node's `next` attribute to the existing list, then redefines `self._stack` as the new node.
 
-`peek` and `pop` require some control flow to avoid raising an error if you call them on an empty stack. Both only allow us to call the `val` and `next` attributes if `self._stack` isn't empty, which would otherwise throw an error.<sup>[[1]](#1-creating-stacks)</sup>
+`peek` and `pop` require some control flow to avoid raising an error if you call them on an empty stack. Both only allow us to call the `val` and `next` attributes if `self._stack` isn't empty, which would otherwise throw an error.
 
 Our methods return `None` if the stack is empty, but it'd be convenient to have a way to explicitly state if the stack has data. Let's therefore add an `is_empty` method. We'll also add methods that traverse the list: one that determines if the stack contains a requested value (`contains`), and one that prints the list contents (`__repr__`). Note that the traversal methods will execute in $O(n)$ time $-$ the longer the list, the longer it takes to scan or print all elements.<sup>[[2]](#2-creating-stacks)</sup>
 
@@ -144,7 +144,6 @@ class Stack:
         the stack.
         """
         head = self._stack
-
         if head:
             return head.val
 
@@ -153,7 +152,6 @@ class Stack:
         Return the top value of the stack, modifying the stack.
         """
         head = self.peek()
-
         if head:
             self._stack = self._stack.next
             return head
@@ -570,12 +568,12 @@ Matt
 
 ## Footnotes
 #### [1. Creating stacks](#creating-stacks)
-The linked list in our `Stack` class has an underscore in front, signaling to other developers that this attribute should be considered [private](https://stackoverflow.com/questions/2620699/why-private-methods-in-the-object-oriented) and not called directly outside the class. But Python doesn't enforce this rule; we can easily modify the contents and wreak havoc.
+It's all honor code that you won't directly call methods and attributes that start with an underscore! Python doesn't actually enforce this rule; we can easily modify the contents and wreak havoc.
 
 {% include header-python.html %}
 ```python
 class BankAccount:
-    def __init__(self, password):
+    def __init__(self, password: str):
         self._password = password
 
 b = BankAccount(password='abc123')
@@ -595,7 +593,7 @@ There's actually no real way to protect against this in Python. The closest we c
 import logging
 
 class BankAccount:
-    def __init__(self, password):
+    def __init__(self, password: str):
         self._password = password
 
     @property
@@ -617,10 +615,26 @@ ba = BankAccount(password='abc123')
 print(ba.password)  # Error: Not authorized to access password
 ba.password = 123   # Error: Password must be string
 
-# ...but then the user "hacks" their way in
+# ...but then the attacker "hacks" their way in
 ba._password = 123  
 print(ba._password)  # 123
 ```
 
+There's also little hope in giving the attribute some crazy name, as an attacker could just use the `vars` command to spill all the juicy contents. While they might not immediately know what the attribute is for, they'd already have a neat set of key-value pairs to use.
+
+{% include header-python.html %}
+```python
+class BankAccount:
+    def __init__(self, password: str):
+        self._zv92x003 = password
+
+b = BankAccount('abc123')
+
+# Attacker just asks b for everything
+print(vars(b))   # {'_zv92x003': 'abc123'}
+```
+
+Ultimately, any data that's even remotely sensitive should be carefully stored behind an API with strict security requirements. If your program _does_ store sensitive data in a Python class, perhaps as it's ferried between databases or APIs, you should ensure there's no way to interact with this class from the frontend.
+
 #### 2. [Creating stacks](#creating-stacks)
-It's important to remember that Big O notation quantifies the _worst case_ efficiency. In the _worst_ case, our search will require scanning the entire stack to find the value we're looking for (i.e. all $n$ values). This is different from the _average_ case: if the values we search for are randomly distributed throughout the stack, we should expect search to take on average $\frac{n}{2}$ steps.
+It's important to remember that Big O notation quantifies the _worst case_ efficiency. In the _worst_ case, our search will require scanning the entire stack to find the value we're looking for (i.e. all $n$ values). This is different from the _average_ case: if the values we search for are randomly distributed throughout the stack, we should expect to find the value on average in the middle (i.e. $\frac{n}{2}$ steps).
