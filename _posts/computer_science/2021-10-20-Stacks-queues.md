@@ -37,12 +37,8 @@ Let's build `Stack` and `Queue` Python classes that utilize linked lists. We'll 
 
 {% include header-python.html %}
 ```python
-from typing import Any, Optional
-
 class ListNode:
-    def __init__(self,
-                 val: Any,
-                 next: Optional[ListNode] = None):
+    def __init__(self, val=None, next=None):
         self.val = val
         self.next = next
 
@@ -85,6 +81,8 @@ Rather, we'll only interact with `_stack` through our `push`, `peek`, and `pop` 
 
 {% include header-python.html %}
 ```python
+from typing import Any
+
 class Stack:
     def __init__(self):
         self._stack = None
@@ -379,10 +377,10 @@ print(q.is_empty())  # True
 <img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/queue_example.png">
 
 ## Use cases
-Above, we defined Python classes for stacks and queues, using linked lists to store the objects' contents. In this section, we'll demonstrate the power of these abstract data types by solving a few [Leetcode](https://leetcode.com/) questions. At least to me, these questions seemed like an impossible puzzle when I first saw them. Once I understood how stacks and queues work, though, the puzzle neatly unfolded into a clean solution. Hopefully I can share some of that "ah-ha" feeling in this post.
+Above, we defined Python classes for stacks and queues, using linked lists to store the objects' contents. In this section, we'll demonstrate the power of these abstract data types by solving a few [Leetcode](https://leetcode.com/) questions. At least to me, these questions seemed like impossible puzzles when I first saw them. Once I understood how stacks and queues work, though, the puzzles neatly unfolded into clean solutions. Hopefully I can share some of that "ah-ha" feeling in this post.
 
 ### Stacks
-One area where stacks are incredibly useful is code inspection. As you undoubtedly know if you're still reading this blog post, programming languages utilize parentheses (`( )`), square brackets (`[ ]`), and curly brackets (`{ }`) for functions, indexing, loops, and more. Every open bracket needs a matching closed bracket, and you can't have a closed bracket before an open bracket.
+One area where stacks are incredibly useful is code validation. As you undoubtedly know if you're still reading this blog post, programming languages utilize curved (`( )`), square (`[ ]`), and curly (`{ }`) **brackets** for functions, indexing, loops, and more. Every open bracket needs a matching closed bracket, and you can't have a closed bracket before an open bracket.
 
 How do you keep track of all the open and closed brackets, and whether they're curved, square, or curly, without going crazy? How can we automatically tell that the brackets on the below left are correct, but the ones on the right are wrong?
 
@@ -390,7 +388,7 @@ How do you keep track of all the open and closed brackets, and whether they're c
 <img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/parentheses.png" height="80%" width="80%">
 </center>
 
-This question, [**LC 20:** Valid Parentheses](https://leetcode.com/problems/valid-parentheses/), is painful without a stack, and trivial with one. Below, we'll write a function that takes in a string of brackets and returns a boolean of whether the brackets are valid.
+This question, [**LC 20:** Valid Parentheses](https://leetcode.com/problems/valid-parentheses/), is existentially painful without a stack, and wonderfully simple with one. Below, we'll write a function that takes in a string of brackets and returns a boolean of whether the brackets are valid.
 
 Our solution works like this at a high level: any time we see an open bracket, we add it to the stack. Any time we see a closing bracket, we check if _the last open bracket we saw_ matches the closing bracket. If it doesn't, we know the string isn't valid. If it does, we pop that open bracket off the stack and continue scanning the string. If we make it to the end, the final check is to confirm the stack is empty, i.e. that there are no unmatched open brackets.
 
@@ -413,7 +411,7 @@ def is_valid(string: str) -> bool:
 
         # If open bracket - (, [, { - add to stack
         if char in matches.values():
-            stack.insert(char)
+            stack.append(char)
 
         # If close bracket - ), ], } - inspect stack
         elif char in matches:
@@ -438,7 +436,7 @@ We keep track of two cases where we can exit the `for` loop and declare that the
 <img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/parentheses2.png" height="70%" width="70%">
 </center>
 
-Let's try a slightly tougher variation of this question. In [**LC 1249:** Minimum Remove to Make Valid Parentheses](https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/), rather than output a simple "yes/no" boolean for whether the string is valid, **we need to _make_ the string valid by removing the misplaced brackets.** The strings will also contain a mixture of letters and brackets, but as a minor concession, we only have to deal with parentheses. In the image above, we need to remove the red brackets to make each string valid.
+Let's try a slightly tougher variation of this question. In [**LC 1249:** Minimum Remove to Make Valid Parentheses](https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/), rather than output a simple "yes/no" boolean for whether the string is valid, **we need to _make_ the string valid by removing the misplaced brackets.** The strings will also contain a mixture of letters and brackets, but as a minor concession, we only have to deal with curved brackets. In the image above, we need to remove the red brackets to make each string valid.
 
 Here's how we'd do it. At a high level, we'll move through the string, adding to the stack when we see an open bracket and removing from the stack when we see a closing bracket. If we encounter a closing bracket with no open bracket, we immediately remove it $-$ there's no open bracket later on that could match this closed bracket. Once we've gone through the string, we remove all remaining open brackets, since they had no matching closing brackets.
 
@@ -453,7 +451,7 @@ def make_valid(string: str) -> str:
 
     for i, char in enumerate(s):
         if char == '(':
-            stack.insert(i)
+            stack.append(i)
         elif char == ')':
             if stack:
                 stack.pop()
