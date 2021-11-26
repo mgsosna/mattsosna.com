@@ -556,6 +556,8 @@ def get_rightside(root: TreeNode) -> List[int]:
 
 Notice that there are now two loops: a `while` loop that iterates through the queue until its empty, and a `for` loop that processes all nodes at a given level. The "trick" to this question is realizing that if we take a snapshot of the queue (line 9) before we start processing its nodes (line 12), we're able to see all nodes at a given level, allowing us to identify the rightmost node. This snapshot is critical, as we modify the queue as we move through it (lines 21-24).
 
+Below we visualize the queue (right) as our algorithm processes a larger tree (left). Notice how the snapshots occur when a queue contains all nodes in a level (and no more).
+
 <img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/snapshot.png">
 
 ## Conclusions
