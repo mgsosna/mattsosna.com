@@ -10,7 +10,7 @@ Cursing your 3am self who wrote that code, you wonder how to fix the issue. **Ho
 
 A better approach, you realize, is to arrange user data in a [**binary search tree**](https://en.wikipedia.org/wiki/Binary_search_tree), which would allow us to find any of our million IDs, on average, in a meager _twenty steps_. A [version of this data structure](https://en.wikipedia.org/wiki/B-tree), indeed, is one of the ways databases index records for lightning-fast retrieval. Quietly migrating user info to a database, your app's latency drops, everyone is happy, and you vow to never tell anyone about how you originally stored the data.
 
-<img src="{{site.baseurl}}/images/computer_science/arr_v_tree.png">
+<img src="{{site.baseurl}}/images/computer_science/intro/arr_v_tree.png">
 
 This example highlights an important point: **the <u>data structures</u> our programs use can determine whether our code will scale as the amount of data grows, or whether we'll need to rewrite everything from scratch every six months.** From quickly finding the shortest path between locations, to always serving the highest-priority items in a constantly-changing list, to instantly and securely confirming whether an inputted password is correct, choosing the right data structures is critical for scalable code.
 
@@ -39,7 +39,7 @@ But if you separate out <i><u>the task</u></i> from <i><u>how you accomplish the
 Here's another example. Let's say you want to visit your friend across town. You have at your disposal your bike, car, and feet. Here, the _vehicle_ is the abstract data type: a means of transportation. _How you actually travel_ is the data structure $-$ your bike, car, or feet.
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/abstract_ds.png" height="90%" width="90%">
+<img src="{{  site.baseurl  }}/images/computer_science/intro/abstract_ds.png" height="90%" width="90%">
 </center>
 
 This distinction is important because **there are multiple ways to accomplish a task, each with pros and cons that depend on your specific program.** In the case of digging a hole, a shovel is the clear winner. But for getting across town, the "right" data structure depends on external context: a car travels the fastest but requires roads, whereas our feet are slow but can traverse tall grass and stairs.
@@ -51,7 +51,7 @@ One more example to drive the point home. Imagine you need to put away some clea
 An alternate method would be to neatly arrange your clothes in your dresser and closet. This method would have a _<u>high write time</u>_ but _<u>low read time</u>_, as it would take longer to put away your clothes, but you'd be able to more quickly access any item you searched for.
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/pile.png" height="70%" width="70%">
+<img src="{{  site.baseurl  }}/images/computer_science/intro/pile.png" height="70%" width="70%">
 </center>
 
 While this example might sound silly, it's actually not too far off from the strategies of dumping data into [AWS S3](https://aws.amazon.com/s3/) versus a database, or to some degree storing it in a [highly-structured SQL vs. flexible NoSQL database]({{  site.baseurl  }}/SQL_vs_NoSQL). The dresser and closet isn't automatically the best approach $-$ transaction logs for an e-commerce store are likely written far more often than read, so a "pile of clothes" approach of saving raw output to S3 can actually work well.
@@ -62,7 +62,7 @@ While it makes sense that it's easier to dig a hole with a shovel than a hammer,
 This only gets us part of the way, though $-$ how do we account for shovels that are different sizes, or the people doing the digging? A bodybuilder with a hammer can dig a hole faster than a toddler with a shovel, but that doesn't mean the hammer is a better digging tool.
 
 <center>
-<img src="{{  site.baseurl }}/images/computer_science/big-o.png" height="80%" width="80%">
+<img src="{{  site.baseurl }}/images/computer_science/intro/big-o.png" height="80%" width="80%">
 </center>
 
 In computer terms, these two considerations can be reframed as **_the amount of data_** being processed, and **_the machine being using._** When comparing how well data structures perform some operation $-$ like storing new data or retrieving a requested element $-$ **we want a metric that quantifies how performance scales with the amount of data, independent of what machine we use.**
@@ -101,12 +101,12 @@ def print_idx(arr: list, i: int):
 
 We can quantify the efficiency of these functions with the `%%timeit` command in a Jupyter notebook. Below, we already see dramatic increases in the execution time of the $O(n^2)$ `print_pairs`. We also see the power of the $O(1)$ `print_idx`, whose execution hovers around 0.153 ms, regardless of the size of the array or whether we're requesting the first or last element.
 
-<img src="{{  site.baseurl  }}/images/computer_science/big-o-demo.png">
+<img src="{{  site.baseurl  }}/images/computer_science/intro/big-o-demo.png">
 
 We can use a plot like the one below to compare how algorithms of various efficiencies scale. The green region is ideal $-$ these are the most scalable runtimes, growing at a rate significantly slower than the amount of data. Gray is pretty good, avoid orange if you can, and find any way possible to avoid the red region.
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/big_o.png" height="90%" width="90%">
+<img src="{{  site.baseurl  }}/images/computer_science/intro/big_o.png" height="90%" width="90%">
 </center>
 
 What problems could possibly require an algorithm in the red zone? **Red zone algorithms are often necessary for problems where you need to know _every possible answer to a question_.** One example of an $O(2^n)$ algorithm is finding all [**subsets**](https://en.wikipedia.org/wiki/Subset) of an array. Each element in the set can be either 1) included or 2) excluded in a subset. A set of four elements like `[A,B,C,D]` will therefore have $2^4$, or 16, subsets:
@@ -137,7 +137,7 @@ Finally, we should briefly mention the fundamental _data types_. If a data struc
 **Void** is a null, like `None` in Python. Voids explicitly indicate a _lack_ of data, which is a useful default when initializing an array that will be filled, or a function that performs an action but doesn't specifically return anything (e.g. sending an email).
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/data_types.png" heigh="70%" width="70%">
+<img src="{{  site.baseurl  }}/images/computer_science/intro/data_types.png" heigh="70%" width="70%">
 </center>
 
 With abstract data types, Big O notation, and the fundamental data types behind us, let's get started on the actual data structures! We'll first cover arrays.
@@ -147,7 +147,7 @@ With abstract data types, Big O notation, and the fundamental data types behind 
 Arrays are one of the most fundamental data structures in computer science, and they come built-in with languages even as low-level as [C](https://www.freecodecamp.org/news/what-is-the-c-programming-language-beginner-tutorial/) or [Assembly](https://en.wikipedia.org/wiki/Assembly_language). An **array** is a group of elements of the same type, like `[5, 8, -1]` or `['a', 'b', 'c']`, located on _a contiguous slice of computer memory_. Because the array elements are physically next to each another, we can access any index $-$ such as the first, third, or last element $-$ in $O(1)$ time.<sup>[[2]](#2-theory)</sup>
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/array1.png" height="80%" width="80%">
+<img src="{{  site.baseurl  }}/images/computer_science/intro/array1.png" height="80%" width="80%">
 </center>
 
 Languages like C and Java require specifying an array's size and data type up front. Python's `list` structure is able to circumvent these requirements by storing data as [pointers to the elements' locations in memory](https://docs.python.org/3/faq/design.html#how-are-lists-implemented-in-cpython) (which aren't necessarily next to each other), and automatically resizing the array when space runs out.
@@ -228,7 +228,7 @@ Linked lists are another key data structure in computer science. Like arrays, a 
 The core element of a linked list is a **node**, which contains 1) some data, and 2) a pointer to a location in memory. Specifically, _any_ location in memory. Below is a linked list with the values `[1, 'a', 0.3]` $-$ note how the element sizes differ (four bytes for integers and floats, one byte for chars), each node has a four-byte pointer, the distance between nodes varies, and that the last node contains a [null pointer](https://en.wikipedia.org/wiki/Null_pointer) that points off into space.
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/ll1.png">
+<img src="{{  site.baseurl  }}/images/computer_science/intro/ll1.png">
 </center>
 
 The lack of restrictions on data types and list length make linked lists attractive, but this flexibility comes with a cost. **Typically only the _head_ of the list is exposed to a program, meaning we have to traverse the list to find any other node.** In other words, we lose that sweet $O(1)$ retrieval for any element besides the first node. If you request the 100th element, it'll take 100 steps to reach: an $O(n)$ pattern.
@@ -345,7 +345,7 @@ Whenever I work on Leetcode questions, I like to draw out examples and make sure
 ```
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/ll_cycle.png" height="70%" width="70%">
+<img src="{{  site.baseurl  }}/images/computer_science/intro/ll_cycle.png" height="70%" width="70%">
 </center>
 
 [**LC 141:** Linked List Cycle](https://leetcode.com/problems/linked-list-cycle/) is another example of using slow and fast pointers. The idea here is to determine whether the list has a cycle, which occurs when a node's `next` pointer points to an earlier node in the list.
@@ -384,7 +384,7 @@ One type of tree is a **binary search tree** (BST); at the start of this post we
 2. Every node in the _left subtree_ must contain a smaller value, and every node in the _right subtree_ must contain a larger value.
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/tree1.png" height="60%" width="60%">
+<img src="{{  site.baseurl  }}/images/computer_science/intro/tree1.png" height="60%" width="60%">
 </center>
 
 Searching for a value in a BST takes at worst $O(log\ n)$ time<sup>[[3]](#3-theory)</sup>, meaning we can find a requested value among millions or even billions of records very rapidly. Let's say we're searching for the node with the value `x`. We can use the following algorithm to quickly find this node in a BST.
@@ -440,12 +440,12 @@ root.right.right = TreeNode('g')
 ### Examples
 Questions involving binary trees often center on different ways of traversing the nodes. Traversal typically begins at the root node and then follows a set of steps for processing each node and its children. _But <u>the order in which nodes are processed</u> depends entirely on <u>the order in which we process the parent relative to the children</u>:_ before (**pre-order**), in between the left and right (**in-order**), or after (**post-order**). Each of the traversals below started at the root node, but the order that nodes _were processed_ differed entirely.
 
-<img src="{{  site.baseurl  }}/images/computer_science/tree_traversals_1.png">
+<img src="{{  site.baseurl  }}/images/computer_science/intro/tree_traversals_1.png">
 
 These three types of traversal can occur with **iteration** (using a `while` loop and a [**stack**](https://en.wikipedia.org/wiki/Stack_(abstract_data_type))) or with [**recursion**](https://en.wikipedia.org/wiki/Recursion_(computer_science)) (using a function that calls itself). There's also a fourth type of traversal, **level-order**, which utilizes a [**queue**](https://en.wikipedia.org/wiki/Queue_(abstract_data_type)). We won't cover stacks and queues in this post, but just think of them as lists where you can only remove from the end (stacks) or the start (queues).
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/tree_traversals_2.png" height="35%" width="35%">
+<img src="{{  site.baseurl  }}/images/computer_science/intro/tree_traversals_2.png" height="35%" width="35%">
 </center>
 
 The patterns for the first three types of traversals are nearly identical, so we'll just choose in-order traversal. Below we code out the iterative and recursive methods for [**LC 94:** Binary Tree Inorder Traversal](https://leetcode.com/problems/binary-tree-inorder-traversal/), starting with the iterative version.
@@ -544,7 +544,7 @@ def _traverse(self, node):
 Trees expand the scope of linked lists by allowing for more than one child per node. With graphs, we expand scope again by loosening trees' strict parent-child relationship. The nodes in a graph have no explicit hierarchy, and any node can be connected to any other node.
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/graph1.png" height="40%" width="40%">
+<img src="{{  site.baseurl  }}/images/computer_science/intro/graph1.png" height="40%" width="40%">
 </center>
 
 Graphs are usually represented as **adjacency matrices.** The above graph, for example, would have the following matrix.
@@ -565,13 +565,13 @@ None of the nodes in this graph are connected to themselves, meaning the matrix 
 I find a bunch of 1s and 0s in a matrix a little hard to interpret, so here's that same graph and matrix with colors.
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/graph1a.png" height="75%" width="75%">
+<img src="{{  site.baseurl  }}/images/computer_science/intro/graph1a.png" height="75%" width="75%">
 </center>
 
 A _weighted_ graph with _directed_ edges would look something like this. Notice how the relationships are no longer symmetric $-$ the second row in the adjacency matrix is now empty, for example, because $B$ has no outbound connections. We also have numbers that range between 0 and 1, which reflect the strength of the connection. For example, $C$ feeds into $A$ more strongly than $A$ feeds into $C$.
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/graph1b.png" height="75%" width="75%">
+<img src="{{  site.baseurl  }}/images/computer_science/intro/graph1b.png" height="75%" width="75%">
 </center>
 
 ### Implementation
@@ -623,7 +623,7 @@ g.connect(2, 3)
 One trickier graph question is identifying the number of connected components, or sub-clusters, within a graph. In the below graph, for example, we can identify three distinct components.
 
 <center>
-<img src="{{  site.baseurl  }}/images/computer_science/graph2.png" height="40%" width="40%">
+<img src="{{  site.baseurl  }}/images/computer_science/intro/graph2.png" height="40%" width="40%">
 </center>
 
 To answer [**LC 323:** Number of Connected Components](https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/), we'll examine each node in the graph, visiting its neighbors, its _neighbors'_ neighbors, and so on, until we only encounter nodes we've already seen. We'll then check if there are any nodes in the graph that we haven't visited $-$ if any exist, that means there's at least one more cluster, so we grab a new node and repeat the process.
@@ -685,7 +685,7 @@ This is where hash tables come in. Data in these tables are associated with key-
 
 Below is how our linked list from earlier would look as a hash table. The green box is our table, which stores the keys `key1`, `key2`, and `key3`. When a user passes in one of these keys to the table, the key is sent through the hash function to find an index in the array of pointers (purple). That pointer then takes us to the area in memory storing the actual value. Each pointer in our array is four bytes, while the size of the values they point to can vary.
 
-<img src="{{  site.baseurl  }}/images/computer_science/hash_map.png">
+<img src="{{  site.baseurl  }}/images/computer_science/intro/hash_map.png">
 
 The main workhorse of the table is the hash function, which maps an input to an output _within some range._ Python's `hash` function, for example, outputs values [between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807](https://stackoverflow.com/questions/19132927/determining-the-range-of-values-returned-by-pythons-hash). We then _bucket_ the hashed value $-$ often by dividing by the length of our array and taking the remainder $-$ to return an index in our array of pointers. In the above example, the output would be 0, 1, or 2: the indices of the pointer array.
 

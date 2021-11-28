@@ -19,7 +19,7 @@ Here is information about my academic life. For blog posts with advice for under
 5. **Grobis MM**, Pearish SP, Bell AM. 2013. [Avoidance or escape? Discriminating between two hypotheses for the function of schooling in threespine sticklebacks.](https://www.sciencedirect.com/science/article/pii/S000334721200485X) _**Animal Behaviour.**_ 85(1): 187-194.
 
 ## In progress
-1. Jolles JW\*, **Sosna MMG**\*, Mazué GPF, Twomey CR, Bak-Coleman J, Rubenstein DI, Couzin ID. Predator attack strategy and prey behaviour drive individual predation risk in schooling prey. _**submitted.**_
+1. Jolles JW\*, **Sosna MMG**\*, Mazué GPF, Twomey CR, Bak-Coleman J, Rubenstein DI, Couzin ID. Both prey and predator features determine predation risk and survival in schooling prey. _**submitted.**_
 
 2. Poel W, Daniels BC, **Sosna MMG**, Twomey CR, Leblanc S, Couzin ID, Romanczuk P. Subcritical escape waves in schooling fish. _**in review.**_
 
