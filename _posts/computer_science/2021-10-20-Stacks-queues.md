@@ -29,7 +29,7 @@ We can see this in the major use cases for stacks and queues. Stacks are used fo
 
 Queues, meanwhile, are used for [asynchronous web service communication](https://aws.amazon.com/message-queue/), [scheduling CPU processes](https://en.wikipedia.org/wiki/Scheduling_(computing)), [tracking the `N` most recently added elements](https://stackoverflow.com/questions/5498865/size-limited-queue-that-holds-last-n-elements-in-java), [breadth-first search](https://en.wikipedia.org/wiki/Breadth-first_search), and any time we care about servicing requests **in the order they're received.**
 
-Since stacks and queues don't need immediate access to every element, they're often implemented with the [linked list](https://en.wikipedia.org/wiki/Linked_list) data structure rather than arrays. This lets the stack or queue grow indefinitely, as well as be comprised of multiple data types if we need.
+Since stacks and queues don't need immediate access to every element, **they're often implemented with the [linked list](https://en.wikipedia.org/wiki/Linked_list) data structure rather than arrays.** This lets the stack or queue grow indefinitely, as well as be comprised of multiple data types if we need.
 
 ## Implementation
 ### Creating a linked list
@@ -432,11 +432,27 @@ For simplicity, we use a built-in Python `list` for our stack, remembering to al
 
 We keep track of two cases where we can exit the `for` loop and declare that the string is invalid: 1) if we come across a closing bracket and the stack is empty, and 2) if the last open bracket doesn't match our closing bracket. The final check is to ensure the stack is empty once we've made it through the string.
 
+Let's see it in action:
+
+{% include header-python.html %}
+```python
+good1 = '[{}]()'
+good2 = '{{{{}}}}'
+
+bad1 = '{}]'
+bad2 = ')(((('
+
+print(is_valid(good1))  # True
+print(is_valid(good2))  # True
+print(is_valid(bad1))   # False
+print(is_valid(bad2))   # False
+```
+
+Let's try a slightly tougher variation of this question. In [**LC 1249:** Minimum Remove to Make Valid Parentheses](https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/), rather than output a simple "yes/no" boolean for whether the string is valid, **we need to _make_ the string valid by removing the misplaced brackets.** The strings will also contain a mixture of letters and brackets, but as a minor concession, we only have to deal with curved brackets. In the image above, we need to remove the red brackets to make each string valid.
+
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/parentheses2.png" height="70%" width="70%">
 </center>
-
-Let's try a slightly tougher variation of this question. In [**LC 1249:** Minimum Remove to Make Valid Parentheses](https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/), rather than output a simple "yes/no" boolean for whether the string is valid, **we need to _make_ the string valid by removing the misplaced brackets.** The strings will also contain a mixture of letters and brackets, but as a minor concession, we only have to deal with curved brackets. In the image above, we need to remove the red brackets to make each string valid.
 
 Here's how we'd do it. At a high level, we'll move through the string, adding to the stack when we see an open bracket and removing from the stack when we see a closing bracket. If we encounter a closing bracket with no open bracket, we immediately remove it $-$ there's no open bracket later on that could match this closed bracket. Once we've gone through the string, we remove all remaining open brackets, since they had no matching closing brackets.
 
@@ -470,6 +486,19 @@ Let's look at the code more closely. We start by converting the string to a list
 We then actually store the _indices_ of open brackets in our stack, rather than the brackets themselves, as we'll need to know where exactly to remove a misplaced bracket. We address misplaced closing brackets as we move through the string, as we know from the empty stack that there are no matching open brackets from earlier in the string. For open brackets, we need to pass through the entire string before knowing if they have a matching closing bracket.
 
 "Removal" occurs by replacing the bracket with an empty string $-$ because we're tracking the index of misplaced brackets, shifting the indices of existing elements while we're moving through the list could cause a huge headache. Instead, we remove all empty strings in the final step, when we convert the list to a string with `''.join(s)`.
+
+Finally, let's make sure it works:
+
+{% include header-python.html %}
+```python
+string1 = '(())()'
+string2 = '())'
+string3 = ')(((('
+
+print(make_valid(string1))  # '(())()'
+print(make_valid(string2))  # '()'    
+print(make_valid(string3))  # ''
+```
 
 ### Queues
 Let's now shift our attention to use cases for queues. One common question where queues are useful is **level-order traversal** for trees. How can we print the value of every node in a tree, level by level? We're usually provided only the root node, so we have no idea ahead of time what the tree looks like. We therefore want to process the tree correctly _as we're exploring it._
@@ -522,6 +551,19 @@ As with our stack examples, we again use a built-in `list`, this time rememberin
 <img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/lot_example.png" height="80%" width="80%">
 </center>
 
+And let's confirm it works:
+
+{% include header-python.html %}
+```python
+tree = TreeNode('A')
+tree.left = TreeNode('B')
+tree.right = TreeNode('C')
+tree.left.left = TreeNode('D')
+tree.left.right = TreeNode('E')
+
+print(level_order_traversal(tree))  # ['A', 'B', 'C', 'D', 'E']
+```
+
 A trickier version of this question is to return only the _rightmost_ node at every level in a tree. In the tree in the diagram above, for example, we'd want to return `[A, C, E]`. The general structure to answering [**LC 199:** Binary Tree Right Side View](https://leetcode.com/problems/binary-tree-right-side-view/) is similar to our answer above, but we need additional logic to check if we're at the rightmost node.
 
 {% include header-python.html %}
@@ -554,14 +596,31 @@ def get_rightside(root: TreeNode) -> List[int]:
     return answer
 ```
 
-Notice that there are now two loops: a `while` loop that iterates through the queue until its empty, and a `for` loop that processes all nodes at a given level. The "trick" to this question is realizing that if we take a snapshot of the queue (line 9) before we start processing its nodes (line 12), we're able to see all nodes at a given level, allowing us to identify the rightmost node. This snapshot is critical, as we modify the queue as we move through it (lines 21-24).
+Notice that there are now two loops: a `while` loop that iterates through the queue until it's empty, and a `for` loop that processes all nodes at a given level. The "trick" to this question is realizing that if we take a snapshot of the queue (line 9) before we start processing its nodes (line 12), we're able to see all nodes at a given level, allowing us to identify the rightmost node. This snapshot is critical, as we modify the queue as we move through it (lines 21-24).
 
 Below we visualize the queue (right) as our algorithm processes a larger tree (left). Notice how the snapshots occur when a queue contains all nodes in a level (and no more).
 
 <img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/snapshot.png">
 
+Finally, let's confirm the code works:
+
+{% include header-python.html %}
+```python
+tree = TreeNode('A')
+tree.left = TreeNode('B')
+tree.right = TreeNode('C')
+tree.left.left = TreeNode('D')
+tree.left.right = TreeNode('E')
+
+print(get_rightside(tree))  # ['A', 'C', 'E']
+```
+
 ## Conclusions
-In this post, we did a deep dive on two of the most common abstract data types: stacks and queues. We covered their wide range of use cases before implementing them in Python and solving some challenging problems ourselves. 
+In this post, we did a deep dive on two of the most common abstract data types: stacks and queues. We covered their wide range of use cases before implementing them in Python and solving some challenging problems ourselves.
+
+If you're interested in learning more, [**priority queues**](https://en.wikipedia.org/wiki/Priority_queue) are a great next step. This abstract data type assigns a ranking to each element in a queue, allowing us to prioritize certain elements over others. The security line at an airport, for example, operates as a classic first-in first-out queue as passengers go through the metal detectors. But when a passenger with TSA PreCheck arrives, they're able to skip to the front and be processed first. Whether a passenger has PreCheck determines their priority in the queue.
+
+Finally, it's important to reiterate that there are many ways to _implement_ a stack or queue. We chose to use a linked list for our `Stack` and `Queue` classes to mirror how these classes are often implemented in languages like Java or C, while we used a built-in Python `list` for our Leetcode questions to keep things simple. But there's nothing stopping you from implementing a stack using a tree or a queue with a graph! On second thought, just because you _can_ implement a queue with an graph doesn't mean you _should_...
 
 Best,<br>
 Matt
@@ -598,13 +657,13 @@ class BankAccount:
 
     @property
     def password(self):
-        logging.error("Error: Not authorized to access password")
+        logging.error("Not authorized to access password")
         return None
 
     @password.setter
     def password(self, value: str):
         if not isinstance(value, str):
-            logging.error("Error: Password must be string")
+            logging.error("Password must be string")
             return None
         self._password = value
 
@@ -612,10 +671,11 @@ class BankAccount:
 ba = BankAccount(password='abc123')
 
 # Our getter and setter are working...
-print(ba.password)  # Error: Not authorized to access password
-ba.password = 123   # Error: Password must be string
+print(ba.password)  # ERROR:root: Not authorized to access password
+ba.password = 123   # ERROR:root: Password must be string
 
 # ...but then the attacker "hacks" their way in
+print(ba._password)  # 'abc123'
 ba._password = 123  
 print(ba._password)  # 123
 ```
@@ -634,7 +694,7 @@ b = BankAccount('abc123')
 print(vars(b))   # {'_zv92x003': 'abc123'}
 ```
 
-Ultimately, any data that's even remotely sensitive should be carefully stored behind an API with strict security requirements. If your program _does_ store sensitive data in a Python class, perhaps as it's ferried between databases or APIs, you should ensure there's no way to interact with this class from the frontend.
+Ultimately, any data that's even remotely sensitive should be stored behind an API with strict security requirements. If your program _does_ store sensitive data in a Python class, perhaps as it's ferried between databases or APIs, you should ensure there's no way to interact with this class from the frontend.
 
 #### 2. [Creating stacks](#creating-stacks)
 It's important to remember that Big O notation quantifies the _worst case_ efficiency. In the _worst_ case, our search will require scanning the entire stack to find the value we're looking for (i.e. all $n$ values). This is different from the _average_ case: if the values we search for are randomly distributed throughout the stack, we should expect to find the value on average in the middle (i.e. $\frac{n}{2}$ steps).
