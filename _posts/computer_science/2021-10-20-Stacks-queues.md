@@ -561,7 +561,7 @@ Below we visualize the queue (right) as our algorithm processes a larger tree (l
 <img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/snapshot.png">
 
 ## Conclusions
-In this post, we did a deep dive on two of the most common abstract data types: stacks and queues.
+In this post, we did a deep dive on two of the most common abstract data types: stacks and queues. We covered their wide range of use cases before implementing them in Python and solving some challenging problems ourselves. 
 
 Best,<br>
 Matt
