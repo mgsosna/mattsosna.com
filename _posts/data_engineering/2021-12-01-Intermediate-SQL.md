@@ -25,3 +25,37 @@ GROUP BY
 HAVING
     AVG(grade) > 90;  
 ```
+
+## `CASE WHEN`
+It's common to need to perform some kind of `if`-`else` logic on a column. You could do something like this:
+
+{% include header-sql.html %}
+```sql
+SELECT
+    id,
+
+```
+
+## `WITH`
+Queries can become long, especially when you're joining data from multiple tables, and you want to apply filters or aggregations to tables before joining. Sometimes you have the luxury of being able to perform part of the query in SQL and the remainder in Python, or to perform multiple queries (e.g. on temporary tables). But when you don't, you need to _nest_ queries.
+
+Let's say we're trying to find all the names in the `cats` table that also appear in the `dogs` table. Our query will require a subquery: finding all the names in dogs.
+
+There are two ways to get these dog names. We'll start with the method I try to avoid.
+
+{% include header-sql.html %}
+```sql
+SELECT DISTINCT
+    name
+FROM
+    cats
+WHERE
+    name IN (
+        SELECT DISTINCT
+            name
+        FROM
+            dogs
+    );
+```
+
+Above, our query for 
