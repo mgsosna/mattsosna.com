@@ -448,7 +448,7 @@ print(is_valid(bad1))   # False
 print(is_valid(bad2))   # False
 ```
 
-Let's try a slightly tougher variation of this question. In [**LC 1249:** Minimum Remove to Make Valid Parentheses](https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/), rather than output a simple "yes/no" boolean for whether the string is valid, **we need to _make_ the string valid by removing the misplaced brackets.** The strings will also contain a mixture of letters and brackets, but as a minor concession, we only have to deal with curved brackets. In the image above, we need to remove the red brackets to make each string valid.
+Let's try a slightly tougher variation of this question. In [**LC 1249:** Minimum Remove to Make Valid Parentheses](https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/), rather than output a simple "yes/no" boolean for whether the string is valid, **we need to _make_ the string valid by removing the misplaced brackets.** The strings will also contain a mixture of letters and brackets, but as a minor concession, we only have to deal with curved brackets. In the image below, we need to remove the red brackets to make each string valid.
 
 <center>
 <img src="{{  site.baseurl  }}/images/computer_science/stacks_queues/parentheses2.png" height="70%" width="70%">
