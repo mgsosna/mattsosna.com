@@ -33,7 +33,34 @@ It's common to need to perform some kind of `if`-`else` logic on a column. You c
 ```sql
 SELECT
     id,
+    grade,
+    CASE
+        WHEN grade < 60 THEN 'F'
+        WHEN grade < 70 THEN 'D'
+        WHEN grade < 80 THEN 'C'
+        WHEN grade < 90 THEN 'B'
+        ELSE 'A'
+    END AS letter_grade
+FROM
+    students;
 
+/*
+| id  | grade | letter_grade |
+| --- | ----- | ------------ |
+| 123 |  A    | 93           |
+| 817 |  C    | 77           |
+| 550 |  B    | 89           |
+| ... | ...   | ...          |
+*/
+```
+
+You can also use it for exact equality, or `IN` statements.
+
+```sql
+SELECT
+    CASE
+        WHEN name IN ('Matt', 'John') THEN 'Friends'
+        
 ```
 
 ## `WITH`
@@ -45,17 +72,81 @@ There are two ways to get these dog names. We'll start with the method I try to 
 
 {% include header-sql.html %}
 ```sql
-SELECT DISTINCT
+SELECT
     name
 FROM
     cats
 WHERE
     name IN (
-        SELECT DISTINCT
+        SELECT
             name
         FROM
             dogs
     );
 ```
 
-Above, our query for 
+Above, our query does X.
+
+But we can make our query more modular and hence easier to read with the `WITH` clause.
+
+{% include header-sql.html %}
+```sql
+WITH dog_names AS (
+    SELECT
+        name
+    FROM
+        dogs
+)
+SELECT
+    name
+FROM
+    cats
+WHERE
+    name IN (SELECT name FROM dog_names);
+```
+
+This might seem like more work compared to above, but it serves two purposes: making our code easier to understand by separating out our subqueries, and setting us up to build more complex queries.
+
+Let's say, for example, that our subquery isn't simply selecting a row from a table. Perhaps it has some groupby's and joins with another subquery's table.
+
+{% include header-sql.html %}
+```sql
+WITH top_students AS (
+    SELECT
+        id,
+        AVG(grade)
+    FROM
+        students
+    WHERE
+        grade IS NOT NULL
+        AND classroom_id IS NOT NULL
+    GROUP BY
+        id
+    ORDER BY
+        AVG(grade) DESC
+    LIMIT
+        10
+),
+chicago_classrooms AS (
+    SELECT
+        id
+    FROM
+        classrooms
+    WHERE
+        city = 'Chicago'
+)
+SELECT
+    name
+FROM
+    students
+WHERE
+    id IN (
+        SELECT id FROM top_students
+    )
+    AND classroom_id IN (
+        SELECT id FROM chicago_classrooms
+    );
+```
+
+## Conclusions
+This post was an overview of some SQL skills that become useful once you're beyond the basics.
