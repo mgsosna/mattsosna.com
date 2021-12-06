@@ -8,6 +8,11 @@ When I was learning SQL, I found it hard to progress beyond the absolute basics.
 
 So here's something we can do. We can stay in Python and create a SQLite DB, then run queries against it. Or we can install an RDBMS like PSequel or whatever and execute queries there.
 
+We'll also focus on `SELECT` queries, the "Read" in CRUD.
+
+## Basic SQL
+Check out [this post on SQL vs. NoSQL databases]({{  site.baseurl  }}/SQL_vs_NoSQL) to learn more about database theory.
+
 ## Filters
 `WHERE` is applied before aggregation steps, while `HAVING` is applied after.
 
@@ -60,7 +65,7 @@ You can also use it for exact equality, or `IN` statements.
 SELECT
     CASE
         WHEN name IN ('Matt', 'John') THEN 'Friends'
-        
+
 ```
 
 ## `WITH`
@@ -147,6 +152,59 @@ WHERE
         SELECT id FROM chicago_classrooms
     );
 ```
+
+[**LC 1412:** Find the Quiet Students in All Exams](https://leetcode.com/problems/find-the-quiet-students-in-all-exams). The premise is that we have `Student` and `Exam` tables, and we want to find the students who meet the following criteria:
+1. Took at least one exam
+2. Never scored the highest or lowest on an exam.
+
+{% include header-sql.html %}
+```sql
+-- Get the highest and lowest exam scores
+WITH hl_exams AS (
+    SELECT
+        exam_id,
+        MIN(score) AS min_score,
+        MAX(score) AS max_score
+    FROM
+        Exams
+    GROUP BY
+        exam_id
+),
+
+-- Get the students who scored highest or lowest on the exams
+hl_students AS (
+    SELECT
+        student_id
+    FROM
+        Exam
+    INNER JOIN
+        hl_exams
+    ON
+        Exam.exam_id = hl_exams.exam_id
+        AND
+        (Exam.score = hl_exams.min_score
+        OR Exam.score = hl_exams.max_score)
+)
+
+SELECT
+    student_id,
+    student_name
+FROM
+    Student
+WHERE
+    -- Student took at least one exam
+    student_id IN (
+        SELECT student_id FROM Exams
+    )
+    AND
+    -- Student not highest or lowest score
+    student_id NOT IN (
+        SELECT student_id FROM hl_students
+    )
+```
+
+## Self joins
+Let's say we want to match all users from a city that are together.
 
 ## Conclusions
 This post was an overview of some SQL skills that become useful once you're beyond the basics.
