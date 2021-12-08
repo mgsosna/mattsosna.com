@@ -10,6 +10,11 @@ So here's something we can do. We can stay in Python and create a SQLite DB, the
 
 We'll also focus on `SELECT` queries, the "Read" in CRUD.
 
+Good "reading list" of beginner vs. intermediate SQL: https://softwareengineering.stackexchange.com/questions/181651/are-these-sql-concepts-for-beginners-intermediate-or-advanced-developers
+
+Can also think about self joins: https://www.w3schools.com/sql/sql_join_self.asp
+
+
 ## Basic SQL
 Check out [this post on SQL vs. NoSQL databases]({{  site.baseurl  }}/SQL_vs_NoSQL) to learn more about database theory.
 
