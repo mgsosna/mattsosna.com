@@ -72,6 +72,7 @@ permalink: /blog/
 1. [Intro to data structures]({{  site.baseurl  }}/CSDS-Intro)
   - <span style="font-size: 12px">Featured in _Toward Data Science_'s [10/28/21 editors' picks](https://towardsdatascience.com/why-eliminating-bias-in-ai-systems-is-so-hard-97e4f60ffe93)
 2. [Exploring stacks and queues]({{  site.baseurl  }}/Stacks-queues)
+  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [12/09/21 editors' picks](https://towardsdatascience.com/ready-to-brush-up-on-your-python-skills-110e4f51992c)
 
 ## Python
 ### Random Python
