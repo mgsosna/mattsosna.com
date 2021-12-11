@@ -58,3 +58,5 @@ LIMIT
 ```
 
 Another thing is randomly sampling rows. There are also multiple ways to do this that vary in efficiency.
+
+Also getting good at Airflow / DAGs. Pipelines will have dependencies, which will have dependencies. Being able to follow the trail is important.
