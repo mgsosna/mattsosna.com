@@ -22,6 +22,12 @@ The thing to remember
 * "Getting to the bottom of it." Following the trail.
 * No one actually knows everything. If they do, they're probably extremely busy and high-up. (If they are and they're willing to talk to you, hold onto them! Set up 1:1's if you can.)
 
+### 1b. Learning quickly
+One thing that surprised me is how little open-source software I use in my job. When you're at a company of FAANG's scale, where users are numbered in the _billions_ rather than thousands or millions, non-custom solutions simply don't work. The one-in-a-million edge case comes up constantly. The inefficiency of an operation starts to wear on your servers.
+
+Rather, you'll most likely be using internal tools. You'll need to be able to quickly learn how these tools work, as well as where to find the documentation on how to use them.
+
+
 ### 2. Really good at SQL
 SQL queries will become super complex. There are some I've dealt with that are over 500 lines. This is just how it is when dealing with big data $-$ you need to perform as much of the processing as possible at the database level before moving things to your machine. (Or the one you've comandeered in the cloud.) One of the queries I ran joined a table with over 1.5 trillion rows.
 
