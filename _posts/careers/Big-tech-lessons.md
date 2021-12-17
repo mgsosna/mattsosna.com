@@ -18,7 +18,8 @@ What I actually need:
 ### 1. Expert-level investigative skills
 The thing to remember
 
-* Absolute fearlessness when it comes to looking through logs
+* Absolute fearlessness when it comes to looking through logs.
+* There is a LOT of reading through others' code. There's this quote by Guido von Rossum, the creator of Python, that one of his big insights was that code was read much more than it was written. That wasn't the case for me for years, pretty much until I arrived at a FAANG company. Now I spend a lot of time each day reading what others have written and trying to understand it. You go from greenfield engineering to needing to build something that plays well with the system others have built. And there can be a long, long history of what others have written... since there are a lot of "others"! Being able to sit with not immediately understanding what you're seeing, and just having to push through it.
 * "Getting to the bottom of it." Following the trail.
 * No one actually knows everything. If they do, they're probably extremely busy and high-up. (If they are and they're willing to talk to you, hold onto them! Set up 1:1's if you can.)
 
