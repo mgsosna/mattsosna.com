@@ -28,6 +28,8 @@ One thing that surprised me is how little open-source software I use in my job. 
 
 Rather, you'll most likely be using internal tools. You'll need to be able to quickly learn how these tools work, as well as where to find the documentation on how to use them.
 
+You also need to learn to navigate an ecosystem of ownership. Which team owns which product? Who is the point of contact when you have a question about X? What's expected for you to figure out on your own, versus expected for you not to know? This becomes even more challenging as teams within a large company are constantly shifting, reorganizing, and changing the products they own.
+
 
 ### 2. Really good at SQL
 SQL queries will become super complex. There are some I've dealt with that are over 500 lines. This is just how it is when dealing with big data $-$ you need to perform as much of the processing as possible at the database level before moving things to your machine. (Or the one you've comandeered in the cloud.) One of the queries I ran joined a table with over 1.5 trillion rows.
@@ -67,3 +69,6 @@ LIMIT
 Another thing is randomly sampling rows. There are also multiple ways to do this that vary in efficiency.
 
 Also getting good at Airflow / DAGs. Pipelines will have dependencies, which will have dependencies. Being able to follow the trail is important.
+
+## 3. Deep dive
+In a startup, you're responsible for a wide range of the analytics-engineering spectrum. In a big company, you really specialize. This doesn't mean that your work is all the same though.
