@@ -1,8 +1,10 @@
 ---
 layout: post
-title: Surprises from starting an MLE job in big tech
+title: Surprises from being an MLE in big tech
 author: matt_sosna
 ---
+
+FAANG companies have attained a sort of "Ivy League" status in the tech world over the last decade. I've spent
 
 What I thought I'd need:
 * Expertise in the details of Docker, AWS, etc.
@@ -34,8 +36,9 @@ You also need to learn to navigate an ecosystem of ownership. Which team owns wh
 ### 2. Really good at SQL
 SQL queries will become super complex. There are some I've dealt with that are over 500 lines. This is just how it is when dealing with big data $-$ you need to perform as much of the processing as possible at the database level before moving things to your machine. (Or the one you've comandeered in the cloud.) One of the queries I ran joined a table with over 1.5 trillion rows.
 
-Your queries also need to become efficient. e.g.
+Your queries need to become efficient. For example, let's say we have a table of model predictions and we want to take the 100 highest-scoring rows. One approach would be to sort the table by `score`, then take the top 100.
 
+{% include header-sql.html %}
 ```sql
 SELECT
     id,
@@ -48,10 +51,11 @@ LIMIT
     100;
 ```
 
-While it looks good on paper, that's probably the least-efficient way to find the ten highest-scoring IDs. The `ORDER BY` line sorts the entire table, an operation that takes $O(nlogn)$ time.
+While it looks good on paper, that's probably the least-efficient way to find the ten highest-scoring IDs. The `ORDER BY` line sorts the entire table, an operation that takes $O(nlogn)$ time. We're also processing a lot of rows we probably don't care about $-$ if our table is a million rows, 99.99% of our compute is essentially unnecessary.
 
 Rather, you need to use additional information wherever possible. Do you know the distribution of the predictions? Then try using a `WHERE` clause to filter out rows below a threshold.
 
+{% include header-sql.html %}
 ```sql
 SELECT
     id,
@@ -66,9 +70,7 @@ LIMIT
     100;
 ```
 
-Another thing is randomly sampling rows. There are also multiple ways to do this that vary in efficiency.
-
 Also getting good at Airflow / DAGs. Pipelines will have dependencies, which will have dependencies. Being able to follow the trail is important.
 
-## 3. Deep dive
-In a startup, you're responsible for a wide range of the analytics-engineering spectrum. In a big company, you really specialize. This doesn't mean that your work is all the same though.
+## 3. Specialization
+In a startup, you're responsible for a wide range of the analytics-engineering spectrum. In a big company, you really specialize. This doesn't mean that your work is all the same, though: as an MLE, your work will range from running experiments, learning from domain experts,
