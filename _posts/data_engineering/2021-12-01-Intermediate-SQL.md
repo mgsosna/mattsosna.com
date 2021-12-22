@@ -4,7 +4,38 @@ title: Intermediate SQL
 author: matt_sosna
 ---
 
-When I was learning SQL, I found it hard to progress beyond the absolute basics.
+When I was learning SQL, I found it hard to progress beyond the absolute basics. One big blocker was being able to practice on my own. If I didn't have access to a database to begin with, how could I develop familiarity with SQL? It was a chicken and egg problem, the "cold start" to SQL.
+
+In this post, we'll create a database for you to play with. Then we'll explore a few intermediate SQL topics, the sort of techniques you might use once you're familiar with the basics. If you can understand the below query, then you're prepared for the rest of this post.
+
+{% include header-sql.html %}
+```sql
+SELECT
+    s.id AS student_id,
+    g.grade
+FROM
+    students AS s
+LEFT JOIN
+    grades AS g
+    ON s.id = g.student_id
+WHERE
+    g.grade > 90;
+```
+
+## Setting up
+When learning a new language, practice is critical. It's one thing to read this post and nod along, and another to be able to explore ideas on your own. So let's first get a database system set up on your computer. While it sounds intimidating, it'll actually be straightforward.
+
+We start by installing [PostgreSQL](https://www.postgresql.org/), a common dialect of SQL. We go to the download page, select our operating system, and then run the installation.
+
+<center>
+<img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/download.png" width="70%" height="70%">
+</center>
+
+We'll then install [pgadmin4](https://www.pgadmin.org/) to interact with our PostgreSQL database(s). We do this by going to the [installation page](https://www.pgadmin.org/download/), clicking the link for our operating system (e.g. Windows), and then following the steps.
+
+We then click on "Set up server" (which is really setting up a connection to an existing server, which is why we need to install Postgres first).
+
+<img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/pgadmin1.png">
 
 So here's something we can do. We can stay in Python and create a SQLite DB, then run queries against it. Or we can install an RDBMS like PSequel or whatever and execute queries there.
 
@@ -33,7 +64,7 @@ WHERE
 GROUP BY
     id
 HAVING
-    AVG(grade) > 90;  
+    AVG(grade) > 90;
 ```
 
 ## `CASE WHEN`
