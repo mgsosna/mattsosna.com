@@ -41,54 +41,91 @@ We're now ready to create some tables! To do so, click on `home` > Databases (1)
 
 <img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/pgadmin1.png">
 
-Let's start with a table called `student` with the columns `id`, `name`, and `classroom_id`. `id` will be the primary key and therefore non-nullable. In other words, for a student to be added to this table, he or she needs an `id` for the write to complete. We'll create a sequence that auto-increments for us.
+Let's start with a table called `student` with the columns `id`, `name`, and `classroom_id`. `id` will be the primary key and therefore non-nullable. In other words, for a student to be added to this table, he or she needs an `id` for the write to complete. We'll use the `GENERATED ALWAYS AS IDENTITY` argument to auto-increment the values for us.
 
 We can do this with the GUI, but it's more reproducible and I think easier and quite a bit faster if we write it with code. Right click on tables and select "Query Editor." Then type this:
 
 {% include header-sql.html %}
 ```sql
--- Create incrementing sequence
-CREATE SEQUENCE student_seq;
-
--- Define 'student' table
-CREATE TABLE student (
-    id INT PRIMARY KEY DEFAULT nextval('student_seq'::regclass),
-    name VARCHAR,
-    classroom_id INT
+DROP TABLE IF EXISTS classrooms;
+CREATE TABLE classrooms (
+	id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	teacher VARCHAR(100)
 );
-
--- Insert rows
-INSERT INTO student
-    (id, name, classroom_id)
- VALUES
-    (1, 'Adam', 1),
-    (2, 'Betty', 1),
-    (3, 'Caroline', 2);
-
--- Pull rows
-SELECT * FROM student;
 ```
 
-Let's now create a `classroom` table and relate the two.
+Then we'll create the students table. It'll have a foreign key that points to `classrooms`.
 
 {% include header-sql.html %}
 ```sql
--- Create another sequence
-CREATE SEQUENCE classroom_seq;
-
--- Create classroom table
-CREATE TABLE classroom (
-    id INT PRIMARY KEY DEFAULT nextval('classroom_seq'::regclass),
-    teacher VARCHAR
+DROP TABLE IF EXISTS students;
+CREATE TABLE students (
+	id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	name VARCHAR(100),
+	classroom_id INT,
+	CONSTRAINT fk_classrooms
+		FOREIGN KEY(classroom_id)
+		REFERENCES classrooms(id)
 );
+```
 
+The foreign key is important. If we try to insert a row into `students` and refernece a classroom that doesn't eyt exist, we'll get an error.
+
+{% include header-sql.html %}
+```sql
+INSERT INTO students (name, classroom_id)
+VALUES ('Matt', 1);
+/*
+ERROR:  insert or update on table "students" violates foreign key constraint "fk_classrooms"
+DETAIL:  Key (classroom_id)=(1) is not present in table "classrooms".
+SQL state: 23503
+*/
+```
+
+So let's first create some classrooms and view the results.
+
+{% include header-sql.html %}
+```sql
 -- Insert rows
-INSERT INTO classroom
+INSERT INTO classrooms
     (teacher)
 VALUES
     ('Mary'),
     ('Jonah');
 
+SELECT * FROM classrooms;
+/*
+  id  | teacher
+  --- | -------
+    1 | Mary
+    2 | Jonah
+ */
+```
+
+Now we can create students that belong to classrooms.
+
+{% include header-sql.html %}
+```sql
+-- Insert rows
+INSERT INTO students
+    (name, classroom_id)
+ VALUES
+    ('Adam', 1),
+    ('Betty', 1),
+    ('Caroline', 2);
+
+-- Pull rows
+SELECT * FROM students;
+/*
+  id  | name     | classroom_id
+  --- | -------- | ------------
+    1 | Adam     |           1
+    2 | Betty    |           1
+    3 | Caroline |           2
+ */
+```
+
+```sql
 -- Join the tables
 SELECT
     *
