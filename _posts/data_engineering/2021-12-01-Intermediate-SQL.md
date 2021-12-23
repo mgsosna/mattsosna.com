@@ -52,18 +52,18 @@ CREATE SEQUENCE student_seq;
 
 -- Define 'student' table
 CREATE TABLE student (
-    id INT DEFAULT nextval('student_seq'::regclass),
-	name VARCHAR,
-	classroom_id INT
+    id INT PRIMARY KEY DEFAULT nextval('student_seq'::regclass),
+    name VARCHAR,
+    classroom_id INT
 );
 
 -- Insert rows
 INSERT INTO student
- 	(id, name, classroom_id)
+    (id, name, classroom_id)
  VALUES
- 	(1, 'Adam', 1),
- 	(2, 'Betty', 1),
- 	(3, 'Caroline', 2);
+    (1, 'Adam', 1),
+    (2, 'Betty', 1),
+    (3, 'Caroline', 2);
 
 -- Pull rows
 SELECT * FROM student;
@@ -78,16 +78,16 @@ CREATE SEQUENCE classroom_seq;
 
 -- Create classroom table
 CREATE TABLE classroom (
-	id INT DEFAULT nextval('classroom_seq'::regclass),
-	teacher VARCHAR
+    id INT PRIMARY KEY DEFAULT nextval('classroom_seq'::regclass),
+    teacher VARCHAR
 );
 
 -- Insert rows
 INSERT INTO classroom
-	(teacher)
+    (teacher)
 VALUES
-	('Mary'),
-	('Jonah');
+    ('Mary'),
+    ('Jonah');
 
 -- Join the tables
 SELECT
