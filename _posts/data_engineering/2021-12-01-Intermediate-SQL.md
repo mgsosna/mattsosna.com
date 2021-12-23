@@ -4,38 +4,101 @@ title: Intermediate SQL
 author: matt_sosna
 ---
 
-When I was learning SQL, I found it hard to progress beyond the absolute basics. One big blocker was being able to practice on my own. If I didn't have access to a database to begin with, how could I develop familiarity with SQL? It was a chicken and egg problem, the "cold start" to SQL.
+When I started learning SQL, I found it hard to progress beyond the absolute basics. I loved [DataCamp's courses](https://www.datacamp.com/courses/introduction-to-sql) because I could just type the code directly into a console on the screen. But once the courses ended, how could I practice what I learned? And how could I continue improving, when all the tutorials I found just consisted of code snippits, without an underlying database I could query myself?
 
-In this post, we'll create a database for you to play with. Then we'll explore a few intermediate SQL topics, the sort of techniques you might use once you're familiar with the basics. If you can understand the below query, then you're prepared for the rest of this post.
+I found myself in a "chicken or egg" problem $-$ I needed access to a database so I could practice SQL and continue learning, but I needed to be good at SQL to get hired and be granted access to databases to practice on.
+
+In this post, we'll create a database for you to play with. Then we'll explore a few intermediate SQL topics, the sort of techniques you'll likely utilize as a data scientist. If you understand the below query, then you're prepared for the rest of this post.
 
 {% include header-sql.html %}
 ```sql
 SELECT
     s.id AS student_id,
-    g.grade
+    e.score
 FROM
     students AS s
 LEFT JOIN
-    grades AS g
-    ON s.id = g.student_id
+    exams AS e
+    ON s.id = e.student_id
 WHERE
-    g.grade > 90;
+    e.grade > 90;
 ```
 
 ## Setting up
-When learning a new language, practice is critical. It's one thing to read this post and nod along, and another to be able to explore ideas on your own. So let's first get a database system set up on your computer. While it sounds intimidating, it'll actually be straightforward.
+When learning a new language, practice is critical. It's one thing to read this post and nod along, and another to be able to explore ideas on your own. So let's first set up a database on your computer. While it sounds intimidating, it'll actually be straightforward.
 
-We start by installing [PostgreSQL](https://www.postgresql.org/), a common dialect of SQL. We go to the download page, select our operating system, and then run the installation.
+The first step is to install SQL on your computer. We'll use [PostgreSQL (Postgres)](https://www.postgresql.org/), a common dialect. We go to the [download page](https://www.postgresql.org/download/), select our operating system (e.g. Windows), and then run the installation. If you set a password on your database, keep it handy for the next step!  (Since our database won't be public, it's fine to use a simple password like `admin`.)
 
 <center>
 <img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/download.png" width="70%" height="70%">
 </center>
 
-We'll then install [pgadmin4](https://www.pgadmin.org/) to interact with our PostgreSQL database(s). We do this by going to the [installation page](https://www.pgadmin.org/download/), clicking the link for our operating system (e.g. Windows), and then following the steps.
+The next step is to install [PGAdmin](https://www.pgadmin.org/), a graphical user interface (GUI) that makes it easy to interact with our PostgreSQL database(s). We do this by going to the [installation page](https://www.pgadmin.org/download/), clicking the link for our operating system, and then following the steps.
 
-We then click on "Set up server" (which is really setting up a connection to an existing server, which is why we need to install Postgres first).
+Once it's installed, we open PGAdmin and click on "Add new server." This step actually sets up a connection to an _existing_ server, which is why we needed to install Postgres first. I named my server `home` and passed in the password I defined during the Postgres installation.
+
+We're now ready to create some tables! To do so, click on `home` > Databases (1) > postgres > Schemas (1) > Public > Tables > Create > Table.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/pgadmin1.png">
+
+Let's start with a table called `student` with the columns `id`, `name`, and `classroom_id`. `id` will be the primary key and therefore non-nullable. In other words, for a student to be added to this table, he or she needs an `id` for the write to complete. We'll create a sequence that auto-increments for us.
+
+We can do this with the GUI, but it's more reproducible and I think easier and quite a bit faster if we write it with code. Right click on tables and select "Query Editor." Then type this:
+
+{% include header-sql.html %}
+```sql
+-- Create incrementing sequence
+CREATE SEQUENCE student_seq;
+
+-- Define 'student' table
+CREATE TABLE student (
+    id INT DEFAULT nextval('student_seq'::regclass),
+	name VARCHAR,
+	classroom_id INT
+);
+
+-- Insert rows
+INSERT INTO student
+ 	(id, name, classroom_id)
+ VALUES
+ 	(1, 'Adam', 1),
+ 	(2, 'Betty', 1),
+ 	(3, 'Caroline', 2);
+
+-- Pull rows
+SELECT * FROM student;
+```
+
+Let's now create a `classroom` table and relate the two.
+
+{% include header-sql.html %}
+```sql
+-- Create another sequence
+CREATE SEQUENCE classroom_seq;
+
+-- Create classroom table
+CREATE TABLE classroom (
+	id INT DEFAULT nextval('classroom_seq'::regclass),
+	teacher VARCHAR
+);
+
+-- Insert rows
+INSERT INTO classroom
+	(teacher)
+VALUES
+	('Mary'),
+	('Jonah');
+
+-- Join the tables
+SELECT
+    *
+FROM
+    student AS s
+INNER JOIN
+    classroom AS c
+    ON s.classroom_id = c.id;
+```
+
 
 So here's something we can do. We can stay in Python and create a SQLite DB, then run queries against it. Or we can install an RDBMS like PSequel or whatever and execute queries there.
 
