@@ -27,7 +27,7 @@ WHERE
 ## Setting up
 When learning a new language, practice is critical. It's one thing to read this post and nod along, and another to be able to explore ideas on your own. So let's first set up a database on your computer. While it sounds intimidating, it'll actually be straightforward.
 
-The first step is to install SQL on your computer. We'll use [PostgreSQL (Postgres)](https://www.postgresql.org/), a common dialect. We go to the [download page](https://www.postgresql.org/download/), select our operating system (e.g. Windows), and then run the installation. If you set a password on your database, keep it handy for the next step!  (Since our database won't be public, it's fine to use a simple password like `admin`.)
+The first step is to install SQL on your computer. We'll use [PostgreSQL (Postgres)](https://www.postgresql.org/), a common dialect in data science. We go to the [download page](https://www.postgresql.org/download/), select our operating system (e.g. Windows), and then run the installation. If you set a password on your database, keep it handy for the next step!  (Since our database won't be public, it's fine to use a simple password like `admin`.)
 
 <center>
 <img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/download.png" width="70%" height="70%">
@@ -37,13 +37,13 @@ The next step is to install [PGAdmin](https://www.pgadmin.org/), a graphical use
 
 Once it's installed, we open PGAdmin and click on "Add new server." This step actually sets up a connection to an _existing_ server, which is why we needed to install Postgres first. I named my server `home` and passed in the password I defined during the Postgres installation.
 
-We're now ready to create some tables! To do so, click on `home` > Databases (1) > postgres > Schemas (1) > Public > Tables > Create > Table.
+We're now ready to create some tables! Let's create a set of tables that describe the data a school might have: students, classrooms, and grades. We'll model our data such that a classroom consists of multiple students, each which has multiple grades.
+
+We could do all this with the GUI, but we'll instead write code to make our workflow repeatable. To write the queries that will create our tables, we'll right click on postgres (under home > Databases (1) > postgres) and then click on Query Tool.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/pgadmin1.png">
 
-Let's start with a table called `student` with the columns `id`, `name`, and `classroom_id`. `id` will be the primary key and therefore non-nullable. In other words, for a student to be added to this table, he or she needs an `id` for the write to complete. We'll use the `GENERATED ALWAYS AS IDENTITY` argument to auto-increment the values for us.
-
-We can do this with the GUI, but it's more reproducible and I think easier and quite a bit faster if we write it with code. Right click on tables and select "Query Editor." Then type this:
+Let's start by creating the `classrooms` table. We'll keep this table simple: it'll just consist of an `id` and the `teacher` name.
 
 {% include header-sql.html %}
 ```sql
@@ -54,7 +54,13 @@ CREATE TABLE classrooms (
 );
 ```
 
-Then we'll create the students table. It'll have a foreign key that points to `classrooms`.
+The first line, `DROP TABLE IF EXISTS classrooms`, deletes the `classrooms` table if it already exists. This is handy down the road if we realize we want to add a column or change the name or datatype of an existing column $-$ we can just rerun the script and the `DROP TABLE` line cleans up our previous version.
+
+Line 3 may also catch your eye: here we specify that `id` is the primary key, meaning each row must contain a value in this column, and that each value must be unique. `GENERATED ALWAYS AS IDENTITY` is an alternative to the [sequence](https://www.postgresql.org/docs/9.5/sql-createsequence.html) syntax $-$ since we don't want to have to keep track of which `id` values have already been used, we allow Postgres to handle setting the `id`. As a result, when inserting data into this table, we only need to provide the `teacher` names.
+
+Finally, on line 4 we specify that `teacher` is a string with a maximum length of 100 characters. In Postgres it [technically doesn't matter](https://stackoverflow.com/questions/1067061/does-a-varchar-fields-declared-size-have-any-impact-in-postgresql) whether we specify 10, 100, or 500, but [in other dialects it _does_ matter](https://stackoverflow.com/questions/1962310/importance-of-varchar-length-in-mysql-table).
+
+Let's now create the `students` table. Our table will consist of a unique `id`, the student's `name`, and a [**foreign key**](https://www.postgresqltutorial.com/postgresql-foreign-key/) that points to `classrooms`.
 
 {% include header-sql.html %}
 ```sql
@@ -69,7 +75,7 @@ CREATE TABLE students (
 );
 ```
 
-The foreign key is important. If we try to insert a row into `students` and refernece a classroom that doesn't eyt exist, we'll get an error.
+The foreign key is important. If we try to insert a row into `students` and refernece a classroom that doesn't yet exist, we'll get an error.
 
 {% include header-sql.html %}
 ```sql
@@ -125,6 +131,7 @@ SELECT * FROM students;
  */
 ```
 
+{% include header-sql.html %}
 ```sql
 -- Join the tables
 SELECT
