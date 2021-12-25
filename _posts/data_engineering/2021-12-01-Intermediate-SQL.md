@@ -54,7 +54,9 @@ CREATE TABLE classrooms (
 );
 ```
 
-The first line, `DROP TABLE IF EXISTS classrooms`, deletes the `classrooms` table if it already exists. This is handy down the road if we realize we want to add a column or change the name or datatype of an existing column $-$ we can just rerun the script and the `DROP TABLE` line cleans up our previous version.
+The first line, `DROP TABLE IF EXISTS classrooms`, deletes the `classrooms` table if it already exists. This is handy down the road if we realize we want to change our database somehow $-$ add a table, change the datatype of a column, etc. We can simply store the instructions for generating our database in a script, update that script when we want to make a change, and then rerun it. The `DROP TABLE` line(s) will clean up the previous versions of our table(s).
+
+(Note: codifying our database is an engineering best practice, but we'll still want to store _backups_ of our data, since we don't want to codify each row!)
 
 Line 3 may also catch your eye: here we specify that `id` is the primary key, meaning each row must contain a value in this column, and that each value must be unique. `GENERATED ALWAYS AS IDENTITY` is an alternative to the [sequence](https://www.postgresql.org/docs/9.5/sql-createsequence.html) syntax $-$ since we don't want to have to keep track of which `id` values have already been used, we allow Postgres to handle setting the `id`. As a result, when inserting data into this table, we only need to provide the `teacher` names.
 
