@@ -6,7 +6,7 @@ author: matt_sosna
 
 When I started learning SQL, I found it hard to progress beyond the absolute basics. I loved [DataCamp's courses](https://www.datacamp.com/courses/introduction-to-sql) because I could just type the code directly into a console on the screen. But once the courses ended, how could I practice what I learned? And how could I continue improving, when all the tutorials I found just consisted of code snippits, without an underlying database I could query myself?
 
-I found myself in a "chicken or egg" problem $-$ I needed access to a database so I could practice SQL and continue learning, but I needed to be good at SQL to get hired and be granted access to databases to practice on.
+I found myself in a "chicken or egg" problem $-$ I needed access to a database so I could continue learning, but I needed to be good at SQL to get hired and access databases to practice on.
 
 In this post, we'll create a database for you to play with. Then we'll explore a few intermediate SQL topics, the sort of techniques you'll likely utilize as a data scientist. If you understand the below query, then you're prepared for the rest of this post.
 
@@ -43,24 +43,25 @@ We could do all this with the GUI, but we'll instead write code to make our work
 
 <img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/pgadmin1.png">
 
-Let's start by creating the `classrooms` table. We'll keep this table simple: it'll just consist of an `id` and the `teacher` name.
+Let's start by creating the `classrooms` table. We'll keep this table simple: it'll just consist of an `id` and the `teacher` name. Type the following code into the query tool and hit run.
 
 {% include header-sql.html %}
 ```sql
 DROP TABLE IF EXISTS classrooms;
+
 CREATE TABLE classrooms (
-	id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-	teacher VARCHAR(100)
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    steacher VARCHAR(100)
 );
 ```
 
-The first line, `DROP TABLE IF EXISTS classrooms`, deletes the `classrooms` table if it already exists. This is handy down the road if we realize we want to change our database somehow $-$ add a table, change the datatype of a column, etc. We can simply store the instructions for generating our database in a script, update that script when we want to make a change, and then rerun it. The `DROP TABLE` line(s) will clean up the previous versions of our table(s).
+The first line, `DROP TABLE IF EXISTS classrooms`, deletes the `classrooms` table if it already exists. Adding a `DROP TABLE IF EXISTS` line before `CREATE TABLE` opens us up to codifying our database schema in one script, which is particularly handy if we decide to change our database in some way down the road $-$ ad a table, change the datatype of a column, etc. We can simply store the instructions for generating our database in a script, update that script when we want to make a change, and then rerun it. The `DROP TABLE` line(s) will clean up the previous versions of our table(s).
 
-(Note: codifying our database is an engineering best practice, but we'll still want to store _backups_ of our data, since we don't want to codify each row!)
+(Note: codifying our database is an engineering best practice, but this doesn't pertain to the _data_ in those tables $-$ for that, we'll want to periodically back up our data. we'll still want to store _backups_ of our data, since we don't want to codify each row!)
 
-Line 3 may also catch your eye: here we specify that `id` is the primary key, meaning each row must contain a value in this column, and that each value must be unique. `GENERATED ALWAYS AS IDENTITY` is an alternative to the [sequence](https://www.postgresql.org/docs/9.5/sql-createsequence.html) syntax $-$ since we don't want to have to keep track of which `id` values have already been used, we allow Postgres to handle setting the `id`. As a result, when inserting data into this table, we only need to provide the `teacher` names.
+Line 4 may also catch your eye: here we specify that `id` is the primary key, meaning each row must contain a value in this column, and that each value must be unique. `GENERATED ALWAYS AS IDENTITY` is an alternative to the [sequence](https://www.postgresql.org/docs/9.5/sql-createsequence.html) syntax $-$ since we don't want to have to keep track of which `id` values have already been used, we allow Postgres to handle setting the `id`. As a result, when inserting data into this table, we only need to provide the `teacher` names.
 
-Finally, on line 4 we specify that `teacher` is a string with a maximum length of 100 characters. In Postgres it [technically doesn't matter](https://stackoverflow.com/questions/1067061/does-a-varchar-fields-declared-size-have-any-impact-in-postgresql) whether we specify 10, 100, or 500, but [in other dialects it _does_ matter](https://stackoverflow.com/questions/1962310/importance-of-varchar-length-in-mysql-table).
+Finally, on line 5 we specify that `teacher` is a string with a maximum length of 100 characters.<sup>[[1]](#1-setting-up)</sup>.
 
 Let's now create the `students` table. Our table will consist of a unique `id`, the student's `name`, and a [**foreign key**](https://www.postgresqltutorial.com/postgresql-foreign-key/) that points to `classrooms`.
 
@@ -353,3 +354,11 @@ Let's say we want to match all users from a city that are together.
 
 ## Conclusions
 This post was an overview of some SQL skills that become useful once you're beyond the basics.
+
+## Footnotes
+#### 1. [Setting up](#setting-up)
+We specified the `teacher` column as a string with a max of 100 characters since we don't think we'll run into names longer than this. But are we actually saving on storage space if we limit rows to 100 characters versus 200 or 500?
+
+In Postgres it turns out it [technically doesn't matter](https://stackoverflow.com/questions/1067061/does-a-varchar-fields-declared-size-have-any-impact-in-postgresql) whether we specify 10, 100, or 500. So specifying a limit might be more of a best practice for communicating to future engineers (including yourself) what your expectations are for the data in this column.
+
+But in MySQL [the size limit _does_ matter](https://stackoverflow.com/questions/1962310/importance-of-varchar-length-in-mysql-table): temporary tables and `MEMORY` tables will store strings of equal length padded out to the maximum specified in the table schema, meaning a `VARCHAR(1000)` will waste a lot of space if none of the values approach that limit.
