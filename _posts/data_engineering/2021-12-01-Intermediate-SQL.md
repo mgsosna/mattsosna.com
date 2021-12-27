@@ -55,13 +55,11 @@ CREATE TABLE classrooms (
 );
 ```
 
-The first line, `DROP TABLE IF EXISTS classrooms`, deletes the `classrooms` table if it already exists. Adding a `DROP TABLE IF EXISTS` line before `CREATE TABLE` opens us up to codifying our database schema in one script, which is particularly handy if we decide to change our database in some way down the road $-$ ad a table, change the datatype of a column, etc. We can simply store the instructions for generating our database in a script, update that script when we want to make a change, and then rerun it. The `DROP TABLE` line(s) will clean up the previous versions of our table(s).
-
-(Note: codifying our database is an engineering best practice, but this doesn't pertain to the _data_ in those tables $-$ for that, we'll want to periodically back up our data. we'll still want to store _backups_ of our data, since we don't want to codify each row!)
+The first line, `DROP TABLE IF EXISTS classrooms`, deletes the `classrooms` table if it already exists. Adding a `DROP TABLE IF EXISTS` line before `CREATE TABLE` opens us up to codifying our database schema in one script, which is particularly handy if we decide to change our database in some way down the road $-$ add a table, change the datatype of a column, etc. We can simply store the instructions for generating our database in a script, update that script when we want to make a change, and then rerun it.<sup>[[1]](#1-setting-up)</sup>.
 
 Line 4 may also catch your eye: here we specify that `id` is the primary key, meaning each row must contain a value in this column, and that each value must be unique. `GENERATED ALWAYS AS IDENTITY` is an alternative to the [sequence](https://www.postgresql.org/docs/9.5/sql-createsequence.html) syntax $-$ since we don't want to have to keep track of which `id` values have already been used, we allow Postgres to handle setting the `id`. As a result, when inserting data into this table, we only need to provide the `teacher` names.
 
-Finally, on line 5 we specify that `teacher` is a string with a maximum length of 100 characters.<sup>[[1]](#1-setting-up)</sup>.
+Finally, on line 5 we specify that `teacher` is a string with a maximum length of 100 characters.<sup>[[2]](#2-setting-up)</sup>.
 
 Let's now create the `students` table. Our table will consist of a unique `id`, the student's `name`, and a [**foreign key**](https://www.postgresqltutorial.com/postgresql-foreign-key/) that points to `classrooms`.
 
@@ -356,7 +354,10 @@ Let's say we want to match all users from a city that are together.
 This post was an overview of some SQL skills that become useful once you're beyond the basics.
 
 ## Footnotes
-#### 1. [Setting up](#setting-up)
+#### 1. [Setting up](#seeting-up)
+Codifying our database _schema_ is an engineering best practice, but for the actual data, we'll instead perform [database backups](https://www.ionos.com/digitalguide/server/security/how-does-data-backup-work-for-databases/). There's a variety of ways to do this ranging from memory-heavy full backups to relatively light snapshots of changes. Ideally, these files are sent somewhere geographically distant from the servers storing our database, so a natural disaster doesn't wipe out your entire company.
+
+#### 2. [Setting up](#setting-up)
 We specified the `teacher` column as a string with a max of 100 characters since we don't think we'll run into names longer than this. But are we actually saving on storage space if we limit rows to 100 characters versus 200 or 500?
 
 In Postgres it turns out it [technically doesn't matter](https://stackoverflow.com/questions/1067061/does-a-varchar-fields-declared-size-have-any-impact-in-postgresql) whether we specify 10, 100, or 500. So specifying a limit might be more of a best practice for communicating to future engineers (including yourself) what your expectations are for the data in this column.
