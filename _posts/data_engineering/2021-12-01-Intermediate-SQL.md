@@ -164,6 +164,36 @@ SELECT * FROM students;
  */
 ```
 
+Finally, let's record some grades. Since grades correspond to _assignments_ $-$ such as homework, projects, attendance, and exams $-$ we'll actually use two tables to store our data more efficiently. `assignments` will contain data on the assignments themselves, while `grades` will record how each student performed on the assignments.
+
+{% include header-sql.html %}
+```sql
+DROP TABLE IF EXISTS grades;
+DROP TABLE IF EXISTS assignments;
+
+CREATE TABLE assignments (
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    category VARCHAR(20),
+    name VARCHAR(200),
+    due_date DATE,
+    weight FLOAT
+);
+
+CREATE TABLE grades (
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    assignment_id INT,
+    score INT,
+    student_id INT,
+    CONSTRAINT fk_assignments
+        FOREIGN KEY(assignment_id)
+        REFERENCES assignments(id),
+    CONSTRAINT fk_students
+        FOREIGN KEY(student_id)
+        REFERENCES students(id)
+);
+```
+
+
 
 {% include header-sql.html %}
 ```sql
