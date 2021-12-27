@@ -39,7 +39,7 @@ Once it's installed, we open PGAdmin and click on "Add new server." This step ac
 
 We're now ready to create some tables! Let's create a set of tables that describe the data a school might have: students, classrooms, and grades. We'll model our data such that a classroom consists of multiple students, each which has multiple grades.
 
-We could do all this with the GUI, but we'll instead write code to make our workflow repeatable. To write the queries that will create our tables, we'll right click on postgres (under home > Databases (1) > postgres) and then click on Query Tool.
+We could do all this with the GUI, but we'll instead write code to make our workflow repeatable. To write the queries that will create our tables, we'll right click on `postgres` (under `home` > `Databases (1)` > `postgres`) and then click on Query Tool.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/pgadmin1.png">
 
@@ -55,45 +55,51 @@ CREATE TABLE classrooms (
 );
 ```
 
-The first line, `DROP TABLE IF EXISTS classrooms`, deletes the `classrooms` table if it already exists. Adding a `DROP TABLE IF EXISTS` line before `CREATE TABLE` opens us up to codifying our database schema in one script, which is particularly handy if we decide to change our database in some way down the road $-$ add a table, change the datatype of a column, etc. We can simply store the instructions for generating our database in a script, update that script when we want to make a change, and then rerun it.<sup>[[1]](#1-setting-up)</sup>.
+The first line, `DROP TABLE IF EXISTS classrooms`, deletes the `classrooms` table if it already exists. Adding `DROP TABLE IF EXISTS <TABLE>` before `CREATE TABLE <table>` lets us **codify our database schema in a script**, which is handy if we decide to change our database in some way down the road $-$ add a table, change the datatype of a column, etc. We can simply store the instructions for generating our database in a script, update that script when we want to make a change, and then rerun it.<sup>[[1]](#1-setting-up)</sup> We're also now able to version control our schema and share it.
 
-Line 4 may also catch your eye: here we specify that `id` is the primary key, meaning each row must contain a value in this column, and that each value must be unique. `GENERATED ALWAYS AS IDENTITY` is an alternative to the [sequence](https://www.postgresql.org/docs/9.5/sql-createsequence.html) syntax $-$ since we don't want to have to keep track of which `id` values have already been used, we allow Postgres to handle setting the `id`. As a result, when inserting data into this table, we only need to provide the `teacher` names.
+Line 4 may also catch your eye: here we specify that `id` is the primary key, meaning each row must contain a value in this column, and that each value must be unique. To avoid needing to keep track of which `id` values have already been used, we use `GENERATED ALWAYS AS IDENTITY`, an alternative to the [**sequence**](https://www.postgresql.org/docs/9.5/sql-createsequence.html) syntax. As a result, when inserting data into this table, we only need to provide the `teacher` names.
 
-Finally, on line 5 we specify that `teacher` is a string with a maximum length of 100 characters.<sup>[[2]](#2-setting-up)</sup>.
+Finally, on line 5 we specify that `teacher` is a string with a maximum length of 100 characters.<sup>[[2]](#2-setting-up)</sup>
 
 Let's now create the `students` table. Our table will consist of a unique `id`, the student's `name`, and a [**foreign key**](https://www.postgresqltutorial.com/postgresql-foreign-key/) that points to `classrooms`.
 
 {% include header-sql.html %}
 ```sql
 DROP TABLE IF EXISTS students;
+
 CREATE TABLE students (
-	id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-	name VARCHAR(100),
-	classroom_id INT,
-	CONSTRAINT fk_classrooms
-		FOREIGN KEY(classroom_id)
-		REFERENCES classrooms(id)
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    name VARCHAR(100),
+    classroom_id INT,
+    CONSTRAINT fk_classrooms
+        FOREIGN KEY(classroom_id)
+        REFERENCES classrooms(id)
 );
 ```
 
-The foreign key is important. If we try to insert a row into `students` and refernece a classroom that doesn't yet exist, we'll get an error.
+We again drop the table if it exists before creating it, then specify an auto-incrementing `id` and a 100-character `name`. We now include a `classroom_id` column, and on lines 7-9 specify that this column points to the `id` column of the `classrooms` table.
+
+By specifying that `classroom_id` is a foreign key, we've set a rule on how data can be written to `students`. Postgres won't allow us to insert a row into `students` with a `classroom_id` that doesn't exist in `classrooms`.
 
 {% include header-sql.html %}
 ```sql
-INSERT INTO students (name, classroom_id)
-VALUES ('Matt', 1);
+INSERT INTO students
+    (name, classroom_id)
+VALUES
+    ('Matt', 1);
 /*
-ERROR:  insert or update on table "students" violates foreign key constraint "fk_classrooms"
-DETAIL:  Key (classroom_id)=(1) is not present in table "classrooms".
+ERROR:  insert or update on table "students" violates foreign
+        key constraint "fk_classrooms"
+DETAIL: Key (classroom_id)=(1) is not present in table
+        "classrooms".
 SQL state: 23503
 */
 ```
 
-So let's first create some classrooms and view the results.
+So let's now create some classrooms and make sure they were written successfully.
 
 {% include header-sql.html %}
 ```sql
--- Insert rows
 INSERT INTO classrooms
     (teacher)
 VALUES
@@ -109,11 +115,10 @@ SELECT * FROM classrooms;
  */
 ```
 
-Now we can create students that belong to classrooms.
+Great! Now that we have some classrooms, we can add records to `students` and reference these classrooms.
 
 {% include header-sql.html %}
 ```sql
--- Insert rows
 INSERT INTO students
     (name, classroom_id)
  VALUES
@@ -121,16 +126,44 @@ INSERT INTO students
     ('Betty', 1),
     ('Caroline', 2);
 
--- Pull rows
 SELECT * FROM students;
 /*
   id  | name     | classroom_id
   --- | -------- | ------------
-    1 | Adam     |           1
-    2 | Betty    |           1
-    3 | Caroline |           2
+    1 | Adam     |            1
+    2 | Betty    |            1
+    3 | Caroline |            2
  */
 ```
+
+What happens if we get a student who hasn't yet been assigned a classroom? Do we have to wait for them to receive a classroom before we can record them in the database? The answer is no: while our foreign key requirement will block writes that reference non-existing IDs in `classrooms`, it allows us to pass in a `NULL` for `classroom_id`. We can do this by explicitly stating `NULL` for `classroom_id` or by only passing in `name`.
+
+{% include header-sql.html %}
+```sql
+-- Explicitly specify NULL
+INSERT INTO students
+    (name, classroom_id)
+VALUES
+    ('Dina', NULL);
+
+-- Implicitly specify NULL
+INSERT INTO students
+    (name)
+VALUES
+    ('Evan');
+
+SELECT * FROM students;
+/*
+  id  | name     | classroom_id
+  --- | -------- | ------------
+    1 | Adam     |            1
+    2 | Betty    |            1
+    3 | Caroline |            2
+    4 | Dina     |       [null]
+    5 | Evan     |       [null]
+ */
+```
+
 
 {% include header-sql.html %}
 ```sql
