@@ -33,9 +33,9 @@ The first step is to install SQL on your computer. We'll use [PostgreSQL (Postgr
 <img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/download.png" width="70%" height="70%">
 </center>
 
-The next step is to install [PGAdmin](https://www.pgadmin.org/), a graphical user interface (GUI) that makes it easy to interact with our PostgreSQL database(s). We do this by going to the [installation page](https://www.pgadmin.org/download/), clicking the link for our operating system, and then following the steps.
+The next step is to install [pgAdmin](https://www.pgadmin.org/), a graphical user interface (GUI) that makes it easy to interact with our PostgreSQL database(s). We do this by going to the [installation page](https://www.pgadmin.org/download/), clicking the link for our operating system, and then following the steps.
 
-Once it's installed, we open PGAdmin and click on "Add new server." This step actually sets up a connection to an _existing_ server, which is why we needed to install Postgres first. I named my server `home` and passed in the password I defined during the Postgres installation.
+Once it's installed, we open pgAdmin and click on "Add new server." This step actually sets up a connection to an _existing_ server, which is why we needed to install Postgres first. I named my server `home` and passed in the password I defined during the Postgres installation.
 
 We're now ready to create some tables! Let's create a set of tables that describe the data a school might have: students, classrooms, and grades. We'll model our data such that a classroom consists of multiple students, each which has multiple grades.
 
@@ -47,15 +47,17 @@ Let's start by creating the `classrooms` table. We'll keep this table simple: it
 
 {% include header-sql.html %}
 ```sql
-DROP TABLE IF EXISTS classrooms;
+DROP TABLE IF EXISTS classrooms CASCADE;
 
 CREATE TABLE classrooms (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    steacher VARCHAR(100)
+    teacher VARCHAR(100)
 );
 ```
 
-The first line, `DROP TABLE IF EXISTS classrooms`, deletes the `classrooms` table if it already exists. Adding `DROP TABLE IF EXISTS <TABLE>` before `CREATE TABLE <table>` lets us **codify our database schema in a script**, which is handy if we decide to change our database in some way down the road $-$ add a table, change the datatype of a column, etc. We can simply store the instructions for generating our database in a script, update that script when we want to make a change, and then rerun it.<sup>[[1]](#1-setting-up)</sup> We're also now able to version control our schema and share it.
+The first line, `DROP TABLE IF EXISTS classrooms`, deletes the `classrooms` table if it already exists, with `CASCADE` removing tables that depend on `classrooms`. We'll be changing all tables at once if we ever need to drop `classrooms`, so this is ok! (Though in general you should really know what you're doing if you're deleting tables!)
+
+Adding `DROP TABLE IF EXISTS <TABLE>` before `CREATE TABLE <table>` lets us **codify our database schema in a script**, which is handy if we decide to change our database in some way down the road $-$ add a table, change the datatype of a column, etc. We can simply store the instructions for generating our database in a script, update that script when we want to make a change, and then rerun it.<sup>[[1]](#1-setting-up)</sup> We're also now able to version control our schema and share it. In fact, the entire database in this post can be recreated from [this script](https://github.com/mgsosna/sql_fun/blob/main/school/create_db.sql) that we're writing right now.
 
 Line 4 may also catch your eye: here we specify that `id` is the primary key, meaning each row must contain a value in this column, and that each value must be unique. To avoid needing to keep track of which `id` values have already been used, we use `GENERATED ALWAYS AS IDENTITY`, an alternative to the [**sequence**](https://www.postgresql.org/docs/9.5/sql-createsequence.html) syntax. As a result, when inserting data into this table, we only need to provide the `teacher` names.
 
@@ -65,7 +67,7 @@ Let's now create the `students` table. Our table will consist of a unique `id`, 
 
 {% include header-sql.html %}
 ```sql
-DROP TABLE IF EXISTS students;
+DROP TABLE IF EXISTS students CASCADE;
 
 CREATE TABLE students (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -168,8 +170,8 @@ Finally, let's record some grades. Since grades correspond to _assignments_ $-$ 
 
 {% include header-sql.html %}
 ```sql
-DROP TABLE IF EXISTS grades;
-DROP TABLE IF EXISTS assignments;
+DROP TABLE IF EXISTS assignments CASCADE;
+DROP TABLE IF EXISTS grades CASCADE;
 
 CREATE TABLE assignments (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -193,11 +195,33 @@ CREATE TABLE grades (
 );
 ```
 
-
+Rather than insert rows by hand, though, let's now upload the data through CSV's. You can download the files from [this repo](https://github.com/mgsosna/sql_fun/tree/main/school) or write them yourselves. Note that to allow pgAdmin to access the data you might need to [update the permissions on the folder](https://stackoverflow.com/questions/14083311/permission-denied-when-trying-to-import-a-csv-file-from-pgadmin) (`db_data` below).
 
 {% include header-sql.html %}
 ```sql
--- Join the tables
+COPY assignments(category, name, due_date, weight)
+FROM 'C:/Users/mgsosna/Desktop/db_data/assignments.csv'
+DELIMITER ','
+CSV HEADER;
+/*
+COPY 5
+Query returned successfully in 118 msec.
+*/
+
+COPY grades(assignment_id, score, student_id)
+FROM 'C:/Users/mgsosna/Desktop/db_data/grades.csv'
+DELIMITER ','
+CSV HEADER;
+/*
+COPY 25
+Query returned successfully in 64 msec.
+*/
+```
+
+Finally, let's take a look to make sure everything's in place.
+
+{% include header-sql.html %}
+```sql
 SELECT
     *
 FROM
