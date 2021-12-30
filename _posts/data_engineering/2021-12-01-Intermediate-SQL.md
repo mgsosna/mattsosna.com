@@ -15,10 +15,8 @@ In this post, we'll create a database for you to play with. Then we'll explore a
 SELECT
     s.id AS student_id,
     e.score
-FROM
-    students AS s
-LEFT JOIN
-    exams AS e
+FROM students AS s
+LEFT JOIN exams AS e
     ON s.id = e.student_id
 WHERE
     e.grade > 90;
@@ -223,25 +221,21 @@ Finally, let's take a look to make sure everything's in place.
 {% include header-sql.html %}
 ```sql
 SELECT
-	c.teacher,
-	a.category,
-	ROUND(AVG(g.score), 1) AS avg_score
-FROM
-	students AS s
-INNER JOIN
-	classrooms AS c
-	ON c.id = s.classroom_id
-INNER JOIN
-	grades AS g
-	ON s.id = g.student_id
-INNER JOIN
-	assignments AS a
-	ON a.id = g.assignment_id
+    c.teacher,
+    a.category,
+    ROUND(AVG(g.score), 1) AS avg_score
+FROM students AS s
+INNER JOIN classrooms AS c
+    ON c.id = s.classroom_id
+INNER JOIN grades AS g
+    ON s.id = g.student_id
+INNER JOIN assignments AS a
+    ON a.id = g.assignment_id
 GROUP BY
-	1,
-	2
+    1,
+    2
 ORDER BY
-	3 DESC;
+    3 DESC;
 /*
   teacher | category  | avg_score
   ------- | --------- | ---------
@@ -254,9 +248,110 @@ ORDER BY
  */
 ```
 
-Looks great! Good work setting up a database! We're now ready to experiment with some tricker SQL concepts.
+Good work setting up a database! We're now ready to experiment with some tricker SQL concepts.
 
-### Filters
+### `WHERE` vs. `HAVING`
+You're likely familiar with the `WHERE` filter if you know some SQL, and you might have heard of the `HAVING` filter. But how exactly do they differ? Let's perform some queries on `grades` to find out.
+
+First, let's sample some rows from `grades` to remind ourselves what the data look like. We use `ORDER BY RANDOM()` to shuffle the rows, then `LIMIT` to take 5. (This is pretty inefficient, but it's a fast trick that works because the table is small.)
+
+{% include header-sql.html %}
+```sql
+SELECT
+    *
+FROM
+    grades
+ORDER BY
+    RANDOM()
+LIMIT
+    5;
+/*
+ id | assignment_id | score | student_id
+ -- | ------------- | ----- | ----------
+ 14 |             4 |   100 |          3
+ 22 |             2 |    91 |          5
+ 23 |             3 |    85 |          5
+ 16 |             1 |    81 |          4
+  9 |             4 |    64 |          2
+*/
+```
+
+Each row is a student's score on an assignment. Now, let's say we want to know each student's _average_ score. We'd perform a `GROUP BY`, using `AVG(score)` and rounding to keep things tidy.
+
+{% include header-sql.html %}
+```sql
+SELECT
+    student_id,
+    ROUND(AVG(score),1) AS avg_score
+FROM
+    grades
+GROUP BY
+    student_id
+ORDER BY
+    student_id;
+/*
+ student_id | avg_score
+ ---------- | ---------
+          1 |      80.8
+          2 |      70.4
+          3 |      94.6
+          4 |      79.6
+          5 |      83.4
+*/
+```
+
+Now, let's say we want to only display rows where `avg_score` is between 50 and 75. What happens if we try using a `WHERE` clause?
+
+{% include header-sql.html %}
+```sql
+SELECT
+    student_id,
+    ROUND(AVG(score),1) AS avg_score
+FROM grades
+WHERE
+    score BETWEEN 50 AND 75
+GROUP BY
+    student_id
+ORDER BY
+    student_id;
+/*
+ student_id | avg_score
+ ---------- | ---------
+          1 |      75.0
+          2 |      70.4
+          3 |      64.0
+          4 |      67.0
+*/
+```
+
+That doesn't look right at all. We didn't filter `avg_score` at all $-$ the values themselves changed to between 50 and 75! Student 5 disappeared, too. This would probably cause some panic if you were generating a report for your boss and didn't understand what happened here.
+
+Now what if we tried that same query, but with `HAVING`?
+
+{% include header-sql.html %}
+```sql
+SELECT
+    student_id,
+    ROUND(AVG(score),1) AS avg_score
+FROM grades
+GROUP BY
+    student_id
+HAVING
+    ROUND(AVG(score),1) BETWEEN 50 AND 75
+ORDER BY
+    student_id;
+/*
+ student_id | avg_score
+ ---------- | ---------
+          2 |      70.4
+*/
+```
+
+Phew, that's what we actually wanted!
+
+These two queries return dramatically different results because **`WHERE` and `HAVING` filter data at different stages of the aggregation.** The `WHERE` query above filters the data _before_ the aggregation, while `HAVING` filters the _results_. The aggregation results in the query with the `WHERE` clause are different because there was _different raw data_ that went into the calculation for each student's average score. Student 5 didn't have any scores between 50 and 75 and therefore weren't included.
+
+
 
 Good "reading list" of beginner vs. intermediate SQL: https://softwareengineering.stackexchange.com/questions/181651/are-these-sql-concepts-for-beginners-intermediate-or-advanced-developers
 
