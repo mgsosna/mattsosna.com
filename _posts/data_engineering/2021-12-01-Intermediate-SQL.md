@@ -8,7 +8,7 @@ When I started learning SQL, I found it hard to progress beyond the absolute bas
 
 I found myself in a "chicken or egg" problem $-$ I needed access to a database so I could continue learning, but I needed to be good at SQL to get hired and access databases to practice on.
 
-In this post, we'll create a database for you to play with. Then we'll explore a few intermediate SQL topics, the sort of techniques you'll likely utilize as a data scientist. If you understand the below query, then you're prepared for the rest of this post.
+In this post, we'll create a database for you to play with. Then we'll explore a few intermediate SQL topics, the sort of techniques you'll likely utilize as a data scientist. If you understand the below query, then you're prepared for the rest of this post. (And if not, check out the [SQL primer in the engineering essentials]({{  site.baseurl  }}/DS-transition-4/#sql) post and the [SQL vs. NoSQL]({{  site.baseurl  }}/SQL_vs_NoSQL) deep dive.)
 
 {% include header-sql.html %}
 ```sql
@@ -223,28 +223,45 @@ Finally, let's take a look to make sure everything's in place.
 {% include header-sql.html %}
 ```sql
 SELECT
-    *
+	c.teacher,
+	a.category,
+	ROUND(AVG(g.score), 1) AS avg_score
 FROM
-    student AS s
+	students AS s
 INNER JOIN
-    classroom AS c
-    ON s.classroom_id = c.id;
+	classrooms AS c
+	ON c.id = s.classroom_id
+INNER JOIN
+	grades AS g
+	ON s.id = g.student_id
+INNER JOIN
+	assignments AS a
+	ON a.id = g.assignment_id
+GROUP BY
+	1,
+	2
+ORDER BY
+	3 DESC;
+/*
+  teacher | category  | avg_score
+  ------- | --------- | ---------
+  Jonah   |  project  |     100.0
+  Jonah   |  homework |      94.0
+  Jonah   |  exam     |      92.5
+  Mary    |  homework |      78.3
+  Mary    |  exam     |      76.0
+  Mary    |  project  |      69.5
+ */
 ```
 
+Looks great! Good work setting up a database! We're now ready to experiment with some tricker SQL concepts.
 
-So here's something we can do. We can stay in Python and create a SQLite DB, then run queries against it. Or we can install an RDBMS like PSequel or whatever and execute queries there.
-
-We'll also focus on `SELECT` queries, the "Read" in CRUD.
+### Filters
 
 Good "reading list" of beginner vs. intermediate SQL: https://softwareengineering.stackexchange.com/questions/181651/are-these-sql-concepts-for-beginners-intermediate-or-advanced-developers
 
 Can also think about self joins: https://www.w3schools.com/sql/sql_join_self.asp
 
-
-## Basic SQL
-Check out [this post on SQL vs. NoSQL databases]({{  site.baseurl  }}/SQL_vs_NoSQL) to learn more about database theory.
-
-## Filters
 `WHERE` is applied before aggregation steps, while `HAVING` is applied after.
 
 {% include header-sql.html %}
