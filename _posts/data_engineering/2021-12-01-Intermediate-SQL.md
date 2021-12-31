@@ -300,14 +300,15 @@ ORDER BY
 */
 ```
 
-Now, let's say we want to only display rows where `avg_score` is between 50 and 75. What happens if we try using a `WHERE` clause?
+Now, let's say we want the above table but only with rows where `avg_score` is between 50 and 75. In other words, we only want to show student 2. What happens if we use a `WHERE` filter?
 
 {% include header-sql.html %}
 ```sql
 SELECT
     student_id,
     ROUND(AVG(score),1) AS avg_score
-FROM grades
+FROM
+    grades
 WHERE
     score BETWEEN 50 AND 75
 GROUP BY
@@ -324,16 +325,17 @@ ORDER BY
 */
 ```
 
-That doesn't look right at all. We didn't filter `avg_score` at all $-$ the values themselves changed to between 50 and 75! Student 5 disappeared, too. This would probably cause some panic if you were generating a report for your boss and didn't understand what happened here.
+That doesn't look right at all. Student 5 correctly disappeared, but students 1, 3, and 4 are still there. Worse, their `avg_score` values changed! This would probably cause some panic if these numbers were going into an important report and you didn't understand what happened here.
 
-Now what if we tried that same query, but with `HAVING`?
+What we actually want to do is use a `HAVING` filter. See the difference below.
 
 {% include header-sql.html %}
 ```sql
 SELECT
     student_id,
     ROUND(AVG(score),1) AS avg_score
-FROM grades
+FROM
+    grades
 GROUP BY
     student_id
 HAVING
@@ -347,35 +349,41 @@ ORDER BY
 */
 ```
 
-Phew, that's what we actually wanted!
+These two queries return dramatically different results because **`WHERE` and `HAVING` filter data at different stages of the aggregation.** The `WHERE` query above filters the data _before_ the aggregation, while `HAVING` filters the _results_. **The aggregation results in the `WHERE` query above changed because we changed _the raw data used to calculate each student's average score_.** Student 5 didn't have any scores between 50 and 75 and was therefore dropped. The `HAVING` query, meanwhile, just filtered the results after the calculation.
 
-These two queries return dramatically different results because **`WHERE` and `HAVING` filter data at different stages of the aggregation.** The `WHERE` query above filters the data _before_ the aggregation, while `HAVING` filters the _results_. The aggregation results in the query with the `WHERE` clause are different because there was _different raw data_ that went into the calculation for each student's average score. Student 5 didn't have any scores between 50 and 75 and therefore weren't included.
-
-
-
-Good "reading list" of beginner vs. intermediate SQL: https://softwareengineering.stackexchange.com/questions/181651/are-these-sql-concepts-for-beginners-intermediate-or-advanced-developers
-
-Can also think about self joins: https://www.w3schools.com/sql/sql_join_self.asp
-
-`WHERE` is applied before aggregation steps, while `HAVING` is applied after.
+Once you're comfortable with `WHERE` and `HAVING`, you can use both to create very specific queries, for example finding students whose average _homework_ score was between 50 and 75.
 
 {% include header-sql.html %}
 ```sql
 SELECT
-    id,
-    AVG(grade)
+    student_id,
+    ROUND(AVG(score),1) AS avg_score
 FROM
-    students
+    grades AS g
+INNER JOIN
+    assignments AS a
+    ON a.id = g.assignment_id
 WHERE
-    classroom_id = 5
+    a.category = 'homework'
 GROUP BY
-    id
+    student_id
 HAVING
-    AVG(grade) > 90;
+    ROUND(AVG(score),1) BETWEEN 50 AND 75
+ORDER BY
+    student_id;
+/*
+ student_id | avg_score
+ ---------- | ---------
+          2 |      74.5
+*/
 ```
 
-## `CASE WHEN`
-It's common to need to perform some kind of `if`-`else` logic on a column. You could do something like this:
+### `IF` vs. `CASE WHEN`
+It's common to need to perform some kind of `if`-`else` logic on a column.
+
+
+
+You could do something like this:
 
 {% include header-sql.html %}
 ```sql
@@ -551,6 +559,14 @@ Let's say we want to match all users from a city that are together.
 
 ## Conclusions
 This post was an overview of some SQL skills that become useful once you're beyond the basics.
+
+
+
+Good "reading list" of beginner vs. intermediate SQL: https://softwareengineering.stackexchange.com/questions/181651/are-these-sql-concepts-for-beginners-intermediate-or-advanced-developers
+
+Can also think about self joins: https://www.w3schools.com/sql/sql_join_self.asp
+
+
 
 ## Footnotes
 #### 1. [Setting up](#seeting-up)
