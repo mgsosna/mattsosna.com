@@ -22,6 +22,12 @@ WHERE
     e.grade > 90;
 ```
 
+## Table of contents
+* [Setting up](#setting-up)
+* [`WHERE` vs. `HAVING`](#where-vs-having)
+* [`IF` vs. `CASE WHEN`](#if-vs-case-when)
+* [`WITH`](#with)
+
 ## Setting up
 When learning a new language, practice is critical. It's one thing to read this post and nod along, and another to be able to explore ideas on your own. So let's first set up a database on your computer. While it sounds intimidating, it'll actually be straightforward.
 
@@ -325,7 +331,7 @@ ORDER BY
 */
 ```
 
-That doesn't look right at all. Student 5 correctly disappeared, but students 1, 3, and 4 are still there. Worse, their `avg_score` values changed! This would probably cause some panic if these numbers were going into an important report and you didn't understand what happened here.
+That doesn't look right at all. Student 5 correctly disappeared, but students 1, 3, and 4 are still there. Worse, their `avg_score` values changed! This would probably cause some panic if these numbers were going into an important report and you didn't understand what happened.
 
 What we actually want to do is use a `HAVING` filter. See the difference below.
 
@@ -379,7 +385,10 @@ ORDER BY
 ```
 
 ### `IF` vs. `CASE WHEN`
-It's common to need to perform some kind of `if`-`else` logic on a column.
+It's common to need to perform some kind of `if`-`else` logic on a column. If all we want
+
+It's useful to think about [separation of concerns](https://stackoverflow.com/questions/2429226/case-statements-versus-coded-if-statements): what our database should do, versus the frontend with whatever data it receives. For calculations, the database is often much stronger.
+
 
 
 
@@ -418,6 +427,9 @@ SELECT
         WHEN name IN ('Matt', 'John') THEN 'Friends'
 
 ```
+
+Maybe consider `COALESCE`, `CAST`?
+
 
 ## `WITH`
 Queries can become long, especially when you're joining data from multiple tables, and you want to apply filters or aggregations to tables before joining. Sometimes you have the luxury of being able to perform part of the query in SQL and the remainder in Python, or to perform multiple queries (e.g. on temporary tables). But when you don't, you need to _nest_ queries.
