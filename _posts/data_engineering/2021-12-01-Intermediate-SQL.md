@@ -390,8 +390,6 @@ It's common to need to perform some kind of `if`-`else` logic on a column. If al
 It's useful to think about [separation of concerns](https://stackoverflow.com/questions/2429226/case-statements-versus-coded-if-statements): what our database should do, versus the frontend with whatever data it receives. For calculations, the database is often much stronger.
 
 
-
-
 You could do something like this:
 
 {% include header-sql.html %}
@@ -427,6 +425,32 @@ SELECT
         WHEN name IN ('Matt', 'John') THEN 'Friends'
 
 ```
+
+It's unlikely you'll be using `IF` much as a data scientist, but just in case:
+
+```sql
+DO $$
+
+DECLARE
+	x INTEGER := 5;
+	y INTEGER := 10;
+
+BEGIN
+	IF x > y THEN
+	RAISE NOTICE 'x greater than y';
+END IF;
+
+IF X < Y THEN
+	RAISE NOTICE 'x less than y';
+END IF;
+
+END $$;
+
+/*
+NOTICE: x less than y
+*/
+```
+
 
 Maybe consider `COALESCE`, `CAST`?
 
