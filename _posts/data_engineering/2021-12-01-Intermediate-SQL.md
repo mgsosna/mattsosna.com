@@ -6,26 +6,28 @@ author: matt_sosna
 
 When I started learning SQL, I found it hard to progress beyond the absolute basics. I loved [DataCamp's courses](https://www.datacamp.com/courses/introduction-to-sql) because I could just type the code directly into a console on the screen. But once the courses ended, how could I practice what I learned? And how could I continue improving, when all the tutorials I found just consisted of code snippits, without an underlying database I could query myself?
 
-I found myself in a "chicken or egg" problem $-$ I needed access to a database so I could continue learning, but I needed to be good at SQL to get hired and access databases to practice on.
+I found myself in a "chicken or egg" problem $-$ I needed access to databases to learn enough SQL to get hired, but the only databases I was aware of were _at those companies_ where I was trying to get hired!
 
-In this post, we'll create a database for you to play with. Then we'll explore a few intermediate SQL topics, the sort of techniques you'll likely utilize as a data scientist. If you understand the below query, then you're prepared for the rest of this post. (And if not, check out the [SQL primer in the engineering essentials]({{  site.baseurl  }}/DS-transition-4/#sql) post and the [SQL vs. NoSQL]({{  site.baseurl  }}/SQL_vs_NoSQL) deep dive.)
+**It turns out it's straightforward to create your own database to play with.** In this post, we'll create a simple relational database that will let us explore SQL topics beyond the basics. If you understand the below query, then you're prepared for the rest of this post. (And if not, check out the [SQL primer in the engineering essentials]({{  site.baseurl  }}/DS-transition-4/#sql) post and the [SQL vs. NoSQL]({{  site.baseurl  }}/SQL_vs_NoSQL) deep dive.)
 
 {% include header-sql.html %}
 ```sql
 SELECT
     s.id AS student_id,
-    e.score
-FROM students AS s
-LEFT JOIN exams AS e
-    ON s.id = e.student_id
+    g.score
+FROM
+    students AS s
+LEFT JOIN
+    grades AS g
+    ON s.id = g.student_id
 WHERE
-    e.grade > 90;
+    g.score > 90;
 ```
 
 ## Table of contents
 * [Setting up](#setting-up)
 * [`WHERE` vs. `HAVING`](#where-vs-having)
-* [`IF` vs. `CASE WHEN`](#if-vs-case-when)
+* [`CASE WHEN`](#case-when)
 * [`WITH`](#with)
 
 ## Setting up
@@ -384,72 +386,61 @@ ORDER BY
 */
 ```
 
-### `IF` vs. `CASE WHEN`
-It's common to need to perform some kind of `if`-`else` logic on a column. If all we want
+### `CASE WHEN`
+It's common to need some kind of `if`-`else` logic on a column. You may have a table of predicted values from a model, for example, and you'd like to binarize the predictions into positive and negative classes by some threshold.
 
-It's useful to think about [separation of concerns](https://stackoverflow.com/questions/2429226/case-statements-versus-coded-if-statements): what our database should do, versus the frontend with whatever data it receives. For calculations, the database is often much stronger.
-
-
-You could do something like this:
+In our database, let's say we want to convert the scores from our `grades` table into letter grades. `CASE WHEN` is the solution here.
 
 {% include header-sql.html %}
 ```sql
 SELECT
-    id,
-    grade,
+    score,
     CASE
-        WHEN grade < 60 THEN 'F'
-        WHEN grade < 70 THEN 'D'
-        WHEN grade < 80 THEN 'C'
-        WHEN grade < 90 THEN 'B'
+        WHEN score < 60 THEN 'F'
+        WHEN score < 70 THEN 'D'
+        WHEN score < 80 THEN 'C'
+        WHEN score < 90 THEN 'B'
         ELSE 'A'
-    END AS letter_grade
+    END AS letter
 FROM
-    students;
-
+    grades;
+    
 /*
-| id  | grade | letter_grade |
-| --- | ----- | ------------ |
-| 123 |  A    | 93           |
-| 817 |  C    | 77           |
-| 550 |  B    | 89           |
-| ... | ...   | ...          |
+ score | letter
+ ----- | ------
+    82 | B
+    82 | B
+    80 | B
+    75 | C
+   ... | ...
 */
 ```
 
-You can also use it for exact equality, or `IN` statements.
-
-```sql
-SELECT
-    CASE
-        WHEN name IN ('Matt', 'John') THEN 'Friends'
-
-```
-
-It's unlikely you'll be using `IF` much as a data scientist, but just in case:
+In some SQL dialects, `IF` is interchangeable with `CASE WHEN`. In Postgres, though, `IF` is used for control flow on _multiple_ queries rather than within one. It's unlikely you'll be using `IF` much as a data scientist $-$ even as a data engineer, I'd imagine you'd handle such logic in a coordinator like [Airflow](https://airflow.apache.org/), but just in case:
 
 ```sql
 DO $$
 
-DECLARE
-	x INTEGER := 5;
-	y INTEGER := 10;
-
 BEGIN
-	IF x > y THEN
-	RAISE NOTICE 'x greater than y';
-END IF;
-
-IF X < Y THEN
-	RAISE NOTICE 'x less than y';
-END IF;
+    IF
+        (SELECT COUNT(*) FROM grades) >
+        (SELECT COUNT(*) FROM students)
+    THEN
+        RAISE NOTICE 'More grades than students.';
+    ELSE
+        RAISE NOTICE 'Equal or more students than grades.';
+    END IF;
 
 END $$;
 
 /*
-NOTICE: x less than y
+NOTICE: More grades than students.
 */
 ```
+
+It's useful to think about [separation of concerns](https://stackoverflow.com/questions/2429226/case-statements-versus-coded-if-statements): what our database should do, versus the frontend with whatever data it receives. For calculations, the database is often much stronger.
+
+
 
 
 Maybe consider `COALESCE`, `CAST`?
