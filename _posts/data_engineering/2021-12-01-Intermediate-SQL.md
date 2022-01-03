@@ -28,6 +28,7 @@ WHERE
 * [Setting up](#setting-up)
 * [`WHERE` vs. `HAVING`](#where-vs-having)
 * [`CASE WHEN`](#case-when)
+* [`COALESCE`](#coalesce)
 * [`WITH`](#with)
 
 ## Setting up
@@ -404,7 +405,7 @@ SELECT
     END AS letter
 FROM
     grades;
-    
+
 /*
  score | letter
  ----- | ------
@@ -413,6 +414,34 @@ FROM
     80 | B
     75 | C
    ... | ...
+*/
+```
+
+The logic we pass into `CASE WHEN` can extend to multiple columns. We can generate an `instructor` column from our `students` table, for example, that has the student's teacher if available, otherwise their own name.
+
+{% include header-sql.html %}
+```sql
+SELECT
+    name,
+    teacher,
+    CASE
+        WHEN teacher IS NOT NULL THEN teacher
+        ELSE name
+    END AS instructor
+FROM
+    students AS s
+LEFT JOIN
+    classrooms AS c
+    ON c.id = s.classroom_id;
+
+/*
+ name     | teacher | instructor
+ -------- | ------- | ----------
+ Adam     | Mary    | Mary
+ Betty    | Mary    | Mary
+ Caroline | Jonah   | Jonah
+ Dina     | [null]  | Dina
+ Evan     | [null]  | Evan
 */
 ```
 
@@ -438,8 +467,54 @@ NOTICE: More grades than students.
 */
 ```
 
-It's useful to think about [separation of concerns](https://stackoverflow.com/questions/2429226/case-statements-versus-coded-if-statements): what our database should do, versus the frontend with whatever data it receives. For calculations, the database is often much stronger.
+## `COALESCE`
+`CASE WHEN` works well for "if-else" logic, such as bucketing values or handling nulls. Our second example above used `CASE WHEN` to return a student's teacher if available, else their own name. We can rewrite this query more concisely using `COALESCE`, however, which specifically handles nulls.
 
+{% include header-sql.html %}
+```sql
+SELECT
+    name,
+    teacher,
+    COALESCE(teacher, name)
+FROM
+    students AS s
+LEFT JOIN
+    classrooms AS c
+    ON c.id = s.classroom_id;
+
+/*
+ name     | teacher | instructor
+ -------- | ------- | ----------
+ Adam     | Mary    | Mary
+ Betty    | Mary    | Mary
+ Caroline | Jonah   | Jonah
+ Dina     | [null]  | Dina
+ Evan     | [null]  | Evan
+*/
+```
+
+Nice and clean! Line 4 above is the same as lines 4-7 in the second `CASE WHEN` example: if `teacher` is non-null, return that value. Otherwise return `name`.
+
+`COALESCE` will keep moving down the arguments you provide until it finds a non-null value. If all values are nulls, it returns null.
+
+{% include header-sql.html %}
+```sql
+SELECT
+    COALESCE(NULL, NULL, NULL, 4);
+/*
+ coalesce
+ --------
+        4
+ */
+
+ SELECT
+    COALESCE(NULL);
+/*
+ coalesce
+ --------
+ [null]
+ */
+```
 
 
 
