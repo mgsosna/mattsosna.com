@@ -26,10 +26,13 @@ WHERE
 
 ## Table of contents
 * [Setting up](#setting-up)
-* [`WHERE` vs. `HAVING`](#where-vs-having)
-* [`CASE WHEN`](#case-when)
-* [`COALESCE`](#coalesce)
-* [`WITH`](#with)
+* [Useful syntax](#useful-syntax)
+   * [`WHERE` vs. `HAVING`](#where-vs-having)
+   * [`CASE WHEN`](#case-when)
+   * [`COALESCE`](#coalesce)
+   * [`UNION ALL`](#union-all)
+* [Advanced queries](#advanced-queries)
+   * [`WITH`](#with)
 
 ## Setting up
 When learning a new language, practice is critical. It's one thing to read this post and nod along, and another to be able to explore ideas on your own. So let's first set up a database on your computer. While it sounds intimidating, it'll actually be straightforward.
@@ -257,10 +260,11 @@ ORDER BY
  */
 ```
 
-Good work setting up a database! We're now ready to experiment with some tricker SQL concepts.
+Good work setting up a database! We're now ready to experiment with some tricker SQL concepts. We'll start with syntax you might not have come across yet that'll give you finer control over your queries. We'll then cover some other joins and ways to organize your queries as they grow into the dozens or hundreds of lines.
 
+## Useful syntax
 ### `WHERE` vs. `HAVING`
-You're likely familiar with the `WHERE` filter if you know some SQL, and you might have heard of the `HAVING` filter. But how exactly do they differ? Let's perform some queries on `grades` to find out.
+You're likely familiar with the `WHERE` filter, and you might have heard of `HAVING`. But how exactly do they differ? Let's perform some queries on `grades` to find out.
 
 First, let's sample some rows from `grades` to remind ourselves what the data look like. We use `ORDER BY RANDOM()` to shuffle the rows, then `LIMIT` to take 5. (This is pretty inefficient, but it's a fast trick that works because the table is small.)
 
@@ -467,7 +471,7 @@ NOTICE: More grades than students.
 */
 ```
 
-## `COALESCE`
+### `COALESCE`
 `CASE WHEN` works well for "if-else" logic, such as bucketing values or handling nulls. Our second example above used `CASE WHEN` to return a student's teacher if available, else their own name. We can rewrite this query more concisely using `COALESCE`, however, which specifically handles nulls.
 
 {% include header-sql.html %}
@@ -516,12 +520,125 @@ SELECT
  */
 ```
 
+### `UNION ALL`
+When we `JOIN` tables, we append data _horizontally_. In the below query, for example, we bring together Adam's data from the `students`, `grades`, and `assignments` tables, creating a table with those columns side by side.
+
+{% include header-sql.html %}
+```sql
+SELECT
+    s.name,
+    g.score,
+    a.category
+FROM
+    students AS s
+INNER JOIN
+    grades AS g
+    ON s.id = g.student_id
+INNER JOIN
+    assignments AS a
+    ON a.id = g.assignment_id
+WHERE
+    s.name = 'Adam';
+
+/*
+ name | score | category
+ ---- | ----- | --------
+ Adam |    82 | homework
+ Adam |    82 | homework
+ Adam |    80 | exam
+ Adam |    75 | project
+ Adam |    85 | exam
+*/
+```
+
+Horizontally appending our data serves us well most of the time. But what if we had two query results that we want to stack _vertically_?
+
+Let's imagine that our school is incredibly corrupt and uses students' names to determine whether they graduate, not their grades. Students pass if their names either 1) start with `A` or `B`, or 2) are five letters long. We can find all graduating students by finding students that meet each criterion, then using `UNION ALL` to stack the rows on top of each other.
+
+{% include header-sql.html %}
+```sql
+SELECT
+    *
+FROM (
+    SELECT
+        name,
+        'Name starts with A/B' as reason
+    FROM
+        students
+    WHERE
+        LEFT(name,1) IN ('A', 'B')
+) AS x
+
+UNION ALL
+
+SELECT
+    *
+FROM (
+    SELECT
+        name,
+        'Name is 5 letters long' AS reason
+    FROM
+        students
+    WHERE
+        LENGTH(name) = 5
+) AS y;
+
+/*
+ name     | reason
+ -------- | ------
+ Adam     | Name starts with A/B
+ Betty    | Name starts with A/B
+ Betty    | Name is 5 letters long
+*/
+```
+
+Notice that our subqueries need to be named (`x` and `y`) for `UNION ALL` to work, and that we used `UNION ALL` instead of `UNION`. The distinction is that `UNION ALL` returns _all_ rows, whereas `UNION` removes duplicates. The results are identical for this query because Betty meets both criteria, but if we didn't include the `reason` column, we'd only see Betty once with `UNION`.
+
+{% include header-sql.html %}
+```sql
+SELECT
+    *
+FROM (
+    SELECT
+        name  -- <- No `reason` column
+    FROM
+        students
+    WHERE
+        LEFT(name,1) IN ('A', 'B')
+) AS x
+
+UNION  -- <- Now UNION, not UNION ALL
+
+SELECT
+    *
+FROM (
+    SELECT
+        name  -- <- No `reason` column
+    FROM
+        students
+    WHERE
+        LENGTH(name) = 5
+) AS y;
+
+/*
+ name
+ ------
+ Adam
+ Betty   <- Duplicate Betty dropped because UNION
+*/
+```
+
+## Advanced queries
+* Cover self joins, `IN`, etc.
+* Outlier analysis
+* Knowing order of execution for a SQL query
+* Indexes
+* Transactions
+* Third normal form
 
 
-Maybe consider `COALESCE`, `CAST`?
 
-
-## `WITH`
+### `WITH`
 Queries can become long, especially when you're joining data from multiple tables, and you want to apply filters or aggregations to tables before joining. Sometimes you have the luxury of being able to perform part of the query in SQL and the remainder in Python, or to perform multiple queries (e.g. on temporary tables). But when you don't, you need to _nest_ queries.
 
 Let's say we're trying to find all the names in the `cats` table that also appear in the `dogs` table. Our query will require a subquery: finding all the names in dogs.
@@ -606,6 +723,61 @@ WHERE
     );
 ```
 
+```sql
+WITH important_grades AS (
+    SELECT
+        s.name AS student,
+        g.score,
+        a.name AS assignment
+    FROM
+        students AS s
+    INNER JOIN
+        grades AS g
+        ON s.id = g.student_id
+    INNER JOIN
+        assignments AS a
+        ON a.id = g.assignment_id
+    WHERE
+        a.name IN ('biography', 'final')
+),
+final_passed AS (
+	SELECT
+		student
+	FROM
+		important_grades
+	WHERE
+		assignment = 'final' AND score > 70
+),
+project_passed AS (
+	SELECT
+		student
+	FROM
+		important_grades
+	WHERE
+		assignment = 'biography' AND score > 90
+)
+
+SELECT DISTINCT
+	name
+FROM
+	students
+WHERE
+	name IN (SELECT student FROM final_passed)
+	OR name IN (SELECT student FROM project_passed);
+
+/*
+ name |
+ ---- |
+ Dina |
+ Evan |
+ Caroline |
+ Adam |
+*/
+```
+
+
+
+#### Example
 [**LC 1412:** Find the Quiet Students in All Exams](https://leetcode.com/problems/find-the-quiet-students-in-all-exams). The premise is that we have `Student` and `Exam` tables, and we want to find the students who meet the following criteria:
 1. Took at least one exam
 2. Never scored the highest or lowest on an exam.
@@ -662,6 +834,8 @@ Let's say we want to match all users from a city that are together.
 ## Conclusions
 This post was an overview of some SQL skills that become useful once you're beyond the basics.
 
+Extras:
+* `CAST`: converting the datatype of a column from one to another. Useful if joining tables where the key of interest is in different types (e.g. `INT` vs. `FLOAT`).
 
 
 Good "reading list" of beginner vs. intermediate SQL: https://softwareengineering.stackexchange.com/questions/181651/are-these-sql-concepts-for-beginners-intermediate-or-advanced-developers
