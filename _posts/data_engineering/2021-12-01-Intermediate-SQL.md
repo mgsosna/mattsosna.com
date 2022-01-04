@@ -31,6 +31,7 @@ WHERE
    * [`CASE WHEN`](#case-when)
    * [`COALESCE`](#coalesce)
    * [`UNION ALL`](#union-all)
+   * [Array functions](#array-functions)
 * [Advanced queries](#advanced-queries)
    * [`WITH`](#with)
 
@@ -584,11 +585,11 @@ FROM (
 ) AS y;
 
 /*
- name     | reason
- -------- | ------
- Adam     | Name starts with A/B
- Betty    | Name starts with A/B
- Betty    | Name is 5 letters long
+ name  | reason
+ ----  | ------
+ Adam  | Name starts with A/B
+ Betty | Name starts with A/B
+ Betty | Name is 5 letters long
 */
 ```
 
@@ -622,9 +623,84 @@ FROM (
 
 /*
  name
- ------
+ -----
  Adam
  Betty   <- Duplicate Betty dropped because UNION
+*/
+```
+
+### Array functions
+Data in relational databases is usually [**atomic**](https://en.wikipedia.org/wiki/First_normal_form#Atomicity), where each row contains one value for a column (e.g. one score per row in the `grades` table). But sometimes storing values as an array can be useful. Postgres supports a wide range of [array functions](https://www.postgresql.org/docs/12/functions-array.html) that let us create and manipulate arrays.
+
+One such useful function is `ARRAY_AGG`. Below, we combine `ARRAY_AGG(score)` with `GROUP BY name` to create arrays of all scores for each student.
+
+{% include header-sql.html %}
+```sql
+SELECT
+    name,
+    ARRAY_AGG(score) AS scores
+FROM
+    students AS s
+INNER JOIN
+    grades AS g
+    ON s.id = g.student_id
+GROUP BY
+    name
+ORDER BY
+    name;
+/*
+ name     | scores
+ -------- | ------
+ Adam     | {82,82,80,75,85}
+ Betty    | {74,75,70,64,69}
+ Caroline | {96,92,90,100,95}
+ Dina     | {81,80,84,64,89}
+ Evan     | {67,91,85,93,81}
+*/
+```
+
+We can use `CARDINALITY` to find the length of an array, and `ARRAY_REPLACE` to replace specified values.
+
+{% include header-sql.html %}
+```sql
+SELECT
+    name,
+    ARRAY_AGG(score) AS scores,
+    CARDINALITY(ARRAY_AGG(score)) AS length,
+    ARRAY_REPLACE(ARRAY_AGG(score), 82, NULL) AS replaced
+FROM
+    students AS s
+INNER JOIN
+    grades AS g
+    ON s.id = g.student_id
+GROUP BY
+    name
+ORDER BY
+    name;
+/*
+ name     | scores            | length | replaced
+ -------- | ----------------- | ------ | --------------------
+ Adam     | {82,82,80,75,85}  |      5 | {NULL,NULL,80,75,85}
+ Betty    | {74,75,70,64,69}  |      5 | {74,75,70,64,69}
+ Caroline | {96,92,90,100,95} |      5 | {96,92,90,100,95}
+ Dina     | {81,80,84,64,89}  |      5 | {81,80,84,64,89}
+ Evan     | {67,91,85,93,81}  |      5 | {67,91,85,93,81}
+*/
+```
+
+One last function you may find useful is `UNNEST`, which unpacks an array to rows.
+
+{% include header-sql.html %}
+```sql
+SELECT
+    'name' AS name,
+    UNNEST(ARRAY[1, 2, 3]);
+/*
+ name  | unnest
+ ----  | ------
+ name  |      1
+ name  |      2
+ name  |      3
 */
 ```
 
