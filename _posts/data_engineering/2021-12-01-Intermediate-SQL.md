@@ -31,6 +31,7 @@ WHERE
    * [`CASE WHEN`](#case-when)
    * [`COALESCE`](#coalesce)
    * [`UNION ALL`](#union-all)
+   * [`INTERSECT` and `EXCEPT`](#intersect-and-except)
    * [Array functions](#array-functions)
 * [Advanced queries](#advanced-queries)
    * [`WITH`](#with)
@@ -593,7 +594,9 @@ FROM (
 */
 ```
 
-Notice that our subqueries need to be named (`x` and `y`) for `UNION ALL` to work, and that we used `UNION ALL` instead of `UNION`. The distinction is that `UNION ALL` returns _all_ rows, whereas `UNION` removes duplicates. The results are identical for this query because Betty meets both criteria, but if we didn't include the `reason` column, we'd only see Betty once with `UNION`.
+We've now seen our first **subqueries** on lines 4-11 and 18-24, the building blocks for more complex queries. Notice that these queries need to be named (`x` and `y`) for `UNION ALL` to work.
+
+You may also notice that we used `UNION ALL` instead of `UNION`. The distinction is that `UNION ALL` returns _all_ rows, whereas `UNION` removes duplicates. The results are identical for this query because Betty meets both criteria, but if we didn't include the `reason` column, we'd only see Betty once with `UNION`.
 
 {% include header-sql.html %}
 ```sql
@@ -629,10 +632,68 @@ FROM (
 */
 ```
 
-### Array functions
-Data in relational databases is usually [**atomic**](https://en.wikipedia.org/wiki/First_normal_form#Atomicity), where each row contains one value for a column (e.g. one score per row in the `grades` table). But sometimes storing values as an array can be useful. Postgres supports a wide range of [array functions](https://www.postgresql.org/docs/12/functions-array.html) that let us create and manipulate arrays.
+### `INTERSECT` and `EXCEPT`
+`UNION` and `UNION ALL` are [**set operators**](https://en.wikipedia.org/wiki/Set_operations_(SQL)) that return _all_ rows from subqueries A and B. Two other operators, `INTERSECT` and `EXCEPT`, let us return _only rows that meet certain criteria_. `INTERSECT` only returns rows present in _both_ subqueries, while `EXCEPT` returns rows in A that are _not_ in B.
 
-One such useful function is `ARRAY_AGG`. Below, we combine `ARRAY_AGG(score)` with `GROUP BY name` to create arrays of all scores for each student.
+Here we demonstrate `INTERSECT`, which finds the rows shared between the subqueries (i.e. rows with IDs 2 or 3). Unlike with `UNION`, we don't need to name the subqueries.
+
+{% include header-sql.html %}
+```sql
+SELECT
+    *
+FROM
+    students
+WHERE
+    id IN (1,2,3)
+
+INTERSECT
+
+SELECT
+    *
+FROM
+    students
+WHERE
+    id IN (2,3,4);
+
+/*
+ id | name     | classroom_id
+ -- | -------- | ------------
+  2 | Betty    |            1
+  3 | Caroline |            2
+*/
+```
+
+And here we show the same query but with `EXCEPT`, which finds the rows in A that are _not_ in B (i.e. rows with ID 1).
+
+{% include header-sql.html %}
+```sql
+SELECT
+    *
+FROM
+    students
+WHERE
+    id IN (1,2,3)
+
+EXCEPT
+
+SELECT
+    *
+FROM
+    students
+WHERE
+    id IN (2,3,4);
+
+/*
+ id | name     | classroom_id
+ -- | -------- | ------------
+  1 | Adam     |            1
+*/
+```
+
+### Array functions
+Data in relational databases is usually [**atomic**](https://en.wikipedia.org/wiki/First_normal_form#Atomicity), where each cell contains one value (e.g. one score per row in the `grades` table). But sometimes storing values as an array can be useful. Postgres supports a wide range of [array functions](https://www.postgresql.org/docs/12/functions-array.html) that let us create and manipulate arrays.
+
+One such useful function is `ARRAY_AGG`, which converts rows into an array. Below, we combine `ARRAY_AGG(score)` with `GROUP BY name` to create arrays of all scores for each student.
 
 {% include header-sql.html %}
 ```sql
@@ -688,7 +749,7 @@ ORDER BY
 */
 ```
 
-One last function you may find useful is `UNNEST`, which unpacks an array to rows.
+One last function you may find useful is `UNNEST`, which unpacks an array to rows. Below, `name` is expanded to match the number of rows.
 
 {% include header-sql.html %}
 ```sql
@@ -704,7 +765,10 @@ SELECT
 */
 ```
 
+With filters, if logic, and
+
 ## Advanced queries
+
 * Cover self joins, `IN`, etc.
 * Outlier analysis
 * Knowing order of execution for a SQL query
@@ -799,6 +863,7 @@ WHERE
     );
 ```
 
+Maybe the school changes its mind for the criteria for graduation and says that you graduate if 1) you got above a 70 on the final exam, or 2) you got above a 90 on your project.
 ```sql
 WITH important_grades AS (
     SELECT
@@ -842,12 +907,12 @@ WHERE
 	OR name IN (SELECT student FROM project_passed);
 
 /*
- name |
- ---- |
- Dina |
- Evan |
+ name     |
+ -------- |
+ Dina     |
+ Evan     |
  Caroline |
- Adam |
+ Adam     |
 */
 ```
 
