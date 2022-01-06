@@ -37,7 +37,7 @@ WHERE
 ## Setting up
 When learning a new language, practice is critical. It's one thing to read this post and nod along, and another to be able to explore ideas on your own. So let's first set up a database on your computer. While it sounds intimidating, it'll actually be straightforward.
 
-The first step is to install SQL on your computer. We'll use [PostgreSQL (Postgres)](https://www.postgresql.org/), a common dialect in data science. We go to the [download page](https://www.postgresql.org/download/), select our operating system (e.g. Windows), and then run the installation. If you set a password on your database, keep it handy for the next step!  (Since our database won't be public, it's fine to use a simple password like `admin`.)
+The first step is to install SQL on your computer. We'll use [PostgreSQL (Postgres)](https://www.postgresql.org/), a common SQL dialect. To do so, we visit the [download page](https://www.postgresql.org/download/), select our operating system (e.g. Windows), and then run the installation. If you set a password on your database, keep it handy for the next step!  (Since our database won't be public, it's fine to use a simple password like `admin`.)
 
 <center>
 <img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/download.png" width="70%" height="70%">
@@ -45,7 +45,9 @@ The first step is to install SQL on your computer. We'll use [PostgreSQL (Postgr
 
 The next step is to install [pgAdmin](https://www.pgadmin.org/), a graphical user interface (GUI) that makes it easy to interact with our PostgreSQL database(s). We do this by going to the [installation page](https://www.pgadmin.org/download/), clicking the link for our operating system, and then following the steps.
 
-Once it's installed, we open pgAdmin and click on "Add new server." This step actually sets up a connection to an _existing_ server, which is why we needed to install Postgres first. I named my server `home` and passed in the password I defined during the Postgres installation.
+(As an FYI, this tutorial uses Postgres 14 and pgAdmin 4 v6.3.)
+
+Once both have been installed, we open pgAdmin and click on "Add new server." This step actually sets up a connection to an _existing_ server, which is why we needed to install Postgres first. I named my server `home` and passed in the password I defined during the Postgres installation.
 
 We're now ready to create some tables! Let's create a set of tables that describe the data a school might have: students, classrooms, and grades. We'll model our data such that a classroom consists of multiple students, each which has multiple grades.
 
@@ -476,7 +478,7 @@ LEFT JOIN
 
 Nice and clean! Line 4 above is the same as lines 4-7 in the second `CASE WHEN` example: if `teacher` is non-null, return that value. Otherwise return `name`.
 
-`COALESCE` will keep moving down the arguments you provide until it finds a non-null value. If all values are nulls, it returns null.
+`COALESCE` will move down the arguments you provide until it finds a non-null value. If all values are nulls, it returns null.
 
 {% include header-sql.html %}
 ```sql
@@ -530,7 +532,7 @@ WHERE
 */
 ```
 
-Horizontally appending our data serves us well most of the time. But what if we had two query results that we want to stack _vertically_?
+Horizontally appending our data serves us well most of the time. But what if we want to stack query results _vertically_?
 
 Let's imagine that our school is incredibly corrupt and uses students' names to determine whether they graduate, not their grades. Students pass if their names either 1) start with `A` or `B`, or 2) are five letters long. We can find all graduating students by finding students that meet each criterion, then using `UNION ALL` to stack the rows on top of each other.
 
@@ -609,8 +611,9 @@ FROM (
 */
 ```
 
-### `INTERSECT` and `EXCEPT`
-`UNION` and `UNION ALL` are [**set operators**](https://en.wikipedia.org/wiki/Set_operations_(SQL)) that return _all_ rows from subqueries A and B. Two other operators, `INTERSECT` and `EXCEPT`, let us return _only rows that meet certain criteria_. `INTERSECT` only returns rows present in _both_ subqueries, while `EXCEPT` returns rows in A that are _not_ in B.
+Choosing `UNION` or `UNION ALL` depends on how you want to handle duplicates. When writing complex queries, I prefer using `UNION ALL` to make sure the resulting table has the number of rows I expect $-$ if there are duplicates, I've likely messed up a `JOIN` somewhere earlier. Your query will be far more performant if you fix the issue at the source, rather than filtering at the end.
+
+`UNION` and `UNION ALL` are [**set operators**](https://en.wikipedia.org/wiki/Set_operations_(SQL)) that return _all_ rows from subqueries A and B (sans duplicates with `UNION`). Two other operators, `INTERSECT` and `EXCEPT`, let us return _only rows that meet certain criteria_. `INTERSECT` only returns rows present in _both_ subqueries, while `EXCEPT` returns rows in A that are _not_ in B.
 
 Here we demonstrate `INTERSECT`, which finds the rows shared between the subqueries (i.e. rows with IDs 2 or 3). Unlike with `UNION`, we don't need to name the subqueries.
 
@@ -666,6 +669,8 @@ WHERE
   1 | Adam     |            1
 */
 ```
+
+Together, set operators give us the power to combine query results (`UNION`), view overlapping records (`INTERSECT`), and see precisely which rows differ between tables (`EXCEPT`). No more printing out the tables to stack or manually compare them!
 
 ### Array functions
 Data in relational databases is usually [**atomic**](https://en.wikipedia.org/wiki/First_normal_form#Atomicity), where each cell contains one value (e.g. one score per row in the `grades` table). But sometimes storing values as an array can be useful. Postgres supports a wide range of [array functions](https://www.postgresql.org/docs/12/functions-array.html) that let us create and manipulate arrays.
