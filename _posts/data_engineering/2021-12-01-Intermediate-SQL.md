@@ -27,11 +27,9 @@ WHERE
 ## Table of contents
 * [Setting up](#setting-up)
 * [Useful syntax](#useful-syntax)
-   * [`WHERE` vs. `HAVING`](#where-vs-having)
-   * [`CASE WHEN`](#case-when)
-   * [`COALESCE`](#coalesce)
-   * [`UNION ALL`](#union-all)
-   * [`INTERSECT` and `EXCEPT`](#intersect-and-except)
+   * [Filters: `WHERE` vs. `HAVING`](#filters-where-vs-having)
+   * [If-then: `CASE WHEN` & `COALESCE`](#if-then-case-when--coalesce)
+   * [Set operators: `UNION`, `INTERSECT`, and `EXCEPT`](#set-operators-union-intersect-and-except)
    * [Array functions](#array-functions)
 * [Advanced queries](#advanced-queries)
    * [`WITH`](#with)
@@ -265,7 +263,7 @@ ORDER BY
 Good work setting up a database! We're now ready to experiment with some tricker SQL concepts. We'll start with syntax you might not have come across yet that'll give you finer control over your queries. We'll then cover some other joins and ways to organize your queries as they grow into the dozens or hundreds of lines.
 
 ## Useful syntax
-### `WHERE` vs. `HAVING`
+### Filters: `WHERE` vs. `HAVING`
 You're likely familiar with the `WHERE` filter, and you might have heard of `HAVING`. But how exactly do they differ? Let's perform some queries on `grades` to find out.
 
 First, let's sample some rows from `grades` to remind ourselves what the data look like. We use `ORDER BY RANDOM()` to shuffle the rows, then `LIMIT` to take 5. (This is pretty inefficient, but it's a fast trick that works because the table is small.)
@@ -393,10 +391,10 @@ ORDER BY
 */
 ```
 
-### `CASE WHEN`
-It's common to need some kind of `if`-`else` logic on a column. You may have a table of predicted values from a model, for example, and you'd like to binarize the predictions into positive and negative classes by some threshold.
+### If-then: `CASE WHEN` & `COALESCE`
+It's common to need some kind of `if`-`else` logic on a column. Maybe you have a table of model predictions, for example, and you want to binarize the values into positive and negative labels by some threshold.
 
-In our database, let's say we want to convert the scores from our `grades` table into letter grades. `CASE WHEN` is the solution here.
+In our database, let's say we want to convert the scores from our `grades` table into letter grades. We can easily do so with `CASE WHEN`.
 
 {% include header-sql.html %}
 ```sql
@@ -451,30 +449,7 @@ LEFT JOIN
 */
 ```
 
-In some SQL dialects, `IF` is interchangeable with `CASE WHEN`. In Postgres, though, `IF` is used for control flow on _multiple_ queries rather than within one. It's unlikely you'll be using `IF` much as a data scientist $-$ even as a data engineer, I'd imagine you'd handle such logic in a coordinator like [Airflow](https://airflow.apache.org/), but just in case:
-
-```sql
-DO $$
-
-BEGIN
-    IF
-        (SELECT COUNT(*) FROM grades) >
-        (SELECT COUNT(*) FROM students)
-    THEN
-        RAISE NOTICE 'More grades than students.';
-    ELSE
-        RAISE NOTICE 'Equal or more students than grades.';
-    END IF;
-
-END $$;
-
-/*
-NOTICE: More grades than students.
-*/
-```
-
-### `COALESCE`
-`CASE WHEN` works well for "if-else" logic, such as bucketing values or handling nulls. Our second example above used `CASE WHEN` to return a student's teacher if available, else their own name. We can rewrite this query more concisely using `COALESCE`, however, which specifically handles nulls.
+If all we're doing is handling nulls, though, `COALESCE` is a cleaner choice. `COALESCE` returns the first non-null value among the arguments passed into it. Rewriting the above query, we get this:
 
 {% include header-sql.html %}
 ```sql
@@ -522,7 +497,9 @@ SELECT
  */
 ```
 
-### `UNION ALL`
+Finally, there _is_ an `IF` statement in Postgres, but it's used for control flow on _multiple_ queries rather than within one. It's unlikely you'll be using `IF` much as a data scientist $-$ even as a data engineer, I'd imagine you'd handle such logic in a coordinator like [Airflow](https://airflow.apache.org/), so we'll skip it here.<sup>[[3]](#3-if-then-case-when--coalesce)
+
+### Set operators: `UNION`, `INTERSECT`, and `EXCEPT`
 When we `JOIN` tables, we append data _horizontally_. In the below query, for example, we bring together Adam's data from the `students`, `grades`, and `assignments` tables, creating a table with those columns side by side.
 
 {% include header-sql.html %}
@@ -995,3 +972,27 @@ We specified the `teacher` column as a string with a max of 100 characters since
 In Postgres it turns out it [technically doesn't matter](https://stackoverflow.com/questions/1067061/does-a-varchar-fields-declared-size-have-any-impact-in-postgresql) whether we specify 10, 100, or 500. So specifying a limit might be more of a best practice for communicating to future engineers (including yourself) what your expectations are for the data in this column.
 
 But in MySQL [the size limit _does_ matter](https://stackoverflow.com/questions/1962310/importance-of-varchar-length-in-mysql-table): temporary tables and `MEMORY` tables will store strings of equal length padded out to the maximum specified in the table schema, meaning a `VARCHAR(1000)` will waste a lot of space if none of the values approach that limit.
+
+#### 3. [If-then: `CASE WHEN` & `COALESCE`](#if-then-case-when--coalesce)
+If you're curious, here's what Postgres code with an `IF` statement looks like.
+
+{% include header-sql.html %}
+```sql
+DO $$
+
+BEGIN
+    IF
+        (SELECT COUNT(*) FROM grades) >
+        (SELECT COUNT(*) FROM students)
+    THEN
+        RAISE NOTICE 'More grades than students.';
+    ELSE
+        RAISE NOTICE 'Equal or more students than grades.';
+    END IF;
+
+END $$;
+
+/*
+NOTICE: More grades than students.
+*/
+```
