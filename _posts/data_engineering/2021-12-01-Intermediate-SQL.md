@@ -32,7 +32,11 @@ WHERE
    * [Set operators: `UNION`, `INTERSECT`, and `EXCEPT`](#set-operators-union-intersect-and-except)
    * [Array functions](#array-functions)
 * [Advanced queries](#advanced-queries)
+   * [Self joins](#self-joins)
+   * [Window functions](#window-functions)
    * [`WITH`](#with)
+   * [`EXPLAIN`](#explain)
+* [Leetcode problems](#leetcode-problems)
 
 ## Setting up
 When learning a new language, practice is critical. It's one thing to read this post and nod along, and another to be able to explore ideas on your own. So let's first set up a database on your computer. While it sounds intimidating, it'll actually be straightforward.
@@ -778,12 +782,19 @@ Having covered [filters](#filters-where-vs-having), [if-then logic](#if-then-cas
 
 ## Advanced queries
 
-* Cover self joins, `IN`, etc.
+### Self joins
+
+### Window functions
+
+### Indexes
+
+
+* Cover self joins
 * Outlier analysis
 * Knowing order of execution for a SQL query
 * Indexes
 * Transactions
-* Third normal form
+
 
 
 
@@ -925,9 +936,73 @@ WHERE
 */
 ```
 
+### `EXPLAIN`
+Let's leave you with one final concept before testing our knowledge on some Leetcode problems. We can use the keyword `EXPLAIN` to get an [**execution plan**](https://www.postgresguide.com/performance/explain/), which details how Postgres actually executes your query under the hood. Revisiting the query from the start of this post, we see that Postgres executes the query in a  completely different order than how we wrote it.
 
+{% include header-sql.html %}
+```sql
+EXPLAIN
+SELECT
+    s.id AS student_id,
+    g.score
+FROM
+    students AS s
+LEFT JOIN
+    grades AS g
+    ON s.id = g.student_id
+WHERE
+    g.score > 90;
+/*
+ QUERY PLAN
+ ----------
+ Hash Join (cost=17.20..51.97 rows=617 width=8)
+ [...] Hash Cond: (g.student_id = s.id)
+ [...] -> Seq Scan on grades g (cost=0.00..33.13 rows=617 width=8)
+ [...] Filter: (score > 90)
+ [...] -> Hash (cost=13.20..13.20 rows=320 width=4)
+ [...] -> Seq Scan on students s (cost=0.00..13.20 rows=320 width=4)
+*/
+```
 
-#### Example
+We can take it a step further with `EXPLAIN ANALYZE`, which will run the query and detail the performance.
+
+{% include header-sql.html %}
+```sql
+EXPLAIN ANALYZE
+SELECT
+    s.id AS student_id,
+    g.score
+FROM
+    students AS s
+LEFT JOIN
+    grades AS g
+    ON s.id = g.student_id
+WHERE
+    g.score > 90;
+/*
+ QUERY PLAN
+ ----------
+ Hash Join (cost=17.20..51.97 rows=617 width=8)
+   (actual time=1.679..1.689 rows=6 loops=1)
+ [...] Hash Cond: (g.student_id = s.id)
+ [...] -> Seq Scan on grades g (cost=0.00..33.13 rows=617 width=8)
+   (actual time=1.604..1.609 rows=6 loops=1)
+ [...] Filter: (score > 90)
+   Rows removed by Filter: 19
+ [...] -> Hash (cost=13.20..13.20 rows=320 width=4)
+   (actual time=0.043..0.043 rows=5 loops=1)
+ [...] Buckets: 1024 Batches: 1 Memory Usage: 9kB
+ [...] -> Seq Scan on students s (cost=0.00..13.20 rows=320 width=4)
+    (actual time=0.031..0.033 rows=5 loops=1)
+ Planning Time: 0.351 ms
+ Execution Time: 1.739 ms    
+*/
+```
+
+We see above, for example, that Postgres is sequentially scanning (`Seq Scan`) our `grades` and `students` tables because the tables aren't indexed. In other words, Postgres has no idea whether rows later in the `students` table will have lower or higher IDs than earlier rows (if we were to index on ID). This suboptimal performance isn't a huge concern for our tiny database, but if our database grew to millions of rows, we would definitely need to identify and fix bottlenecks such as these.
+
+## Leetcode problems
+### Quiet students
 [**LC 1412:** Find the Quiet Students in All Exams](https://leetcode.com/problems/find-the-quiet-students-in-all-exams). The premise is that we have `Student` and `Exam` tables, and we want to find the students who meet the following criteria:
 1. Took at least one exam
 2. Never scored the highest or lowest on an exam.
@@ -977,9 +1052,6 @@ WHERE
         SELECT student_id FROM hl_students
     )
 ```
-
-## Self joins
-Let's say we want to match all users from a city that are together.
 
 ## Conclusions
 This post was an overview of some SQL skills that become useful once you're beyond the basics.
