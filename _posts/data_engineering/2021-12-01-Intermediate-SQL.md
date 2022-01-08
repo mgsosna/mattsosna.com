@@ -672,10 +672,37 @@ WHERE
 
 Together, set operators give us the power to combine query results (`UNION`), view overlapping records (`INTERSECT`), and see precisely which rows differ between tables (`EXCEPT`). No more printing out the tables to stack or manually compare them!
 
-### Array functions
-Data in relational databases is usually [**atomic**](https://en.wikipedia.org/wiki/First_normal_form#Atomicity), where each cell contains one value (e.g. one score per row in the `grades` table). But sometimes storing values as an array can be useful. Postgres supports a wide range of [array functions](https://www.postgresql.org/docs/12/functions-array.html) that let us create and manipulate arrays.
+There _is_ one caveat to set operators, though: they can be computationally expensive. There's no real way around it for `UNION`, but we do have an alternative for `INTERSECT` and `EXCEPT` if they're proving too heavy. If tables A and B have comparable primary keys (e.g. each row has a unique student ID), comparing the IDs with `WHERE id IN` can be far more efficient, as rather than compare every value in the rows, we can compare only the primary keys.
 
-One such useful function is `ARRAY_AGG`, which converts rows into an array. Below, we combine `ARRAY_AGG(score)` with `GROUP BY name` to create arrays of all scores for each student.
+{% include header-sql.html %}
+```sql
+-- Alternative to INTERSECT
+SELECT
+    *
+FROM
+    students
+WHERE
+    id IN (1, 2, 3)
+    AND id IN (
+        SELECT
+            id
+        FROM
+            students
+        WHERE
+            id IN (2,3,4)
+);
+/*
+ id | name     | classroom_id
+ -- | -------- | ------------
+  2 | Betty    |            1
+  3 | Caroline |            2
+*/
+```
+
+### Array functions
+Data in relational databases is usually [**atomic**](https://en.wikipedia.org/wiki/First_normal_form#Atomicity), where each cell contains one value (e.g. one score per row in the `grades` table). But sometimes storing values as an array can be useful. For this type of data, Postgres offers a wide range of [array functions](https://www.postgresql.org/docs/12/functions-array.html) that let us create and manipulate arrays.
+
+One useful function is `ARRAY_AGG`, which converts rows into an array. Below, we combine `ARRAY_AGG(score)` with `GROUP BY name` to create arrays of all scores for each student.
 
 {% include header-sql.html %}
 ```sql
@@ -702,7 +729,7 @@ ORDER BY
 */
 ```
 
-We can use `CARDINALITY` to find the length of an array, and `ARRAY_REPLACE` to replace specified values.
+We can use `CARDINALITY` to find the length of an array, and `ARRAY_REPLACE` to replace specified values. (Alternatively, `ARRAY_REMOVE` removes them.)
 
 {% include header-sql.html %}
 ```sql
@@ -731,7 +758,7 @@ ORDER BY
 */
 ```
 
-One last function you may find useful is `UNNEST`, which unpacks an array to rows. Below, `name` is expanded to match the number of rows.
+One last function you may find useful is `UNNEST`, which unpacks an array to rows. (It is, in essence, the opposite of `ARRAY_AGG`.)
 
 {% include header-sql.html %}
 ```sql
@@ -747,7 +774,7 @@ SELECT
 */
 ```
 
-With filters, if logic, and
+Having covered [filters](#filters-where-vs-having), [if-then logic](#if-then-case-when--coalesce), [set operators](#set-operators-union-intersect-and-except), and [array functions](#array-functions), let's now move on to constructing more advanced queries.
 
 ## Advanced queries
 
