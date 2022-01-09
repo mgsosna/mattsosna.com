@@ -126,11 +126,11 @@ VALUES
 
 SELECT * FROM classrooms;
 /*
-  id  | teacher
-  --- | -------
-    1 | Mary
-    2 | Jonah
- */
+ id | teacher
+ -- | -------
+  1 | Mary
+  2 | Jonah
+*/
 ```
 
 Great! Now that we have some classrooms, we can add records to `students` and reference these classrooms.
@@ -146,12 +146,12 @@ INSERT INTO students
 
 SELECT * FROM students;
 /*
-  id  | name     | classroom_id
-  --- | -------- | ------------
-    1 | Adam     |            1
-    2 | Betty    |            1
-    3 | Caroline |            2
- */
+ id | name     | classroom_id
+ -- | -------- | ------------
+  1 | Adam     |            1
+  2 | Betty    |            1
+  3 | Caroline |            2
+*/
 ```
 
 What happens if we get a student who hasn't yet been assigned a classroom? Do we have to wait for them to receive a classroom before we can record them in the database? The answer is no: while our foreign key requirement will block writes that reference non-existing IDs in `classrooms`, it allows us to pass in a `NULL` for `classroom_id`. We can do this by explicitly stating `NULL` for `classroom_id` or by only passing in `name`.
@@ -172,14 +172,14 @@ VALUES
 
 SELECT * FROM students;
 /*
-  id  | name     | classroom_id
-  --- | -------- | ------------
-    1 | Adam     |            1
-    2 | Betty    |            1
-    3 | Caroline |            2
-    4 | Dina     |       [null]
-    5 | Evan     |       [null]
- */
+ id | name     | classroom_id
+ -- | -------- | ------------
+  1 | Adam     |            1
+  2 | Betty    |            1
+  3 | Caroline |            2
+  4 | Dina     |       [null]
+  5 | Evan     |       [null]
+*/
 ```
 
 Finally, let's record some grades. Since grades correspond to _assignments_ $-$ such as homework, projects, attendance, and exams $-$ we'll actually use two tables to store our data more efficiently. `assignments` will contain data on the assignments themselves, while `grades` will record how each student performed on the assignments.
@@ -255,15 +255,15 @@ GROUP BY
 ORDER BY
     3 DESC;
 /*
-  teacher | category  | avg_score
-  ------- | --------- | ---------
-  Jonah   |  project  |     100.0
-  Jonah   |  homework |      94.0
-  Jonah   |  exam     |      92.5
-  Mary    |  homework |      78.3
-  Mary    |  exam     |      76.0
-  Mary    |  project  |      69.5
- */
+ teacher | category  | avg_score
+ ------- | --------- | ---------
+ Jonah   |  project  |     100.0
+ Jonah   |  homework |      94.0
+ Jonah   |  exam     |      92.5
+ Mary    |  homework |      78.3
+ Mary    |  exam     |      76.0
+ Mary    |  project  |      69.5
+*/
 ```
 
 Good work setting up a database! We're now ready to experiment with some tricker SQL concepts. We'll start with syntax you might not have come across yet that'll give you finer control over your queries. We'll then cover some other joins and ways to organize your queries as they grow into the dozens or hundreds of lines.
@@ -783,6 +783,68 @@ Having covered [filters](#filters-where-vs-having), [if-then logic](#if-then-cas
 ## Advanced queries
 
 ### Self joins
+Occasionally, we may want to join our table _with itself_ to get the data we need. One common example is [the "manager" problem](https://www.postgresqltutorial.com/postgresql-self-join/), which we'll rephrase as the "best friend" problem. Let's start by adding and then populating a `best_friend_id` column to our `students` table.
+
+{% include header-sql.html %}
+```sql
+ALTER TABLE students
+ADD best_friend_id INT;
+
+UPDATE students
+SET best_friend_id = 5
+WHERE id = 1;
+
+UPDATE students
+SET best_friend_id = 4
+WHERE id = 2;
+
+UPDATE students
+SET best_friend_id = 2
+WHERE id = 3;
+
+UPDATE students
+SET best_friend_id = 2
+WHERE id = 4;
+
+UPDATE students
+SET best_friend_id = 1
+WHERE id = 5;
+
+SELECT * FROM students;
+/*
+ id  | name     | classroom_id | best_friend_id
+ --- | -------- | ------------ | --------------
+   1 | Adam     |            1 |              5
+   2 | Betty    |            1 |              4
+   3 | Caroline |            2 |              2
+   4 | Dina     |       [null] |              2
+   5 | Evan     |       [null] |              1
+*/
+```
+
+Storing the identity of the best friend as a number is efficient but not very readable. To identify _who_ each student's best friend is, we perform a **self join.** We join `students` _to itself_, where the `id` column in one table is the `best_friend_id` in the other. We distinguish the tables with aliases, `x` and `y` in our example.
+
+{% include header-sql.html %}
+```sql
+SELECT
+    x.name,
+    y.name AS best_friend
+FROM
+    students AS x
+INNER JOIN
+    students AS y
+    ON y.id = x.best_friend_id;
+/*
+ name     | best_friend
+ -------- | -----------
+ Adam     | Evan
+ Betty    | Dina
+ Caroline | Betty
+ Dina     | Betty
+ Evan     | Adam
+*/
+```
+
 
 ### Window functions
 
@@ -937,7 +999,7 @@ WHERE
 ```
 
 ### `EXPLAIN`
-Let's leave you with one final concept before testing our knowledge on some Leetcode problems. We can use the keyword `EXPLAIN` to get an [**execution plan**](https://www.postgresguide.com/performance/explain/), which details how Postgres actually executes your query under the hood. Revisiting the query from the start of this post, we see that Postgres executes the query in a  completely different order than how we wrote it.
+Let's cover one final concept before testing our knowledge on some Leetcode problems. We can use the keyword `EXPLAIN` to get an [**execution plan**](https://www.postgresguide.com/performance/explain/), which details how Postgres actually executes your query under the hood. Revisiting the query from the start of this post, we see that Postgres executes the query in a  completely different order than how we wrote it.
 
 {% include header-sql.html %}
 ```sql
@@ -995,7 +1057,7 @@ WHERE
  [...] -> Seq Scan on students s (cost=0.00..13.20 rows=320 width=4)
     (actual time=0.031..0.033 rows=5 loops=1)
  Planning Time: 0.351 ms
- Execution Time: 1.739 ms    
+ Execution Time: 1.739 ms
 */
 ```
 
