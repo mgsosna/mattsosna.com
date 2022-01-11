@@ -783,7 +783,9 @@ Having covered [filters](#filters-where-vs-having), [if-then logic](#if-then-cas
 ## Advanced queries
 
 ### Self joins
-Occasionally, we may want to join our table _with itself_ to get the data we need. One common example is [the "manager" problem](https://www.postgresqltutorial.com/postgresql-self-join/), which we'll rephrase as the "best friend" problem. Let's start by adding and then populating a `best_friend_id` column to our `students` table.
+Occasionally, we may want to join our table _with itself_ to get the data we need. One common example is [the "manager" problem](https://www.postgresqltutorial.com/postgresql-self-join/), which we'll rephrase as the "best friend" problem. The idea is that if rows in a table contain values pointing to _other_ rows in the table (such as IDs), then we can join the table on itself to get additional data corresponding to those values.
+
+Let's start by adding and then populating a `best_friend_id` column to our `students` table.
 
 {% include header-sql.html %}
 ```sql
@@ -845,8 +847,35 @@ INNER JOIN
 */
 ```
 
-
 ### Window functions
+Window functions are similar to aggregate functions (anything with a `GROUP BY`) in that they apply a calculation to a grouped set of values. Unlike aggregate functions, however, window functions don't reduce the number of rows.
+
+{% include header-sql.html %}
+```sql
+SELECT
+    s.name,
+    g.score,
+    AVG(g.score) OVER (
+        PARTITION BY s.name
+    )
+FROM
+    students AS s
+INNER JOIN
+    grades AS g
+    ON s.id = g.student_id;
+/*
+ name  | score | avg
+ ------| ----- | ----------
+ Adam  |    82 | 80.8000...
+ Adam  |    82 | 80.8000...
+ Adam  |    80 | 80.8000...
+ Adam  |    75 | 80.8000...
+ Adam  |    85 | 80.8000...
+ Betty |    74 | 70.4000...
+ Betty |    75 | 70.4000...
+ ...   |   ... |        ...
+*/
+```
 
 ### Indexes
 
