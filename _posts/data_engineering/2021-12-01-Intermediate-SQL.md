@@ -878,7 +878,7 @@ INNER JOIN
 ```
 
 ### Indexes
-
+Indexes allow for much faster retrieval of rows. Think of it as a layer on top of the data.
 
 * Cover self joins
 * Outlier analysis
