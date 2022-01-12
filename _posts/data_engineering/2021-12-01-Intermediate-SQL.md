@@ -850,6 +850,8 @@ INNER JOIN
 ### Window functions
 Window functions are similar to aggregate functions (anything with a `GROUP BY`) in that they apply a calculation to a grouped set of values. Unlike aggregate functions, however, window functions don't reduce the number of rows.
 
+Let's say we take the average score for each student. On lines 4-6 below, we add the `OVER` and `PARTITION BY` to convert the aggregation into a window functions.
+
 {% include header-sql.html %}
 ```sql
 SELECT
@@ -877,14 +879,69 @@ INNER JOIN
 */
 ```
 
-### Indexes
-Indexes allow for much faster retrieval of rows. Think of it as a layer on top of the data.
+For aggregator functions like `AVG`, `MIN`, or `MAX`, each row in the `PARTITION BY` grouping will have the same value. This might prove useful for some analyses, but it doesn't really exemplify the strength of window functions.
 
-* Cover self joins
-* Outlier analysis
-* Knowing order of execution for a SQL query
-* Indexes
-* Transactions
+A more useful case is **ranking** each student's scores. First, here's how we'd rank scores across _all_ students. We use `RANK() OVER`, then pass in the column to rank.
+
+{% include header-sql.html %}
+```sql
+SELECT
+    s.name,
+    g.score,
+    RANK() OVER (
+        ORDER BY g.score
+    )
+FROM
+    grades AS g
+INNER JOIN
+    students AS s
+    ON s.id = g.student_id;
+/*
+ name  | score | rank
+ ----- | ----- | ----
+ Betty |    64 |    1
+ Dina  |    64 |    1
+ Evan  |    67 |    3
+ ...   |   ... |  ...
+*/
+```
+
+Ranking scores _by each student_ is a one-line change: we simply add `PARTITION BY s.name` to the `OVER` clause.
+
+{% include header-sql.html %}
+```sql
+SELECT
+    s.name,
+    g.score,
+    RANK() OVER (
+        PARTITION BY s.name  -- ranks by student
+        ORDER BY g.score
+    )
+FROM
+    grades AS g
+INNER JOIN
+    students AS s
+    ON s.id = g.student_id;
+/*
+ name     | score | rank
+ -------- | ----- | ----
+ Adam     |    75 |    1
+ Adam     |    80 |    2
+ Adam     |    82 |    3
+ Adam     |    82 |    3
+ Adam     |    85 |    5
+ Betty    |    64 |    1
+ Betty    |    69 |    2
+ Betty    |    70 |    3
+ Betty    |    74 |    4
+ Betty    |    75 |    5
+ Caroline |    90 |    1
+ Caroline |    92 |    2
+ ...      |   ... |  ...
+*/
+```
+
+
 
 
 
@@ -1153,8 +1210,14 @@ Extras:
 
 Good "reading list" of beginner vs. intermediate SQL: https://softwareengineering.stackexchange.com/questions/181651/are-these-sql-concepts-for-beginners-intermediate-or-advanced-developers
 
-Can also think about self joins: https://www.w3schools.com/sql/sql_join_self.asp
+### Indexes
+Indexes allow for much faster retrieval of rows. Think of it as a layer on top of the data.
 
+* Cover self joins
+* Outlier analysis
+* Knowing order of execution for a SQL query
+* Indexes
+* Transactions
 
 
 ## Footnotes
