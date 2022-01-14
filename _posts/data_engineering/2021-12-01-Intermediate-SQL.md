@@ -1206,17 +1206,12 @@ This post was an overview of some SQL skills that become useful once you're beyo
 
 Extras:
 * `CAST`: converting the datatype of a column from one to another. Useful if joining tables where the key of interest is in different types (e.g. `INT` vs. `FLOAT`).
-
+* Indexes: faster data retrieval from a table, since the RDBMS doesn't need to scan the entire table - it can just navigate along the index. This assumes though that the indexed column is one you'll be using in the query. Think of it as a layer on top of the data.
 
 Good "reading list" of beginner vs. intermediate SQL: https://softwareengineering.stackexchange.com/questions/181651/are-these-sql-concepts-for-beginners-intermediate-or-advanced-developers
 
-### Indexes
-Indexes allow for much faster retrieval of rows. Think of it as a layer on top of the data.
-
-* Cover self joins
 * Outlier analysis
 * Knowing order of execution for a SQL query
-* Indexes
 * Transactions
 
 
