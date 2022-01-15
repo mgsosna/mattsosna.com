@@ -942,9 +942,9 @@ INNER JOIN
 ```
 
 ### `WITH`
-Let's cover one final technique, one that will empower us to write complex queries through modular subqueries. `WITH` lets us name the results of a query, letting us string together as many queries as we want.
+Let's cover one final technique, one that will empower us to write complex queries by stringing together subqueries. **`WITH` lets us name a subquery,** meaning we can then reference that subquery's results elsewhere.
 
-Let's say, for example, that we want to label whether each score in `grades` is higher than that student's average score. Knocking this out in one query seems straightforward $-$ we just need to calculate each score with a `GROUP BY` and then do something like `g.score > avg`, right? Let's start with the `GROUP BY` aggregation.
+Let's say, for example, that we want to label whether students' scores in `grades` are higher than their average score. Knocking this out in one query seems straightforward $-$ we just need to calculate each average with a `GROUP BY` and then do something like `g.score > avg`, right? Let's start with the `GROUP BY` aggregation.
 
 {% include header-sql.html %}
 ```sql
@@ -969,7 +969,7 @@ GROUP BY
 */
 ```
 
-Easy enough. But how do we then compare the individual scores to those averages? Each of the below attempts raises an error.
+Easy enough. But how do we then compare the individual scores to those averages? Both attempts below raise an error.
 
 {% include header-sql.html %}
 ```sql
@@ -989,7 +989,7 @@ SELECT
     -- clause or be used in an aggregate function
 ```
 
-We _can_ get this to work by calling a window function twice, but it looks a little ugly:
+We _can_ get this to work by calling a window function twice, but it looks a little ugly.
 
 {% include header-sql.html %}
 ```sql
@@ -1045,54 +1045,99 @@ INNER JOIN
 
 The `WITH` query is substantially longer than just writing the window function twice. Why bother? Well, this more verbose query provides two important advantages: **scalability** and **readability.**
 
-Queries can become ridiculously long $-$ at Meta (Facebook), the longest query I came across was over 1000 lines and called over 25 tables. This query would be completely unreadable without `WITH` clauses, which demarcate distinct, _named_, sections of the code. When dealing with big data, we don't have the luxury of sequentially running those subqueries, saving the results to CSVs, and then performing the merges and analyses in Python. All the database interactions need to run in one go. 
+Queries can become ridiculously long $-$ at Meta (Facebook), the longest query I've come across (so far!) was over 1000 lines and called 25 tables. This query would be completely unreadable without `WITH` clauses, which demarcate distinct, _named_, sections of the code. When dealing with big data, we don't have the luxury of sequentially running those subqueries, saving the results to CSVs, and then performing the merges and analyses in Python. All the database interactions need to run in one go.
+
+Here's another example. Let's say that our school's corrupt policy for passing grades gets exposed and the administrators get fired. Now, the criteria for passing a class is 1) you have a weighted average of at least 85%, or 2) you get above a 70% on your biography project. Bundling this logic into one `CASE WHEN` would be painful, but it's straightforward if we break the query down with `WITH`.
+
+Let's start by identifying the students who would pass because they got above an 85 weighted average.
 
 {% include header-sql.html %}
 ```sql
-WITH top_students AS (
-    SELECT
-        id,
-        AVG(grade)
-    FROM
-        students
-    WHERE
-        grade IS NOT NULL
-        AND classroom_id IS NOT NULL
-    GROUP BY
-        id
-    ORDER BY
-        AVG(grade) DESC
-    LIMIT
-        10
-),
-chicago_classrooms AS (
-    SELECT
-        id
-    FROM
-        classrooms
-    WHERE
-        city = 'Chicago'
-)
 SELECT
+    s.name
+FROM
+    students AS s
+INNER JOIN
+    grades AS g
+    ON s.id = g.student_id
+INNER JOIN
+    assignments AS a
+    ON a.id = g.assignment_id
+GROUP BY
+    s.name
+HAVING
+    SUM(g.score * a.weight) > 85;
+
+/*
+ name
+ --------
+ Caroline
+*/
+```
+
+Tough school! (But go Caroline!) Now let's identify the students who pass because they got above an 60% on their biography project.
+
+{% include header-sql.html %}
+```sql
+SELECT
+    s.name
+FROM
+    students AS s
+INNER JOIN
+    grades AS g
+    ON s.id = g.student_id
+INNER JOIN
+    assignments AS a
+    ON a.id = g.assignment_id
+WHERE
+    a.name = 'biography'
+    AND g.score > 70
+
+/*
+ name
+ --------
+ Adam
+ Caroline
+ Evan
+*/
+```
+
+We want to find students who meet either criterion, so we'll want a query that looks something like this:
+
+{% include header-sql.html %}
+```sql
+SELECT DISTINCT
     name
 FROM
     students
 WHERE
-    id IN (
-        SELECT id FROM top_students
-    )
-    AND classroom_id IN (
-        SELECT id FROM chicago_classrooms
-    );
+    name IN <people_who_passed_final>
+    OR name IN <people_who_passed_project>;
+
 ```
 
-Maybe the school changes its mind for the criteria for graduation and says that you graduate if 1) you got above a 70 on the final exam, or 2) you got above a 90 on your project.
+This is straightforward with `WITH` $-$ we simply name the above two queries `weighted_pass` and `project_pass`, then reference them as above.
+
+{% include header-sql.html %}
 ```sql
-WITH important_grades AS (
-    SELECT
-        s.name AS student,
-        g.score,
-        a.name AS assignment
+WITH weighted_pass AS (
+	SELECT
+		s.name
+	FROM
+		students AS s
+	INNER JOIN
+		grades AS g
+		ON s.id = g.student_id
+	INNER JOIN
+		assignments AS a
+		ON a.id = g.assignment_id
+	GROUP BY
+		s.name
+	HAVING
+		SUM(g.score * a.weight) > 85),
+project_pass AS (
+	SELECT
+        s.name
     FROM
         students AS s
     INNER JOIN
@@ -1102,40 +1147,22 @@ WITH important_grades AS (
         assignments AS a
         ON a.id = g.assignment_id
     WHERE
-        a.name IN ('biography', 'final')
-),
-final_passed AS (
-	SELECT
-		student
-	FROM
-		important_grades
-	WHERE
-		assignment = 'final' AND score > 70
-),
-project_passed AS (
-	SELECT
-		student
-	FROM
-		important_grades
-	WHERE
-		assignment = 'biography' AND score > 90
-)
-
+        a.name = 'biography'
+        AND g.score > 70)
 SELECT DISTINCT
 	name
 FROM
 	students
 WHERE
-	name IN (SELECT student FROM final_passed)
-	OR name IN (SELECT student FROM project_passed);
+	name IN (SELECT name FROM weighted_pass)
+	OR name IN (SELECT name FROM project_pass);
 
 /*
- name     |
- -------- |
- Dina     |
- Evan     |
- Caroline |
- Adam     |
+ name
+ --------
+ Evan
+ Caroline
+ Adam
 */
 ```
 
