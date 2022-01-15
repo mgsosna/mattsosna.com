@@ -941,56 +941,111 @@ INNER JOIN
 */
 ```
 
-
-
-
-
-
 ### `WITH`
-Queries can become long, especially when you're joining data from multiple tables, and you want to apply filters or aggregations to tables before joining. Sometimes you have the luxury of being able to perform part of the query in SQL and the remainder in Python, or to perform multiple queries (e.g. on temporary tables). But when you don't, you need to _nest_ queries.
+Let's cover one final technique, one that will empower us to write complex queries through modular subqueries. `WITH` lets us name the results of a query, letting us string together as many queries as we want.
 
-Let's say we're trying to find all the names in the `cats` table that also appear in the `dogs` table. Our query will require a subquery: finding all the names in dogs.
-
-There are two ways to get these dog names. We'll start with the method I try to avoid.
+Let's say, for example, that we want to label whether each score in `grades` is higher than that student's average score. Knocking this out in one query seems straightforward $-$ we just need to calculate each score with a `GROUP BY` and then do something like `g.score > avg`, right? Let's start with the `GROUP BY` aggregation.
 
 {% include header-sql.html %}
 ```sql
 SELECT
-    name
+    s.name,
+    ROUND(AVG(g.score),1) AS avg
 FROM
-    cats
-WHERE
-    name IN (
-        SELECT
-            name
-        FROM
-            dogs
-    );
+    students AS s
+INNER JOIN
+    grades AS g
+    ON s.id = g.student_id
+GROUP BY
+    s.name;
+/*
+ name     | avg
+ -------- | ----
+ Dina     | 79.6
+ Evan     | 83.4
+ Betty    | 70.4
+ Caroline | 94.6
+ Adam     | 80.8
+*/
 ```
 
-Above, our query does X.
-
-But we can make our query more modular and hence easier to read with the `WITH` clause.
+Easy enough. But how do we then compare the individual scores to those averages? Each of the below attempts raises an error.
 
 {% include header-sql.html %}
 ```sql
-WITH dog_names AS (
+SELECT
+    s.name,
+    ROUND(AVG(g.score),1) AS avg,
+    g.score > avg
+    ...
+    -- ERROR: column "avg" does not exist
+
+SELECT
+    s.name,
+    ROUND(AVG(g.score),1) AS avg,
+    g.score > ROUND(AVG(g.score),1)
+    ...
+    -- ERROR: column "g.score" must appear in the GROUP BY
+    -- clause or be used in an aggregate function
+```
+
+We _can_ get this to work by calling a window function twice, but it looks a little ugly:
+
+{% include header-sql.html %}
+```sql
+SELECT
+    s.name,
+    AVG(g.score) OVER (PARTITION BY s.name),
+    g.score > AVG(g.score) OVER (PARTITION BY s.name)
+    ...
+```
+
+A cleaner and more scalable alternative is to use `WITH`. We can break our query into _two_ subqueries $-$ one to calculate the averages, and one to join that table of averages into `grades`.
+
+{% include header-sql.html %}
+```sql
+WITH averages AS (
     SELECT
-        name
+        s.id,
+        ROUND(AVG(g.score),1) AS avg_score
     FROM
-        dogs
+        students AS s
+    INNER JOIN
+        grades AS g
+        ON s.id = g.student_id
+    GROUP BY
+        s.id
 )
 SELECT
-    name
+    s.name,
+    g.score,
+    a.avg_score,
+    g.score > a.avg_score AS above_avg
 FROM
-    cats
-WHERE
-    name IN (SELECT name FROM dog_names);
+    students AS s
+INNER JOIN
+    grades AS g
+    ON s.id = g.student_id
+INNER JOIN
+    averages AS a
+    ON a.id = s.id;
+
+/*
+ name  | score | avg_score | above_avg
+ ----- | ----- | --------- | ---------
+ Adam  |    82 |      80.8 | true
+ Adam  |    82 |      80.8 | true
+ Adam  |    80 |      80.8 | false
+ Adam  |    75 |      80.8 | false
+ Adam  |    85 |      80.8 | true
+ Betty |    74 |      70.4 | true
+ Betty |    75 |      70.4 | true
+*/
 ```
 
-This might seem like more work compared to above, but it serves two purposes: making our code easier to understand by separating out our subqueries, and setting us up to build more complex queries.
+The `WITH` query is substantially longer than just writing the window function twice. Why bother? Well, this more verbose query provides two important advantages: **scalability** and **readability.**
 
-Let's say, for example, that our subquery isn't simply selecting a row from a table. Perhaps it has some groupby's and joins with another subquery's table.
+Queries can become ridiculously long $-$ at Meta (Facebook), the longest query I've written was over 1000 lines and called over 25 tables. This query would be completely unreadable without `WITH` clauses, which demarcate distinct, _named_, sections of the code. When dealing with big data, we don't have the luxury of sequentially running those subqueries, saving the results to CSVs, and then performing the merges and analyses in Python. All the database interactions need to run in one go. 
 
 {% include header-sql.html %}
 ```sql
