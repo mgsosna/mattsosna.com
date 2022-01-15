@@ -1045,7 +1045,7 @@ INNER JOIN
 
 The `WITH` query is substantially longer than just writing the window function twice. Why bother? Well, this more verbose query provides two important advantages: **scalability** and **readability.**
 
-Queries can become ridiculously long $-$ at Meta (Facebook), the longest query I've written was over 1000 lines and called over 25 tables. This query would be completely unreadable without `WITH` clauses, which demarcate distinct, _named_, sections of the code. When dealing with big data, we don't have the luxury of sequentially running those subqueries, saving the results to CSVs, and then performing the merges and analyses in Python. All the database interactions need to run in one go. 
+Queries can become ridiculously long $-$ at Meta (Facebook), the longest query I came across was over 1000 lines and called over 25 tables. This query would be completely unreadable without `WITH` clauses, which demarcate distinct, _named_, sections of the code. When dealing with big data, we don't have the luxury of sequentially running those subqueries, saving the results to CSVs, and then performing the merges and analyses in Python. All the database interactions need to run in one go. 
 
 {% include header-sql.html %}
 ```sql
