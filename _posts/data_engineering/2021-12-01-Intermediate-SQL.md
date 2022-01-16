@@ -35,8 +35,7 @@ WHERE
    * [Self joins](#self-joins)
    * [Window functions](#window-functions)
    * [`WITH`](#with)
-   * [`EXPLAIN`](#explain)
-* [Leetcode problems](#leetcode-problems)
+* [Looking under the hood: `EXPLAIN`](#looking-under-the-hood-explain)
 
 ## Setting up
 When learning a new language, practice is critical. It's one thing to read this post and nod along, and another to be able to explore ideas on your own. So let's first set up a database on your computer. While it sounds intimidating, it'll actually be straightforward.
@@ -1116,27 +1115,28 @@ WHERE
 
 ```
 
-This is straightforward with `WITH` $-$ we simply name the above two queries `weighted_pass` and `project_pass`, then reference them as above.
+This is straightforward with `WITH`. We simply name the above two queries `weighted_pass` and `project_pass`, then reference them as above.
 
 {% include header-sql.html %}
 ```sql
 WITH weighted_pass AS (
-	SELECT
-		s.name
-	FROM
-		students AS s
-	INNER JOIN
-		grades AS g
-		ON s.id = g.student_id
-	INNER JOIN
-		assignments AS a
-		ON a.id = g.assignment_id
-	GROUP BY
-		s.name
-	HAVING
-		SUM(g.score * a.weight) > 85),
+    SELECT
+        s.name
+    FROM
+        students AS s
+    INNER JOIN
+        grades AS g
+        ON s.id = g.student_id
+    INNER JOIN
+        assignments AS a
+        ON a.id = g.assignment_id
+    GROUP BY
+        s.name
+    HAVING
+        SUM(g.score * a.weight) > 85
+),
 project_pass AS (
-	SELECT
+    SELECT
         s.name
     FROM
         students AS s
@@ -1148,14 +1148,15 @@ project_pass AS (
         ON a.id = g.assignment_id
     WHERE
         a.name = 'biography'
-        AND g.score > 70)
+        AND g.score > 70
+)
 SELECT DISTINCT
-	name
+    name
 FROM
-	students
+    students
 WHERE
-	name IN (SELECT name FROM weighted_pass)
-	OR name IN (SELECT name FROM project_pass);
+    name IN (SELECT name FROM weighted_pass)
+    OR name IN (SELECT name FROM project_pass);
 
 /*
  name
@@ -1166,8 +1167,12 @@ WHERE
 */
 ```
 
-### `EXPLAIN`
-Let's cover one final concept before testing our knowledge on some Leetcode problems. We can use the keyword `EXPLAIN` to get an [**execution plan**](https://www.postgresguide.com/performance/explain/), which details how Postgres actually executes your query under the hood. Revisiting the query from the start of this post, we see that Postgres executes the query in a  completely different order than how we wrote it.
+## Looking under the hood: `EXPLAIN`
+Let's cover one final concept before we close out this post. The more knowledge we gain about SQL, the more ways we can build complex queries. Should we use `EXCEPT` or `NOT IN`? Should we perform a couple extra `JOIN`s or use `WITH` and `UNION ALL`?
+
+**In essence, how do we know if one query is more or less efficient than another?**
+
+Postgres can actually tell you this. The keyword `EXPLAIN` provides an [**execution plan**](https://www.postgresguide.com/performance/explain/), which details _how Postgres executes your query_ under the hood. Revisiting the query from the start of this post, we see that Postgres executes the query in a completely different order than how we wrote it.
 
 {% include header-sql.html %}
 ```sql
@@ -1229,72 +1234,21 @@ WHERE
 */
 ```
 
-We see above, for example, that Postgres is sequentially scanning (`Seq Scan`) our `grades` and `students` tables because the tables aren't indexed. In other words, Postgres has no idea whether rows later in the `students` table will have lower or higher IDs than earlier rows (if we were to index on ID). This suboptimal performance isn't a huge concern for our tiny database, but if our database grew to millions of rows, we would definitely need to identify and fix bottlenecks such as these.
-
-## Leetcode problems
-### Quiet students
-[**LC 1412:** Find the Quiet Students in All Exams](https://leetcode.com/problems/find-the-quiet-students-in-all-exams). The premise is that we have `Student` and `Exam` tables, and we want to find the students who meet the following criteria:
-1. Took at least one exam
-2. Never scored the highest or lowest on an exam.
-
-{% include header-sql.html %}
-```sql
--- Get the highest and lowest exam scores
-WITH hl_exams AS (
-    SELECT
-        exam_id,
-        MIN(score) AS min_score,
-        MAX(score) AS max_score
-    FROM
-        Exams
-    GROUP BY
-        exam_id
-),
-
--- Get the students who scored highest or lowest on the exams
-hl_students AS (
-    SELECT
-        student_id
-    FROM
-        Exam
-    INNER JOIN
-        hl_exams
-    ON
-        Exam.exam_id = hl_exams.exam_id
-        AND
-        (Exam.score = hl_exams.min_score
-        OR Exam.score = hl_exams.max_score)
-)
-
-SELECT
-    student_id,
-    student_name
-FROM
-    Student
-WHERE
-    -- Student took at least one exam
-    student_id IN (
-        SELECT student_id FROM Exams
-    )
-    AND
-    -- Student not highest or lowest score
-    student_id NOT IN (
-        SELECT student_id FROM hl_students
-    )
-```
+We see above, for example, that Postgres is sequentially scanning (`Seq Scan`) our `grades` and `students` tables because the tables aren't indexed. In other words, Postgres has no idea whether rows later in the `students` table will have lower or higher IDs than earlier rows (if we were to index on ID). This suboptimal performance isn't a huge concern for our tiny database, but if our database grew to millions of rows, we would definitely need to identify and fix bottlenecks such as these.<sup>[[4]](#4-looking-under-the-hood-explain)</sup>
 
 ## Conclusions
-This post was an overview of some SQL skills that become useful once you're beyond the basics.
 
-Extras:
-* `CAST`: converting the datatype of a column from one to another. Useful if joining tables where the key of interest is in different types (e.g. `INT` vs. `FLOAT`).
-* Indexes: faster data retrieval from a table, since the RDBMS doesn't need to scan the entire table - it can just navigate along the index. This assumes though that the indexed column is one you'll be using in the query. Think of it as a layer on top of the data.
+
+This post was an overview of some SQL skills that become useful once you're beyond the basics. We started with [filters](#filters-where-vs-having). We then covered [if-then logic](#if-then-case-when--coalesce), letting us do X. [Set operators](#set-operators-union-intersect-and-except) let us do Y. Then [array functions](#array-functions) do Z.
+
+We then discussed components of more advanced queries, such as using [self joins](#self-joins), [window functions](#window-functions), and [`WITH`](#with). Finally, we ended with
+
+
+
+
+Want to keep expanding your knowledge? There are always more functions to learn, like `CAST` (for converting datatypes, e.g. floats to integers), or [user-defined functions](https://www.postgresql.org/docs/8.0/xfunc.html) for simplifying your code further. These are useful, but it may be more fruitful to think about _optimizing_ your queries however possible. Even at FAANG companies with essentially unlimited compute, queries can fail if they demand more memory than a server can handle. The `EXPLAIN` command empowers us to quantify _how_ our queries work, which lets us optimize them.
 
 Good "reading list" of beginner vs. intermediate SQL: https://softwareengineering.stackexchange.com/questions/181651/are-these-sql-concepts-for-beginners-intermediate-or-advanced-developers
-
-* Outlier analysis
-* Knowing order of execution for a SQL query
-* Transactions
 
 
 ## Footnotes
@@ -1331,3 +1285,16 @@ END $$;
 NOTICE: More grades than students.
 */
 ```
+
+#### 4. [Looking under the hood: `EXPLAIN`](#looking-under-the-hood-explain)
+Setting indexes on your tables is critical to ensuring performance as the database size grows. We can easily set an index on the scores in `grades`, for example, with the following query:
+
+{% include header-sql.html %}
+```sql
+CREATE INDEX
+    score_index
+ON
+    grades(score);
+```
+
+Yet, if we run `EXPLAIN ANALYZE` again, we'll see that Postgres still runs a sequential scan. This is because Postgres has been optimized beyond what an "intermediate SQL" blog post will teach you! If the number of rows in a table are relatively small, [it's actually faster to perform a sequential scan](https://stackoverflow.com/questions/5203755/why-does-postgresql-perform-sequential-scan-on-indexed-column/5203827) than use an index, so Postgres executes the query with the faster approach.
