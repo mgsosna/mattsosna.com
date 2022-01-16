@@ -40,10 +40,14 @@ WHERE
 ## Setting up
 When learning a new language, practice is critical. It's one thing to read this post and nod along, and another to be able to explore ideas on your own. So let's first set up a database on your computer. While it sounds intimidating, it'll actually be straightforward.
 
+<center>
+<img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/simple_db.png" height="70%" width="70%" loading="lazy" alt="A simple database">
+</center>
+
 The first step is to install SQL on your computer. We'll use [PostgreSQL (Postgres)](https://www.postgresql.org/), a common SQL dialect. To do so, we visit the [download page](https://www.postgresql.org/download/), select our operating system (e.g. Windows), and then run the installation. If you set a password on your database, keep it handy for the next step!  (Since our database won't be public, it's fine to use a simple password like `admin`.)
 
 <center>
-<img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/download.png" width="70%" height="70%">
+<img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/download.png" width="70%" height="70%" loading="lazy" alt="A screenshot of downloading pgAdmin">
 </center>
 
 The next step is to install [pgAdmin](https://www.pgadmin.org/), a graphical user interface (GUI) that makes it easy to interact with our PostgreSQL database(s). We do this by going to the [installation page](https://www.pgadmin.org/download/), clicking the link for our operating system, and then following the steps.
@@ -56,7 +60,7 @@ We're now ready to create some tables! Let's create a set of tables that describ
 
 We could do all this with the GUI, but we'll instead write code to make our workflow repeatable. To write the queries that will create our tables, we'll right click on `postgres` (under `home` > `Databases (1)` > `postgres`) and then click on Query Tool.
 
-<img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/pgadmin1.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/pgadmin1.png" loading="lazy" alt="A screenshot of pgAdmin">
 
 Let's start by creating the `classrooms` table. We'll keep this table simple: it'll just consist of an `id` and the `teacher` name. Type the following code into the query tool and hit run.
 
@@ -72,11 +76,17 @@ CREATE TABLE classrooms (
 
 The first line, `DROP TABLE IF EXISTS classrooms`, deletes the `classrooms` table if it already exists, with `CASCADE` removing tables that depend on `classrooms`. We'll be changing all tables at once if we ever need to drop `classrooms`, so this is ok! (Though in general you should really know what you're doing if you're deleting tables!)
 
-Adding `DROP TABLE IF EXISTS <TABLE>` before `CREATE TABLE <table>` lets us **codify our database schema in a script**, which is handy if we decide to change our database in some way down the road $-$ add a table, change the datatype of a column, etc. We can simply store the instructions for generating our database in a script, update that script when we want to make a change, and then rerun it.<sup>[[1]](#1-setting-up)</sup> We're also now able to version control our schema and share it. In fact, the entire database in this post can be recreated from [this script](https://github.com/mgsosna/sql_fun/blob/main/school/create_db.sql) that we're writing right now.
+Adding `DROP TABLE IF EXISTS` before `CREATE TABLE` lets us **codify our database schema in a script**, which is handy if we decide to change our database in some way down the road $-$ add a table, change the datatype of a column, etc. We can simply store the instructions for generating our database in a script, update that script when we want to make a change, and then rerun it.<sup>[[1]](#1-setting-up)</sup>
+
+We're also now able to [version control](https://www.atlassian.com/git/tutorials/what-is-version-control) our schema and share it. In fact, the entire database in this post can be recreated from [this script](https://github.com/mgsosna/sql_fun/blob/main/school/create_db.sql), so feel free to experiment!
+
+<center>
+<img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/weird_db.png" loading="lazy" alt="A simple database and a complex one">
+</center>
 
 Line 4 may also catch your eye: here we specify that `id` is the primary key, meaning each row must contain a value in this column, and that each value must be unique. To avoid needing to keep track of which `id` values have already been used, we use `GENERATED ALWAYS AS IDENTITY`, an alternative to the [**sequence**](https://www.postgresql.org/docs/9.5/sql-createsequence.html) syntax. As a result, when inserting data into this table, we only need to provide the `teacher` names.
 
-Finally, on line 5 we specify that `teacher` is a string with a maximum length of 100 characters.<sup>[[2]](#2-setting-up)</sup>
+Finally, on line 5 we specify that `teacher` is a string with a maximum length of 100 characters.<sup>[[2]](#2-setting-up)</sup> If we come across a teacher whose name is longer than this, we're either abbreviating their name or altering the table.
 
 Let's now create the `students` table. Our table will consist of a unique `id`, the student's `name`, and a [**foreign key**](https://www.postgresqltutorial.com/postgresql-foreign-key/) that points to `classrooms`.
 
@@ -104,6 +114,7 @@ INSERT INTO students
     (name, classroom_id)
 VALUES
     ('Matt', 1);
+
 /*
 ERROR:  insert or update on table "students" violates foreign
         key constraint "fk_classrooms"
@@ -113,7 +124,7 @@ SQL state: 23503
 */
 ```
 
-So let's now create some classrooms and make sure they were written successfully.
+So let's now create some classrooms. Since we specified that the `id` column will be automatically incremented for us, we only have to insert the teacher names.
 
 {% include header-sql.html %}
 ```sql
@@ -124,6 +135,7 @@ VALUES
     ('Jonah');
 
 SELECT * FROM classrooms;
+
 /*
  id | teacher
  -- | -------
@@ -153,7 +165,7 @@ SELECT * FROM students;
 */
 ```
 
-What happens if we get a student who hasn't yet been assigned a classroom? Do we have to wait for them to receive a classroom before we can record them in the database? The answer is no: while our foreign key requirement will block writes that reference non-existing IDs in `classrooms`, it allows us to pass in a `NULL` for `classroom_id`. We can do this by explicitly stating `NULL` for `classroom_id` or by only passing in `name`.
+What happens if we get a student who hasn't yet been assigned a classroom? Do we have to wait for them to receive a classroom before we can record them in the database? The answer is no: **while our foreign key requirement will block writes that reference non-existing IDs in `classrooms`, it allows us to pass in a `NULL` for `classroom_id`.** We can do this by explicitly stating `NULL` for `classroom_id` or by only passing in `name`.
 
 {% include header-sql.html %}
 ```sql
@@ -233,7 +245,7 @@ Query returned successfully in 64 msec.
 */
 ```
 
-Finally, let's take a look to make sure everything's in place.
+Finally, let's take a look to make sure everything's in place. The query below finds the average score on each assignment category, grouped by teacher.
 
 {% include header-sql.html %}
 ```sql
@@ -253,6 +265,7 @@ GROUP BY
     2
 ORDER BY
     3 DESC;
+
 /*
  teacher | category  | avg_score
  ------- | --------- | ---------
@@ -267,11 +280,13 @@ ORDER BY
 
 Good work setting up a database! We're now ready to experiment with some tricker SQL concepts. We'll start with syntax you might not have come across yet that'll give you finer control over your queries. We'll then cover some other joins and ways to organize your queries as they grow into the dozens or hundreds of lines.
 
+<img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/complex_db.png" loading="lazy" alt="A laughably complex database">
+
 ## Useful syntax
 ### Filters: `WHERE` vs. `HAVING`
 You're likely familiar with the `WHERE` filter, and you might have heard of `HAVING`. But how exactly do they differ? Let's perform some queries on `grades` to find out.
 
-First, let's sample some rows from `grades` to remind ourselves what the data look like. We use `ORDER BY RANDOM()` to shuffle the rows, then `LIMIT` to take 5. (This is pretty inefficient, but it's a fast trick that works because the table is small.)
+First, let's sample some rows from `grades` to remind ourselves what the data look like. We use `ORDER BY RANDOM()` to shuffle the rows, then `LIMIT` to take 5. (Ordering all the rows in a table just to get a sample is pretty inefficient, but it's fine if the table is small.)
 
 {% include header-sql.html %}
 ```sql
@@ -283,6 +298,7 @@ ORDER BY
     RANDOM()
 LIMIT
     5;
+
 /*
  id | assignment_id | score | student_id
  -- | ------------- | ----- | ----------
@@ -307,6 +323,7 @@ GROUP BY
     student_id
 ORDER BY
     student_id;
+
 /*
  student_id | avg_score
  ---------- | ---------
@@ -368,6 +385,8 @@ ORDER BY
 ```
 
 These two queries return dramatically different results because **`WHERE` and `HAVING` filter data at different stages of the aggregation.** The `WHERE` query above filters the data _before_ the aggregation, while `HAVING` filters the _results_. **The aggregation results in the `WHERE` query above changed because we changed _the raw data used to calculate each student's average score_.** Student 5 didn't have any scores between 50 and 75 and was therefore dropped. The `HAVING` query, meanwhile, just filtered the results after the calculation.
+
+<img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/where_vs_having.png">
 
 Once you're comfortable with `WHERE` and `HAVING`, you can use both to create very specific queries, for example finding students whose average _homework_ score was between 50 and 75.
 
