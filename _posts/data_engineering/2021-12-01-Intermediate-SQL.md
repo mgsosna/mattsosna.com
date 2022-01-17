@@ -779,10 +779,18 @@ SELECT
 
 Great! Having covered [filters](#filters-where-vs-having), [if-then logic](#if-then-case-when--coalesce), [set operators](#set-operators-union-intersect-and-except), and [array functions](#array-functions), let's now move on to constructing more advanced queries.
 
+<center>
+<img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/array_funcs.png" height="55%" width="55%" loading="lazy" alt="Visualizations of array functions">
+</center>
+
 ## Advanced queries
 
 ### Self joins
 Occasionally, we may want to join our table _with itself_ to get the data we need. One common example is [the "manager" problem](https://www.postgresqltutorial.com/postgresql-self-join/), which we'll rephrase here as the "best friend" problem. The idea is that if rows in a table contain values pointing to _other_ rows in the table (such as IDs), then we can join the table _to itself_ to get additional data corresponding to those values.
+
+<center>
+<img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/self_join.png" height="65%" width="65%" loading="lazy" alt="Diagram of a self join">
+</center>
 
 Let's start by adding and then populating a `best_friend_id` column to our `students` table.
 
@@ -812,6 +820,7 @@ SET best_friend_id = 1
 WHERE id = 5;
 
 SELECT * FROM students;
+
 /*
  id  | name     | classroom_id | best_friend_id
  --- | -------- | ------------ | --------------
@@ -835,6 +844,7 @@ FROM
 INNER JOIN
     students AS y
     ON y.id = x.best_friend_id;
+
 /*
  name     | best_friend
  -------- | -----------
@@ -847,7 +857,7 @@ INNER JOIN
 ```
 
 ### Window functions
-Window functions are similar to aggregate functions (anything with a `GROUP BY`) in that they apply a calculation to a grouped set of values. Unlike aggregate functions, however, window functions don't reduce the number of rows.
+Window functions are similar to aggregation functions (anything with a `GROUP BY`) in that they apply a calculation to a grouped set of values. Unlike aggregation functions, however, _window functions don't reduce the number of rows._
 
 Let's say we take the average score for each student. On lines 4-6 below, we add the `OVER` and `PARTITION BY` to convert the aggregation into a window functions.
 
@@ -864,6 +874,7 @@ FROM
 INNER JOIN
     grades AS g
     ON s.id = g.student_id;
+
 /*
  name  | score | avg
  ------| ----- | ----------
@@ -878,7 +889,7 @@ INNER JOIN
 */
 ```
 
-For aggregator functions like `AVG`, `MIN`, or `MAX`, each row in the `PARTITION BY` grouping will have the same value. This might prove useful for some analyses, but it doesn't really exemplify the strength of window functions.
+For aggregators like `AVG`, `MIN`, or `MAX`, each row in the `PARTITION BY` grouping will have the same value. This might prove useful for some analyses, but it doesn't really exemplify the strength of window functions.
 
 A more useful case is **ranking** each student's scores. First, here's how we'd rank scores across _all_ students. We use `RANK() OVER`, then pass in the column to rank.
 
@@ -895,6 +906,7 @@ FROM
 INNER JOIN
     students AS s
     ON s.id = g.student_id;
+
 /*
  name  | score | rank
  ----- | ----- | ----
@@ -921,6 +933,7 @@ FROM
 INNER JOIN
     students AS s
     ON s.id = g.student_id;
+
 /*
  name     | score | rank
  -------- | ----- | ----
@@ -939,6 +952,12 @@ INNER JOIN
  ...      |   ... |  ...
 */
 ```
+
+[Other window functions](https://www.postgresql.org/docs/9.3/functions-window.html) include calculating leading and lagging values (e.g. the previous value of a time series), the cumulative distribution, and dense or percent ranks.
+
+<center>
+<img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/lag.png" height="65%" width="65%" loading="lazy" alt="Lag window function">
+</center>
 
 ### `WITH`
 Let's cover one final technique, one that will empower us to write complex queries by stringing together subqueries. **`WITH` lets us name a subquery,** meaning we can then reference that subquery's results elsewhere.
