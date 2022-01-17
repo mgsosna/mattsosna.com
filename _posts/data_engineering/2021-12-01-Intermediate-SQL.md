@@ -21,7 +21,9 @@ LEFT JOIN
     grades AS g
     ON s.id = g.student_id
 WHERE
-    g.score > 90;
+    g.score > 90
+ORDER BY
+    g.score DESC;
 ```
 
 ## Table of contents
@@ -38,7 +40,7 @@ WHERE
 * [Looking under the hood: `EXPLAIN`](#looking-under-the-hood-explain)
 
 ## Setting up
-When learning a new language, practice is critical. It's one thing to read this post and nod along, and another to be able to explore ideas on your own. So let's first set up a database on your computer. While it sounds intimidating, it'll actually be straightforward.
+When learning a new language, practice is critical. It's one thing to read this post and nod along, and another to be able to explore ideas on your own. So let's start by setting up a database on your computer so you can experiment and practice. While it sounds intimidating, it'll actually be straightforward!
 
 <center>
 <img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/simple_db.png" height="70%" width="70%" loading="lazy" alt="A simple database">
@@ -56,7 +58,7 @@ The next step is to install [pgAdmin](https://www.pgadmin.org/), a graphical use
 
 Once both have been installed, we open pgAdmin and click on "Add new server." This step actually sets up a connection to an _existing_ server, which is why we needed to install Postgres first. I named my server `home` and passed in the password I defined during the Postgres installation.
 
-We're now ready to create some tables! Let's create a set of tables that describe the data a school might have: students, classrooms, and grades. We'll model our data such that a classroom consists of multiple students, each which has multiple grades.
+We're now ready to create some tables! Let's make a set of tables that describe the data a school might have: students, classrooms, and grades. We'll model our data such that a classroom consists of multiple students, each with multiple grades.
 
 We could do all this with the GUI, but we'll instead write code to make our workflow repeatable. To write the queries that will create our tables, we'll right click on `postgres` (under `home` > `Databases (1)` > `postgres`) and then click on Query Tool.
 
@@ -1205,15 +1207,19 @@ LEFT JOIN
     grades AS g
     ON s.id = g.student_id
 WHERE
-    g.score > 90;
+    g.score > 90
+ORDER BY
+    g.score DESC;
 /*
  QUERY PLAN
  ----------
- Hash Join (cost=17.20..51.97 rows=617 width=8)
+ Sort (cost=80.34..81.88 rows=617 width=8)
+ [...] Sor Key: g.score DESC
+ [...] -> Hash Join (cost=16.98..51.74 rows=617 width=8)
  [...] Hash Cond: (g.student_id = s.id)
  [...] -> Seq Scan on grades g (cost=0.00..33.13 rows=617 width=8)
  [...] Filter: (score > 90)
- [...] -> Hash (cost=13.20..13.20 rows=320 width=4)
+ [...] -> Hash (cost=13.10..13.10 rows=310 width=4)
  [...] -> Seq Scan on students s (cost=0.00..13.20 rows=320 width=4)
 */
 ```
@@ -1232,24 +1238,30 @@ LEFT JOIN
     grades AS g
     ON s.id = g.student_id
 WHERE
-    g.score > 90;
+    g.score > 90
+ORDER BY
+    g.score DESC;
 /*
  QUERY PLAN
  ----------
- Hash Join (cost=17.20..51.97 rows=617 width=8)
-   (actual time=1.679..1.689 rows=6 loops=1)
+ Sort (cost=80.34..81.88 rows=617 width=8)
+   (actual tiem=0.169..0.171 rows=6 loops=1)
+ [...] Sort Key: g.score DESC
+ [...] Sort Method: quicksort Memory: 25kB
+ [...] -> Hash Join (cost=16.98..51.74 rows=617 width=8)
+   (actual time=0.115..0.145 rows=6 loops=1)
  [...] Hash Cond: (g.student_id = s.id)
  [...] -> Seq Scan on grades g (cost=0.00..33.13 rows=617 width=8)
-   (actual time=1.604..1.609 rows=6 loops=1)
+   (actual time=0.045..0.052 rows=6 loops=1)
  [...] Filter: (score > 90)
    Rows removed by Filter: 19
- [...] -> Hash (cost=13.20..13.20 rows=320 width=4)
-   (actual time=0.043..0.043 rows=5 loops=1)
+ [...] -> Hash (cost=13.10..13.10 rows=310 width=4)
+   (actual time=0.059..0.060 rows=5 loops=1)
  [...] Buckets: 1024 Batches: 1 Memory Usage: 9kB
- [...] -> Seq Scan on students s (cost=0.00..13.20 rows=320 width=4)
-    (actual time=0.031..0.033 rows=5 loops=1)
- Planning Time: 0.351 ms
- Execution Time: 1.739 ms
+ [...] -> Seq Scan on students s (cost=0.00..13.10 rows=310 width=4)
+    (actual time=0.022..0.027 rows=5 loops=1)
+ Planning Time: 0.379 ms
+ Execution Time: 0.227 ms
 */
 ```
 
@@ -1364,8 +1376,9 @@ LEFT JOIN
 */
 ```
 
-**This is because `CASCADE` deleted the foreign key reference in `students`.** We can see this by updating `classroom_id` in `students` (which is now not a foreign key), but being unable to do this with `student_id` in `grades` (which _is_ a foreign key).
+**This is because `CASCADE` deleted the foreign key reference in `students`.** We can see this by manually updating `classroom_id` in `students` (which is now not a foreign key) to an ID not in `classrooms`, but being unable to do so with `student_id` in `grades` (which _is_ a foreign key).
 
+{% include header-sql.html %}
 ```sql
 UPDATE students
 SET classroom_id = 10
@@ -1380,14 +1393,55 @@ UPDATE grades
 SET student_id = 10
 WHERE id = 1;
 /*
-ERROR:  insert or update on table "grades" violates foreign key constraint "fk_students"
-DETAIL:  Key (student_id)=(10) is not present in table "students".
+ERROR:  insert or update on table "grades" violates foreign key
+    constraint "fk_students"
+DETAIL:  Key (student_id)=(10) is not present in table
+    "students".
 SQL state: 23503
 */
-
 ```
 
+One final note on `CASCADE`. If we specify `ON DELETE CASCADE` when creating the foreign key in `students`, then deleting rows in `classrooms` will delete the linked rows in `students`. This can be important for privacy reasons, for example, if you want to delete all information about a customer or employee once they leave your company.
 
+{% include header-sql.html %}
+```sql
+DROP TABLE IF EXISTS students CASCADE;
+
+CREATE TABLE students (
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    name VARCHAR(100),
+    classroom_id INT,
+    CONSTRAINT fk_classrooms
+        FOREIGN KEY(classroom_id)
+        REFERENCES classrooms(id) ON DELETE CASCADE
+);
+
+INSERT INTO students
+    (name, classroom_id)
+ VALUES
+    ('Adam', 1),
+    ('Betty', 1),
+    ('Caroline', 2);
+
+SELECT * FROM students;
+/*
+ id | name     | classroom_id
+ -- | -------- | ------------
+  1 | Adam     |            1
+  2 | Betty    |            1
+  3 | Caroline |            2
+*/
+
+DELETE FROM classrooms
+WHERE id = 1;
+
+SELECT * FROM students;
+/*
+ id | name     | classroom_id
+ -- | -------- | ------------
+  3 | Caroline |            2
+*/
+```
 
 #### 2. [Setting up](#setting-up)
 Codifying our database _schema_ is an engineering best practice, but for the actual data, we'll instead perform [database backups](https://www.ionos.com/digitalguide/server/security/how-does-data-backup-work-for-databases/). There's a variety of ways to do this ranging from memory-heavy full backups to relatively light snapshots of changes. Ideally, these files are sent somewhere geographically distant from the servers storing our database, so a natural disaster doesn't wipe out your entire company.
