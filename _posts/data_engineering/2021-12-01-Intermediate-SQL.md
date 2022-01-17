@@ -88,7 +88,7 @@ We're also now able to [version control](https://www.atlassian.com/git/tutorials
 
 Line 4 may also catch your eye: here we specify that `id` is the primary key, meaning each row must contain a value in this column, and that each value must be unique. To avoid needing to keep track of which `id` values have already been used, we use `GENERATED ALWAYS AS IDENTITY`, an alternative to the [**sequence**](https://www.postgresql.org/docs/9.5/sql-createsequence.html) syntax. As a result, when inserting data into this table, we only need to provide the `teacher` names.
 
-Finally, on line 5 we specify that `teacher` is a string with a maximum length of 100 characters.<sup>[[3]](#3-setting-up)</sup> If we come across a teacher whose name is longer than this, we're either abbreviating their name or altering the table.
+Finally, on line 5 we specify that `teacher` is a string with a maximum length of 100 characters.<sup>[[3]](#3-setting-up)</sup> If we come across a teacher whose name is longer than this, we'll have to either abbreviate their name or alter the table.
 
 Let's now create the `students` table. Our table will consist of a unique `id`, the student's `name`, and a [**foreign key**](https://www.postgresqltutorial.com/postgresql-foreign-key/) that points to `classrooms`.
 
@@ -118,10 +118,10 @@ VALUES
     ('Matt', 1);
 
 /*
-ERROR:  insert or update on table "students" violates foreign
-        key constraint "fk_classrooms"
+ERROR: insert or update on table "students" violates foreign
+    key constraint "fk_classrooms"
 DETAIL: Key (classroom_id)=(1) is not present in table
-        "classrooms".
+    "classrooms".
 SQL state: 23503
 */
 ```
@@ -255,7 +255,8 @@ SELECT
     c.teacher,
     a.category,
     ROUND(AVG(g.score), 1) AS avg_score
-FROM students AS s
+FROM
+    students AS s
 INNER JOIN classrooms AS c
     ON c.id = s.classroom_id
 INNER JOIN grades AS g
@@ -386,9 +387,11 @@ ORDER BY
 */
 ```
 
-These two queries return dramatically different results because **`WHERE` and `HAVING` filter data at different stages of the aggregation.** The `WHERE` query above filters the data _before_ the aggregation, while `HAVING` filters the _results_. **The aggregation results in the `WHERE` query above changed because we changed _the raw data used to calculate each student's average score_.** Student 5 didn't have any scores between 50 and 75 and was therefore dropped. The `HAVING` query, meanwhile, just filtered the results after the calculation.
+These two queries return dramatically different results because **`WHERE` and `HAVING` filter data at different stages of the aggregation.** The `WHERE` query above filters the data _before_ the aggregation, while `HAVING` filters the _results_.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/where_vs_having.png">
+
+**The aggregation results in the `WHERE` query above changed because we changed _the raw data used to calculate each student's average score_.** Student 5 didn't have any scores between 50 and 75 and was therefore dropped. The `HAVING` query, meanwhile, just filtered the results after the calculation.
 
 Once you're comfortable with `WHERE` and `HAVING`, you can use both to create very specific queries, for example finding students whose average _homework_ score was between 50 and 75.
 
@@ -407,9 +410,8 @@ WHERE
 GROUP BY
     student_id
 HAVING
-    ROUND(AVG(score),1) BETWEEN 50 AND 75
-ORDER BY
-    student_id;
+    ROUND(AVG(score),1) BETWEEN 50 AND 75;
+
 /*
  student_id | avg_score
  ---------- | ---------
@@ -597,9 +599,9 @@ FROM (
 */
 ```
 
-We've now seen our first **subqueries** on lines 4-11 and 18-24, the building blocks for more complex queries. Notice that these queries need to be named (`x` and `y`) for `UNION ALL` to work.
+We've now seen our first **subqueries**, the building blocks for more complex queries, on lines 4-11 and 18-24. Notice that these subqueries need to be named (`x` and `y`) for `UNION ALL` to work.
 
-You may also notice that we used `UNION ALL` instead of `UNION`. The distinction is that `UNION ALL` returns _all_ rows, whereas `UNION` removes duplicates. The results are identical for this query because Betty meets both criteria, but if we didn't include the `reason` column, we'd only see Betty once with `UNION`.
+You may also notice that we used `UNION ALL` instead of `UNION`. The distinction is that `UNION ALL` returns _all_ rows, whereas `UNION` removes duplicates (including within `x` and `y`). The results are identical for this query because Betty meets both criteria, but if we didn't include the `reason` column, we'd only see Betty once with `UNION`.
 
 {% include header-sql.html %}
 ```sql
@@ -637,7 +639,11 @@ FROM (
 
 Choosing `UNION` or `UNION ALL` depends on how you want to handle duplicates. When writing complex queries, I prefer using `UNION ALL` to make sure the resulting table has the number of rows I expect $-$ if there are duplicates, I've likely messed up a `JOIN` somewhere earlier. Your query will be far more performant if you fix the issue at the source, rather than filtering at the end.
 
+<img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/union_vs_union_all.png">
+
 `UNION` and `UNION ALL` are [**set operators**](https://en.wikipedia.org/wiki/Set_operations_(SQL)) that return _all_ rows from subqueries A and B (sans duplicates with `UNION`). Two other operators, `INTERSECT` and `EXCEPT`, let us return _only rows that meet certain criteria_. `INTERSECT` only returns rows present in _both_ subqueries, while `EXCEPT` returns rows in A that are _not_ in B.
+
+<img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/intersect_vs_except.png">
 
 Here we demonstrate `INTERSECT`, which finds the rows shared between the subqueries (i.e. rows with IDs 2 or 3). Unlike with `UNION`, we don't need to name the subqueries.
 
@@ -695,33 +701,6 @@ WHERE
 ```
 
 Together, set operators give us the power to combine query results (`UNION`), view overlapping records (`INTERSECT`), and see precisely which rows differ between tables (`EXCEPT`). No more printing out the tables to stack or manually compare them!
-
-There _is_ one caveat to set operators, though: they can be computationally expensive. There's no real way around it for `UNION`, but we do have an alternative for `INTERSECT` and `EXCEPT` if they're proving too heavy. If tables A and B have comparable primary keys (e.g. each row has a unique student ID), comparing the IDs with `WHERE id IN` can be far more efficient, as rather than compare every value in the rows, we can compare only the primary keys.
-
-{% include header-sql.html %}
-```sql
--- Alternative to INTERSECT
-SELECT
-    *
-FROM
-    students
-WHERE
-    id IN (1, 2, 3)
-    AND id IN (
-        SELECT
-            id
-        FROM
-            students
-        WHERE
-            id IN (2,3,4)
-);
-/*
- id | name     | classroom_id
- -- | -------- | ------------
-  2 | Betty    |            1
-  3 | Caroline |            2
-*/
-```
 
 ### Array functions
 Data in relational databases is usually [**atomic**](https://en.wikipedia.org/wiki/First_normal_form#Atomicity), where each cell contains one value (e.g. one score per row in the `grades` table). But sometimes storing values as an array can be useful. For this type of data, Postgres offers a wide range of [array functions](https://www.postgresql.org/docs/12/functions-array.html) that let us create and manipulate arrays.
@@ -798,12 +777,12 @@ SELECT
 */
 ```
 
-Having covered [filters](#filters-where-vs-having), [if-then logic](#if-then-case-when--coalesce), [set operators](#set-operators-union-intersect-and-except), and [array functions](#array-functions), let's now move on to constructing more advanced queries.
+Great! Having covered [filters](#filters-where-vs-having), [if-then logic](#if-then-case-when--coalesce), [set operators](#set-operators-union-intersect-and-except), and [array functions](#array-functions), let's now move on to constructing more advanced queries.
 
 ## Advanced queries
 
 ### Self joins
-Occasionally, we may want to join our table _with itself_ to get the data we need. One common example is [the "manager" problem](https://www.postgresqltutorial.com/postgresql-self-join/), which we'll rephrase as the "best friend" problem. The idea is that if rows in a table contain values pointing to _other_ rows in the table (such as IDs), then we can join the table on itself to get additional data corresponding to those values.
+Occasionally, we may want to join our table _with itself_ to get the data we need. One common example is [the "manager" problem](https://www.postgresqltutorial.com/postgresql-self-join/), which we'll rephrase here as the "best friend" problem. The idea is that if rows in a table contain values pointing to _other_ rows in the table (such as IDs), then we can join the table _to itself_ to get additional data corresponding to those values.
 
 Let's start by adding and then populating a `best_friend_id` column to our `students` table.
 
