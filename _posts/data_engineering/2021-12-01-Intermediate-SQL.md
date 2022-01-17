@@ -74,9 +74,9 @@ CREATE TABLE classrooms (
 );
 ```
 
-The first line, `DROP TABLE IF EXISTS classrooms`, deletes the `classrooms` table if it already exists, with `CASCADE` removing tables that depend on `classrooms`. We'll be changing all tables at once if we ever need to drop `classrooms`, so this is ok! (Though in general you should really know what you're doing if you're deleting tables!)
+In the first line, `DROP TABLE IF EXISTS classrooms`, deletes the `classrooms` table if it already exists. (Makes sense!) Postgres will stop us from deleting `classrooms` if other tables point to it, so we specify `CASCADE` to override this constraint.<sup>[[1]](#1-setting-up)</sup> This is ok $-$ if we're deleting `classrooms`, we're probably regenerating everything from scratch, so all the other tables are getting deleted too!
 
-Adding `DROP TABLE IF EXISTS` before `CREATE TABLE` lets us **codify our database schema in a script**, which is handy if we decide to change our database in some way down the road $-$ add a table, change the datatype of a column, etc. We can simply store the instructions for generating our database in a script, update that script when we want to make a change, and then rerun it.<sup>[[1]](#1-setting-up)</sup>
+Adding `DROP TABLE IF EXISTS` before `CREATE TABLE` lets us **codify our database schema in a script**, which is handy if we decide to change our database in some way down the road $-$ add a table, change the datatype of a column, etc. We can simply store the instructions for generating our database in a script, update that script when we want to make a change, and then rerun it.<sup>[[2]](#2-setting-up)</sup>
 
 We're also now able to [version control](https://www.atlassian.com/git/tutorials/what-is-version-control) our schema and share it. In fact, the entire database in this post can be recreated from [this script](https://github.com/mgsosna/sql_fun/blob/main/school/create_db.sql), so feel free to experiment!
 
@@ -86,7 +86,7 @@ We're also now able to [version control](https://www.atlassian.com/git/tutorials
 
 Line 4 may also catch your eye: here we specify that `id` is the primary key, meaning each row must contain a value in this column, and that each value must be unique. To avoid needing to keep track of which `id` values have already been used, we use `GENERATED ALWAYS AS IDENTITY`, an alternative to the [**sequence**](https://www.postgresql.org/docs/9.5/sql-createsequence.html) syntax. As a result, when inserting data into this table, we only need to provide the `teacher` names.
 
-Finally, on line 5 we specify that `teacher` is a string with a maximum length of 100 characters.<sup>[[2]](#2-setting-up)</sup> If we come across a teacher whose name is longer than this, we're either abbreviating their name or altering the table.
+Finally, on line 5 we specify that `teacher` is a string with a maximum length of 100 characters.<sup>[[3]](#3-setting-up)</sup> If we come across a teacher whose name is longer than this, we're either abbreviating their name or altering the table.
 
 Let's now create the `students` table. Our table will consist of a unique `id`, the student's `name`, and a [**foreign key**](https://www.postgresqltutorial.com/postgresql-foreign-key/) that points to `classrooms`.
 
@@ -521,7 +521,7 @@ SELECT
  */
 ```
 
-Finally, there _is_ an `IF` statement in Postgres, but it's used for control flow on _multiple_ queries rather than within one. It's unlikely you'll be using `IF` much as a data scientist $-$ even as a data engineer, I'd imagine you'd handle such logic in a coordinator like [Airflow](https://airflow.apache.org/), so we'll skip it here.<sup>[[3]](#3-if-then-case-when--coalesce)
+Finally, there _is_ an `IF` statement in Postgres, but it's used for control flow on _multiple_ queries rather than within one. It's unlikely you'll be using `IF` much as a data scientist $-$ even as a data engineer, I'd imagine you'd handle such logic in a coordinator like [Airflow](https://airflow.apache.org/), so we'll skip it here.<sup>[[4]](#4-if-then-case-when--coalesce)
 
 ### Set operators: `UNION`, `INTERSECT`, and `EXCEPT`
 When we `JOIN` tables, we append data _horizontally_. In the below query, for example, we bring together Adam's data from the `students`, `grades`, and `assignments` tables, creating a table with those columns side by side.
@@ -1253,7 +1253,7 @@ WHERE
 */
 ```
 
-We see above, for example, that Postgres is sequentially scanning (`Seq Scan`) our `grades` and `students` tables because the tables aren't indexed. In other words, Postgres has no idea whether rows later in the `students` table will have lower or higher IDs than earlier rows (if we were to index on ID). This suboptimal performance isn't a huge concern for our tiny database, but if our database grew to millions of rows, we would definitely need to identify and fix bottlenecks such as these.<sup>[[4]](#4-looking-under-the-hood-explain)</sup>
+We see above, for example, that Postgres is sequentially scanning (`Seq Scan`) our `grades` and `students` tables because the tables aren't indexed. In other words, Postgres has no idea whether rows later in the `students` table will have lower or higher IDs than earlier rows (if we were to index on ID). This suboptimal performance isn't a huge concern for our tiny database, but if our database grew to millions of rows, we would definitely need to identify and fix bottlenecks such as these.<sup>[[5]](#5-looking-under-the-hood-explain)</sup>
 
 ## Conclusions
 
@@ -1271,17 +1271,135 @@ Good "reading list" of beginner vs. intermediate SQL: https://softwareengineerin
 
 
 ## Footnotes
-#### 1. [Setting up](#seeting-up)
-Codifying our database _schema_ is an engineering best practice, but for the actual data, we'll instead perform [database backups](https://www.ionos.com/digitalguide/server/security/how-does-data-backup-work-for-databases/). There's a variety of ways to do this ranging from memory-heavy full backups to relatively light snapshots of changes. Ideally, these files are sent somewhere geographically distant from the servers storing our database, so a natural disaster doesn't wipe out your entire company.
+#### 1. [Setting up](#setting-up)
+What actually happens when we specify `CASCADE` when dropping a table? A little demo can be helpful.
+
+Let's say we drop `classrooms` without dropping any other tables. None of the _data_ in `students` is affected $-$ we still see the original classroom IDs.
+
+{% include header-sql.html %}
+```sql
+SELECT
+    s.name,
+    s.classroom_id,
+    c.teacher
+FROM
+    students AS s
+LEFT JOIN
+    classrooms AS c
+    ON c.id = s.classroom_id;
+
+/*
+ name     | classroom_id | teacher
+ -------- | ------------ | -------
+ Adam     |            1 | Mary
+ Betty    |            1 | Mary
+ Caroline |            2 | Jonah
+ Dina     |       [null] | [null]
+ Evan     |       [null] | [null]
+*/
+
+DROP TABLE classrooms CASCADE;
+
+/*
+DROP TABLE
+Query returned successfully in 71 msec.
+*/
+
+SELECT * FROM students;
+
+/*
+ id | name     | classroom_id | best_friend_id
+ -- | -------- | ------------ | --------------
+  1 | Adam     |            1 |              5
+  2 | Betty    |            1 |              4
+  3 | Caroline |            2 |              2
+  4 | Dina     |       [null] |              2
+  5 | Evan     |       [null] |              1
+*/
+```
+
+If we now recreate `classrooms` and enter _different_ teachers, the relation between `students` and `classrooms` is no longer accurate.
+
+{% include header-sql.html %}
+```sql
+CREATE TABLE classrooms (
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    teacher VARCHAR(100)
+);
+
+/*
+CREATE TABLE
+Query returned successfully in 139 msec.
+*/
+
+INSERT INTO classrooms
+    (teacher)
+VALUES
+    ('Dr. Random'),
+    ('Alien Banana');
+
+/*
+INSERT 0 2
+Query returned successfully in 99 msec.
+*/
+
+SELECT
+    s.name,
+    s.classroom_id,
+    c.teacher
+FROM
+    students AS s
+LEFT JOIN
+    classrooms AS c
+    ON c.id = s.classroom_id;
+
+/*
+ name     | classroom_id | teacher
+ -------- | ------------ | -----------
+ Adam     |            1 | Dr. Random
+ Betty    |            1 | Dr. Random
+ Caroline |            2 | Alien Banana
+ Dina     |       [null] | [null]
+ Evan     |       [null] | [null]
+*/
+```
+
+**This is because `CASCADE` deleted the foreign key reference in `students`.** We can see this by updating `classroom_id` in `students` (which is now not a foreign key), but being unable to do this with `student_id` in `grades` (which _is_ a foreign key).
+
+```sql
+UPDATE students
+SET classroom_id = 10
+WHERE id = 1;
+
+/*
+UPDATE 1
+Query returned successfully in 37 msec.
+*/
+
+UPDATE grades
+SET student_id = 10
+WHERE id = 1;
+/*
+ERROR:  insert or update on table "grades" violates foreign key constraint "fk_students"
+DETAIL:  Key (student_id)=(10) is not present in table "students".
+SQL state: 23503
+*/
+
+```
+
+
 
 #### 2. [Setting up](#setting-up)
+Codifying our database _schema_ is an engineering best practice, but for the actual data, we'll instead perform [database backups](https://www.ionos.com/digitalguide/server/security/how-does-data-backup-work-for-databases/). There's a variety of ways to do this ranging from memory-heavy full backups to relatively light snapshots of changes. Ideally, these files are sent somewhere geographically distant from the servers storing our database, so a natural disaster doesn't wipe out your entire company.
+
+#### 3. [Setting up](#setting-up)
 We specified the `teacher` column as a string with a max of 100 characters since we don't think we'll run into names longer than this. But are we actually saving on storage space if we limit rows to 100 characters versus 200 or 500?
 
 In Postgres it turns out it [technically doesn't matter](https://stackoverflow.com/questions/1067061/does-a-varchar-fields-declared-size-have-any-impact-in-postgresql) whether we specify 10, 100, or 500. So specifying a limit might be more of a best practice for communicating to future engineers (including yourself) what your expectations are for the data in this column.
 
 But in MySQL [the size limit _does_ matter](https://stackoverflow.com/questions/1962310/importance-of-varchar-length-in-mysql-table): temporary tables and `MEMORY` tables will store strings of equal length padded out to the maximum specified in the table schema, meaning a `VARCHAR(1000)` will waste a lot of space if none of the values approach that limit.
 
-#### 3. [If-then: `CASE WHEN` & `COALESCE`](#if-then-case-when--coalesce)
+#### 4. [If-then: `CASE WHEN` & `COALESCE`](#if-then-case-when--coalesce)
 If you're curious, here's what Postgres code with an `IF` statement looks like.
 
 {% include header-sql.html %}
@@ -1305,7 +1423,7 @@ NOTICE: More grades than students.
 */
 ```
 
-#### 4. [Looking under the hood: `EXPLAIN`](#looking-under-the-hood-explain)
+#### 5. [Looking under the hood: `EXPLAIN`](#looking-under-the-hood-explain)
 Setting indexes on your tables is critical to ensuring performance as the database size grows. We can easily set an index on the scores in `grades`, for example, with the following query:
 
 {% include header-sql.html %}
