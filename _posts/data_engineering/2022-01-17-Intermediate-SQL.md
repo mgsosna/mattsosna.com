@@ -158,6 +158,7 @@ INSERT INTO students
     ('Caroline', 2);
 
 SELECT * FROM students;
+
 /*
  id | name     | classroom_id
  -- | -------- | ------------
@@ -167,7 +168,9 @@ SELECT * FROM students;
 */
 ```
 
-What happens if we get a student who hasn't yet been assigned a classroom? Do we have to wait for them to receive a classroom before we can record them in the database? The answer is no: **while our foreign key requirement will block writes that reference non-existing IDs in `classrooms`, it allows us to pass in a `NULL` for `classroom_id`.** We can do this by explicitly stating `NULL` for `classroom_id` or by only passing in `name`.
+What happens if we get a student who hasn't yet been assigned a classroom? Do we have to wait for them to receive a classroom before we can record them in the database?
+
+The answer is no: **while our foreign key requirement will block writes that reference non-existing IDs in `classrooms`, it allows us to pass in a `NULL` for `classroom_id`.** We can do this by explicitly stating `NULL` for `classroom_id` or by only passing in `name`.
 
 {% include header-sql.html %}
 ```sql
@@ -184,6 +187,7 @@ VALUES
     ('Evan');
 
 SELECT * FROM students;
+
 /*
  id | name     | classroom_id
  -- | -------- | ------------
@@ -281,7 +285,7 @@ ORDER BY
 */
 ```
 
-Good work setting up a database! We're now ready to experiment with some tricker SQL concepts. We'll start with syntax you might not have come across yet that'll give you finer control over your queries. We'll then cover some other joins and ways to organize your queries as they grow into the dozens or hundreds of lines.
+Good work setting up a database! We're now ready to experiment with some trickier SQL concepts. We'll start with syntax you might not have come across yet that'll give you finer control over your queries. We'll then cover some other joins and ways to organize your queries as they grow into the dozens or hundreds of lines.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/complex_db.png" loading="lazy" alt="A laughably complex database">
 
@@ -353,6 +357,7 @@ GROUP BY
     student_id
 ORDER BY
     student_id;
+
 /*
  student_id | avg_score
  ---------- | ---------
@@ -380,6 +385,7 @@ HAVING
     ROUND(AVG(score),1) BETWEEN 50 AND 75
 ORDER BY
     student_id;
+
 /*
  student_id | avg_score
  ---------- | ---------
@@ -524,6 +530,10 @@ SELECT
  [null]
  */
 ```
+
+<center>
+<img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/case_when_vs_coalesce.png" height="70%" width="70%" loading="lazy" alt="CASE WHEN and COALESCE operators">
+</center>
 
 Finally, there _is_ an `IF` statement in Postgres, but it's used for control flow on _multiple_ queries rather than within one. It's unlikely you'll be using `IF` much as a data scientist $-$ even as a data engineer, I'd imagine you'd handle such logic in a coordinator like [Airflow](https://airflow.apache.org/), so we'll skip it here.<sup>[[4]](#4-if-then-case-when--coalesce)
 
@@ -721,6 +731,7 @@ GROUP BY
     name
 ORDER BY
     name;
+
 /*
  name     | scores
  -------- | ------
@@ -750,6 +761,7 @@ GROUP BY
     name
 ORDER BY
     name;
+
 /*
  name     | scores            | length | replaced
  -------- | ----------------- | ------ | --------------------
@@ -768,6 +780,7 @@ One last function you may find useful is `UNNEST`, which unpacks an array to row
 SELECT
     'name' AS name,
     UNNEST(ARRAY[1, 2, 3]);
+    
 /*
  name  | unnest
  ----  | ------
