@@ -960,7 +960,7 @@ INNER JOIN
 </center>
 
 ### `WITH`
-Let's cover one final technique, one that will empower us to write complex queries by stringing together subqueries. **`WITH` lets us name a subquery,** meaning we can then reference that subquery's results elsewhere.
+Let's end this section by covering a technique that will empower us to write queries as complex as we can imagine, simply by stringing together subqueries. **`WITH` lets us name a subquery,** meaning we can then reference that subquery's results elsewhere.
 
 Let's say, for example, that we want to label whether students' scores in `grades` are higher than their average score. Knocking this out in one query seems straightforward $-$ we just need to calculate each average with a `GROUP BY` and then do something like `g.score > avg`, right? Let's start with the `GROUP BY` aggregation.
 
@@ -976,6 +976,7 @@ INNER JOIN
     ON s.id = g.student_id
 GROUP BY
     s.name;
+
 /*
  name     | avg
  -------- | ----
@@ -1065,9 +1066,13 @@ The `WITH` query is substantially longer than just writing the window function t
 
 Queries can become ridiculously long $-$ at Meta (Facebook), the longest query I've come across (so far!) was over 1000 lines and called 25 tables. This query would be completely unreadable without `WITH` clauses, which demarcate distinct, _named_, sections of the code. When dealing with big data, we don't have the luxury of sequentially running those subqueries, saving the results to CSVs, and then performing the merges and analyses in Python. All the database interactions need to run in one go.
 
+<center>
+<img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/with.png" height="60%" width="60%" loading="lazy" alt="WITH clause">
+</center>
+
 Here's another example. Let's say that our school's corrupt policy for passing grades gets exposed and the administrators get fired. Now, the criteria for passing a class is 1) you have a weighted average of at least 85%, or 2) you get above a 70% on your biography project. Bundling this logic into one `CASE WHEN` would be painful, but it's straightforward if we break the query down with `WITH`.
 
-Let's start by identifying the students who would pass because they got above an 85 weighted average.
+Let's start by identifying the students who would pass because they got above an 85% weighted average.
 
 {% include header-sql.html %}
 ```sql
@@ -1093,7 +1098,7 @@ HAVING
 */
 ```
 
-Tough school! (But go Caroline!) Now let's identify the students who pass because they got above an 60% on their biography project.
+Tough school! (But go Caroline!) Now let's identify the students who pass because they got above a 70% on their biography project.
 
 {% include header-sql.html %}
 ```sql
@@ -1187,7 +1192,7 @@ WHERE
 ```
 
 ## Looking under the hood: `EXPLAIN`
-Let's cover one final concept before we close out this post. The more knowledge we gain about SQL, the more ways we can build complex queries. Should we use `EXCEPT` or `NOT IN`? Should we perform a couple extra `JOIN`s or use `WITH` and `UNION ALL`?
+Let's cover one final concept before closing out this post. The more knowledge we gain about SQL, the more ways we can build complex queries. Should we use `EXCEPT` or `NOT IN`? Should we perform a couple extra `JOIN`s or use `WITH` and `UNION ALL`?
 
 **In essence, how do we know if one query is more or less efficient than another?**
 
@@ -1212,7 +1217,7 @@ ORDER BY
  QUERY PLAN
  ----------
  Sort (cost=80.34..81.88 rows=617 width=8)
- [...] Sor Key: g.score DESC
+ [...] Sort Key: g.score DESC
  [...] -> Hash Join (cost=16.98..51.74 rows=617 width=8)
  [...] Hash Cond: (g.student_id = s.id)
  [...] -> Seq Scan on grades g (cost=0.00..33.13 rows=617 width=8)
@@ -1221,6 +1226,10 @@ ORDER BY
  [...] -> Seq Scan on students s (cost=0.00..13.20 rows=320 width=4)
 */
 ```
+
+<center>
+<img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/explain.png" height="75%" width="75%" loading="lazy" alt="Expensive and cheaper SQL keywords">
+</center>
 
 We can take it a step further with `EXPLAIN ANALYZE`, which will run the query and detail the performance.
 
@@ -1266,19 +1275,20 @@ ORDER BY
 We see above, for example, that Postgres is sequentially scanning (`Seq Scan`) our `grades` and `students` tables because the tables aren't indexed. In other words, Postgres has no idea whether rows later in the `students` table will have lower or higher IDs than earlier rows (if we were to index on ID). This suboptimal performance isn't a huge concern for our tiny database, but if our database grew to millions of rows, we would definitely need to identify and fix bottlenecks such as these.<sup>[[5]](#5-looking-under-the-hood-explain)</sup>
 
 ## Conclusions
+This post was a broad overview of some SQL skills that become useful once you're beyond the basics. We started by [installing Postgres and pgAdmin](#setting-up), setting ourselves up for success by enabling experimentation with SQL on our own laptops.
 
+We then covered [useful syntax](#useful-syntax) for building more elaborate queries. We started with [filters](#filters-where-vs-having), outlining the differences between `WHERE` and `HAVING`. We then discussed [if-then logic](#if-then-case-when--coalesce), showing how to bucket values with `CASE WHEN` and handle nulls with `COALESCE`. We moved from horizontal to vertical merges with [set operators](#set-operators-union-intersect-and-except), detailing how `UNION`, `UNION ALL`, `INTERSECT`, and `EXCEPT` keep some or all rows in the provided tables. We then ended this section by showing how to [create and process arrays](#array-functions).
 
-This post was an overview of some SQL skills that become useful once you're beyond the basics. We started with [filters](#filters-where-vs-having). We then covered [if-then logic](#if-then-case-when--coalesce), letting us do X. [Set operators](#set-operators-union-intersect-and-except) let us do Y. Then [array functions](#array-functions) do Z.
+Next, we discussed components of more advanced queries, such as using [self joins](#self-joins) to join tables on themselves, [window functions](#window-functions) for comparisons within groups, and [`WITH`](#with) to name subqueries. Finally, we discussed how `EXPLAIN` and `EXPLAIN ANALYZE` can quantify the performance of our queries and point to areas for improvement.
 
-We then discussed components of more advanced queries, such as using [self joins](#self-joins), [window functions](#window-functions), and [`WITH`](#with). Finally, we ended with
+Want to keep expanding your knowledge? There are always more functions to learn, like `CAST` (for converting datatypes, e.g. floats to integers), or [user-defined functions](https://www.postgresql.org/docs/8.0/xfunc.html) for simplifying your code further. These are useful, but **I actually recommend thinking about _optimizing_ your queries however possible.** Even at FAANG companies with essentially unlimited compute, queries can fail if they demand more memory than a server can handle. Choosing the right approach for a complex query makes a data pipeline easier to maintain, meaning you're less likely to get called at midnight when it breaks. (Hopefully!)
 
+Best,<br>
+Matt
 
-
-
-Want to keep expanding your knowledge? There are always more functions to learn, like `CAST` (for converting datatypes, e.g. floats to integers), or [user-defined functions](https://www.postgresql.org/docs/8.0/xfunc.html) for simplifying your code further. These are useful, but it may be more fruitful to think about _optimizing_ your queries however possible. Even at FAANG companies with essentially unlimited compute, queries can fail if they demand more memory than a server can handle. The `EXPLAIN` command empowers us to quantify _how_ our queries work, which lets us optimize them.
-
-Good "reading list" of beginner vs. intermediate SQL: https://softwareengineering.stackexchange.com/questions/181651/are-these-sql-concepts-for-beginners-intermediate-or-advanced-developers
-
+<center>
+<img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/final_db.png" height="20%" width="20%" loading="lazy" alt="A one-table database">
+</center>
 
 ## Footnotes
 #### 1. [Setting up](#setting-up)
