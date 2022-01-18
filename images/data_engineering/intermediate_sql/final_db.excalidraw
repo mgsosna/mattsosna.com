@@ -1,0 +1,101 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [
+    {
+      "type": "rectangle",
+      "version": 30,
+      "versionNonce": 984352993,
+      "isDeleted": false,
+      "id": "p2N89t985jr38V_R4i1_j",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "x": 704,
+      "y": 156,
+      "strokeColor": "#000000",
+      "backgroundColor": "#228be6",
+      "width": 88,
+      "height": 14,
+      "seed": 1625391201,
+      "groupIds": [],
+      "strokeSharpness": "sharp",
+      "boundElements": [],
+      "updated": 1642347863186
+    },
+    {
+      "type": "rectangle",
+      "version": 79,
+      "versionNonce": 480129455,
+      "isDeleted": false,
+      "id": "FKLGbo6EDpGsJkXANKPc1",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "x": 705,
+      "y": 155,
+      "strokeColor": "#000000",
+      "backgroundColor": "transparent",
+      "width": 89,
+      "height": 70,
+      "seed": 1464337313,
+      "groupIds": [],
+      "strokeSharpness": "sharp",
+      "boundElements": [
+        {
+          "id": "5j_iWRfs9dEka7yGVOqgT",
+          "type": "arrow"
+        },
+        {
+          "id": "lWiJIXGjip6CBXZCTLDu1",
+          "type": "arrow"
+        }
+      ],
+      "updated": 1642347863187
+    },
+    {
+      "id": "BeyS23FWzk1kqwHbP2aPB",
+      "type": "text",
+      "x": 703.9000244140625,
+      "y": 259.20001220703125,
+      "width": 89,
+      "height": 26,
+      "angle": 0,
+      "strokeColor": "#0b7285",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "strokeSharpness": "sharp",
+      "seed": 1481379577,
+      "version": 28,
+      "versionNonce": 849555511,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1642467244552,
+      "text": "Version 4",
+      "fontSize": 20,
+      "fontFamily": 1,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "baseline": 18,
+      "containerId": null,
+      "originalText": "Version 4"
+    }
+  ],
+  "appState": {
+    "gridSize": null,
+    "viewBackgroundColor": "#ffffff"
+  },
+  "files": {}
+}
