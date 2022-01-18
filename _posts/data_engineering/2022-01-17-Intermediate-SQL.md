@@ -780,7 +780,7 @@ One last function you may find useful is `UNNEST`, which unpacks an array to row
 SELECT
     'name' AS name,
     UNNEST(ARRAY[1, 2, 3]);
-    
+
 /*
  name  | unnest
  ----  | ------
@@ -872,7 +872,7 @@ INNER JOIN
 ### Window functions
 Window functions are similar to aggregation functions (anything with a `GROUP BY`) in that they apply a calculation to a grouped set of values. Unlike aggregation functions, however, _window functions don't reduce the number of rows._
 
-Let's say we take the average score for each student. On lines 4-6 below, we add the `OVER` and `PARTITION BY` to convert the aggregation into a window functions.
+Let's say we take the average score for each student. On lines 4-6 below, we add the `OVER` and `PARTITION BY` to convert the aggregation into a window function.
 
 {% include header-sql.html %}
 ```sql
@@ -1077,7 +1077,9 @@ INNER JOIN
 
 The `WITH` query is substantially longer than just writing the window function twice. Why bother? Well, this more verbose query provides two important advantages: **scalability** and **readability.**
 
-Queries can become ridiculously long $-$ at Meta (Facebook), the longest query I've come across (so far!) was over 1000 lines and called 25 tables. This query would be completely unreadable without `WITH` clauses, which demarcate distinct, _named_, sections of the code. When dealing with big data, we don't have the luxury of sequentially running those subqueries, saving the results to CSVs, and then performing the merges and analyses in Python. All the database interactions need to run in one go.
+Queries can become ridiculously long $-$ at Meta (Facebook), the longest query I've come across (so far!) was over 1000 lines and called 25 tables. This query would be completely unreadable without `WITH` clauses, which demarcate distinct, _named_, sections of the code.
+
+When dealing with big data, we don't have the luxury of sequentially running those subqueries, saving the results to CSVs, and then performing the merges and analyses in Python. All the database interactions need to run in one go.
 
 <center>
 <img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/with.png" height="60%" width="60%" loading="lazy" alt="WITH clause">
@@ -1226,6 +1228,7 @@ WHERE
     g.score > 90
 ORDER BY
     g.score DESC;
+
 /*
  QUERY PLAN
  ----------
@@ -1261,6 +1264,7 @@ WHERE
     g.score > 90
 ORDER BY
     g.score DESC;
+    
 /*
  QUERY PLAN
  ----------
