@@ -12,7 +12,7 @@ permalink: /blog/
   - [Theory](#theory)
   - [External](#external)
   - [Projects](#projects)
-  - [Data engineering](#data-engineering)
+- [**Data engineering**](#data-engineering)
 - [**Computer science**](#computer-science)
 - [**Python**](#python)
   - [Random Python](#random-python)
@@ -62,11 +62,12 @@ permalink: /blog/
 2. [Backend]({{  site.baseurl  }}/spamCatch-2)
 3. [Frontend & Deployment]({{  site.baseurl  }}/spamCatch-3)
 
-### Data engineering
+## Data engineering
 1. [SQL vs. NoSQL databases in Python]({{  site.baseurl  }}/SQL_vs_NoSQL/)
   - <span style="font-size: 12px">Featured in _Toward Data Science_'s [4/15/21 editors' picks](https://towardsdatascience.com/math-animations-irreproducible-research-and-telling-stories-with-data-d9b55aa3887b)</span>
-2. [3 levels of technical abstraction when sharing your code]({{ site.baseurl }}/Sharing-projects)
-3. [A hands-on demo of big data with Spark]({{  site.baseurl  }}/Spark-intro)
+2. [Intermediate SQL]({{  site.baseurl  }}/Intermediate-SQL)
+3. [3 levels of technical abstraction when sharing your code]({{ site.baseurl }}/Sharing-projects)
+4. [A hands-on demo of big data with Spark]({{  site.baseurl  }}/Spark-intro)
 
 ## Computer science
 1. [Intro to data structures]({{  site.baseurl  }}/CSDS-Intro)
