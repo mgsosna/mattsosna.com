@@ -35,6 +35,9 @@ AWS is market leader, so we'll focus on them. But all of these services are avai
   - [EC2](#ec2)
   - [Lambda](#lambda)
 
+## Storage
+Your computer has a finite amount of data it can store (which is different from memory). But you also want to be able to access this information from other computers. Dropbox's business model is based off this, as well as Google Drive, etc. Unthinkable to go back.
+
 ## Compute
 ### EC2
 Let's start with the fundamental building block of AWS: the virtual server. Whatever you need to do, from this to that, comes from here. Whether you have a database you're hosting in the cloud, or an application, etc., you need to have some sort of engine to _service_ the requests. If someone visits your website, a server needs to process the HTTP request and send the HTML back to them. If someone submits a query for your database, some server needs to execute the query to search through the data. This is where EC2 comes in.
