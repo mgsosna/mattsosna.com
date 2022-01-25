@@ -5,6 +5,7 @@ title-clean: AWS Essentials for Data Science<div class="a2">2. Storage</div>
 author: matt_sosna
 ---
 
+Your computer has a finite amount of data it can store (which is different from memory). But you also want to be able to access this information from other computers. Dropbox's business model is based off this, as well as Google Drive, etc. Unthinkable to go back.
 
 ---
 **AWS Essentials for Data Science:**
@@ -14,19 +15,9 @@ author: matt_sosna
 ---
 
 ### Table of contents
-* [**Storage**](#storage)
-  - [S3 (Simple Storage Service)](#s3)
-  - [RDS (Relational Database Service)](#rds)
-  - [DynamoDB](#dynamodb)
-
-## Storage
-Your computer has a finite amount of data it can store (which is different from memory). But you also want to be able to access this information from other computers. Dropbox's business model is based off this, as well as Google Drive, etc. Unthinkable to go back.
-
-
-
-## Identity
-### IAM
-Identity Access Management. Before we go any further, we need to know who you are. By default, no AWS service can access any other service. But an easy way to manage permissions is to have an IAM profile.
+* [S3 (Simple Storage Service)](#s3)
+* [RDS (Relational Database Service)](#rds)
+* [DynamoDB](#dynamodb)
 
 
 ### Storage

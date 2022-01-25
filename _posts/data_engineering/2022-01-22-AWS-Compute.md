@@ -16,6 +16,7 @@ author: matt_sosna
 * [**Compute**](#compute)
   - [EC2](#ec2)
   - [Lambda](#lambda)
+  - [API Gateway](#api-gateways)
 
 ## Compute
 ### EC2
