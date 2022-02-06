@@ -23,7 +23,7 @@ But what happens when you want to share that data with someone, or have multiple
 
 Cloud storage is meant to address these issues. You're likely already familiar with Dropbox or Google Drive $-$ these services have become ubiquitous because it's now unthinkable to try sending data through an email or handing it over on a USB stick. Upload a file to Dropbox, send your friend a link to the file, and you're done.
 
-But cloud storage can go beyond this $-$ AWS and others provide [SDKs](https://www.ibm.com/cloud/blog/sdk-vs-api), or **software development kits** that allow you to interact with the cloud through code. So instead of needing to click and drag a file from Google Drive onto your Desktop, then load it into Python, you can pull it straight into Python with the `boto3` library. 
+But cloud storage can go beyond this $-$ AWS and others provide [SDKs](https://www.ibm.com/cloud/blog/sdk-vs-api), or **software development kits** that allow you to interact with the cloud through code. So instead of needing to click and drag a file from Google Drive onto your Desktop, then load it into Python, you can pull it straight into Python with the `boto3` library.
 
 
 
@@ -38,16 +38,20 @@ The amount of data we have can grow very quickly, and we want to be able to acce
 
 But there are certain files that are hard to neatly store in a database. **Binary large objects**, or **[BLOB](https://en.wikipedia.org/wiki/Binary_large_object)s** for short, are large collections of binary data that can't be easily broken up, or shouldn't. Think of an image $-$ you don't really want half the pixels in one file and half in another, when you'll always be fetching the entire image any time you want to access it. Similarly, audio, video, or [executable programs](https://en.wikipedia.org/wiki/Executable) are large entities that you almost always to fetch all at once.
 
-#### S3
+### S3
 S3 is Simple Storage Service. This is like Dropbox or Google Drive - just the raw data. Even when you have a database, it's probably a good idea to put the raw input data (e.g. text files from user interviews, or the raw sensor data for your IoT application) in S3 as a backup.
 
+Data is stored in **buckets.** We can create a bucket in the UI like this:
 
 
 
-#### RDS
+
+
+
+### RDS
 RDS is Relational Database Service. This is like a SQL database hosted in the cloud (on top of an EC2 instance). For NoSQL, you're looking at DynamoDB.
 
-#### Redshift
+### Redshift
 Data warehouse. A data warehouse is a https://www.talend.com/resources/what-is-data-warehouse/.
 
 
