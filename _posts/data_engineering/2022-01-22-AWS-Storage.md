@@ -41,9 +41,9 @@ But there are certain files that are hard to neatly store in a database. **Binar
 ### S3
 S3 is Simple Storage Service. This is like Dropbox or Google Drive - just the raw data. Even when you have a database, it's probably a good idea to put the raw input data (e.g. text files from user interviews, or the raw sensor data for your IoT application) in S3 as a backup.
 
-Data is stored in **buckets.** We can create a bucket in the UI like this:
+Data is stored in **buckets,** which are like distinct folders. We can create a bucket in the UI like this:
 
-
+<img src="{{ site.baseurl }}/images/data_engineering/aws/storage/create_bucket.png">s
 
 
 
