@@ -25,6 +25,34 @@ Cloud storage is meant to address these issues. You're likely already familiar w
 
 But cloud storage can go beyond this $-$ AWS and others provide [SDKs](https://www.ibm.com/cloud/blog/sdk-vs-api), or **software development kits** that allow you to interact with the cloud through code. So instead of needing to click and drag a file from Google Drive onto your Desktop, then load it into Python, you can pull it straight into Python with the `boto3` library.
 
+(I wonder if we can get this in fewer lines.)
+
+% include header-python.html %}
+```python
+import os
+import json
+import boto3
+import pandas as pd
+from io import StringIO
+
+# Get credentials
+access_key = os.environ['AWS_ACCESS_KEY_ID'],
+secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
+
+# Establish a connection
+client = boto3.client(aws_access_key_id=access_key,
+                      aws_secret_access_key=secret_key,
+                      region_name='us-east-1')
+
+# Get the file
+obj = client.get_object(Bucket="my_company", Key='datasets/data.json')
+
+# Convert the file to a dataframe
+body = obj['Body'].read()
+string = body.decode(encoding='utf-8')
+df = pd.DataFrame(json.load(StringIO(string)))
+```
+
 
 
 AWS guarantees ["five nines"](https://aws.amazon.com/blogs/publicsector/achieving-five-nines-cloud-justice-public-safety/), or 99.999% availability for justice and public safety customers, for example. (That means AWS guarantees it will be unavailable less than five minutes and 15 seconds per year.)
