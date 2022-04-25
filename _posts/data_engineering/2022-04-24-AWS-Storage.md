@@ -25,9 +25,43 @@ Cloud storage is meant to address these issues. You're likely already familiar w
 
 But cloud storage can go beyond this $-$ AWS and others provide [SDKs](https://www.ibm.com/cloud/blog/sdk-vs-api), or **software development kits** that allow you to interact with the cloud through code. So instead of needing to click and drag a file from Google Drive onto your Desktop, then load it into Python, you can pull it straight into Python with the `boto3` library.
 
+In this post we'll show you how to leverage S3, RDS, and DynamoDB.
+
+### Storing AWS credentials
+Before we get started, we need to store our credentials in a secure location. What you _shouldn't_ do:
+
+{% include header-python.html %}
+```python
+access_key = 'abc123'
+secret_key = 'xyz456'
+
+# the rest of your code
+```
+
+This is a huge security vulnerabilty, as anyone with these values can make calls to your AWS services as if they were you. Rather, we should store these in a local file that we _don't_ version control.
+
+For MacOS and Linux users, we can store these secrets in a `.bash_profile.rc` file. ([See here](https://saralgyaan.com/posts/set-passwords-and-secret-keys-in-environment-variables-maclinuxwindows-python-quicktip/) for Windows.) In this file, we can set our variables. (Note the lack of spaces around the equals signs.)
+
+{% include header-bash.html %}
+```bash
+export AWS_ACCESS_KEY_ID=abc123
+export AWS_SECRET_ACCESS_KEY=xyz456
+```
+
+Once we do this, we can access our variables through Python's `os` module.
+
+```python
+import os
+
+access_key = os.environ['AWS_ACCESS_KEY_ID']
+secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
+```
+
+
+### Pulling data
 (I wonder if we can get this in fewer lines.)
 
-% include header-python.html %}
+{% include header-python.html %}
 ```python
 import os
 import json
