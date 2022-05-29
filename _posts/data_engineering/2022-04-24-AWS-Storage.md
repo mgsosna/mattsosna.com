@@ -5,9 +5,17 @@ title-clean: AWS Essentials for Data Science<div class="a2">2. Storage</div>
 author: matt_sosna
 ---
 
-In the [intro post]({{  site.baseurl  }}/AWS-Intro), we introduced cloud computing as an industry, as well as Amazon Web Services (AWS). In this post, we'll talk about one of the major advantages of the cloud: **data storage.** We'll cover [blob](https://en.wikipedia.org/wiki/Binary_large_object) storage (S3) and databases.
+Unless you've avoided [iCloud](https://www.apple.com/icloud/), [Dropbox](https://www.dropbox.com/), and [Google Drive](https://www.google.com/drive/) the last fifteen years $-$ and if you have, props to you! $-$ then you're likely familiar with cloud storage. You can recover your texts if you lose your phone; you can share files with links instead of massive email attachments; you can organize and search your photos by who's in them.
 
-Your computer has a finite amount of data it can store (which is different from memory). But you also want to be able to access this information from other computers. Dropbox's business model is based off this, as well as Google Drive, etc. Unthinkable to go back.
+But these benefits extend into the professional realm, too. If you ever have data or code that you want to share with others $-$ like an [AI-powered cat picture generator](https://affinelayer.com/pixsrv/) or the [daily number of occupied hotel rooms in Brussels](https://datastore.brussels/web/data/dataset/f03544a1-a01c-4374-b19d-e93697f1ac73)$-$ you'll want to store this data on a cloud server. Cloud servers don't turn off when you close your laptop, and you don't have to worry if some of those queries are fetching your private data when they visit your laptop.
+
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/edges2cats.png">
+<span style="font-size: 12px"><i>Screenshot from Christopher Hesse's amazing [Image-to-Image Demo](https://affinelayer.com/pixsrv/)</i></span>
+
+
+So how can we set up cloud storage? And how can we leverage [SDKs](https://www.ibm.com/cloud/blog/sdk-vs-api) to integrate our cloud storage into our code?
+
+In the [last post]({{  site.baseurl  }}/AWS-Intro), we introduced cloud computing as an industry, as well as Amazon Web Services (AWS). In this post, we'll cover **storage**, one of the two main offerings of the cloud. (The other being compute, which we'll cover in the next post.) We'll set up our software environment before showing how to efficiently store [blobs](https://en.wikipedia.org/wiki/Binary_large_object), tabular data, and JSONs.
 
 ## Table of contents
 * [Background](#background)
