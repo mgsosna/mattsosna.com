@@ -7,15 +7,14 @@ author: matt_sosna
 
 Unless you've avoided [iCloud](https://www.apple.com/icloud/), [Dropbox](https://www.dropbox.com/), and [Google Drive](https://www.google.com/drive/) the last fifteen years $-$ and if you have, props to you! $-$ then you're likely familiar with cloud storage. You can recover your texts if you lose your phone; you can share files with links instead of massive email attachments; you can organize and search your photos by who's in them.
 
-But these benefits extend into the professional realm, too. If you ever have data you want to share with others $-$ like thousands of streaming 4K videos or just a CSV of the [daily number of occupied hotel rooms in Brussels](https://datastore.brussels/web/data/dataset/f03544a1-a01c-4374-b19d-e93697f1ac73) $-$ you'll want to store this data on a cloud server. Cloud servers don't turn off when you close your laptop, and you don't have to worry if nefarious users' queries are fetching your private data when they visit your laptop.
+But these benefits extend into the professional realm, too. If you ever have data you want to share with others $-$ like, say, thousands of 4K movies and shows for a low monthly fee (😛) $-$ you'll want to store this data on a cloud server. Cloud servers don't turn off when you close your laptop, and you don't have to worry if nefarious users' queries are fetching your private data when they visit your laptop.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/hulu.jpeg">
 <span style="font-size: 12px"><i>Photo by [Tech Daily](https://unsplash.com/@techdailyca) on [Unsplash](https://unsplash.com)</i></span>
 
+So how can we set up cloud storage? What's the right type of storage for our data? And how can we interact with cloud storage directly from code, rather than needing to click around in a UI?
 
-So how can we set up cloud storage? And how can we leverage [SDKs](https://www.ibm.com/cloud/blog/sdk-vs-api) to integrate our cloud storage into our code?
-
-In the [last post]({{  site.baseurl  }}/AWS-Intro), we introduced cloud computing as an industry, as well as Amazon Web Services (AWS). In this post, we'll cover **storage**, one of the two main offerings of the cloud. (The other being compute, which we'll cover in the next post.) We'll set up our software environment before showing how to efficiently store [blobs](https://en.wikipedia.org/wiki/Binary_large_object), tabular data, and JSONs.
+This post will answer these questions. We'll set up our software environment before showing how to efficiently store [blobs](https://en.wikipedia.org/wiki/Binary_large_object), tabular data, and JSONs in **Amazon Web Services (AWS)**. (For an intro to the cloud industry in general, check out the [last post]({{  site.baseurl  }}/AWS-Intro).) Stay tuned for a follow-up post on _compute_, the other major offering of the cloud.
 
 ## Table of contents
 * [Background](#background)
@@ -33,6 +32,8 @@ When you work alone on a small project, you probably don't think too hard about 
 But what happens when you want to add someone to your project? It doesn't make sense to keep the data on your laptop and take turns using your data. You could copy the data to each person's laptop, but this won't work if the files are larger than you or your teammate's hard drive. Also, it's a lot of trust to hand over all the data right away $-$ what if they leave, taking everything with them to share with competitors or malicious actors?
 
 Cloud storage is designed to address these issues. It's easy to share files, as well as fine-tune the access. It's also easy to integrate into code $-$ AWS and others provide [SDKs](https://www.ibm.com/cloud/blog/sdk-vs-api), or **software development kits** that allow you to interact with the cloud through code. So instead of needing to click and drag a file from Google Drive onto your Desktop, then load it into Python, you can pull it straight into Python with the `boto3` library.
+
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/single_source.png">
 
 AWS guarantees ["five nines"](https://aws.amazon.com/blogs/publicsector/achieving-five-nines-cloud-justice-public-safety/), or 99.999% availability for justice and public safety customers, for example. (That means AWS guarantees it will be unavailable less than five minutes and 15 seconds per year.)
 
