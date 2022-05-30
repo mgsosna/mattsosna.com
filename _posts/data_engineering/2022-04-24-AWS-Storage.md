@@ -7,10 +7,10 @@ author: matt_sosna
 
 Unless you've avoided [iCloud](https://www.apple.com/icloud/), [Dropbox](https://www.dropbox.com/), and [Google Drive](https://www.google.com/drive/) the last fifteen years $-$ and if you have, props to you! $-$ then you're likely familiar with cloud storage. You can recover your texts if you lose your phone; you can share files with links instead of massive email attachments; you can organize and search your photos by who's in them.
 
-But these benefits extend into the professional realm, too. If you ever have data or code that you want to share with others $-$ like an [AI-powered cat picture generator](https://affinelayer.com/pixsrv/) or the [daily number of occupied hotel rooms in Brussels](https://datastore.brussels/web/data/dataset/f03544a1-a01c-4374-b19d-e93697f1ac73)$-$ you'll want to store this data on a cloud server. Cloud servers don't turn off when you close your laptop, and you don't have to worry if some of those queries are fetching your private data when they visit your laptop.
+But these benefits extend into the professional realm, too. If you ever have data you want to share with others $-$ like thousands of streaming 4K videos or just a CSV of the [daily number of occupied hotel rooms in Brussels](https://datastore.brussels/web/data/dataset/f03544a1-a01c-4374-b19d-e93697f1ac73) $-$ you'll want to store this data on a cloud server. Cloud servers don't turn off when you close your laptop, and you don't have to worry if nefarious users' queries are fetching your private data when they visit your laptop.
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/edges2cats.png">
-<span style="font-size: 12px"><i>Screenshot from Christopher Hesse's amazing [Image-to-Image Demo](https://affinelayer.com/pixsrv/)</i></span>
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/hulu.jpeg">
+<span style="font-size: 12px"><i>Photo by [Tech Daily](https://unsplash.com/@techdailyca) on [Unsplash](https://unsplash.com)</i></span>
 
 
 So how can we set up cloud storage? And how can we leverage [SDKs](https://www.ibm.com/cloud/blog/sdk-vs-api) to integrate our cloud storage into our code?
@@ -28,15 +28,11 @@ In the [last post]({{  site.baseurl  }}/AWS-Intro), we introduced cloud computin
 
 ## Background
 ### Why cloud storage?
-When you're working by yourself on a relatively small project, you probably don't think too hard about data access and storage. Maybe the CSVs are in the same folder as your Jupyter Notebook or R scripts, or if you're fancy they're backed up to a hard drive.
+When you work alone on a small project, you probably don't think too hard about data storage. Maybe you have a few CSVs in the same folder as your Jupyter Notebook or R scripts, or if you're fancy they're backed up to a hard drive.
 
-But what happens when you want to share that data with someone, or have multiple people access it at the same time? It doesn't make sense to keep the data on your laptop and then take turns using your data. Maybe you decide to copy the data to each person's laptop. But if the files are large, this can take a while. And what if someone unknowingly modifies their copy of the data, meaning their analyses don't sync up with yours? Without a single source of truth, it can be really hard to debug the issue. And finally, what happens if someone leaves the project? They can just take their copy of the data with them, sharing it with competitors or malicious actors.
+But what happens when you want to add someone to your project? It doesn't make sense to keep the data on your laptop and take turns using your data. You could copy the data to each person's laptop, but this won't work if the files are larger than you or your teammate's hard drive. Also, it's a lot of trust to hand over all the data right away $-$ what if they leave, taking everything with them to share with competitors or malicious actors?
 
-Cloud storage is meant to address these issues. You're likely already familiar with Dropbox or Google Drive $-$ these services have become ubiquitous because it's now unthinkable to try sending data through an email or handing it over on a USB stick. Upload a file to Dropbox, send your friend a link to the file, and you're done.
-
-But cloud storage can go beyond this $-$ AWS and others provide [SDKs](https://www.ibm.com/cloud/blog/sdk-vs-api), or **software development kits** that allow you to interact with the cloud through code. So instead of needing to click and drag a file from Google Drive onto your Desktop, then load it into Python, you can pull it straight into Python with the `boto3` library.
-
-In this post we'll show you how to leverage S3, RDS, and DynamoDB.
+Cloud storage is designed to address these issues. It's easy to share files, as well as fine-tune the access. It's also easy to integrate into code $-$ AWS and others provide [SDKs](https://www.ibm.com/cloud/blog/sdk-vs-api), or **software development kits** that allow you to interact with the cloud through code. So instead of needing to click and drag a file from Google Drive onto your Desktop, then load it into Python, you can pull it straight into Python with the `boto3` library.
 
 AWS guarantees ["five nines"](https://aws.amazon.com/blogs/publicsector/achieving-five-nines-cloud-justice-public-safety/), or 99.999% availability for justice and public safety customers, for example. (That means AWS guarantees it will be unavailable less than five minutes and 15 seconds per year.)
 
@@ -86,7 +82,7 @@ But there are certain files that are hard to neatly store in a database. **Binar
 
 S3 is **Simple Storage Service.** Think of it like Dropbox or Google Drive, a "catch-all" place for files in the cloud. Upload your text files, CSVs, R scripts, Python pickle files, images, videos, zipped programs, etc. by clicking and dragging in the UI or using the AWS CLI.
 
-It's hard to beat the ease of using S3. Simply create a **bucket** (like a distinct directory) and start uploading files. We can organize data into folders <sup>[[1]](#1-s3)</sup> and easily load in the data from a script.
+It's hard to beat the ease of using S3. Simply create a **bucket** (i.e., distinct directory) and start uploading files. We can organize data into folders <sup>[[1]](#1-s3)</sup> and easily load in the data from a script.
 
 The downside to this simplicity is that S3 only contains data _about_ the files, not what's inside them. So you're out of luck if you forget your Facebook password and can't search your text files for the phrase `my Facebook password is`. If we need to search the data _within_ our files, we're better off storing that data in a database.<sup>[[2]](#2-s3)</sup>. But even with a database, S3 is still ideal for storing the _raw data_ that generated those data, such as the logs, raw sensor data for your IoT application, text files from user interviews, etc., as a backup.
 
@@ -94,6 +90,9 @@ The downside to this simplicity is that S3 only contains data _about_ the files,
 So let's actually create a bucket. We can do this from the console like this:
 
 <img src="{{ site.baseurl }}/images/data_engineering/aws/storage/create_bucket.png">
+
+When we create a bucket, we need to give it a name. This needs to globally distinct across all AWS buckets.
+
 
 **ACL:** Access Control List
 
@@ -149,9 +148,11 @@ df = pd.DataFrame(json.load(StringIO(string)))
 ```
 
 
-
-## RDS
+## RDS: Relational Database Service
 RDS is Relational Database Service. This is like a SQL database hosted in the cloud (on top of an EC2 instance). For NoSQL, you're looking at DynamoDB.
+
+## DynamoDB
+DynamoDB is for non-relational databases.
 
 ## Redshift
 Data warehouse. A data warehouse is a https://www.talend.com/resources/what-is-data-warehouse/.
@@ -160,11 +161,8 @@ Data warehouse. A data warehouse is a https://www.talend.com/resources/what-is-d
 [This website](https://aws-certified-cloud-practitioner.fandom.com/wiki/3.3_Identify_the_core_AWS_services) looks super helpful.
 [This whitepaper](https://docs.aws.amazon.com/whitepapers/latest/aws-overview/aws-overview.pdf) looks awesome.
 
-### Honorable mentions
-#### Sagemaker
-I guess we could bring it up. Personally, I've only really used Databricks.
 
-#### Cloudwatch
+## Cloudwatch
 Logs.
 
 #### Elastic Beanstalk

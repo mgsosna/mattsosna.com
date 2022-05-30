@@ -7,6 +7,12 @@ author: matt_sosna
 
 In the [first post]({{  site.baseurl  }}/AWS-Intro) we covered an introduction to AWS. In the [second post]({{  site.baseurl  }}/AWS-Storage) we covered storing data in the cloud. This post will cover the other big use case for the cloud: compute.
 
+But these benefits extend into the professional realm, too. If you ever have data or code that you want to share with others $-$ like an [AI-powered cat picture generator](https://affinelayer.com/pixsrv/) or the [daily number of occupied hotel rooms in Brussels](https://datastore.brussels/web/data/dataset/f03544a1-a01c-4374-b19d-e93697f1ac73)$-$ you'll want to store this data on a cloud server. Cloud servers don't turn off when you close your laptop, and you don't have to worry if some of those queries are fetching your private data when they visit your laptop.
+
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/edges2cats.png">
+<span style="font-size: 12px"><i>Screenshot from Christopher Hesse's amazing [Image-to-Image Demo](https://affinelayer.com/pixsrv/)</i></span>
+
+
 ## Table of contents
 * [**Compute**](#compute)
   - [EC2](#ec2)
