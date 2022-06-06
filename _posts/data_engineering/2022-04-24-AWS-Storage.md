@@ -29,11 +29,13 @@ This post will answer these questions. We'll set up our software environment bef
 ### Why cloud storage?
 When you work alone on a small project, you probably don't think too hard about data storage. Maybe you have a few CSVs in the same folder as your Jupyter Notebook or R scripts, or if you're fancy they're backed up to a hard drive.
 
-But what happens when you want to add someone to your project? It doesn't make sense to keep the data on your laptop and take turns using your data. You could copy the data to each person's laptop, but this won't work if the files are larger than you or your teammate's hard drive. Also, it's a lot of trust to hand over all the data right away $-$ what if they leave, taking everything with them to share with competitors or malicious actors?
+But what happens when you want to add someone to your project? It doesn't make sense to take turns using your laptop. You could copy the data to their laptop, but what if one of you accidentally modifies their copy (leading to absolutely gnarly bugs), or what if there's more data than can fit on your teammate's hard drive? Also, it's a lot of trust to hand over all the data right away $-$ what if they leave, taking everything with them to share with competitors or malicious actors?
 
-Cloud storage is designed to address these issues. It's easy to share files, as well as fine-tune the access. It's also easy to integrate into code $-$ AWS and others provide [SDKs](https://www.ibm.com/cloud/blog/sdk-vs-api), or **software development kits** that allow you to interact with the cloud through code. So instead of needing to click and drag a file from Google Drive onto your Desktop, then load it into Python, you can pull it straight into Python with the `boto3` library.
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/single_source.png" alt="Sharing data in the cloud">
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/single_source.png">
+Cloud storage is designed to address these issues. As with Dropbox or Google Drive, you can simply send data through a link. But you can also make this cloud data into a **single source of truth:** the data at the end of that link you both have is the real thing if there's ever a disagreement. This data can be made read-only, and we can use [**SDKs** (software development kits)](https://www.ibm.com/cloud/blog/sdk-vs-api) to access the data straight from our code. Finally, we can fine-tune the access to the data $-$ if your teammate turns out to be a spy from the competition, you can instantly turn those links you shared into error messages the next time they try to fetch the data.<sup>[[1]](#why-cloud-storage)</sup>
+
+
 
 AWS guarantees ["five nines"](https://aws.amazon.com/blogs/publicsector/achieving-five-nines-cloud-justice-public-safety/), or 99.999% availability for justice and public safety customers, for example. (That means AWS guarantees it will be unavailable less than five minutes and 15 seconds per year.)
 
@@ -163,16 +165,11 @@ Data warehouse. A data warehouse is a https://www.talend.com/resources/what-is-d
 [This whitepaper](https://docs.aws.amazon.com/whitepapers/latest/aws-overview/aws-overview.pdf) looks awesome.
 
 
-## Cloudwatch
+## Other services
+### Cloudwatch
 Logs.
 
-#### Elastic Beanstalk
-Deployment, I think...
-
-#### Route 53
-DNS management.
-
-#### Glue, Athena
+### Glue, Athena
 These combine with S3 to let you treat a bucket (or directory within one) as a big table that you can query with SQL.
 
 There are services that build off these.
@@ -181,8 +178,11 @@ There are services that build off these.
 
 
 ## Footnotes
-#### 1. [S3: Simple Storage Service](#s3-simple-storage-service)
-"Folders" in S3 don't _really_ exist. They're more like human-friendly ways to organize your data.
+#### 1. [Why cloud storage?](#why-cloud-storage)
+While we can revoke a user's access to cloud data, there's of course always the concern that they downloaded it and made a local copy. There's no real good answer to this $-$ we can't make that downloaded data self-destruct once the person leaves your team. For files from S3, there's likely little hope, but at least for data from databases, it's impractical or impossible to download everything. At companies like Meta, data access is carefully monitored, from access to tables with sensitive data to any time data is downloaded.
 
 #### 2. [S3: Simple Storage Service](#s3-simple-storage-service)
+"Folders" in S3 don't _really_ exist. They're more like human-friendly ways to organize your data.
+
+#### 3. [S3: Simple Storage Service](#s3-simple-storage-service)
 There _are_ services like Glue that let you index your buckets and search them as if they were a database with Athena, but there are some serious caveats to this, and you're still far better off writing to a database in my experience!
