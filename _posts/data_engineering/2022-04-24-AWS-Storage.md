@@ -7,7 +7,7 @@ author: matt_sosna
 
 Unless you've avoided [iCloud](https://www.apple.com/icloud/), [Dropbox](https://www.dropbox.com/), and [Google Drive](https://www.google.com/drive/) the last fifteen years $-$ and if you have, props to you! $-$ then you're likely familiar with cloud storage. You can recover your texts if you lose your phone; you can share files with links instead of massive email attachments; you can organize and search your photos by who's in them.
 
-But these benefits extend into the professional realm, too. If you ever have data you want to share with others $-$ like, say, thousands of 4K movies and shows for a low monthly fee (😛) $-$ you'll want to store this data on a cloud server. Cloud servers don't turn off when you close your laptop, and you don't have to worry if nefarious users' queries are fetching your private data when they visit your laptop.
+But these benefits extend into the professional realm, too. If you ever start a company that shares data $-$ like, say, thousands of 4K movies and shows for a low monthly fee (😛) $-$ you'll want to store this data on a cloud server. Cloud servers don't turn off when you close your laptop, and you don't have to worry about nefarious users fetching your private data when they visit your laptop.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/hulu.jpeg">
 <span style="font-size: 12px"><i>Photo by [Tech Daily](https://unsplash.com/@techdailyca) on [Unsplash](https://unsplash.com)</i></span>
@@ -29,15 +29,26 @@ This post will answer these questions. We'll set up our software environment bef
 ### Why cloud storage?
 When you work alone on a small project, you probably don't think too hard about data storage. Maybe you have a few CSVs in the same folder as your Jupyter Notebook or R scripts, or if you're fancy they're backed up to a hard drive.
 
-But what happens when you want to add someone to your project? It doesn't make sense to take turns using your laptop. You could copy the data to their laptop, but what if one of you accidentally modifies their copy (leading to absolutely gnarly bugs), or what if there's more data than can fit on your teammate's hard drive? Also, it's a lot of trust to hand over all the data right away $-$ what if they leave, taking everything with them to share with competitors or malicious actors?
+But what happens when you want to add someone to your project? It doesn't make sense to take turns using your laptop. You could copy the data to their laptop, but what if one of you accidentally modifies their copy (leading to ugly arguments where everyone thinks they're right), or what if there's more data than can fit on your teammate's hard drive? It's also a lot of trust to hand over all the data right away $-$ what if they leave, taking everything with them to share with competitors or malicious actors?
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/single_source.png" alt="Sharing data in the cloud">
 
-Cloud storage is designed to address these issues. As with Dropbox or Google Drive, you can simply send data through a link. But you can also make this cloud data into a **single source of truth:** the data at the end of that link you both have is the real thing if there's ever a disagreement. This data can be made read-only, and we can use [**SDKs** (software development kits)](https://www.ibm.com/cloud/blog/sdk-vs-api) to access the data straight from our code. Finally, we can fine-tune the access to the data $-$ if your teammate turns out to be a spy from the competition, you can instantly turn those links you shared into error messages the next time they try to fetch the data.<sup>[[1]](#why-cloud-storage)</sup>
+Cloud storage is designed to address these issues. As with Dropbox or Google Drive, you can simply send data through a link: "click _here_ to access the database." But you can also turn this cloud data into a **single source of truth:** the data at the end of that link you both have is the real thing if there's ever a disagreement. This data can be made read-only, and we can use [**SDKs** (software development kits)](https://www.ibm.com/cloud/blog/sdk-vs-api) to access the data straight from our code.
+
+We can fine-tune the access to the data $-$ if your teammate turns out to be a spy from the competition, you can instantly turn those links you shared into error messages the next time they try to fetch the data.<sup>[[1]](#why-cloud-storage)</sup> And as long as your internet connection is reliable, you should be able to access the data at any time $-$ AWS, for example, guarantees an uptime of [99.9%](https://aws.amazon.com/s3/sla/), [99.99%](https://aws.amazon.com/compute/sla/), or [99.999%](https://aws.amazon.com/blogs/publicsector/achieving-five-nines-cloud-justice-public-safety/) depending on your application. (For justice and public safety customers, for example, AWS guarantees it will be unavailable less than 315 seconds per year.)
+
+### Types of data
+So we see that it's useful to store data in the cloud so it's a secure, highly-available, single source of truth. But "data" is a broad term $-$ is it raw videos and text transcripts? Is it a user profile and activity log? Is it code? Is it tabular data?
+
+We _could_ throw all our data into a big, disorganized Dropbox folder, with photos brushing shoulders with config files and CSVs. But as our data grows, _the way we store our data_ will determine whether our applications can support 100 users or 100 million. And as we'll see, the optimal way to access a particular type of data will strongly depend on how it's _formatted_.
+
+This format, i.e., _unstructured_, _semi-structured_, or _structured_, refers to how the data is organized within the file.
+
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/storage_types.png">
 
 
+But there are certain files that are hard to neatly store in a database. **Binary large objects**, or **[BLOB](https://en.wikipedia.org/wiki/Binary_large_object)s** for short, are large collections of binary data that can't be easily broken up, or shouldn't. Think of an image $-$ you don't really want half the pixels in one file and half in another, when you'll always be fetching the entire image any time you want to access it. Similarly, audio, video, or [executable programs](https://en.wikipedia.org/wiki/Executable) are large entities that you almost always to fetch all at once.
 
-AWS guarantees ["five nines"](https://aws.amazon.com/blogs/publicsector/achieving-five-nines-cloud-justice-public-safety/), or 99.999% availability for justice and public safety customers, for example. (That means AWS guarantees it will be unavailable less than five minutes and 15 seconds per year.)
 
 ### Storing AWS credentials
 Before we get started, we need to store our credentials in a secure location. What you _shouldn't_ do is store your AWS credentials in the code that you're running $-$ _especially_ if that code is version controlled with a service like Git! Accidentally pushing that code will create a version that will last forever.
@@ -71,14 +82,6 @@ access_key = os.environ['AWS_ACCESS_KEY_ID']
 secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
 ```
 
-### Types of data
-So we see that it's useful to store data in the cloud so it's easily accessible to the right people, hard to access for everyone else, resilient and robust, etc.
-
-But "data" is a broad term $-$ is it raw videos or text transcripts? Is it a user profile? Is it code? Is it tabular data? The _structure_ of the data (unstructured, semi-structured, and structured) will determine what the right storage solution is.
-
-The amount of data we have can grow very quickly, and we want to be able to access it quickly.
-
-But there are certain files that are hard to neatly store in a database. **Binary large objects**, or **[BLOB](https://en.wikipedia.org/wiki/Binary_large_object)s** for short, are large collections of binary data that can't be easily broken up, or shouldn't. Think of an image $-$ you don't really want half the pixels in one file and half in another, when you'll always be fetching the entire image any time you want to access it. Similarly, audio, video, or [executable programs](https://en.wikipedia.org/wiki/Executable) are large entities that you almost always to fetch all at once.
 
 ## S3: Simple Storage Service
 <img src="{{ site.baseurl }}/images/data_engineering/aws/storage/s3_landing.png">
