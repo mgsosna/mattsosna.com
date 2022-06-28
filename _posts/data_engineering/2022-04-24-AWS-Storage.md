@@ -38,11 +38,11 @@ Cloud storage is designed to address these issues. As with Dropbox or Google Dri
 We can fine-tune the access to the data $-$ if your teammate turns out to be a spy from the competition, you can instantly turn those links you shared into error messages the next time they try to fetch the data.<sup>[[1]](#why-cloud-storage)</sup> And as long as your internet connection is reliable, you should be able to access the data at any time $-$ AWS, for example, guarantees an uptime of [99.9%](https://aws.amazon.com/s3/sla/), [99.99%](https://aws.amazon.com/compute/sla/), or [99.999%](https://aws.amazon.com/blogs/publicsector/achieving-five-nines-cloud-justice-public-safety/) depending on your application. (For justice and public safety customers, for example, AWS guarantees it will be unavailable less than 315 seconds per year.)
 
 ### Types of data
-So we see that it's useful to store data in the cloud so it's a secure, highly-available, single source of truth. But "data" is a broad term $-$ is it raw videos and text transcripts? Is it a user profile and activity log? Is it code? Is it tabular data?
+So we see that it's useful to store data in the cloud so it's a secure, highly-available, single source of truth. But "data" is a broad term $-$ is it raw videos and text transcripts? Is it a user profile and activity logs? Is it Python and R scripts? Is it CSVs and Excel files?
 
-We _could_ throw all our data into a big, disorganized Dropbox folder, with photos brushing shoulders with config files and CSVs. But as our data grows, _the way we store our data_ will determine whether our applications can support 100 users or 100 million. And as we'll see, the optimal way to access a particular type of data will strongly depend on how it's _formatted_.
+We _could_ throw all our data into a big, disorganized Dropbox folder, with photos brushing shoulders with config files and text files. But as our data grows, _the way we store our data_ will determine whether our applications can support 100 users or 100 million. And as we'll see, the optimal way to access a particular type of data will strongly depend on how it's _formatted_.
 
-This format, i.e., _unstructured_, _semi-structured_, or _structured_, refers to how the data is organized within the file.
+This format, i.e., _structured_, _semi-structured_, or _unstructured_, refers to how the data is organized within the file. "Structured" is the tabular data you're likely familiar with, often where one row is one sample and each column is a feature of that sample. Semi-structured data includes [JSON](https://www.w3schools.com/js/js_json_intro.asp), [XML](https://www.w3.org/standards/xml/core), and [HTML](https://en.wikipedia.org/wiki/HTML), where the data is organized by usually can't be neatly fit into columns and rows.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/storage_types.png">
 
