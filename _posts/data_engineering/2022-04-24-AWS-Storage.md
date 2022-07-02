@@ -19,8 +19,8 @@ This post will answer these questions. We'll set up our software environment bef
 ## Table of contents
 * [Background](#background)
   * [Why cloud storage?](#why-cloud-storage)
-  * [Storing AWS credentials](#storing-aws-credentials)
-  * [Types of data](#types-of-data)
+  * [What am I storing?](#what-am-i-storing)
+  * [Avoiding getting hacked when using an SDK](#avoiding-getting-hacked-when-using-an-sdk)
 * [S3 (Simple Storage Service)](#s3-simple-storage-service)
 * [RDS (Relational Database Service)](#rds)
 * [DynamoDB](#dynamodb)
@@ -39,23 +39,30 @@ We can use [**SDKs** (software development kits)](https://www.ibm.com/cloud/blog
 
 And as long as your internet connection is reliable, you should be able to access the data at any time $-$ AWS, for example, guarantees an uptime of [99.9%](https://aws.amazon.com/s3/sla/), [99.99%](https://aws.amazon.com/dynamodb/sla/), or [99.999%](https://aws.amazon.com/blogs/publicsector/achieving-five-nines-cloud-justice-public-safety/) depending on your application. (For justice and public safety customers, for example, AWS guarantees it will be unavailable fewer than 315 seconds per year.)
 
-### Types of data
+### What am I storing?
 So we see that it's useful to store data in the cloud so it's secure, accessible by code, and highly-available. But "data" is a broad term $-$ is it raw videos and text transcripts? Is it a user profile and activity logs? Is it Python and R scripts? Is it all screenshots of Excel?
 
-We _could_ throw all our files into a big Dropbox folder, with photos mixing with config files and CSVs. As long as you know the filename containing the data you're looking for, Dropbox will fetch the file when requested. This works ok $-$ unless the file contains only the data you want and nothing else, you'll need to then extract the data you want $-$ but the real issue is when you _don't_ know exactly what you're looking for.
+We _could_ throw all our files into a big Dropbox folder, with photos mixing with config files and CSVs. As long as you know the name of the file containing the data you want, Dropbox will fetch the file when requested. This works ok $-$ unless the file contains only the data you want, you'll need to then search through the file to extract the relevant data. But the real issue is when you _don't_ know exactly what you're looking for.
 
 Because we often need to _search_ for data that matches some criteria, **_the way we organize our data_ will determine whether our applications can support 100 users or 100 million as our data grows.** And as we'll see, the optimal way to access a particular type of data will strongly depend on how it's _formatted_.
 
-This format, i.e., _structured_, _semi-structured_, or _unstructured_, refers to how the data is organized within the file. "Structured" is the tabular data you're likely familiar with, often where one row is one sample and each column is a feature of that sample. Semi-structured data includes [JSON](https://www.w3schools.com/js/js_json_intro.asp), [XML](https://www.w3.org/standards/xml/core), and [HTML](https://en.wikipedia.org/wiki/HTML), where the data is organized by usually can't be neatly fit into columns and rows.
+This format, i.e., _structured_, _semi-structured_, or _unstructured_, refers to how the data is organized within the file. **Structured** data is the tabular set of rows and columns you're likely familiar with: typically, each row is a sample and each column is a [feature](https://www.datarobot.com/wiki/feature/) of that sample. The tables in a relational database consist of structured data, which we can quickly search if the tables are [_indexed_](https://www.codecademy.com/article/sql-indexes) by a column that partitions the data well.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/storage_types.png">
 
+**Semi-structured** data includes [JSON](https://www.w3schools.com/js/js_json_intro.asp), [XML](https://www.w3.org/standards/xml/core), and [HTML](https://en.wikipedia.org/wiki/HTML), where the data usually doesn't fit nicely into columns and rows. This format is ideal for hierarchical data, where a field may have subfields, many containing subfields of their own. **There is no limit on the number of layers, but there _is_ a required structure.** An HTML page, for example, can have many `<div>` sections nested within one another, each with unique CSS formatting.
 
-But there are certain files that are hard to neatly store in a database. **Binary large objects**, or **[BLOB](https://en.wikipedia.org/wiki/Binary_large_object)s** for short, are large collections of binary data that can't be easily broken up, or shouldn't. Think of an image $-$ you don't really want half the pixels in one file and half in another, when you'll always be fetching the entire image any time you want to access it. Similarly, audio, video, or [executable programs](https://en.wikipedia.org/wiki/Executable) are large entities that you almost always to fetch all at once.
+Finally, **unstructured** data is raw and unformatted, impossible to split into the rows and columns of structured data, or even the nested fields of semi-structured data, without further processing. One example of unstructured data is **binary large objects**, or **[BLOB](https://en.wikipedia.org/wiki/Binary_large_object)s**. BLOBs are large chunks of data that can't be easily broken up, or shouldn't. You usually want to load an entire image at once, for example, so you shouldn't store half the pixels in one file and half in another. Similarly, [executable programs](https://en.wikipedia.org/wiki/Executable) (i.e., compiled code) are large entities that you'll always want to fetch all at once.
+
+### Avoiding getting hacked when using an SDK
+Now that we have an idea on the types of data we'll want to store in the cloud, we can start experimenting with AWS services optimized for each type. We'll play with RDS for structured data, DynamoDB for semi-structured data, and S3 for unstructured data. And to really show the strengths of cloud computing over physical storage, we'll interact with these services through Python.
+
+But before we run any script, there's one crucial thing we need to do to avoid getting obliterated by a hacker. **It is crucial that we store our AWS credentials in a secure location.**
+
+When we interact with AWS, we need to identify ourselves to Amazon's servers, showing that we're allowed to perform the actions we're requesting. We do this with our access key and secret access key. In the last post, we set these variables in the Terminal when using the AWS CLI. In Python, we'll need to do something slightly different.
 
 
-### Storing AWS credentials
-Before we get started, we need to store our credentials in a secure location. What you _shouldn't_ do is store your AWS credentials in the code that you're running $-$ _especially_ if that code is version controlled with a service like Git! Accidentally pushing that code will create a version that will last forever.
+What you _shouldn't_ do is store your AWS credentials in the code that you're running $-$ _especially_ if that code is version controlled with a service like Git! Accidentally pushing that code will create a version that will last forever.
 
 {% include header-python.html %}
 ```python
