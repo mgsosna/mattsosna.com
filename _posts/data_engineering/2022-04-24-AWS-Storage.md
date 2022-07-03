@@ -52,24 +52,18 @@ This format, i.e., _structured_, _semi-structured_, or _unstructured_, refers to
 
 **Semi-structured** data includes [JSON](https://www.w3schools.com/js/js_json_intro.asp), [XML](https://www.w3.org/standards/xml/core), [HTML](https://en.wikipedia.org/wiki/HTML), and large graphs, where the data usually doesn't fit nicely into columns and rows. This format is ideal for hierarchical data, where a field may have subfields, many containing subfields of their own. **There is no limit on the number of layers, but there _is_ a required structure.** An HTML page, for example, can have many `<div>` sections nested within one another, each with unique CSS formatting.
 
-Finally, **unstructured** data is raw and unformatted, impossible to split into the rows and columns of structured data, or even the nested fields of semi-structured data, without further processing. One example of unstructured data is **binary large objects**, or **[BLOB](https://en.wikipedia.org/wiki/Binary_large_object)s**. BLOBs are large chunks of data that can't be easily broken up, or shouldn't. You usually want to load an entire image at once, for example, so you shouldn't store half the pixels in one file and half in another. Similarly, [executable programs](https://en.wikipedia.org/wiki/Executable) (i.e., compiled code) are large entities that you'll always want to fetch all at once.
+Finally, **unstructured** data is raw and unformatted, impossible to split into the rows and columns of structured data, or even the nested fields of semi-structured data, without further processing. One example of unstructured data that can't $-$ or shouldn't $-$ be broken up is **binary large objects** (**[BLOB](https://en.wikipedia.org/wiki/Binary_large_object)s**). You usually want to load an entire image at once, for example, so you shouldn't store half the pixels in one file and half in another. Similarly, [executable programs](https://en.wikipedia.org/wiki/Executable) (i.e., compiled code) are large entities that you'll always want to fetch all at once.
 
 ### Avoiding getting hacked when using an SDK
 Now that we have an idea on the types of data we can store in the cloud, we can start experimenting with AWS services optimized for each type. To really show the strength of the cloud, we'll use the AWS Python SDK to integrate these services into our code.
 
 But before we run any scripts, there's one crucial thing we need to do to avoid getting obliterated by a hacker. **It is crucial that we store our AWS credentials in a secure location in our code.**
 
-Any interaction with an AWS server requires _authentication_. If a server receives a request to download a file from your S3 bucket, how does the server know whether to allow or block the action? The server can't send back a verification message like "Please type the name of the account owner" $-$ the whole point of calling AWS through code is that we're making requests through a computer acting _on behalf_ of us.
+AWS servers receive dozens or hundreds of queries per second. If a server receives a request to download a file from your S3 bucket, how does the server know whether to block or allow the action? To ensure this request is coming from you $-$ or a machine acting on your behalf $-$ **we [_sign_ our API requests](https://docs.aws.amazon.com/general/latest/gr/signing_aws_api_requests.html) with our AWS access key ID and secret access key.** These keys are used to [encrypt our message content](https://www.okta.com/identity-101/hmac/) and [generate a hash](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html) to prove the message AWS received is the same one we sent.
 
-To ensure the action is allowed, the server will compare a _fingerprint_ from the requester against the fingerprint
+In other words, anyone with your access keys can use AWS SDKs to perform requests on your behalf. So it's important to ensure that you're the only one performing these requests.
 
-
-
-
-When we interact with AWS, we need to identify ourselves to Amazon's servers, showing that we're allowed to perform the actions we're requesting. We do this with our access key and secret access key. In the last post, we set these variables in the Terminal when using the AWS CLI. In Python, we'll need to do something slightly different.
-
-
-What you _shouldn't_ do is store your AWS credentials in the code that you're running $-$ _especially_ if that code is version controlled with a service like Git! Accidentally pushing that code will create a version that will last forever.
+In the last post, we defined our access keys in the Terminal when using the AWS CLI. In Python, we'll need to do something slightly different. What you _shouldn't_ do is store your AWS credentials in the code that you're running $-$ _especially_ if that code is version controlled with a service like Git! Accidentally pushing that code will create a version that will last forever.
 
 {% include header-python.html %}
 ```python
