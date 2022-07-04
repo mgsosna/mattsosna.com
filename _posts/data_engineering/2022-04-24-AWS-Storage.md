@@ -29,22 +29,20 @@ This post will answer these questions. We'll set up our software environment bef
 ### Why cloud storage?
 When you work alone on a small project, you probably don't think too hard about data storage. Maybe you have a few CSVs in the same folder as your Jupyter Notebook or R scripts. Hopefully everything's backed up to a hard drive.
 
-But what happens when you want to add someone to your project? It doesn't make sense to take turns using your laptop. You could copy the data to their laptop, but what if there's more data than can fit on your teammate's computer? It's also a lot of trust to hand over all the data right away $-$ what if this new person leaves, taking everything with them to share with competitors or malicious actors?
+But what happens when you want to add someone to your project? It doesn't make sense to take turns using your laptop. You could copy the data to their laptop, but what if there's more data than can fit on your teammate's computer? Syncing changes across datasets is a headache waiting to happen. It's also a lot of trust to hand over all the data right away $-$ what if this new person leaves, taking everything with them to share with competitors or malicious actors?
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/single_source.png" alt="Sharing data in the cloud">
 
 Cloud storage is designed to address these issues. As with Dropbox or Google Drive, you can simply send data through a link: "click _here_ to access the database." This data can be made read-only, with fine-tuned access rules $-$ if your teammate turns out to be a spy from the competition, you can instantly turn those links you shared into error messages the next time they try to fetch the data.<sup>[[1]](#1-why-cloud-storage)</sup>
 
-We can use [**SDKs** (software development kits)](https://www.ibm.com/cloud/blog/sdk-vs-api) to access the data straight from our code, which is critical for scaling any application beyond a tiny handful of users.
-
-And as long as your internet connection is reliable, you should be able to access the data at any time $-$ AWS, for example, guarantees an uptime of [99.9%](https://aws.amazon.com/s3/sla/), [99.99%](https://aws.amazon.com/dynamodb/sla/), or [99.999%](https://aws.amazon.com/blogs/publicsector/achieving-five-nines-cloud-justice-public-safety/) depending on your application. (For justice and public safety customers, for example, AWS guarantees it will be unavailable fewer than 315 seconds per year.)
+We can use [**SDKs** (software development kits)](https://www.ibm.com/cloud/blog/sdk-vs-api) to access the data straight from our code, which is critical for scaling any application beyond a tiny handful of users. And as long as your internet connection is reliable, you should be able to access the data at any time $-$ AWS, for example, guarantees an uptime of [99.9%](https://aws.amazon.com/s3/sla/), [99.99%](https://aws.amazon.com/dynamodb/sla/), or [99.999%](https://aws.amazon.com/blogs/publicsector/achieving-five-nines-cloud-justice-public-safety/) depending on your application.<sup>[[2]](#2-why-cloud-storage)</sup>
 
 ### What am I storing?
-So we see that it's useful to store data in the cloud so it's secure, accessible by code, and highly-available. But "data" is a broad term $-$ is it raw videos and text transcripts? Is it a user profile and activity logs? Is it Python and R scripts? Is it all screenshots of Excel?
+So we see that it's useful to store data in the cloud so it's secure, accessible by code, and highly-available. But "data" is a broad term $-$ is it raw videos and text transcripts? Is it a user profile and activity logs? Is it Python and R scripts? Is it grainy screenshots of Excel?
 
-We _could_ throw all our files into a big Dropbox folder, with photos mixing with config files and CSVs. As long as you know the name of the file containing the data you want, Dropbox will fetch the file when requested. This works ok $-$ unless the file contains only the data you want, you'll need to then search through the file to extract the relevant data. But the real issue is when you _don't_ know exactly what you're looking for.
+We _could_ throw all our files into a big Dropbox folder, with photos mixing with config files and CSVs. As long as you know the name of the file containing the data you want, Dropbox will fetch the file when requested. But unless the file contains strictly the data you requested, you'll need to then search through the file to extract the relevant data.
 
-Because we often need to _search_ for data that matches some criteria, **_the way we organize our data_ will determine whether our applications can support 100 users or 100 million as our data grows.** And as we'll see, the optimal way to access a particular type of data will strongly depend on how it's _formatted_.
+This issue $-$ not knowing exactly where a piece of data is $-$ is where a big Dropbox folder stops working as the amount of data grows. Because we often need to _search_ for data that matches some criteria, **_the way we organize our data_ determines whether our applications can support 100 users or 100 million.** And as we'll see, the optimal way to access a particular type of data will strongly depend on how it's _formatted_.
 
 This format, i.e., _structured_, _semi-structured_, or _unstructured_, refers to how the data is organized within the file. **Structured** data is the tabular set of rows and columns you're likely familiar with: typically, each row is a sample and each column is a [feature](https://www.datarobot.com/wiki/feature/) of that sample. The tables in a relational database consist of structured data, which we can quickly search if the tables are [_indexed_](https://www.codecademy.com/article/sql-indexes) by a column that partitions the data well.
 
@@ -59,9 +57,11 @@ Now that we have an idea on the types of data we can store in the cloud, we can 
 
 But before we run any scripts, there's one crucial thing we need to do to avoid getting obliterated by a hacker. **It is crucial that we store our AWS credentials in a secure location in our code.**
 
-AWS servers receive dozens or hundreds of queries per second. If a server receives a request to download a file from your S3 bucket, how does the server know whether to block or allow the action? To ensure this request is coming from you $-$ or a machine acting on your behalf $-$ **we [_sign_ our API requests](https://docs.aws.amazon.com/general/latest/gr/signing_aws_api_requests.html) with our AWS access key ID and secret access key.** These keys are used to [encrypt our message content](https://www.okta.com/identity-101/hmac/) and [generate a hash](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html) to prove the message AWS received is the same one we sent.
+AWS servers receive dozens or hundreds of queries per second. If a server receives a request to download a file from your S3 bucket, how does the server know whether to block or allow the action? To ensure this request is coming from you $-$ or a machine acting on your behalf $-$ **we [_sign_ our API requests](https://docs.aws.amazon.com/general/latest/gr/signing_aws_api_requests.html) with our AWS access key ID and secret access key.** These keys are used to [encrypt our message content](https://www.okta.com/identity-101/hmac/) and [generate a hash](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html) to prove the message AWS receives is the same one we sent.
 
-In other words, anyone with your access keys can use AWS SDKs to perform requests on your behalf. So it's important to ensure that you're the only one performing these requests.
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/access_keys.png">
+
+In other words, anyone with your access keys can use AWS SDKs to perform requests on your behalf! So it's important to ensure that you're the only one performing these requests.
 
 In the last post, we defined our access keys in the Terminal when using the AWS CLI. In Python, we'll need to do something slightly different. What you _shouldn't_ do is store your AWS credentials in the code that you're running $-$ _especially_ if that code is version controlled with a service like Git! Accidentally pushing that code will create a version that will last forever.
 
@@ -195,6 +195,9 @@ There are services that build off these.
 ## Footnotes
 #### 1. [Why cloud storage?](#why-cloud-storage)
 While we can revoke a user's access to cloud data, there's of course always the concern that the user made a local copy. There's no real good answer to this $-$ we can't make that downloaded data self-destruct once the person leaves your team. For files from S3, there's likely little hope, but at least for data from databases, it's impractical or impossible to download everything. At companies like Meta, data access is carefully monitored, from access to tables with sensitive data to any time data is downloaded.
+
+#### 2. [Why cloud storage?](#why-cloud-storage)
+99.999% uptime is a hard number to wrap your head around. Per year, this means AWS guarantees it will be unavailable less than 5 minutes and 15 seconds.
 
 #### 2. [S3: Simple Storage Service](#s3-simple-storage-service)
 "Folders" in S3 don't _really_ exist. They're more like human-friendly ways to organize your data.
