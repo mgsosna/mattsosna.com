@@ -53,30 +53,39 @@ This format, i.e., _structured_, _semi-structured_, or _unstructured_, refers to
 Finally, **unstructured** data is raw and unformatted, impossible to split into the rows and columns of structured data, or even the nested fields of semi-structured data, without further processing. One example of unstructured data that can't $-$ or shouldn't $-$ be broken up is **binary large objects** (**[BLOB](https://en.wikipedia.org/wiki/Binary_large_object)s**). You usually want to load an entire image at once, for example, so you shouldn't store half the pixels in one file and half in another. Similarly, [executable programs](https://en.wikipedia.org/wiki/Executable) (i.e., compiled code) are large entities that you'll always want to fetch all at once.
 
 ### Avoiding getting hacked when using an SDK
-Now that we have an idea on the types of data we can store in the cloud, we can start experimenting with AWS services optimized for each type. To really show the strength of the cloud, we'll use the AWS Python SDK to integrate these services into our code.
+Now that we have an idea on the types of data we can store in the cloud, we can start experimenting with AWS services optimized for each type. To really show the strength of the cloud, we'll use the AWS Python SDK to integrate these services into our code. To use the Python SDK, we simply install the `boto3` library.
 
-But before we run any scripts, there's one crucial thing we need to do to avoid getting obliterated by a hacker. **It is crucial that we store our AWS credentials in a secure location in our code.**
+{% include header-bash.html %}
+```bash
+pip install boto3
+```
+
+But before we run any scripts, there's one thing we need to do to avoid getting obliterated by a hacker. **It is crucial that we store our AWS credentials in a secure location in our code.**
 
 AWS servers receive dozens or hundreds of queries per second. If a server receives a request to download a file from your S3 bucket, how does the server know whether to block or allow the action? To ensure this request is coming from you $-$ or a machine acting on your behalf $-$ **we [_sign_ our API requests](https://docs.aws.amazon.com/general/latest/gr/signing_aws_api_requests.html) with our AWS access key ID and secret access key.** These keys are used to [encrypt our message content](https://www.okta.com/identity-101/hmac/) and [generate a hash](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html) to prove the message AWS receives is the same one we sent.
 
+So in essence, any requests AWS receives that were signed with your access keys will be treated like they came from you. So it's important to ensure that you're the only one performing these requests!
+
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/access_keys.png">
 
-In other words, anyone with your access keys can use AWS SDKs to perform requests on your behalf! So it's important to ensure that you're the only one performing these requests.
-
-In the last post, we defined our access keys in the Terminal when using the AWS CLI. In Python, we'll need to do something slightly different. What you _shouldn't_ do is store your AWS credentials in the code that you're running $-$ _especially_ if that code is version controlled with a service like Git! Accidentally pushing that code will create a version that will last forever.
+`boto3` requires us to pass in out access key ID and secret access key when we instantiate a client. We can technically do this by defining our access keys as variables and then passing them in, like this:
 
 {% include header-python.html %}
 ```python
-# DON'T do this
+import boto3
+
+# DON'T DO THIS!!
 access_key = 'abc123'
 secret_key = 'xyz456'
 
-# the rest of your code
+client = boto3.client(access_key, secret_key, region_name='us-east-1')
 ```
 
-This is a huge security vulnerabilty, as **anyone with these values can make calls to your AWS services as if they were you.** Rather, we should store these in a local file that we _don't_ version control.
+But this is a huge security vulnerabilty, as **anyone who reads this code can impersonate you!** And if you accidentally pushed the file to a version control system like Git, removing those lines and pushing a new version won't be enough $-$ anyone can scroll through the history of the file to find your keys.
 
-For MacOS and Linux users, we can store these secrets in a `.bash_profile.rc` file. ([See here](https://saralgyaan.com/posts/set-passwords-and-secret-keys-in-environment-variables-maclinuxwindows-python-quicktip/) for Windows.) In this file, we can set our variables. (Note the lack of spaces around the equals signs.)
+Rather than hard-coding the values in Python, MacOS and Linux users can store these **secrets** in a `.bash_profile.rc` file. ([See here](https://saralgyaan.com/posts/set-passwords-and-secret-keys-in-environment-variables-maclinuxwindows-python-quicktip/) for Windows.) This file contains aliases for filepaths (so Terminal knows you mean `/opt/homebrew/bin/python` when you type `python`, for example), as well as database passwords or other sensitive information. This file is located in your root directory and is hidden $-$ to find it, you need to type `⌘` + `.` to see it.
+
+In this file, we can set our AWS access keys. (Note the lack of spaces around the equals signs.)
 
 {% include header-bash.html %}
 ```bash
@@ -92,8 +101,12 @@ import os
 
 access_key = os.environ['AWS_ACCESS_KEY_ID']
 secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
+
+print(access_key)  # abc123
+print(secret_key)  # xyz456
 ```
 
+With that, we're now ready to start using AWS.
 
 ## S3: Simple Storage Service
 <img src="{{ site.baseurl }}/images/data_engineering/aws/storage/s3_landing.png">
