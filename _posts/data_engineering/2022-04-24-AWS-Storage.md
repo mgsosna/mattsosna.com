@@ -108,22 +108,29 @@ print(secret_key)  # xyz456
 
 With that, we're now ready to start using AWS.
 
-## S3: Simple Storage Service
 <img src="{{ site.baseurl }}/images/data_engineering/aws/storage/s3_landing.png">
 
-S3 is **Simple Storage Service.** Think of it like Dropbox or Google Drive, a "catch-all" place for files in the cloud. Upload your text files, CSVs, R scripts, Python pickle files, images, videos, zipped programs, etc. by clicking and dragging in the UI or using the AWS CLI.
+## S3: Simple Storage Service
+**S3**, or **Simple Storage Service**, is the closest analogue to Dropbox or Google Drive. Think of S3 as a "catch-all" for your files. Upload [_any_ number of files of _any_ type](https://docs.amazonaws.cn/en_us/AmazonS3/latest/userguide/upload-objects.html) $-$ text, CSVs, C++ scripts, Python pickle files, images, videos, zipped folders, etc. Define the access rules at the file, folder, or bucket level with just a few clicks.
 
-It's hard to beat the ease of using S3. Simply create a **bucket** (i.e., distinct directory) and start uploading files. We can organize data into folders <sup>[[1]](#1-s3)</sup> and easily load in the data from a script.
+It's hard to beat the ease of using S3. Simply create a bucket (i.e., distinct directory) and start uploading files. We can organize data into folders<sup>[[3]](#3-s3-simple-storage-service)</sup> and easily load in the data from a script.
 
 The downside to this simplicity is that S3 only contains data _about_ the files, not what's inside them. So you're out of luck if you forget your Facebook password and can't search your text files for the phrase `my Facebook password is`. If we need to search the data _within_ our files, we're better off storing that data in a database.<sup>[[2]](#2-s3)</sup>. But even with a database, S3 is still ideal for storing the _raw data_ that generated those data, such as the logs, raw sensor data for your IoT application, text files from user interviews, etc., as a backup.
 
 ### Using S3
-So let's actually create a bucket. We can do this from the console like this:
+So let's actually create a bucket. Don't worry about getting charged by AWS for storing data $-$ we'll stay well within the boundaries of the [Free Tier](https://aws.amazon.com/free/) and delete everything once we're done.
+
+We'll create a bucket from the console, the AWS CLI, and the Python SDK. Let's start with the console. We first [log into our AWS account](https://aws.amazon.com) (preferably with an [IAM role]({{  site.baseurl  }}/AWS-Intro/#iam-identity-and-access-management)) and navigate to S3. Then we just click the "Create bucket" button:
 
 <img src="{{ site.baseurl }}/images/data_engineering/aws/storage/create_bucket.png">
 
-When we create a bucket, we need to give it a name. This needs to globally distinct across all AWS buckets.
+When we create a bucket, we need to give it a name that's globally distinct across all AWS buckets.
 
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/name_bucket.png">
+
+We can configure access rules - let's keep it at disabled public access. Then our bucket is ready.
+
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/bucket_created.png">
 
 **ACL:** Access Control List
 
@@ -192,6 +199,8 @@ Data warehouse. A data warehouse is a https://www.talend.com/resources/what-is-d
 [This website](https://aws-certified-cloud-practitioner.fandom.com/wiki/3.3_Identify_the_core_AWS_services) looks super helpful.
 [This whitepaper](https://docs.aws.amazon.com/whitepapers/latest/aws-overview/aws-overview.pdf) looks awesome.
 
+## Cleaning up
+Let's delete our stuff to avoid incurring charges.
 
 ## Other services
 ### Cloudwatch
@@ -212,8 +221,8 @@ While we can revoke a user's access to cloud data, there's of course always the 
 #### 2. [Why cloud storage?](#why-cloud-storage)
 99.999% uptime is a hard number to wrap your head around. Per year, this means AWS guarantees it will be unavailable less than 5 minutes and 15 seconds.
 
-#### 2. [S3: Simple Storage Service](#s3-simple-storage-service)
-"Folders" in S3 don't _really_ exist. They're more like human-friendly ways to organize your data.
-
 #### 3. [S3: Simple Storage Service](#s3-simple-storage-service)
+A pedantic note: "folders" in S3 don't _really_ exist. They're more like human-friendly ways to organize your data.
+
+#### 4. [S3: Simple Storage Service](#s3-simple-storage-service)
 There _are_ services like Glue that let you index your buckets and search them as if they were a database with Athena, but there are some serious caveats to this, and you're still far better off writing to a database in my experience!
