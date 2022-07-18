@@ -129,7 +129,7 @@ We can configure access rules - let's keep it at disabled public access. Then ou
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/bucket_created.png">
 
-Let's now switch to the AWS CLI. In Terminal or Command Prompt, we can see our new bucket with the following command:
+Let's now switch to the AWS CLI. In Terminal or Command Prompt, we can see our new bucket with the following command. (You may need to authenticate following the steps [here]({{  site.baseurl }}/AWS-Intro/#cli-command-line-interface)).
 
 {% include header-bash.html %}
 ```bash
