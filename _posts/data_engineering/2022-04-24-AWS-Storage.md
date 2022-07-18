@@ -108,16 +108,16 @@ With that, we're now ready to start using AWS.
 <img src="{{ site.baseurl }}/images/data_engineering/aws/storage/s3_landing.png">
 
 ## S3: Simple Storage Service
-**S3**, or **Simple Storage Service**, is the closest analogue to Dropbox or Google Drive. Think of S3 as a "catch-all" for your files. Upload [_any_ number of files of _any_ type](https://docs.amazonaws.cn/en_us/AmazonS3/latest/userguide/upload-objects.html) $-$ text, CSVs, executables, Python pickle files, images, videos, zipped folders, etc. Define the access rules at the file, folder<sup>[[4]](#4-s3-simple-storage-service)</sup>, or bucket level with just a few clicks.
+**S3**, or **Simple Storage Service**, is the closest analogue to Dropbox or Google Drive. Think of S3 as a "catch-all" for your files. Simply create a **bucket** (i.e., distinct directory) and upload [_any_ number of files of _any_ type](https://docs.amazonaws.cn/en_us/AmazonS3/latest/userguide/upload-objects.html) $-$ text, CSVs, executables, Python pickle files, images, videos, zipped folders, etc. Define the access rules at the file, folder,<sup>[[4]](#4-s3-simple-storage-service)</sup> or bucket level with just a few clicks.
 
-It's hard to beat the ease of using S3. Simply create a bucket (i.e., distinct directory) and start uploading files. We can organize data into folders and easily load in the data from a script.
+The downside to this simplicity is that S3 only contains data _about_ the files, not what's inside them. So you're out of luck if you forget your Facebook password and can't search your text files for the phrase `my Facebook password is`. If we need to search the data _within_ our files, we're better off storing that data in a database.<sup>[[5]](#5-s3-simple-storage-service)</sup>
 
-The downside to this simplicity is that S3 only contains data _about_ the files, not what's inside them. So you're out of luck if you forget your Facebook password and can't search your text files for the phrase `my Facebook password is`. If we need to search the data _within_ our files, we're better off storing that data in a database.<sup>[[5]](#5-s3-simple-storage-service)</sup> But even with a database, S3 is still ideal for storing the _raw data_ that generated those data, such as the logs, raw sensor data for your IoT application, text files from user interviews, etc., as a backup.
+But even with a database, S3 is still ideal for storing the _raw data_ that generated those data. S3 can serve as a backup for logs, raw sensor data for your IoT application, text files from user interviews, and more. And some file types, such as images or trained machine learning models, are best kept in S3, with the database simply storing the path to the object.
 
 ### Using S3
 So let's actually create a bucket. Don't worry about getting charged by AWS for storing data $-$ we'll stay well within the boundaries of the [Free Tier](https://aws.amazon.com/free/) and delete everything once we're done.
 
-We'll create a bucket from the console, the AWS CLI, and the Python SDK. Let's start with the console. We first [log into our AWS account](https://aws.amazon.com) (preferably with an [IAM role]({{  site.baseurl  }}/AWS-Intro/#iam-identity-and-access-management)) and navigate to S3. Then we just click the "Create bucket" button:
+We'll interact with S3 from the console, the AWS CLI, and the Python SDK. Let's start with the console. We first [log into our AWS account](https://aws.amazon.com) (preferably with an [IAM role]({{  site.baseurl  }}/AWS-Intro/#iam-identity-and-access-management)) and navigate to S3. Then we just click the "Create bucket" button:
 
 <img src="{{ site.baseurl }}/images/data_engineering/aws/storage/create_bucket.png">
 
@@ -129,32 +129,62 @@ We can configure access rules - let's keep it at disabled public access. Then ou
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/bucket_created.png">
 
-**ACL:** Access Control List
+Let's now switch to the AWS CLI. In Terminal or Command Prompt, we can see our new bucket with the following command:
 
 {% include header-bash.html %}
 ```bash
-aws s3 mb s3://my-bucket
+aws s3 ls
+# 2022-07-04 22:42:25 matt-sosnas-test-bucket
 ```
 
-We can list files like this:
+Let's now create a file and upload it to our bucket. To keep things simple, we'll just create a file straight from the command line by piping a string into a file with `echo` and `>`. We'll then upload the file with `aws s3 cp <source> <destination>`.
 
 {% include header-bash.html %}
 ```bash
-$ aws s3 ls
-# s3://my-bucket
-# s3://my-other-bucket
+# Create file
+echo 'Hello there, this is a test file!' > test.txt
 
-aws s3 ls s3://my-bucket
-# folder1/file.py
-# folder2/file2.py
+# Verify contents
+cat test.txt
+# Hello there, this is a test file!
 
-aws s3 ls s3://my-bucket/folder1/
-# file.py
+# Upload to S3
+aws s3 cp test.txt s3://matt-sosnas-test-bucket/test.txt
+# upload: .\test.txt to s3://matt-sosnas-test-bucket/test.txt
 ```
 
+We can now view our file with `aws s3 ls <bucket_name>`.
 
-### Pulling data
-(I wonder if we can get this in fewer lines.)
+{% include header-bash.html %}
+```bash
+aws s3 ls s3://matt-sosnas-test-bucket
+# 2022-07-18 00:31:54   27 test.txt
+```
+
+If the S3 filepath contains a folder, AWS will automatically create a folder for us. Let's create a Python file this time, `test.py`, and upload it into a `python/` directory in our bucket.
+
+{% include header-bash.html %}
+```bash
+echo 'print("This is a different test file")' > test.py
+
+aws s3 cp test.py s3://matt-sosnas-test-bucket/python/test.py
+# upload: .\test.py to s3://matt-sosnas-test-bucket/python/test.py
+```
+
+Now when we view the contents with `aws s3 ls`, we see the `python/` folder next to `test.txt` in the root directory. If we add `/python/` to the end of our bucket name in the command, we then see the contents of the folder.
+
+{% include header-bash.html %}
+```bash
+aws s3 ls s3://matt-sosnas-test-bucket
+#                      PRE python/
+# 2022-07-18 00:31:54   27 test.txt
+
+aws s3 ls s3://matt-sosnas-test-bucket/python/
+# 2022-07-18 00:42:39   39 test.py
+```
+
+Finally, let's pull data from S3 with the Python SDK `boto3`.
+
 
 {% include header-python.html %}
 ```python
