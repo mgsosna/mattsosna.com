@@ -117,6 +117,7 @@ But even with a database, S3 is still ideal for storing the _raw data_ that gene
 ### Using S3
 So let's actually create a bucket. Don't worry about getting charged by AWS for storing data $-$ we'll stay well within the boundaries of the [Free Tier](https://aws.amazon.com/free/) and delete everything once we're done.
 
+#### Create a bucket
 We'll interact with S3 from the console, the AWS CLI, and the Python SDK. Let's start with the console. We first [log into our AWS account](https://aws.amazon.com) (preferably with an [IAM role]({{  site.baseurl  }}/AWS-Intro/#iam-identity-and-access-management)) and navigate to S3. Then we just click the "Create bucket" button:
 
 <img src="{{ site.baseurl }}/images/data_engineering/aws/storage/create_bucket.png">
@@ -137,6 +138,7 @@ aws s3 ls
 # 2022-07-04 22:42:25 matt-sosnas-test-bucket
 ```
 
+#### Upload files
 Let's now create a file and upload it to our bucket. To keep things simple, we'll just create a file straight from the command line by piping a string into a file with `echo` and `>`. We'll then upload the file with `aws s3 cp <source> <destination>`.
 
 {% include header-bash.html %}
@@ -182,6 +184,28 @@ aws s3 ls s3://matt-sosnas-test-bucket
 aws s3 ls s3://matt-sosnas-test-bucket/python/
 # 2022-07-18 00:42:39   39 test.py
 ```
+
+We can upload a bunch of files like this:
+
+```bash
+echo 'name,age\nanna,31' > file1.csv
+echo 'name,age\nbea,100' > file2.csv
+echo 'name,age\ncody,0' > file3.csv
+
+aws s3 cp . s3://matt-sosnas-test-bucket/csv/ --recursive --exclude "*" --include "file*"
+# upload: .\file2.csv to s3://matt-sosnas-test-bucket/csv/file2.csv
+# upload: .\file1.csv to s3://matt-sosnas-test-bucket/csv/file1.csv
+# upload: .\file3.csv to s3://matt-sosnas-test-bucket/csv/file3.csv
+
+aws s3 ls s3://matts-sosnas-test-bucket/csv/
+# 2022-07-19 01:05:22    18 file1.csv
+# 2022-07-19 01:05:22    18 file2.csv
+# 2022-07-19 01:05:22    17 file3.csv
+```
+
+
+#### Download files
+
 
 Finally, let's pull data from S3 with the Python SDK `boto3`.
 
