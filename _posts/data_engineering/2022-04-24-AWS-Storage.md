@@ -115,10 +115,10 @@ The downside to this simplicity is that S3 only contains data _about_ the files,
 But even with a database, S3 is still ideal for storing the _raw data_ that generated those data. S3 can serve as a backup for logs, raw sensor data for your IoT application, text files from user interviews, and more. And some file types, such as images or trained machine learning models, are best kept in S3, with the database simply storing the path to the object.
 
 ### Using S3
-So let's actually create a bucket. Don't worry about getting charged by AWS for storing data $-$ we'll stay well within the boundaries of the [Free Tier](https://aws.amazon.com/free/) and delete everything once we're done.
+So let's actually create a bucket. Don't worry about getting charged by AWS for storing data $-$ we'll stay well within the boundaries of the [Free Tier](https://aws.amazon.com/free/) and delete everything once we're done. We'll create a bucket, then upload and download files. We'll use the console, AWS CLI, and Python SDK to perform each of these steps, though note that we can do all steps from any one of the tools.
 
 #### Create a bucket
-We'll interact with S3 from the console, the AWS CLI, and the Python SDK. Let's start with the console. We first [log into our AWS account](https://aws.amazon.com) (preferably with an [IAM role]({{  site.baseurl  }}/AWS-Intro/#iam-identity-and-access-management)) and navigate to S3. Then we just click the "Create bucket" button:
+Let's start with the console to create a bucket. We first [log into our AWS account](https://aws.amazon.com) (preferably with an [IAM role]({{  site.baseurl  }}/AWS-Intro/#iam-identity-and-access-management)) and navigate to S3. Then we just click the "Create bucket" button:
 
 <img src="{{ site.baseurl }}/images/data_engineering/aws/storage/create_bucket.png">
 
@@ -185,55 +185,62 @@ aws s3 ls s3://matt-sosnas-test-bucket/python/
 # 2022-07-18 00:42:39   39 test.py
 ```
 
-We can upload a bunch of files like this:
+Finally, we can upload multiple files by specifying the `--recursive`, `--exclude`, and `--include` flags. Below, we create two CSVs, `file1.csv` and `file2.csv`, first creating the header and then appending two rows each. We then use the AWS CLI to upload all files in our current directory (`.`) that match the `file*` pattern into the `csv/` folder in our bucket. Finally, we list the contents of the `csv/` folder.
 
+{% include header-bash.html %}
 ```bash
-echo 'name,age\nanna,31' > file1.csv
-echo 'name,age\nbea,100' > file2.csv
-echo 'name,age\ncody,0' > file3.csv
+# Create file1.csv
+echo "name,age" > file1.csv
+echo "abe,31" >> file1.csv
+echo "bea,5" >> file1.csv
+
+# Create file2.csv
+echo "name,age" > file2.csv
+echo "cory,50" >> file2.csv
+echo "dana,100" >> file2.csv
 
 aws s3 cp . s3://matt-sosnas-test-bucket/csv/ --recursive --exclude "*" --include "file*"
-# upload: .\file2.csv to s3://matt-sosnas-test-bucket/csv/file2.csv
 # upload: .\file1.csv to s3://matt-sosnas-test-bucket/csv/file1.csv
-# upload: .\file3.csv to s3://matt-sosnas-test-bucket/csv/file3.csv
+# upload: .\file2.csv to s3://matt-sosnas-test-bucket/csv/file2.csv
 
-aws s3 ls s3://matts-sosnas-test-bucket/csv/
-# 2022-07-19 01:05:22    18 file1.csv
-# 2022-07-19 01:05:22    18 file2.csv
-# 2022-07-19 01:05:22    17 file3.csv
+aws s3 ls matts-sosnas-test-bucket/csv/
+# 2022-07-19 01:05:22    23 file1.csv
+# 2022-07-19 01:05:22    25 file2.csv
 ```
 
-
 #### Download files
-
-
 Finally, let's pull data from S3 with the Python SDK `boto3`.
 
 
 {% include header-python.html %}
 ```python
-import os
-import json
 import boto3
-import pandas as pd
 from io import StringIO
-
-# Get credentials
-access_key = os.environ['AWS_ACCESS_KEY_ID'],
-secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
+import os
+import pandas as pd
 
 # Establish a connection
-client = boto3.client(aws_access_key_id=access_key,
-                      aws_secret_access_key=secret_key,
-                      region_name='us-east-1')
+client = boto3.client(
+    aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
+    aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
+    region_name='us-east-1',
+    service_name='s3'
+)
 
 # Get the file
-obj = client.get_object(Bucket="my_company", Key='datasets/data.json')
+obj = client.get_object(
+    Bucket="matt-sosnas-test-bucket",
+    Key='csvs/file1.csv'
+)
 
 # Convert the file to a dataframe
 body = obj['Body'].read()
-string = body.decode(encoding='utf-8')
-df = pd.DataFrame(json.load(StringIO(string)))
+string = body.decode('utf-8')
+df = pd.read_csv(string)
+
+#    name  age
+# 0  abe    31
+# 1  bea     5
 ```
 
 
