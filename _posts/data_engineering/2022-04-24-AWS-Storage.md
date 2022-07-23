@@ -261,8 +261,6 @@ We start by [defining a DB instance](https://docs.aws.amazon.com/AmazonRDS/lates
 ## DynamoDB
 DynamoDB is for non-relational databases.
 
-## Redshift
-Data warehouse. A data warehouse is a https://www.talend.com/resources/what-is-data-warehouse/.
 
 
 [This website](https://aws-certified-cloud-practitioner.fandom.com/wiki/3.3_Identify_the_core_AWS_services) looks super helpful.
@@ -282,6 +280,11 @@ There are services that build off these.
 
 [AWS infrastructure explained](https://aws.plainenglish.io/aws-infrastructure-explained-b0f4fb7b6829)
 
+### Redshift
+Data warehouse. A data warehouse is a https://www.talend.com/resources/what-is-data-warehouse/.
+
+## Conclusions
+This post walked us through three AWS services for storing data in the cloud: S3, RDS, and DynamoDB. 
 
 ## Footnotes
 #### 1. [Why cloud storage?](#why-cloud-storage)
