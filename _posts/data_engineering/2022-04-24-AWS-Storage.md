@@ -122,14 +122,15 @@ Let's start with the console to create a bucket. We first [log into our AWS acco
 
 <img src="{{ site.baseurl }}/images/data_engineering/aws/storage/create_bucket.png">
 
-When we create a bucket, we need to give it a name that's globally distinct across all AWS buckets.
+When we create a bucket, we need to give it a name that's globally distinct across all AWS buckets. Here we create one called `matt-sosnas-test-bucket`.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/name_bucket.png">
 
-We can configure access rules - let's keep it at disabled public access. Then our bucket is ready.
+Our bucket can have customized access rules, but let's just keep it at disabled public access for now. Once we select that, our bucket is ready.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/bucket_created.png">
 
+#### Upload files
 Let's now switch to the AWS CLI. In Terminal or Command Prompt, we can see our new bucket with the following command. (You may need to authenticate following the steps [here]({{  site.baseurl }}/AWS-Intro/#cli-command-line-interface)).
 
 {% include header-bash.html %}
@@ -138,8 +139,7 @@ aws s3 ls
 # 2022-07-04 22:42:25 matt-sosnas-test-bucket
 ```
 
-#### Upload files
-Let's now create a file and upload it to our bucket. To keep things simple, we'll just create a file straight from the command line by piping a string into a file with `echo` and `>`. We'll then upload the file with `aws s3 cp <source> <destination>`.
+We can now create a file and upload it to our bucket. To keep things simple, we'll just create a file straight from the command line by piping a string into a file with `echo` and `>`. We'll then upload the file with `aws s3 cp <source> <destination>`.
 
 {% include header-bash.html %}
 ```bash
@@ -163,7 +163,7 @@ aws s3 ls s3://matt-sosnas-test-bucket
 # 2022-07-18 00:31:54   27 test.txt
 ```
 
-If the S3 filepath contains a folder, AWS will automatically create a folder for us. Let's create a Python file this time, `test.py`, and upload it into a `python/` directory in our bucket.
+If the S3 file path contains a folder, AWS will automatically create a folder for us. Let's create a Python file this time, `test.py`, and upload it into a `python/` directory in our bucket. Because `s3://matt-sosnas-test-bucket/python/test.py` contains a `python/` directory, S3 will create one for us.
 
 {% include header-bash.html %}
 ```bash
@@ -209,8 +209,7 @@ aws s3 ls matts-sosnas-test-bucket/csv/
 ```
 
 #### Download files
-Finally, let's pull data from S3 with the Python SDK `boto3`.
-
+Uploading files is great, but at some point we'll want to download them. Let's use our third tool, the Python SDK `boto3`, to demonstrate downloading files. This step is more involved than the one-line AWS CLI commands, but we'll go through it line by line below.
 
 {% include header-python.html %}
 ```python
@@ -235,17 +234,29 @@ obj = client.get_object(
 
 # Convert the file to a dataframe
 body = obj['Body'].read()
-string = body.decode('utf-8')
+string = StringIO(body.decode('utf-8'))
 df = pd.read_csv(string)
-
 #    name  age
 # 0  abe    31
 # 1  bea     5
 ```
 
+We first import `boto3`, `io.StringIO`, `os`, and `pandas`. `boto3` contains code for interacting with AWS, `io` is a library for working with [stream data](https://en.wikipedia.org/wiki/Stream_(computing)), `os.environ` stores our AWS credentials, and `pandas` will convert our CSV to a dataframe.
+
+On lines 7-12 we instantiate a `boto3` client that allows us to make requests to AWS. We perform such a request to get the `csvs/file1.csv` file from `matt-sosnas-test-bucket` on lines 15-18. This object is packed with metadata, so we extract the byte string on line 21, decode it to a CSV string on line 22, and finally parse the string to a dataframe on line 23.
+
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds.png">
 
 ## RDS: Relational Database Service
-RDS is Relational Database Service. This is like a SQL database hosted in the cloud (on top of an EC2 instance). For NoSQL, you're looking at DynamoDB.
+Throwing all our data into a bucket, even with file types arranged by folder, only gets us so far. As our data grows, we need a more scalable way to find, join, filter, and perform calculations on our data. A **relational database** is one way to store and organize our data more optimally. (See [this post]({{  site.baseurl  }}/SQL_vs_NoSQL) for a primer on databases.)
+
+We _could_ rent a server in the cloud and install a MySQL or PostgreSQL database ourselves. But this is [barely better than hosting a database on a server in our garage](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html) $-$ while AWS would handle server maintenance, we would still be responsible for scaling, availability, backups, and software and operating system updates. For slightly added cost, we can use a service like [**Amazon RDS**](https://aws.amazon.com/rds/) to have AWS manage everything except our actual data.
+
+
+
+We start by [defining a DB instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_SettingUp.html#CHAP_SettingUp.Requirements), which will provide an address called an _endpoint_ for us to access our database.
+* Need to set up security group rules. Default AWS VPC likely fine.
+* Configure IAM policy to allow access to RDS
 
 ## DynamoDB
 DynamoDB is for non-relational databases.
