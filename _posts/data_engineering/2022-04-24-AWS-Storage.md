@@ -284,7 +284,7 @@ There are services that build off these.
 Data warehouse. A data warehouse is a https://www.talend.com/resources/what-is-data-warehouse/.
 
 ## Conclusions
-This post walked us through three AWS services for storing data in the cloud: S3, RDS, and DynamoDB. 
+This post walked us through three AWS services for storing data in the cloud: S3, RDS, and DynamoDB.
 
 ## Footnotes
 #### 1. [Why cloud storage?](#why-cloud-storage)

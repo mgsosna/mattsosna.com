@@ -22,7 +22,4 @@ Here is information about my academic life. For blog posts with advice for under
 
 7. **Grobis MM**, Pearish SP, Bell AM. 2013. [Avoidance or escape? Discriminating between two hypotheses for the function of schooling in threespine sticklebacks.](https://www.sciencedirect.com/science/article/pii/S000334721200485X) _**Animal Behaviour.**_ 85(1): 187-194.
 
-## In progress
-1. Twomey CR, **Sosna MMG**, Ragazzo G, Bak-Coleman J, Couzin ID. Between-group dynamics and emergent social forces at the limits of sensory perception. _**in prep.**_
-
 <span style="font-size: 12px"><i>\* denotes joint first authorship</i></span>
