@@ -73,6 +73,7 @@ permalink: /blog/
 
 ### AWS essentials
 1. [Why cloud computing?]({{  site.baseurl  }}/AWS-Intro)
+2. [Storage: S3, RDS, DynamoDB]({{  site.baseurl  }}/AWS-Storage)
 
 ## Computer science
 1. [Intro to data structures]({{  site.baseurl  }}/CSDS-Intro)

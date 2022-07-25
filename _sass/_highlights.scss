@@ -34,39 +34,14 @@
     border-radius: 0;
 }
 
-.mytable.python {
-    background: #619ccd54;
-    color: #619ccd;
-}
-
-.mytable.sql {
-    background: #bf658342;
-    color: #bf6583c9;
-}
-
-.mytable.r {
-    background: #e3b04e4f;
-    color: #c69a47;
-}
-
 .mytable.bash {
     background: #a8a7a769;
     color: #7d7979;
 }
 
-.mytable.javascript {
-    background: #7dbf6542;
-    color: #6ca657;
-}
-
 .mytable.c {
     background: #F9262624;
     color: #F9262691;
-}
-
-.mytable.html {
-    background: #8a65bf38;
-    color: #8a65bfb5;
 }
 
 .mytable.css {
@@ -77,6 +52,36 @@
 .mytable.dockerfile {
     background: #a8a7a769;
     color: #7d7979;
+}
+
+.mytable.haskell {
+    background: #74ec87ad;
+    color: #2b902f;
+}
+
+.mytable.html {
+    background: #8a65bf38;
+    color: #8a65bfb5;
+}
+
+.mytable.javascript {
+    background: #7dbf6542;
+    color: #6ca657;
+}
+
+.mytable.python {
+    background: #619ccd54;
+    color: #619ccd;
+}
+
+.mytable.r {
+    background: #e3b04e4f;
+    color: #c69a47;
+}
+
+.mytable.sql {
+    background: #bf658342;
+    color: #bf6583c9;
 }
 
 .mytable.yaml {
