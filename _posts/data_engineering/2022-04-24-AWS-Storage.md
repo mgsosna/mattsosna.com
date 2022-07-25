@@ -250,13 +250,33 @@ On lines 7-12 we instantiate a `boto3` client that allows us to make requests to
 ## RDS: Relational Database Service
 Throwing all our data into a bucket, even with file types arranged by folder, only gets us so far. As our data grows, we need a more scalable way to find, join, filter, and perform calculations on our data. A **relational database** is one way to store and organize our data more optimally. (See [this post]({{  site.baseurl  }}/SQL_vs_NoSQL) for a primer on databases.)
 
-We _could_ rent a server in the cloud and install a MySQL or PostgreSQL database ourselves. But this is [barely better than hosting a database on a server in our garage](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html) $-$ while AWS would handle server maintenance, we would still be responsible for scaling, availability, backups, and software and operating system updates. For slightly added cost, we can use a service like [**Amazon RDS**](https://aws.amazon.com/rds/) to have AWS manage everything except our actual data.
+We _could_ rent an EC2 instance (i.e., virtual server) in the cloud and install a MySQL or PostgreSQL database ourselves. But this is [barely better than hosting a database on a server in our garage](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html) $-$ while AWS would handle server maintenance, we would still be responsible for scaling, availability, backups, and software and operating system updates. For slightly added cost, we can use a service like [**Amazon RDS**](https://aws.amazon.com/rds/) to have AWS manage everything except our actual data.
+
+So let's create a database in RDS. We'll sign into the AWS console, navigate to RDS, and click `Create database`. Let's create a MySQL database with the `Standard create` option.
+
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/mysql_configure_1.png">
+
+Make sure to specify that you want to use the Free Tier!
+
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/mysql_configure_2.png">
+
+While we'll tear down our database at the end of this post, we can also uncheck "Enable storage autoscaling" under the "Storage" header. Finally, we'll want to make our database public for our demo. It won't be truly open to the world, don't worry $-$ we'll specify that only our IP address is allowed to access the database. (For a professional application, though, you'll want to [configure a VPC](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html).)
+
+Everything else in the configuration can stay the same. When we hit `Create database`, we're taken back to the RDS landing page. We'll see that our database is being created $-$ this step can take a while, up to 20 minutes.
+
+Once the database is created, we can connect to it from any MySQL client, such as the command line or [MySQL Workbench])(https://www.mysql.com/products/workbench/).
 
 
 
 We start by [defining a DB instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_SettingUp.html#CHAP_SettingUp.Requirements), which will provide an address called an _endpoint_ for us to access our database.
 * Need to set up security group rules. Default AWS VPC likely fine.
 * Configure IAM policy to allow access to RDS
+
+DB instance = isolated database environment. Can host multiple databases. A DB engine = the specific relational database software, e.g., MySQL, PostgreSQL, Oracle, etc.
+
+
+
+
 
 ## DynamoDB
 DynamoDB is for non-relational databases.
