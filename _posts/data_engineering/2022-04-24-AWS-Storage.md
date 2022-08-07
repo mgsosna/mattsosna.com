@@ -252,13 +252,15 @@ Throwing all our data into a bucket, even with file types arranged by folder, on
 
 We _could_ rent an EC2 instance (i.e., virtual server) in the cloud and install a MySQL or PostgreSQL database ourselves. But this is [barely better than hosting a database on a server in our garage](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html) $-$ while AWS would handle server maintenance, we would still be responsible for scaling, availability, backups, and software and operating system updates. For slightly added cost, we can use a service like [**Amazon RDS**](https://aws.amazon.com/rds/) to have AWS manage everything except our actual data.
 
-So let's create a database in RDS. We'll sign into the AWS console, navigate to RDS, and click `Create database`. Let's create a MySQL database with the `Standard create` option.
+So let's create a database in RDS. We'll sign into the AWS console, navigate to RDS, and click `Create database`. If you read [Intermediate SQL for Everyone]({{  site.baseurl  }}/Intermediate-SQL), you might already have [pgAdmin](https://www.pgadmin.org/), a GUI for Postgres databases, installed. Since I already have pgAdmin on my computer, then let's go with Postgres. 🙂 We'll use the `Standard create` option.
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/mysql_configure_1.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/sql_configure_1.png">
 
-Make sure to specify that you want to use the Free Tier!
+Make sure to specify that you want to use the Free tier!
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/mysql_configure_2.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/sql_configure_2.png">
+
+Name your database and set a master username $-$ `postgres` is fine $-$ then make sure to write down your password somewhere secure. 
 
 While we'll tear down our database at the end of this post, we can also uncheck "Enable storage autoscaling" under the "Storage" header. Finally, we'll want to make our database public for our demo. It won't be truly open to the world, don't worry $-$ we'll specify that only our IP address is allowed to access the database. (For a professional application, though, you'll want to [configure a VPC](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html).)
 
