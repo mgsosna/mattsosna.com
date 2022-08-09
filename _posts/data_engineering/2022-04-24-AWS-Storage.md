@@ -254,19 +254,22 @@ We _could_ rent an EC2 instance (i.e., virtual server) in the cloud and install 
 
 So let's create a database in RDS. We'll sign into the AWS console, navigate to RDS, and click `Create database`. If you read [Intermediate SQL for Everyone]({{  site.baseurl  }}/Intermediate-SQL), you might already have [pgAdmin](https://www.pgadmin.org/), a GUI for Postgres databases, installed. Since I already have pgAdmin on my computer, then let's go with Postgres. 🙂 We'll use the `Standard create` option.
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/sql_configure_1.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_1.png">
 
 Make sure to specify that you want to use the Free tier!
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/sql_configure_2.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_2.png">
 
-Name your database and set a master username $-$ `postgres` is fine $-$ then make sure to write down your password somewhere secure. 
+Name your database identifier and set a username $-$ `postgres` is fine $-$ and make sure to write down your password somewhere secure. Disable autoscaling (under "Storage") and select yes for public access. Our database won't be truly open to the world, don't worry $-$ we'll still require a password to access the database. (For a professional application, though, you'll want to [configure a VPC](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html).)
 
-While we'll tear down our database at the end of this post, we can also uncheck "Enable storage autoscaling" under the "Storage" header. Finally, we'll want to make our database public for our demo. It won't be truly open to the world, don't worry $-$ we'll specify that only our IP address is allowed to access the database. (For a professional application, though, you'll want to [configure a VPC](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html).)
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_3.png">
 
-Everything else in the configuration can stay the same. When we hit `Create database`, we're taken back to the RDS landing page. We'll see that our database is being created $-$ this step can take a while, up to 20 minutes.
+Under "Additional configuration", name your initial DB `my_database`, disable automated backups, performance insights, and minor version upgrades. Everything else in the configuration can stay the same.
 
-Once the database is created, we can connect to it from any MySQL client, such as the command line or [MySQL Workbench])(https://www.mysql.com/products/workbench/).
+When we hit `Create database`, we're taken back to the RDS landing page. We'll see that our database is being created $-$ this step can take a while, up to 20 minutes.
+
+Now let's head to pgAdmin.
+
 
 
 
