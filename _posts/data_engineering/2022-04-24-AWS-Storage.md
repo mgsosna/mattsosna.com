@@ -260,13 +260,23 @@ Make sure to specify that you want to use the Free tier!
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_2.png">
 
-Name your database identifier and set a username $-$ `postgres` is fine $-$ and make sure to write down your password somewhere secure. Disable autoscaling (under "Storage") and select yes for public access. Our database won't be truly open to the world, don't worry $-$ we'll still require a password to access the database. (For a professional application, though, you'll want to [configure a VPC](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html).)
+Name your database identifier and set a username $-$ `postgres` is fine for both $-$ and make sure to write down your password somewhere secure. Disable autoscaling (under "Storage") and select yes for public access. Our database won't be truly open to the world, don't worry $-$ we'll still require a password to access the database. (For a professional application, though, you'll want to [configure a VPC](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html).)
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_3.png">
 
-Under "Additional configuration", name your initial DB `my_database`, disable automated backups, performance insights, and minor version upgrades. Everything else in the configuration can stay the same.
+Under "Additional configuration", name your initial DB `my_database`, then disable automated backups, performance insights, and minor version upgrades. Everything else in the configuration can stay the same.
 
-When we hit `Create database`, we're taken back to the RDS landing page. We'll see that our database is being created $-$ this step can take a while, up to 20 minutes.
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_4.png" height="85%" width="85%">
+
+When we hit `Create database`, we're taken back to the RDS landing page and see that our database is being created. Once it's finished, you can click on the instance and be taken to the following page. On this page, click on the VPC security group link under "Security".
+
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_5.png">
+
+We'll now make our database available to access from pgAdmin. Under the Security tab, we'll see the security group ID
+
+Under the Connectivity & security tab, we can see the endpoint address we'll connect to with pgAdmin.
+
+So now we can head to pgAdmin
 
 Now let's head to pgAdmin.
 
