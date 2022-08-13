@@ -272,13 +272,13 @@ When we hit `Create database`, we're taken back to the RDS landing page and see 
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_5.png">
 
-We'll now make our database available to access from pgAdmin. Under the Security tab, we'll see the security group ID
+Here, we can scroll down to the `Inbound rules` tab and click `Edit inbound rules`, then `Add rule`. Select "PostgreSQL" for `Type` and "Anywhere-IPv4" for `Source`. (Friendly reminder to not do this for a production database!) You can also be more secure by [specifying your IP address](https://www.avast.com/c-how-to-find-ip-address#) instead. Once you're done, click `Save rules`.
 
-Under the Connectivity & security tab, we can see the endpoint address we'll connect to with pgAdmin.
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_6.png">
 
-So now we can head to pgAdmin
+Now do the same for outbound rules: click on the `Outbound rules` tab, `Edit outbound rules`, `Add rule`, "PostgreSQL" for `Type` and "Anywhere-IPv4" (or your IP address) for `Destination`, and then `Save rules`.
 
-Now let's head to pgAdmin.
+We'll now access our database from pgAdmin. Under the Connectivity & security tab in AWS RDS, copy the endpoint address. Then open pgAdmin, click on Servers > Create Server. Name the connection something like `aws_rds_postgres` and paste the endpoint address in the Hostname/Address field.
 
 
 
