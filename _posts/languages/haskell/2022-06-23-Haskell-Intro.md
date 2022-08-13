@@ -107,19 +107,29 @@ add x y = x + y
 
 We first define what types the function will take, followed by the actual definition. Note that Haskell doesn't require commas to separate arguments. This might feel uncomfortable coming from Python or R, but it's like how bash works if that's any comfort.
 
+Functions are left-associative.
+
+```haskell
+add :: Int -> Int -> Int
+add x y = x + y
+
+add 1 add 2 add 3 4 == (add 1 (add 2 (add 3 4)))
+```
 
 The `$` adds parentheses to the rest of the line.
 
 {% include header-haskell.html %}
 ```haskell
-add 1 2  -- 3
-add 1 2 3 -- error
-
-add 1 (2 + 3)    -- 6
-add 1 $ 2 + 3    -- 6
-add 1 $ add 2 3  -- 6
+head (drop 1 (drop 1 [1,2,3]))    -- 1
+head $ drop 1 $ drop 1 [1, 2, 3]  -- 1
 ```
 
+```haskell
+:t lines
+-- lines :: String -> [String]
+
+lines "I like\ntoeat\nfood!"  -- ["I like", "to eat", "food!"]
+```
 
 ### Map
 ```haskell
@@ -167,10 +177,30 @@ fold (+) our_list  -- 6
 ```
 
 ### Random stuff:
-
 {% include header-haskell.html %}
 ```haskell
 -- String concatenation
 "abc" ++ "def"
 -- "abcdef"
+
+null []  -- True
+null [1] -- False
+
+zip [1,2,3] "abc"
+-- [(1,'a'), (2,'b'), (3,'c')]
+```
+
+## Pure
+You can use `:t` to inspect a function.
+
+```haskell
+:t lines
+-- lines :: String -> [String]
+```
+
+Pure functions mean that there's no side effects. Every input will have the same output. But if you can't control that (because the input can be variable) then Haskell will prepend `IO` to the type signature.
+
+```haskell
+:t readFile
+-- readFile :: FilePath -> IO String
 ```
