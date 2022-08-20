@@ -316,39 +316,127 @@ FROM users
 */
 ```
 
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/dynamodb.png">
+
 ## DynamoDB
 Let's cover one last database type: non-relational databases. AWS offers DynamoDB for creating and querying NoSQL databases.
 
-* Create a table called `users`
-* Set the partition key as `id`, which is a number.
-* Select `Customize settings`
-* `DynamoDB Standard`
-* `Provisioned`, not `On-demand`
-* Turn off Auto Scaling for both reads and writes and set the number of Provisioned Capacity Units to 1.
+Thankfully, DynamoDB is much easier to set up than RDS. We'll start by navigating to DynamoDB inside the AWS console and clicking the `Create table` button. Let's create a table called `users` with `id` as a number partition key. Then, click `Customize settings`.
 
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/dynamodb_setup_1.png">
 
-[This website](https://aws-certified-cloud-practitioner.fandom.com/wiki/3.3_Identify_the_core_AWS_services) looks super helpful.
-[This whitepaper](https://docs.aws.amazon.com/whitepapers/latest/aws-overview/aws-overview.pdf) looks awesome.
+Select `DynamoDB Standard` as the table class and `Provisioned` capacity, then turn off auto-scaling for both reads and writes and reduce the number of provisioned capacity units to 1 each.
+
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/dynamodb_setup_2.png">
+
+Leave encryption to be owned by Amazon DynamoDB, then click `Create table`.
+
+And... that's it! Let's now navigate to Python to write to our table. In a Jupyter notebook or Python script, run the following:
+
+{% include header-python.html %}
+```python
+import boto3
+
+# Set up client
+client = boto3.client(
+    aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
+    aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
+    region_name='us-east-1',
+    service_name='dynamodb'
+)
+
+# Add an item to our table
+response = client.put_item(
+    TableName='users',
+    Item = {
+     'id': {'N': '123'},
+     'first_name': {'S': 'matt'},
+     'last_name': {'S': 'sosna'},
+     'favorite_movies': {'SS': ['The Matrix', 'Tenet']}
+       }
+)
+
+response = client.put_item(
+    TableName='users',
+    Item = {
+     'id': {'N': '456'},
+     'first_name': {'S': 'fireball'},
+     'is_wizard': {'BOOL': True}
+       }
+)
+```
+
+The syntax for writing to DynamoDB is rather explicit $-$ we need to specify the datatype of each element of the dictionary being written. See the [`boto3` DynamoDB documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/dynamodb.html#DynamoDB.Client.put_item) for some examples. But overall, note how we're able to save a list of movies under `favorite_movies` and write a different set of fields for user 456. This flexibility is a hallmark of NoSQL databases.
+
+If the above code runs without an error, then we should see these records in the DynamoDB console. Click on our `users` table, then `Explore table items`.
+
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/dynamodb_example.png">
+
+Finally, we can also fetch the objects from Python.
+
+{% include header-python.html %}
+```python
+client.get_item(
+    TableName="users",
+    Key = {"id": {"N": "123"}}
+)
+# {'Item': {'favorite_movies': {'SS': ['Tenet', 'The Matrix']},
+#  'id': {'N': '123'},
+#  'last_name': {'S': 'sosna'},
+#  'first_name': {'S': 'matt'}},
+# 'ResponseMetadata': {'RequestId': 'K96...',
+#  'HTTPStatusCode': 200,
+#  'HTTPHeaders': {'server': 'Server',
+#   'date': 'Sat, 20 Aug 2022 16:08:19 GMT',
+#   'content-type': 'application/x-amz-json-1.0',
+#   'content-length': '127',
+#   'connection': 'keep-alive',
+#   'x-amzn-requestid': 'K96...',
+#   'x-amz-crc32': '...'},
+#  'RetryAttempts': 0}}
+
+client.get_item(
+    TableName="users",
+    Key = {"id": {"N": "456"}}
+)
+# {'Item': {'is_wizard': {'BOOL': True},
+#   'id': {'N': '456'},
+#   'first_name': {'S': 'fireball'}},
+#  'ResponseMetadata': {'RequestId': 'NFS...',
+#   'HTTPStatusCode': 200,
+#   'HTTPHeaders': {'server': 'Server',
+#    'date': 'Sat, 20 Aug 2022 19:38:23 GMT',
+#    'content-type': 'application/x-amz-json-1.0',
+#    'content-length': '83',
+#    'connection': 'keep-alive',
+#    'x-amzn-requestid': 'NFS...',
+#    'x-amz-crc32': '2747782936'},
+#   'RetryAttempts': 0}}
+```
 
 ## Cleaning up
-Let's delete our stuff to avoid incurring charges. In RDS, we simply click on our database (`postgres`), then Actions, then Delete. Make sure to avoid taking a final snapshot of the database before deletion.
+In this post we've set up an S3 bucket, relational database, and NoSQL table. Even though we're using AWS's free tier and each data source houses only a tiny handful of data, we'll still want to tear down each source to avoid eventually being charged.
 
-## Other services
-### Cloudwatch
-Logs.
+Deletion, thankfully, is straightforward. In S3, we simply click on our bucket, then the `Empty` button. Confirm we want everything deleted. Then click on our bucket again and hit the `Delete` button and confirm we want the bucket gone.
 
-### Glue, Athena
-These combine with S3 to let you treat a bucket (or directory within one) as a big table that you can query with SQL.
+In RDS, we simply click on our database (`postgres`), then `Actions`, then `Delete`. Make sure to avoid taking a final snapshot of the database before deletion.
 
-There are services that build off these.
+Finally, for DynamoDB we click on `Actions` > `Delete table`, then confirm we don't want [Cloudwatch](https://aws.amazon.com/cloudwatch/) alarms.
 
-[AWS infrastructure explained](https://aws.plainenglish.io/aws-infrastructure-explained-b0f4fb7b6829)
-
-### Redshift
-Data warehouse. A data warehouse is a https://www.talend.com/resources/what-is-data-warehouse/.
+That's it! Friendly reminder to never do this to your company's production data. 🤓
 
 ## Conclusions
-This post walked us through three AWS services for storing data in the cloud: S3, RDS, and DynamoDB.
+This post walked through the benefits of cloud storage and the various data formats we may actually store: _structured_ data for tabular data, _semi-structured_ for data that doesn't fit nicely into columns and rows, and _unstructured_ for raw and unformatted data.
+
+We then built data sources optimized for each. We created an S3 bucket as a "catch-all" source for logs, CSVs, photos, and anything else we can imagine. We then built an RDS database for neatly structured tabular data. Finally, we used DynamoDB to write Python dictionaries with varying keys and data formats.
+
+There are, of course, plenty of other AWS services for data storage that we didn't cover here. [AWS Glue](https://aws.amazon.com/glue/) and [Athena](https://aws.amazon.com/athena/) let you run SQL queries directly on files in an S3 bucket (with some serious caveats<sup>[[5]](#5-s3-simple-storage-service)</sup>). [AWS Redshift](https://aws.amazon.com/redshift/) is a data warehouse, which lets you combine data from multiple sources (including S3, RDS, and DynamoDB) to make it easier to run analytics. [AWS Cloudwatch](https://aws.amazon.com/cloudwatch/) is a monitoring and alerting service for logs.
+
+With the skills you've gained in this post, you should have the building blocks to start building larger and more complex cloud storage applications. In the next post, we'll finish our AWS series by covering _compute_, where we'll use AWS servers to run calculations on data. See you there!
+
+Best,<br>
+Matt
+
 
 ## Footnotes
 #### 1. [Why cloud storage?](#why-cloud-storage)
