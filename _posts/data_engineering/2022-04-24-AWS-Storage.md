@@ -278,31 +278,60 @@ Here, we can scroll down to the `Inbound rules` tab and click `Edit inbound rule
 
 Now do the same for outbound rules: click on the `Outbound rules` tab, `Edit outbound rules`, `Add rule`, "PostgreSQL" for `Type` and "Anywhere-IPv4" (or your IP address) for `Destination`, and then `Save rules`.
 
-We'll now access our database from pgAdmin. Under the Connectivity & security tab in AWS RDS, copy the endpoint address. Then open pgAdmin, click on Servers > Create Server. Name the connection something like `aws_rds_postgres` and paste the endpoint address in the Hostname/Address field.
+We'll now access our database from pgAdmin. Under the Connectivity & security tab in AWS RDS, copy the endpoint address. (It'll look something like `postgres.abcdef.us-east-1.rds.amazonaws.com`.) Then open pgAdmin, right click on Servers > Register > Server. Name the connection something like `aws_rds_postgres` and paste the endpoint address in the Hostname/Address field. Fill out your password and click "Save password".
 
+If all goes well, you should see the `aws_rds_postgres` server and `my_database` database.
 
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/pgadmin_rds.png">
 
+Right click on `my_database`, then on `Query Tool` and type the following:
 
-We start by [defining a DB instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_SettingUp.html#CHAP_SettingUp.Requirements), which will provide an address called an _endpoint_ for us to access our database.
-* Need to set up security group rules. Default AWS VPC likely fine.
-* Configure IAM policy to allow access to RDS
+{% include header-sql.html %}
+```sql
+CREATE TABLE users (
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    age INT
+);
 
-DB instance = isolated database environment. Can host multiple databases. A DB engine = the specific relational database software, e.g., MySQL, PostgreSQL, Oracle, etc.
+INSERT INTO users
+  (first_name, last_name, age)
+VALUES
+  ('Matt', 'Sosna', 32);
+```
 
+Since we're using the Free Tier, we unfortunately can only query our database through pgAdmin, as opposed to the AWS console or `boto3`. (Though we _can_ [make changes to the database itself](https://docs.aws.amazon.com/cli/latest/reference/rds/).) But just to make sure the above operation worked, type the following in pgAdmin to confirm we can query our database.
 
+{% include header-sql.html %}
+```sql
+SELECT
+  *
+FROM users
 
-
+/*
+ id | first_name | last_name | age |
+ -- | ---------- | --------- | --- |
+  1 | Matt       | Sosna     |  32 |
+*/
+```
 
 ## DynamoDB
-DynamoDB is for non-relational databases.
+Let's cover one last database type: non-relational databases. AWS offers DynamoDB for creating and querying NoSQL databases.
 
+* Create a table called `users`
+* Set the partition key as `id`, which is a number.
+* Select `Customize settings`
+* `DynamoDB Standard`
+* `Provisioned`, not `On-demand`
+* Turn off Auto Scaling for both reads and writes and set the number of Provisioned Capacity Units to 1.
 
 
 [This website](https://aws-certified-cloud-practitioner.fandom.com/wiki/3.3_Identify_the_core_AWS_services) looks super helpful.
 [This whitepaper](https://docs.aws.amazon.com/whitepapers/latest/aws-overview/aws-overview.pdf) looks awesome.
 
 ## Cleaning up
-Let's delete our stuff to avoid incurring charges.
+Let's delete our stuff to avoid incurring charges. In RDS, we simply click on our database (`postgres`), then Actions, then Delete. Make sure to avoid taking a final snapshot of the database before deletion.
 
 ## Other services
 ### Cloudwatch
