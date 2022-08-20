@@ -24,6 +24,8 @@ This post will answer these questions. We'll set up our software environment bef
 * [S3 (Simple Storage Service)](#s3-simple-storage-service)
 * [RDS (Relational Database Service)](#rds)
 * [DynamoDB](#dynamodb)
+* [Cleaning up](#cleaning-up)
+* [Conclusions](#conclusions)
 
 ## Background
 ### Why cloud storage?
@@ -336,6 +338,7 @@ And... that's it! Let's now navigate to Python to write to our table. In a Jupyt
 {% include header-python.html %}
 ```python
 import boto3
+import os
 
 # Set up client
 client = boto3.client(
