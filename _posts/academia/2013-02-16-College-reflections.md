@@ -2,6 +2,7 @@
 layout: post
 title: Nine months out of the college bubble
 author: matt_sosna
+tags: career
 ---
 As the one-year anniversary of my graduation approaches, I've had some time to reflect on my college experience and the ways it has - and hasn't - prepared me for graduate-level research.
 

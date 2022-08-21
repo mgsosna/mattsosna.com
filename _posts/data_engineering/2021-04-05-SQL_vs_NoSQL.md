@@ -2,6 +2,7 @@
 layout: post
 title: SQL vs. NoSQL databases in Python
 author: matt_sosna
+tags: python sql
 ---
 
 From ancient government, library, and medical records to present-day video and [IoT streams](https://en.wikipedia.org/wiki/Internet_of_things), we have always needed ways to efficiently store and retrieve data. Yesterday's filing cabinets have become today's computer [**databases**](https://www.oracle.com/database/what-is-database/), with two major paradigms for how to best organize data: the _**relational**_ (SQL) versus _**non-relational**_ (NoSQL) approach.

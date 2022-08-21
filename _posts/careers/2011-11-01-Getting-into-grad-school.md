@@ -2,6 +2,7 @@
 layout: post
 title: How to get into grad school for bio
 author: matt_sosna
+tags: academia
 ---
 At this point in the year, with grad applications closing and the waiting process beginning (or continuing for some of us), this post might not seem all that relevant to the college seniors who have hopefully figured out how to apply to graduate schools. This post may seem early for juniors who are interested in grad school but figure they have time before they apply. Maybe the occasional freshman or sophomore who stumbles across this blog will think that grad school is so far in the distance it's not even worth thinking about right now. However, the following advice is a general path for _**leveling up as a researcher**_ and figuring out _**what about biology interests you,**_ knowledge that will serve you well regardless if you pursue grad school.
 

@@ -2,6 +2,7 @@
 layout: post
 title: Visualizing my daily commute
 author: matt_sosna
+tags: projects r
 ---
 
 I love data visualization, and one holiday my partner surprised me with the book [_Dear Data_](http://www.dear-data.com/). The book is a series of weekly letters two data analysts wrote to one another with visualizations of data on random topics. One week they tracked the number of times they said "thank you," for example; another week, they counted the number of times they looked at a clock. In their letters, they visualized their data. One of the most interesting parts of the book was seeing how differently they could plot the same type of data.

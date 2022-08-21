@@ -34,6 +34,10 @@
     {% endif %}
     <!-- end of Twitter cards -->
 
+    {% if site.tags != "" %}
+      {% include collect-tags.html %}
+    {% endif %}
+
   </head>
 
   <body>
@@ -56,7 +60,7 @@
 
     <div id="copyright" class="container">
         <br>
-        <center>&copy; 2021 Matt Sosna</center>
+        <center>&copy; 2022 Matt Sosna</center>
     </div>
 
     <div class="wrapper-footer">

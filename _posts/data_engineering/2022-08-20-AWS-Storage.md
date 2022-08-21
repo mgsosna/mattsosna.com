@@ -3,13 +3,14 @@ layout: post
 title: AWS Essentials for Data Science - 2. Storage
 title-clean: AWS Essentials for Data Science<div class="a2">2. Storage</div>
 author: matt_sosna
+tags: aws sql python
 ---
 
 Do you have a store your music, videos, and personal files in a garage full of hard drives? My bet is... no. Unless you've avoided [iCloud](https://www.apple.com/icloud/), [Dropbox](https://www.dropbox.com/), and [Google Drive](https://www.google.com/drive/) the last fifteen years $-$ and if you have, props to you! $-$ then you're likely using storage. You can recover your texts if you lose your phone; you can share files with links instead of massive email attachments; you can organize and search your photos by who's in them.
 
 But these benefits extend into the professional realm, too. If you ever start a company that shares data $-$ like, say, thousands of 4K movies and shows for a low monthly fee (😛) $-$ you'll want to store this data on a cloud server. Cloud servers don't turn off when you close your laptop, and you don't have to worry about nefarious users fetching your private data when they visit your laptop.
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/hulu.jpeg">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/hulu.jpeg" loading="lazy" alt="Laptop with Hulu">
 <span style="font-size: 12px"><i>Photo by [Tech Daily](https://unsplash.com/@techdailyca) on [Unsplash](https://unsplash.com)</i></span>
 
 So how can we set up cloud storage? What's the right type of storage for our data? And how can we interact with cloud storage directly from code, rather than needing to click around in a UI?
@@ -33,7 +34,7 @@ When you work alone on a small project, you probably don't think too hard about 
 
 But what happens when you want to add someone to your project? It doesn't make sense to take turns using your laptop. You could copy the data to their laptop, but what if there's more data than can fit on your teammate's computer? Once the work starts, syncing changes across datasets is a headache waiting to happen. It's also a lot of trust to hand over all the data right away $-$ what if this new person leaves, taking everything with them to share with competitors or malicious actors?
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/single_source.png" alt="Sharing data in the cloud">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/single_source.png" alt="Sharing data in the cloud" loading="lazy">
 
 Cloud storage is designed to address these issues. As with Dropbox or Google Drive, you can simply send data through a link: "click _here_ to access the database." This data can be made read-only, with fine-tuned access rules $-$ if your teammate turns out to be a spy from the competition, you can instantly turn those URLs into error messages the next time they try to fetch the data.<sup>[[1]](#1-why-cloud-storage)</sup>
 
@@ -48,7 +49,7 @@ This issue $-$ not knowing exactly where a piece of data is $-$ is where a big D
 
 This format, i.e., _structured_, _semi-structured_, or _unstructured_, refers to how the data is organized within the file. **Structured** data is the tabular set of rows and columns you're likely familiar with: typically, each row is a sample and each column is a [feature](https://www.datarobot.com/wiki/feature/) of that sample. The tables in a relational database consist of structured data, which we can quickly search if the tables are [_indexed_](https://www.codecademy.com/article/sql-indexes) by a column that partitions the data well.
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/storage_types.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/storage_types.png" loading="lazy" alt="Structured, semi-structured, and unstructured data">
 
 **Semi-structured** data includes [JSON](https://www.w3schools.com/js/js_json_intro.asp), [XML](https://www.w3.org/standards/xml/core), [HTML](https://en.wikipedia.org/wiki/HTML), and large graphs, where the data usually doesn't fit nicely into columns and rows. This format is ideal for hierarchical data, where a field may have subfields, many containing subfields of their own. **There is no limit on the number of layers, but there _is_ a required structure.** An HTML page, for example, can have many `<div>` sections nested within one another, each with unique CSS formatting.
 
@@ -68,7 +69,7 @@ AWS servers receive dozens or hundreds of queries per second. If a server receiv
 
 So in essence, any requests AWS receives that were signed with your access keys will be treated like they came from you. So it's important to ensure that you're the only one performing these requests!
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/access_keys.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/access_keys.png" loading="lazy" alt="Secret keys when accessing data in the cloud">
 
 `boto3` requires us to pass in our access key ID and secret access key when we instantiate a client object. We can technically do this by defining our access keys as variables and then passing them in, like this:
 
@@ -107,7 +108,7 @@ secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
 
 With that, we're now ready to start using AWS.
 
-<img src="{{ site.baseurl }}/images/data_engineering/aws/storage/s3_landing.png">
+<img src="{{ site.baseurl }}/images/data_engineering/aws/storage/s3_landing.png" loading="lazy" alt="Landing page for AWS S3">
 
 ## S3: Simple Storage Service
 **S3**, or **Simple Storage Service**, is the closest analogue to Dropbox or Google Drive. Think of S3 as a "catch-all" for your files. Simply create a **bucket** (i.e., distinct directory) and upload [_any_ number of files of _any_ type](https://docs.amazonaws.cn/en_us/AmazonS3/latest/userguide/upload-objects.html) $-$ text, CSVs, executables, Python pickle files, images, videos, zipped folders, etc. Define the access rules at the file, folder,<sup>[[4]](#4-s3-simple-storage-service)</sup> or bucket level with just a few clicks.
@@ -122,15 +123,15 @@ So let's actually create a bucket. Don't worry about getting charged by AWS for 
 #### Create a bucket
 Let's start with the console to create a bucket. We first [log into our AWS account](https://aws.amazon.com) (preferably with an [IAM role]({{  site.baseurl  }}/AWS-Intro/#iam-identity-and-access-management)) and navigate to S3. Then we just click the "Create bucket" button:
 
-<img src="{{ site.baseurl }}/images/data_engineering/aws/storage/create_bucket.png">
+<img src="{{ site.baseurl }}/images/data_engineering/aws/storage/create_bucket.png" loading="lazy" alt="Creating an AWS S3 bucket">
 
 When we create a bucket, we need to give it a name that's globally distinct across all AWS buckets. Here we create one called `matt-sosnas-test-bucket`.
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/name_bucket.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/name_bucket.png" loading="lazy" alt="Naming an AWS S3 bucket">
 
 Our bucket can have customized access rules, but let's just keep it at disabled public access for now. Once we select that, our bucket is ready.
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/bucket_created.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/bucket_created.png" alt="Creating an AWS S3 bucket" loading="lazy">
 
 #### Upload files
 Let's now switch to the AWS CLI. In Terminal or Command Prompt, we can see our new bucket with the following command. (You may need to authenticate following the steps [here]({{  site.baseurl }}/AWS-Intro/#cli-command-line-interface)).
@@ -247,7 +248,7 @@ We first import `boto3`, `io.StringIO`, `os`, and `pandas`. `boto3` contains cod
 
 On lines 7-12 we instantiate a `boto3` client that allows us to make requests to AWS. We perform such a request to get the `csvs/file1.csv` file from `matt-sosnas-test-bucket` on lines 15-18. This object is packed with metadata, so we extract the byte string on line 21, decode it to a CSV string on line 22, and finally parse the string to a dataframe on line 23.
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds.png" loading="lazy" alt="Landing page for AWS RDS">
 
 ## RDS: Relational Database Service
 Throwing all our data into a bucket, even with file types arranged by folder, only gets us so far. As our data grows, we need a more scalable way to find, join, filter, and perform calculations on our data. A **relational database** is one way to store and organize our data more optimally. (See [this post]({{  site.baseurl  }}/SQL_vs_NoSQL) for a primer on databases.)
@@ -256,27 +257,27 @@ We _could_ rent an EC2 instance (i.e., virtual server) in the cloud and install 
 
 So let's create a database in RDS. We'll sign into the AWS console, navigate to RDS, and click `Create database`. If you read [Intermediate SQL for Everyone]({{  site.baseurl  }}/Intermediate-SQL), you might already have [pgAdmin](https://www.pgadmin.org/), a GUI for Postgres databases, installed. Since I already have pgAdmin on my computer, then let's go with Postgres. 🙂 We'll use the `Standard create` option.
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_1.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_1.png" loading="lazy" alt="Configuring an AWS RDS instance 1">
 
 Make sure to specify that you want to use the Free tier!
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_2.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_2.png" loading="lazy" alt="Configuring an AWS RDS instance 2">
 
 Name your database identifier and set a username $-$ `postgres` is fine for both $-$ and make sure to write down your password somewhere secure. Disable autoscaling (under "Storage") and select yes for public access. Our database won't be truly open to the world, don't worry $-$ we'll still require a password to access the database. (For a professional application, though, you'll want to [configure a VPC](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html).)
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_3.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_3.png" loading="lazy" alt="Configuring an AWS RDS instance 3">
 
 Under "Additional configuration", name your initial DB `my_database`, then disable automated backups, performance insights, and minor version upgrades. Everything else in the configuration can stay the same.
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_4.png" height="85%" width="85%">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_4.png" loading="lazy" alt="Configuring an AWS RDS instance 4" height="85%" width="85%">
 
 When we hit `Create database`, we're taken back to the RDS landing page and see that our database is being created. Once it's finished, you can click on the instance and be taken to the following page. On this page, click on the VPC security group link under "Security".
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_5.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_5.png" loading="lazy" alt="Configuring an AWS RDS instance 5">
 
 Here, we can scroll down to the `Inbound rules` tab and click `Edit inbound rules`, then `Add rule`. Select "PostgreSQL" for `Type` and "Anywhere-IPv4" for `Source`. (Friendly reminder to not do this for a production database!) You can also be more secure by [specifying your IP address](https://www.avast.com/c-how-to-find-ip-address#) instead. Once you're done, click `Save rules`.
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_6.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_6.png" loading="lazy" alt="Configuring an AWS RDS instance 6">
 
 Now do the same for outbound rules: click on the `Outbound rules` tab, `Edit outbound rules`, `Add rule`, "PostgreSQL" for `Type` and "Anywhere-IPv4" (or your IP address) for `Destination`, and then `Save rules`.
 
@@ -284,7 +285,7 @@ We'll now access our database from pgAdmin. Under the Connectivity & security ta
 
 If all goes well, you should see the `aws_rds_postgres` server and `my_database` database.
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/pgadmin_rds.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/pgadmin_rds.png" loading="lazy" alt="Accessing an AWS RDS instance from pgAdmin">
 
 Right click on `my_database`, then on `Query Tool` and type the following:
 
@@ -318,18 +319,18 @@ FROM users
 */
 ```
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/dynamodb.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/dynamodb.png" loading="lazy" alt="Landing page for AWS DynamoDB">
 
 ## DynamoDB
 Let's cover one last database type: non-relational databases. AWS offers DynamoDB for creating and querying NoSQL databases.
 
 Thankfully, DynamoDB is much easier to set up than RDS. We'll start by navigating to DynamoDB inside the AWS console and clicking the `Create table` button. Let's create a table called `users` with `id` as a number partition key. Then, click `Customize settings`.
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/dynamodb_setup_1.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/dynamodb_setup_1.png" alt="Setting up an AWS DynamoDB instance 1" loading="lazy">
 
 Select `DynamoDB Standard` as the table class and `Provisioned` capacity, then turn off auto-scaling for both reads and writes and reduce the number of provisioned capacity units to 1 each.
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/dynamodb_setup_2.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/dynamodb_setup_2.png" loading="lazy" alt="Setting up an AWS DynamoDB instance 2">
 
 Leave encryption to be owned by Amazon DynamoDB, then click `Create table`.
 
@@ -373,7 +374,7 @@ The syntax for writing to DynamoDB is rather explicit $-$ we need to specify the
 
 If the above code runs without an error, then we should see these records in the DynamoDB console. Click on our `users` table, then `Explore table items`.
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/dynamodb_example.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/dynamodb_example.png" alt="Records from an AWS DynamoDB instance" loading="lazy">
 
 Finally, we can also fetch the objects from Python.
 

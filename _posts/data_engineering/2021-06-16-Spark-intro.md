@@ -2,6 +2,7 @@
 layout: post
 title: A hands-on demo of analyzing big data with Spark
 author: matt_sosna
+tags: python
 ---
 
 [Cloud services firm Domo estimates](https://web-assets.domo.com/blog/wp-content/uploads/2020/08/20-data-never-sleeps-8-final-01-Resize.jpg) that for every minute in 2020, WhatsApp users sent 41.7 million messages, Netflix streamed 404,000 hours of video, $240,000 changed hands on Venmo, and 69,000 people applied for jobs on LinkedIn. In that firehose of data are patterns those companies use to understand the present, predict the future, and ultimately stay alive in a hyper-competitive market.

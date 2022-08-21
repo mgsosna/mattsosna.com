@@ -2,6 +2,7 @@
 layout: post
 title: Linear regression via gradient descent
 author: matt_sosna
+tags: machine-learning projects r statistics
 ---
 
 After hearing so much about Andrew Ng's famed [Machine Learning Coursera course](https://www.coursera.org/learn/machine-learning), I started taking the course and loved it. (His demeanor can make any topic sound reassuringly simple!) Early in the course, Ng covers linear regression via gradient descent. In other words, given a series of points, how can we find the line that best represents those points? And to take it a step further, how can we do that with machine learning?

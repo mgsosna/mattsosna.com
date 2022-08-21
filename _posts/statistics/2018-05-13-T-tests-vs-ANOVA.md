@@ -2,6 +2,7 @@
 layout: post
 title: Visualizing the danger of multiple t-test comparisons
 author: matt_sosna
+tags: projects r statistics
 ---
 
 It's often tempting to make multiple t-test comparisons when running analyses with multiple groups. If you have three groups, this logic would look like "I'll run a t-test to see if Group A is significantly different from Group B, then another to check if Group A is significantly different from Group C, then one more for whether Group B is different from Group C." This logic, while seemingly intuitive, is seriously flawed. I'll use [an R function](https://github.com/mgsosna/t-tests_vs_ANOVA/blob/master/false_pos.R) I wrote, `false_pos`, to help visualize why multiple t-tests can lead to highly inflated false positive rates.

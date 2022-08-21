@@ -4,6 +4,81 @@ title: Blog
 permalink: /blog/
 ---
 
+## Tags
+<ul>
+<li>
+  <a class="tag-link"
+    href="{{ site.baseurl}}/tag/academia/"
+    rel="category tag">
+    <span style='color:#dd3a77cc'>#academia</span>
+  </a>
+</li>
+<li>
+  <a class="tag-link"
+    href="{{ site.baseurl}}/tag/aws/"
+    rel="category tag">
+    <span style='color:#dd3a77cc'>#aws</span>
+  </a>
+</li>
+<li>
+  <a class="tag-link"
+    href="{{ site.baseurl}}/tag/careers/"
+    rel="category tag">
+    <span style='color:#dd3a77cc'>#careers</span>
+  </a>
+</li>
+<li>
+  <a class="tag-link"
+    href="{{ site.baseurl}}/tag/computer-science/"
+    rel="category tag">
+    <span style='color:#dd3a77cc'>#computer-science</span>
+  </a>
+</li>
+<li>
+  <a class="tag-link"
+    href="{{ site.baseurl}}/tag/data-science/"
+    rel="category tag">
+    <span style='color:#dd3a77cc'>#data-science</span>
+  </a>
+</li>
+<li>
+  <a class="tag-link"
+    href="{{ site.baseurl}}/tag/machine-learning/"
+    rel="category tag">
+    <span style='color:#dd3a77cc'>#machine-learning</span>
+  </a>
+</li>
+<li>
+  <a class="tag-link"
+    href="{{ site.baseurl}}/tag/projects/"
+    rel="category tag">
+    <span style='color:#dd3a77cc'>#projects</span>
+  </a>
+</li>
+<li>
+  <a class="tag-link"
+    href="{{ site.baseurl}}/tag/r/"
+    rel="category tag">
+    <span style='color:#dd3a77cc'>#r</span>
+  </a>
+</li>
+<li>
+  <a class="tag-link"
+    href="{{ site.baseurl}}/tag/sql/"
+    rel="category tag">
+    <span style='color:#dd3a77cc'>#sql</span>
+  </a>
+</li>
+<li>
+  <a class="tag-link"
+    href="{{ site.baseurl}}/tag/statistics/"
+    rel="category tag">
+    <span style='color:#dd3a77cc'>#statistics</span>
+  </a>
+</li>
+</ul>
+
+
 ## Topics
 - [**Data science**](#data-science)
   - [How to enter data science](#how-to-enter-data-science)

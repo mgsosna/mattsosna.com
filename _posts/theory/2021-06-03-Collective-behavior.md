@@ -2,6 +2,7 @@
 layout: post
 title: Fish schools as ensemble learning algorithms
 author: matt_sosna
+tags: academia machine-learning
 ---
 <img src="{{  site.baseurl  }}/images/theory/coll_beh/koi_shoal.jpg" alt="Fish school">
 <span style="font-size: 12px"><i>Photo by <a href="https://unsplash.com/@jwimmerli">jean wimmerlin</a> on <a href="https://unsplash.com">Unsplash</a></i></span>

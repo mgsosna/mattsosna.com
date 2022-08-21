@@ -2,6 +2,7 @@
 layout: post
 title: Writing the self-contained universe
 author: matt_sosna
+tags: academia
 ---
 You are not sitting next to me right now as I type these thoughts. You're most likely not in New Jersey, and you might not even be in the U.S. The fact that it's even possible for you to be reading these words right now highlights the power of communicating ideas through writing. Effective communication is the difference between you growing bored and leaving halfway through this blog post to explore other parts of the internet, and you reaching the end (before moving on to explore the rest of the internet!).
 
