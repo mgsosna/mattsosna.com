@@ -8,7 +8,7 @@ tags: aws sql python
 
 Do you store your music, videos, and personal files in a garage full of hard drives? My bet is... no. Unless you've avoided [iCloud](https://www.apple.com/icloud/), [Dropbox](https://www.dropbox.com/), and [Google Drive](https://www.google.com/drive/) the last fifteen years $-$ and if you have, props to you! $-$ then you're likely using **cloud storage**. You can recover your texts if you lose your phone; you can share files with links instead of massive email attachments; you can organize and search your photos by who's in them.
 
-But these benefits extend into the professional realm, too. If you ever start a company that shares data $-$ like, say, thousands of 4K movies and shows for a low monthly fee (😛) $-$ you'll want to store this data on a cloud server. Cloud servers don't turn off when you close your laptop, and you don't have to worry about nefarious users fetching your private data when they visit your laptop.
+But these benefits extend into the professional realm, too. If you ever start a company that shares data $-$ like, say, thousands of 4K movies and shows for a low monthly fee (😛) $-$ you'll want to store this data on a cloud server. Cloud servers don't turn off when you close your laptop, and you don't have to worry about nefarious users fetching your private data when they visit.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/hulu.jpeg" loading="lazy" alt="Laptop with Hulu">
 <span style="font-size: 12px"><i>Photo by [Tech Daily](https://unsplash.com/@techdailyca) on [Unsplash](https://unsplash.com)</i></span>
@@ -81,12 +81,16 @@ import boto3
 access_key = 'abc123'
 secret_key = 'xyz456'
 
-client = boto3.client(access_key, secret_key, region_name='us-east-1')
+client = boto3.client(
+  access_key,
+  secret_key,
+  region_name='us-east-1'
+)
 ```
 
 But this is a huge security vulnerability, as **anyone who reads this code can impersonate you!** And if you accidentally push this file to a version control system like Git, removing lines 4-5 and pushing a new version won't be enough $-$ anyone can scroll through the history of the file to find your keys.
 
-Rather than hard-coding the values in Python, MacOS and Linux users can store these [**secrets**](https://secrethub.io/blog/what-is-secrets-management/) in a `.bash_profile.rc` file. ([See here](https://saralgyaan.com/posts/set-passwords-and-secret-keys-in-environment-variables-maclinuxwindows-python-quicktip/) for Windows.) This file contains aliases for filepaths (so Terminal knows you mean `/opt/homebrew/bin/python` when you type `python`, for example), as well as database passwords or other sensitive information. This file is located in your root directory and is hidden $-$ to find it, you need to type `⌘` + `.` to see it.
+Rather than hard-coding the values in Python, MacOS and Linux users can store these [**secrets**](https://secrethub.io/blog/what-is-secrets-management/) in a `.bash_profile.rc` or `.zshrc` file. ([See here](https://saralgyaan.com/posts/set-passwords-and-secret-keys-in-environment-variables-maclinuxwindows-python-quicktip/) for Windows.) This file contains aliases for filepaths (so Terminal knows you mean `/opt/homebrew/bin/python` when you type `python`, for example), as well as database passwords or other sensitive information. This file is located in your root directory and is hidden $-$ to find it, you need to type `⌘` + `.` to see it.
 
 In this file, we can set our AWS access keys. (Note the lack of spaces around the equals signs.)
 
@@ -255,7 +259,9 @@ Throwing all our data into a bucket, even with file types arranged by folder, on
 
 We _could_ rent an EC2 instance (i.e., virtual server) in the cloud and install a MySQL or PostgreSQL database ourselves. But this is [barely better than hosting a database on a server in our garage](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html) $-$ while AWS would handle server maintenance, we would still be responsible for scaling, availability, backups, and software and operating system updates. For slightly added cost, we can use a service like [**Amazon RDS**](https://aws.amazon.com/rds/) to have AWS manage everything except our actual data.
 
-So let's create a database in RDS. We'll sign into the AWS console, navigate to RDS, and click `Create database`. If you read [Intermediate SQL for Everyone]({{  site.baseurl  }}/Intermediate-SQL), you might already have [pgAdmin](https://www.pgadmin.org/), a GUI for Postgres databases, installed. Since I already have pgAdmin on my computer, then let's go with Postgres. 🙂 We'll use the `Standard create` option.
+So let's create a database in RDS. We'll sign into the AWS console, navigate to RDS, and click `Create database`. If you read [Intermediate SQL for Everyone]({{  site.baseurl  }}/Intermediate-SQL), you might already have [pgAdmin](https://www.pgadmin.org/), a GUI for Postgres databases, installed. Since I already have pgAdmin on my computer, then let's go with Postgres. 🙂
+
+In the setup wizard, select `Standard create` as the creation method and `Postgres` as the engine.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/storage/rds_configure_1.png" loading="lazy" alt="Configuring an AWS RDS instance 1">
 
