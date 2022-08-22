@@ -2,6 +2,7 @@
 layout: post
 title: Exploring stacks and queues
 author: matt_sosna
+tags: computer-science python
 ---
 
 In our [last post]({{  site.baseurl  }}/CSDS-intro), we covered _data structures_, or the ways that programming languages store data in memory. We touched upon **abstract data types**, theoretical entities that are _implemented_ via data structures. The concept of a "vehicle" can be viewed as an abstract data type, for example, with a "bike" being the data structure.

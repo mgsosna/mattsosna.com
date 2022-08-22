@@ -5,6 +5,7 @@ title-clean: How to enter data science <div class="a2">2. The statistics</div>
 author: matt_sosna
 summary: The statistics needed to succeed in data science
 image: "images/careers/DS-2/two_models.png"
+tags: careers data-science statistics
 ---
 In [the last post]({{ site.baseurl }}/DS-transition-1), we defined the key elements of data science as 1) deriving insights from data and 2) communicating those insights to others. Despite the huge diversity in how these elements are expressed in actual data scientist roles, **there is a core skill set** that will serve you well no matter where you go. The remaining posts in this series will define and explore these skills in detail.
 

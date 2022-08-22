@@ -3,7 +3,7 @@ layout: post
 title: Learning R - 5. The apply functions
 title-clean: Learning R <div class="a2">5. The apply functions</div>
 author: matt_sosna
----
+tags: r
 ---
 **Learning R series**
 1. [Introduction]({{  site.baseurl  }}/R-1-Intro)

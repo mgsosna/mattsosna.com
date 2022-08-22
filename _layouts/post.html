@@ -8,6 +8,15 @@ layout: default
 <article class="post">
   <h1>{% if page.title-clean %}{{ page.title-clean }}{% else %}{{ page.title }}{% endif %}</h1>
 
+  {% for tag in page.tags %}
+    {% assign tag_slug = tag | slugify: "raw" %}
+    <a class="tag-link"
+      href={{ site.baseurl | append: "/tag/" | append: tag_slug | append: "/" }}
+      rel="category tag">
+      <span style='color:#dd3a77cc; font-size:18px'>#{{ tag }}</span>
+    </a>
+  {% endfor %}<br>
+
   <!-- Output author details if some exist. -->
   {% if author %}
       <span>

@@ -3,7 +3,7 @@ layout: post
 title: Learning R - 4. Functions and if statements
 title-clean: Learning R <div class="a2">4. Functions and if statements</div>
 author: matt_sosna
----
+tags: r
 ---
 **Learning R series**
 1. [Introduction]({{  site.baseurl  }}/R-1-Intro)

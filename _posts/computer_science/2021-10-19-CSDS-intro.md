@@ -2,6 +2,7 @@
 layout: post
 title: Intro to data structures
 author: matt_sosna
+tags: computer-science python
 ---
 
 Imagine you build a wildly popular app that is quickly growing towards a million users. (Congrats!) While users love the app, they're complaining that the app is becoming slower and slower, to the point that some users are starting to leave. You notice that the main bottleneck is how user info is retrieved during authentication: currently, your app searches through an unsorted list of Python dictionaries until it finds the requested user ID.

@@ -2,6 +2,7 @@
 layout: post
 title: How to be fancy with comparisons in R
 author: matt_sosna
+tags: r
 ---
 Welcome to another episode of "Random R," where we'll ask random programming and statistical questions and answer them with R. Today, for whatever reason, let's say we want to dive into methods for comparing values. We'll start simple (e.g. is 5 greater than 4? Read on to find out.) and then work our way towards trickier element-wise comparisons among multiple matrices.
 

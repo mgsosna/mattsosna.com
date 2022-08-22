@@ -2,6 +2,7 @@
 layout: post
 title: Intermediate SQL
 author: matt_sosna
+tags: sql
 ---
 
 When I started learning SQL, I found it hard to progress beyond the absolute basics. I loved [DataCamp's courses](https://www.datacamp.com/courses/introduction-to-sql) because I could just type the code directly into a console on the screen. But once the courses ended, how could I practice what I learned? And how could I continue improving, when all the tutorials I found just consisted of code snippits, without an underlying database I could query myself?
@@ -1264,7 +1265,7 @@ WHERE
     g.score > 90
 ORDER BY
     g.score DESC;
-    
+
 /*
  QUERY PLAN
  ----------

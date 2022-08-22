@@ -2,6 +2,7 @@
 layout: post
 title: 3 levels of technical abstraction when sharing your code
 author: matt_sosna
+tags: computer-science
 ---
 
 ![]({{ site.baseurl }}/images/data_engineering/sharing/sharing_services.png)

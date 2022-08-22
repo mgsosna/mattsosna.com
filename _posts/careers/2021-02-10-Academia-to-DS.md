@@ -3,6 +3,7 @@ layout: post
 title: Transitioning to data science from academia
 author: matt_sosna
 summary: Academics have many valuable skills to succeed in data science, but some need to be cultivated. This post outlines the soft and hard skills needed for success.
+tags: academia careers data-science
 ---
 **"I could always do data science if academia doesn't work out."** It's a recurring thought many graduate students and postdocs experience, especially if their work involves hearty servings of [programming]({{  site.baseurl  }}/DS-transition-3) and [statistics]({{  site.baseurl  }}/DS-transition-2), the core elements of data science. Data science can be a rewarding alternative to academia, and academics *do* have many qualities that make them attractive candidates for data science roles. However, there are *also* often large holes in academics' skill sets that can deter them from being hired straight off the bat.
 

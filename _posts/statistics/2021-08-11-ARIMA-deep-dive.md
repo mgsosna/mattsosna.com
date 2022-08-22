@@ -2,6 +2,7 @@
 layout: post
 title: A deep dive on ARIMA models
 author: matt_sosna
+tags: python statistics
 ---
 
 Predicting the future has forever been a universal challenge, from decisions like whether to plant crops now or next week, marry someone or remain single, sell a stock or hold, or go to college or play music full time. We will never be able to perfectly predict the future<sup>[[1]](#1-intro)</sup>, but we can use tools from the statistical field of **forecasting** to better understand what lies ahead.

@@ -5,6 +5,7 @@ title-clean: How to enter data science <div class="a2">5. The people</div>
 author: matt_sosna
 summary: The personal and interpersonal skills needed to succeed in data science
 image: "images/careers/DS-5/diminishing_returns.jpg"
+tags: careers data-science
 ---
 
 So far, we've covered the technical side to data science: [statistics]({{  site.baseurl  }}/DS-transition-2), [analytics]({{  site.baseurl  }}/DS-transition-3), and [software engineering]({{  site.baseurl  }}/DS-transition-4). But no matter how talented you are at crunching numbers and writing code, your *effectiveness* as a data scientist is limited if you chase questions that don't actually help your company, or you can't get anyone to incorporate the results of your analyses. Similarly, how do you stay motivated and relevant in a field that's constantly evolving?

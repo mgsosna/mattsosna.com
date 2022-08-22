@@ -5,6 +5,7 @@ title-clean: How to enter data science <div class="a2">4. The engineering</div>
 author: matt_sosna
 summary: The software engineering skills needed to succeed in data science
 image: "images/careers/DS-4/git.png"
+tags: careers data-science python
 ---
 
 Welcome to the fourth post in our series on how to enter data science! So far, we've covered [the range of data science roles]({{  site.baseurl  }}/DS-transition-1), some [inferential statistics fundamentals]({{  site.baseurl  }}/DS-transition-2), and [manipulating and analyzing data]({{  site.baseurl  }}/DS-transition-3). This post will focus on **software engineering** concepts that are essential for data science.
