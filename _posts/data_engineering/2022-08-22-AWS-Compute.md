@@ -11,7 +11,7 @@ If you ever have software you want to share with others -- like an [AI-powered c
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/edges2cats.png">
 <span style="font-size: 12px"><i>Screenshot from Christopher Hesse's amazing [Image-to-Image Demo](https://affinelayer.com/pixsrv/)</i></span>
 
-But what sort of services are out there? How can we use them? In the final post in [our AWS series]({{  site.baseurl  }}/AWS-Intro), we'll cover several **Amazon Web Services** that let us leverage cloud servers in different ways to run calculations. We'll start with the fundamental cloud building block, EC2, before moving on to serverless computing with Lambda.
+But what sort of services are out there, and how can we use them? In the final post in [our AWS series]({{  site.baseurl  }}/AWS-Intro), we'll cover several **Amazon Web Services** that let us leverage cloud servers in different ways to run calculations. We'll start with the fundamental cloud building block, EC2, before moving on to server-less computing with Lambda.
 
 
 ## Table of contents
@@ -24,7 +24,10 @@ In the early 2000s, the holiday season was a yearly pain point for the e-commerc
 
 How can you handle this extra load? One option is to buy more computers. And there are indeed [stories of early Amazon engineers](https://open.spotify.com/episode/14LmWeOMRZysw2i2vYSOuw?si=ce630660e3b44461) shopping for the most powerful servers they could find, hoping it would handle the spike in requests to the online retailer. But when the holiday buzz ends, that extra compute might end up sitting around unused.
 
-Ideally, you'd be able to _scale up_ when you need the compute, then _scale down_ when you don't need the computers. This **elasticity** is a central goal of cloud computing -- use only what you need, when you need it. 
+Ideally, you'd be able to _scale up_ when you need the compute, then _scale down_ when you don't need the computers. This **elasticity** is a central goal of cloud computing -- use only what you need, when you need it.
+
+EC2 is AWS's core building block.
+* You're renting virtual machines and storing data on virtual drives
 
 
 
@@ -35,22 +38,86 @@ Ideally, you'd be able to _scale up_ when you need the compute, then _scale down
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/ec2_landing.png" alt="AWS EC2 landing page">
 
 ## EC2
-Let's start with the fundamental building block of AWS: the virtual server. Virtual servers are partitions of physical servers in data centers, distinct chunks of compute you can reserve to do essentially _anything_ involving a computer. Whether they're running simulations for a weather forecast, fetching data from a database, or sending the HTML for your app's fancy webpage, virtual servers are the engines powering the cloud.
+Let's start with the fundamental building block of AWS: the virtual server. Virtual servers are partitions of physical servers in data centers, like miniature computers we can reserve _inside_ a bigger computer. Whether they're running simulations for a weather forecast, fetching data from a database, or sending the HTML for your app's fancy webpage, virtual servers are the engines powering the cloud.
 
-At AWS, these engines are called **EC2** instances. EC2 stands for "Elastic Compute Cloud" and was Amazon's first cloud offering, back in 2006. EC2 instances are modular and configurable, meaning you can easily add or remove instances that are as small or large as you need. You can choose the amount of resources your server has (i.e. CPU, memory)<sup>[[1]](#1-ec2)</sup>, and then you can configure the operating system and applications on your instance.
+At AWS, these engines are called **EC2** instances. EC2 stands for "Elastic Compute Cloud" and was Amazon's first public cloud offering, in 2006. EC2 instances are modular and configurable, meaning you can easily add or remove instances that meet your specific needs. You can specify both the hardware (e.g., the compute, memory, GPU, etc.)<sup>[[1]](#1-ec2)</sup> and software (e.g., its operating system and programs).
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/ec2_intro.png">
 
-The first thing you do when you launch an instance is select the [Amazon Machine Image](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html). This is like a Docker image that specifies the basic configurations of your instance: the operating system, application server, and applications required for your server to run. The basic AMI comes with a Linux kernel optimized for EC2, [the system and service manager systemd](https://en.wikipedia.org/wiki/Systemd), [the GCC compiler](https://en.wikipedia.org/wiki/GNU_Compiler_Collection), and other very low-level software.
+### Set up
+#### AMI
+The first thing you do when you launch an instance is select the [Amazon Machine Image](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html). This is like a Docker image that specifies the basic configurations of your instance: the operating system, application server, and applications required for your server to run. Another way to think of this is like a Python class: a reusable template.
 
-We'll create a key pair. From the [AWS website](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/get-set-up-for-amazon-ec2.html):
+The basic AMI comes with a Linux kernel optimized for EC2, [the system and service manager systemd](https://en.wikipedia.org/wiki/Systemd), [the GCC compiler](https://en.wikipedia.org/wiki/GNU_Compiler_Collection), and other very low-level software. We could create our own, e.g., if we had strong opinions about optimizing for our custom use case. But this is an intro to AWS tutorial, so let's just choose the default Amazon Linux 2 AMI.
+
+<img src="{{ site.baseurl  }}/images/data_engineering/aws/compute/ec2_ami.png" alt="EC2 Amazon Machine Images">
+
+#### Instance Type
+Next up is **Instance Type.** This is where we can choose the hardware for our server. We won't want to deviate from the `t2.micro` option, which is covered by the Free Tier. In a production setting, we could decide whether to optimize for compute (e.g., if running a lot of computations), memory (if needing to store a lot of data in cache), GPU (e.g., for gaming), storage (e.g., if reading and writing a lot to disk), or some balance of these.
+
+Once we choose an instance type, we can't go back -- unlike an application or even the operating system, this is the hardware of the machine. We can't yet warp the metal with a few code commands. But anyway, let's choose the `t2.micro` option.
+
+#### Key Pair
+Next we'll create a key pair. From the [AWS website](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/get-set-up-for-amazon-ec2.html):
 > AWS uses public-key cryptography to secure the login information for your instance. A Linux instance has no password; you use a key pair to log in to your instance securely. You specify the name of the key pair when you launch your instance, then provide the private key when you log in using SSH.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/ec2_setup1.png" alt="Setting up AWS EC2">
 
+* Pick a region geographically close to where you are
+* AMI: the template. Like a class in Python
+  * Operating system, software, etc. Can get predefined ones from AWS, or create your own and reuse it later.
+* Instance type: how powerful our machine should be
+  * e.g., compute-optimized (processing power), memory-optimized (if storing a lot of in-memory cache), GPU-optimized (e.g., gaming), storage-optimized, general-purpose
+  * These are fixed because they're hardware.
+* Additional configuration: can set your availability zone within your geographic region, but most likely you don't have a preference.
+  * The kind of network, purchasing options, IP addresses for security group, stopping behavior, etc.
+  * Bootstrap shell scripts: code that's run before the instance is officially online. Useful if setting up the instance for someone else
+  * For storage: we can do ephemeral (free), which disappears when we release the instance. But we can also go for Amazon Elastic Block Storage (EBS), or S3
+* For Security Group, we can just set IP as 0.0.0.0/0. Open to the world.
+  * Then need to create a key pair, which will let us SSH into the instance
+    * Public key that AWS stores, and private one that we store
+* SSH: Secure Shell. Works for Unix. Need Putty for Windows but we'll connect to Linux server
+  * SSH is a network protocol that provides [a secure way to access a computer](https://www.techtarget.com/searchsecurity/definition/Secure-Shell) over an unsecured network (like the internet). Strong password and public key authentication, encrypted data communications between two computers.
+  * Most basic use of SSH is to connect to a remote host for a terminal session. In other words: controlling a remote server from the command line. Once we've SSH'd into the server, it'll be as if our computer is that machine.
+* Tags = useful if you have a lot of EC2 instances. e.g., for a big company, the team that is using this instance.
+
+We'll see a public DNS and a public IP. That IP is how we'll access it. We can also check our EC2 instance's inbound rules and confirm that port 22 is open.
+
+```bash
+ssh ec2-user@xx.xxx.xxx.xxx
+```
+
+* It'll say the authenticity of the host can't be guaranteed. Do we want to continue? Yes.
+* Then it'll say that we can't connect: permission denied. That's because we need to pass in our key. (The `.pem` file.)
+
+```bash
+ssh -i matt_ec2_key.pem ec2-user@xx.xxx.xxx.xxx
+```
+
+* It'll say Warning: unprotected private key file. Permission 0644 is too open
+  * This permission is what's on the file when you first download it.
+* To fix this, we'll need to `chmod` the file.
+
+```bash
+chmod 0400 matt_ec2_key.pem
+ssh -i matt_ec2_key.pem ec2-user@xx.xxx.xxx.xxx
+```
+
+Now we're in the machine.
+
+```bash
+whoami
+# ec2-user
+```
+
+```bash
+exit
+```
+
+
 
 ## Lambda
-Lambda is _serverless_ computing. This is a bit of a confusing term because there _is_ a server involved... you just don't have to worry about the configurations. With an EC2 instance, you need to choose how much CPU and RAM you want the instance to have. Your instance will be there when you submit your requests, run your app, etc. But it'll still be quietly running in the background when you're not using it. This is often what you want $-$ you don't know when someone will make a request to your database, so you want the server to be ready at any time to serve that request. (Or for larger websites, there may never be a time where users _aren't_ making requests to your database. Think Amazon or Google displaying search results.)
+Lambda is _server-less_ computing. This is a bit of a confusing term because there _is_ a server involved... you just don't have to worry about the configurations. With an EC2 instance, you need to choose how much CPU and RAM you want the instance to have. Your instance will be there when you submit your requests, run your app, etc. But it'll still be quietly running in the background when you're not using it. This is often what you want $-$ you don't know when someone will make a request to your database, so you want the server to be ready at any time to serve that request. (Or for larger websites, there may never be a time where users _aren't_ making requests to your database. Think Amazon or Google displaying search results.)
 
 But sometimes you don't want an instance to be running constantly in the background. You may have a tiny operation you want to run, like saving a log to S3, any time a user clicks on something. Or you want to write to a database or kick off a data processing pipeline whenever a file is uploaded to S3. For this, a lambda is the way to go.
 
