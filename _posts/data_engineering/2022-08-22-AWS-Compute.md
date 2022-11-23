@@ -6,13 +6,16 @@ author: matt_sosna
 tags: aws python
 ---
 
-If you ever have software you want to share with others -- like an [AI-powered cat picture generator](https://affinelayer.com/pixsrv/) or [viral LinkedIn post generator](https://viralpostgenerator.com) -- you'll want to store this data on a cloud server. Cloud servers don't turn off when you close your laptop, you don't need to worry about malicious users stealing your private data, and you can rent a much stronger machine than your laptop.
-
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/edges2cats.png">
 <span style="font-size: 12px"><i>Screenshot from Christopher Hesse's amazing [Image-to-Image Demo](https://affinelayer.com/pixsrv/)</i></span>
 
-But what sort of services are out there, and how can we use them? In the final post in [our AWS series]({{  site.baseurl  }}/AWS-Intro), we'll cover several **Amazon Web Services** that let us leverage cloud servers in different ways to run calculations. We'll start with the fundamental cloud building block, EC2, before moving on to server-less computing with Lambda.
+So you've built a cool app and want to show it off to the world. Maybe it's an AI that generates [cat pictures from scribbles](https://affinelayer.com/pixsrv/), a [viral LinkedIn post generator](https://viralpostgenerator.com), or an [English to RegEx translator](https://www.autoregex.xyz/). In all cases, you want a user to just click a link and immediately start interacting with your app, rather than needing to download and run it on their computer.
 
+This "immediate interactivity" is going to require a **server**, which takes user requests (e.g., the scribbles) and _serves_ responses (e.g., the generated cat images). You _could_ use your laptop as a server, but it'll stop serving requests when it goes to sleep, a sophisticated hacker could steal your private data, and your hard drive might melt if your app gets too much traffic.
+
+Unless you have your own data center, you'll probably want to rent a server from the cloud. At the downside of losing full control over the machine serving requests, you're able to abstract away a lot of details that are nice to not have to deal with. You can also rent a machine that's stronger than your laptop.
+
+We previously covered a [high-level overview]({{  site.baseurl  }}/AWS-Intro) of the cloud and its history, as well as [cloud storage]({{  site.baseurl  }}/AWS-Storage). But what about the _engines_ of the cloud, using servers to perform computations? In the final post, we'll cover several **Amazon Web Services** that let us leverage cloud servers in different ways to run calculations. We'll start with the fundamental cloud building block, EC2, before moving on to server-less computing with Lambda.
 
 ## Table of contents
 * [Background](#background)
@@ -20,7 +23,7 @@ But what sort of services are out there, and how can we use them? In the final p
 * [Lambda](#lambda)
 
 ## Background
-In the early 2000s, the holiday season was a yearly pain point for the e-commerce industry. Q4 can account for [32% of online retailers' yearly revenue](https://www.forbes.com/sites/shelleykohan/2022/01/12/record-sales-for-online-holiday-shopping-hitting-over-204-billion/?sh=a8ec2f36bb56), which means a lot of users spending a lot more time on your website.
+In the early 2000s, the holiday season was a yearly pain point for online retailers in the fledgling internet. Q4 can account for [32% of online retailers' yearly revenue](https://www.forbes.com/sites/shelleykohan/2022/01/12/record-sales-for-online-holiday-shopping-hitting-over-204-billion/?sh=a8ec2f36bb56), which means _a lot of users_ spending _a lot more time_ on your website. Even in 2020, the middle of the Covid pandemic brought Amazon a [22% Thanksgiving Day increase in sales](https://www.cnn.com/2020/12/01/business/amazon-holiday-season-sales) compared to 2019.
 
 How can you handle this extra load? One option is to buy more computers. And there are indeed [stories of early Amazon engineers](https://open.spotify.com/episode/14LmWeOMRZysw2i2vYSOuw?si=ce630660e3b44461) shopping for the most powerful servers they could find, hoping it would handle the spike in requests to the online retailer. But when the holiday buzz ends, that extra compute might end up sitting around unused.
 
