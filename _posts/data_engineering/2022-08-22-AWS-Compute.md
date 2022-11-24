@@ -11,11 +11,11 @@ tags: aws python
 
 So you've built a cool app and want to show it off to the world. Maybe it's an AI that generates [cat pictures from scribbles](https://affinelayer.com/pixsrv/), a [viral LinkedIn post generator](https://viralpostgenerator.com), or an [English to RegEx translator](https://www.autoregex.xyz/). In all cases, you want a user to just click a link and immediately start interacting with your app, rather than needing to download and run it on their computer.
 
-This "immediate interactivity" is going to require a **server**, which takes user requests (e.g., the scribbles) and _serves_ responses (e.g., the generated cat images). You _could_ use your laptop as a server, but it'll stop serving requests when it goes to sleep, a sophisticated hacker could steal your private data, and your hard drive might melt if your app gets too much traffic.
+This "immediate interactivity" is going to require a **server**, which takes user requests (e.g., the scribbles) and _serves_ responses (e.g., the generated cat images). You _could_ use your personal laptop, but it'll stop serving requests when it goes to sleep or you turn it off. A sophisticated hacker could also steal your private data, and your hard drive might melt if your computer tries serving too many requests once the app gets popular!
 
-Unless you have your own data center, you'll probably want to rent a server from the cloud. At the downside of losing full control over the machine serving requests, you're able to abstract away a lot of details that are nice to not have to deal with. You can also rent a machine that's stronger than your laptop.
+Unless you like hacked, melted laptops, you'll probably want to rent a server from the cloud. While you do lose full control over over the machine serving requests, cloud computing lets you abstract away a lot of configuration and maintenance you likely don't want to deal with anyway. And if you're willing to pay a bit more, you can easily rent a machine $-$ or several $-$ that's significantly stronger than your laptop.
 
-We previously covered a [high-level overview]({{  site.baseurl  }}/AWS-Intro) of the cloud and its history, as well as [cloud storage]({{  site.baseurl  }}/AWS-Storage). But what about the _engines_ of the cloud, using servers to perform computations? In the final post, we'll cover several **Amazon Web Services** that let us leverage cloud servers in different ways to run calculations. We'll start with the fundamental cloud building block, EC2, before moving on to server-less computing with Lambda.
+We previously covered a [high-level overview]({{  site.baseurl  }}/AWS-Intro) of the cloud and its history, as well as [cloud storage]({{  site.baseurl  }}/AWS-Storage). But what about the _engines_ of the cloud? In this final post, we'll cover two compute-focused **Amazon Web Services**. We'll start with the fundamental cloud building block, **EC2**, before moving on to server-less computing with **Lambda**.
 
 ## Table of contents
 * [Background](#background)
@@ -23,7 +23,7 @@ We previously covered a [high-level overview]({{  site.baseurl  }}/AWS-Intro) of
 * [Lambda](#lambda)
 
 ## Background
-In the early 2000s, the holiday season was a yearly pain point for online retailers in the fledgling internet. Q4 can account for [32% of online retailers' yearly revenue](https://www.forbes.com/sites/shelleykohan/2022/01/12/record-sales-for-online-holiday-shopping-hitting-over-204-billion/?sh=a8ec2f36bb56), which means _a lot of users_ spending _a lot more time_ on your website. Even in 2020, the middle of the Covid pandemic brought Amazon a [22% Thanksgiving Day increase in sales](https://www.cnn.com/2020/12/01/business/amazon-holiday-season-sales) compared to 2019.
+The holiday season is a yearly compute crunch for online retailers. Q4 accounted for **a staggering 33-39%** of [Macy's](https://ycharts.com/companies/M/revenues) and [Kohl's](https://ycharts.com/companies/KSS/revenues) yearly revenues. ([Amazon](https://ycharts.com/companies/AMZN/revenues) was 29-32%.) Holiday shopping means _a lot of users_ are spending _a lot more time_ on your website.
 
 How can you handle this extra load? One option is to buy more computers. And there are indeed [stories of early Amazon engineers](https://open.spotify.com/episode/14LmWeOMRZysw2i2vYSOuw?si=ce630660e3b44461) shopping for the most powerful servers they could find, hoping it would handle the spike in requests to the online retailer. But when the holiday buzz ends, that extra compute might end up sitting around unused.
 
