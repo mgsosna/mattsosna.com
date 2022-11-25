@@ -19,7 +19,9 @@ What I actually need:
 * Extreme patience
   - There's no real way around it: onboarding is challenging. There's just so much to learn.
 
-It really varies by your team. An engineering team will probably be 5-10 people, _maybe_ 20 if it's big. At a company with 50,000+ employees, that means there are hundreds of teams. 
+It really varies by your team. An engineering team will probably be 5-10 people, _maybe_ 20 if it's big. At a company with 50,000+ employees, that means there are hundreds of teams.
+
+At Meta scale: an event with a "one in a billion" likelihood happens once every X minutes. (Haskell talk.)
 
 ### 1. Expert-level investigative skills
 The thing to remember
