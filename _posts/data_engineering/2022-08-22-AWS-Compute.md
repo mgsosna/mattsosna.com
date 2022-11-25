@@ -13,9 +13,9 @@ So you've built a cool app and want to show it off to the world. Maybe it's an A
 
 This "immediate interactivity" is going to require a **server**, which takes user requests (e.g., the scribbles) and _serves_ responses (e.g., the generated cat images). You _could_ use your personal laptop, but it'll stop serving requests when it goes to sleep or you turn it off. A sophisticated hacker could also steal your private data, and your hard drive might melt if your computer tries serving too many requests once the app gets popular!
 
-Unless you like hacked, melted laptops, you'll probably want to rent a server from the cloud. While you do lose full control over over the machine serving requests, cloud computing lets you abstract away a lot of configuration and maintenance you likely don't want to deal with anyway. And if you're willing to pay a bit more, you can easily rent a machine $-$ or several $-$ that's significantly stronger than your laptop.
+Unless you like hacked, melted laptops, you'll probably want to rent a server from the cloud. While you do lose full control over over the machine serving requests, cloud computing lets you abstract away a lot of configuration and maintenance you likely don't want to deal with anyway. And if you're willing to pay a bit more, you can easily rent a machine -- or several -- that's significantly stronger than your laptop.
 
-We previously covered a [high-level overview]({{  site.baseurl  }}/AWS-Intro) of the cloud and its history, as well as [cloud storage]({{  site.baseurl  }}/AWS-Storage). But what about the _engines_ of the cloud? In this final post, we'll cover two compute-focused **Amazon Web Services**. We'll start with the fundamental cloud building block, **EC2**, before moving on to server-less computing with **Lambda**.
+We previously covered a [high-level overview]({{  site.baseurl  }}/AWS-Intro) of the cloud, as well as a tutorial on [storing data]({{  site.baseurl  }}/AWS-Storage). But what about the _engines_ of the cloud? In this final post, we'll cover two compute-focused **Amazon Web Services**. We'll start with the fundamental cloud building block, **EC2**, before moving on to server-less computing with **Lambda**.
 
 ## Table of contents
 * [Background](#background)
@@ -23,9 +23,11 @@ We previously covered a [high-level overview]({{  site.baseurl  }}/AWS-Intro) of
 * [Lambda](#lambda)
 
 ## Background
-The holiday season is a yearly compute crunch for online retailers. Q4 accounted for **a staggering 33-39%** of [Macy's](https://ycharts.com/companies/M/revenues) and [Kohl's](https://ycharts.com/companies/KSS/revenues) yearly revenues. ([Amazon](https://ycharts.com/companies/AMZN/revenues) was 29-32%.) Holiday shopping means _a lot of users_ are spending _a lot more time_ on your website.
+The holiday season is a recurring chaotic time for retailers: Q4 accounts for **a staggering 33-39%** of [Macy's](https://ycharts.com/companies/M/revenues) and [Kohl's](https://ycharts.com/companies/KSS/revenues) yearly revenues, for example. (Even with Prime Day in the summer, [Amazon](https://ycharts.com/companies/AMZN/revenues) is still 29-32%.) Holiday shopping means _a lot of users_ spending _a lot more time_ on your website.
 
-How can you handle this extra load? One option is to buy more computers. And there are indeed [stories of early Amazon engineers](https://open.spotify.com/episode/14LmWeOMRZysw2i2vYSOuw?si=ce630660e3b44461) shopping for the most powerful servers they could find, hoping it would handle the spike in requests to the online retailer. But when the holiday buzz ends, that extra compute might end up sitting around unused.
+This extra load is often more than your servers can handle the remainder of the year. You need to do something: the last thing you want is for your site to be down, millions of dollars of sales slipping by as frustrated users switch to another website for their last-minute shopping.
+
+One way to handle the additional load is to buy more computers. And there are indeed [stories of early Amazon engineers](https://open.spotify.com/episode/14LmWeOMRZysw2i2vYSOuw?si=ce630660e3b44461) shopping for the most powerful servers they could find, hoping it would handle the spike in requests! But when the holiday buzz ends, that extra compute would end up sitting around unused until the business grew enough to need it, hopefully before the next holiday season.
 
 Ideally, you'd be able to _scale up_ when you need the compute, then _scale down_ when you don't need the computers. This **elasticity** is a central goal of cloud computing -- use only what you need, when you need it.
 
