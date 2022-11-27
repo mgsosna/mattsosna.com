@@ -23,29 +23,22 @@ We previously covered a [high-level overview]({{  site.baseurl  }}/AWS-Intro) of
 * [Lambda](#lambda)
 
 ## Background
-The holiday season is a recurring chaotic time for retailers: Q4 accounts for **a staggering 33-39%** of [Macy's](https://ycharts.com/companies/M/revenues) and [Kohl's](https://ycharts.com/companies/KSS/revenues) yearly revenues, for example. (Even with Prime Day in the summer, [Amazon](https://ycharts.com/companies/AMZN/revenues) is still 29-32%.) Holiday shopping means _a lot of users_ spending _a lot more time_ on your website.
+The holiday season is a recurring chaotic time for retailers. Q4 accounts for **a staggering 33-39%** of [Macy's](https://ycharts.com/companies/M/revenues) and [Kohl's](https://ycharts.com/companies/KSS/revenues) yearly revenues, for example, and even with Prime Day in the summer, [Amazon's](https://ycharts.com/companies/AMZN/revenues) Q4 is still 29-32%. Holiday shopping means _a lot of users_ spending _a lot more time_ on your website.
 
-This extra load is often more than your servers can handle the remainder of the year. You need to do something: the last thing you want is for your site to be down, millions of dollars of sales slipping by as frustrated users switch to another website for their last-minute shopping.
+This extra load is often much more than your servers -- configured for normal traffic the rest of the year -- can handle. You need to do something: the last thing you want is for your site to be down, millions of dollars of sales slipping by as frustrated shoppers switch to another website.
 
-One way to handle the additional load is to buy more computers. And there are indeed [stories of early Amazon engineers](https://open.spotify.com/episode/14LmWeOMRZysw2i2vYSOuw?si=ce630660e3b44461) shopping for the most powerful servers they could find, hoping it would handle the spike in requests! But when the holiday buzz ends, that extra compute would end up sitting around unused until the business grew enough to need it, hopefully before the next holiday season.
+One way to handle the additional load is to buy more computers. And there are indeed [stories of early Amazon engineers](https://open.spotify.com/episode/14LmWeOMRZysw2i2vYSOuw?si=ce630660e3b44461) preparing for the holidays by buying the most powerful servers they could find, hoping they'd handle the spike in requests! But when the holiday buzz ended, that extra compute would end up sitting around unused until the next holiday season.<sup>[[1]](#1-background)</sup>
 
-Ideally, you'd be able to _scale up_ when you need the compute, then _scale down_ when you don't need the computers. This **elasticity** is a central goal of cloud computing -- use only what you need, when you need it.
+Ideally, you'd be able to _scale up_ when you need the compute, then _scale down_ when you don't need the extra power. This **elasticity** is a central goal of cloud computing -- use only what you need, when you need it. And being able to **quickly** get up and running, without needing to buy and set up the hardware, was another key need.
 
-EC2 is AWS's core building block.
-* You're renting virtual machines and storing data on virtual drives
-
-
-
-* EC2, ECS
-
-
+Amazon Web Services set out to address needs like these in the fledgling internet. We've [already covered]({{  site.baseurl  }}/AWS-Storage) one of their core early offerings: Amazon Simple Storage Service (S3), a catch-all Dropbox analogue for storing data. But Amazon's _very first_ offering was a compute service: Elastic Cloud Compute.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/ec2_landing.png" alt="AWS EC2 landing page">
 
-## EC2
-Let's start with the fundamental building block of AWS: the virtual server. Virtual servers are partitions of physical servers in data centers, like miniature computers we can reserve _inside_ a bigger computer. Whether they're running simulations for a weather forecast, fetching data from a database, or sending the HTML for your app's fancy webpage, virtual servers are the engines powering the cloud.
+## EC2: Elastic Cloud Compute
+Amazon's first offering, EC2, is the fundamental building block of the cloud: the virtual server. Virtual servers are [logical partitions](https://en.wikipedia.org/wiki/Logical_partition) of physical servers sitting in data centers. They're like miniature computers we can reserve _inside_ a bigger computer. Whether they're running simulations for a weather forecast, fetching data from a database, or sending the HTML for your app's fancy webpage, virtual servers are the engines powering the cloud.
 
-At AWS, these engines are called **EC2** instances. EC2 stands for "Elastic Compute Cloud" and was Amazon's first public cloud offering, in 2006. EC2 instances are modular and configurable, meaning you can easily add or remove instances that meet your specific needs. You can specify both the hardware (e.g., the compute, memory, GPU, etc.)<sup>[[1]](#1-ec2)</sup> and software (e.g., its operating system and programs).
+At AWS, these engines are called **EC2** instances. EC2 stands for "Elastic Compute Cloud" and was Amazon's first public cloud offering, in 2006. EC2 instances are modular and configurable, meaning you can easily add or remove instances that meet your specific needs. You can specify both the hardware (e.g., the compute, memory, GPU, etc.)<sup>[[2]](#2-ec2)</sup> and software (e.g., its operating system and programs).
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/ec2_intro.png">
 
@@ -127,5 +120,8 @@ Lambda is _server-less_ computing. This is a bit of a confusing term because the
 But sometimes you don't want an instance to be running constantly in the background. You may have a tiny operation you want to run, like saving a log to S3, any time a user clicks on something. Or you want to write to a database or kick off a data processing pipeline whenever a file is uploaded to S3. For this, a lambda is the way to go.
 
 ## Footnotes
-#### 1. [EC2](#ec2)
+#### 1. [Background](#background)
+For hyper-growth early Amazon, the extra compute purchased during the holiday season would eventually just serve the normal business needs as the company grew. But for most companies, this extra compute wouldn't be helpful to have most of the year.
+
+#### 2. [EC2: Elastic Cloud Compute](#ec2-elastic-cloud-compute)
 It's tempting to say that you choose what _hardware_ you want your virtual server to have when you're deciding the amount of memory and CPU your instance will have, but this is likely provisioned via software as well.
