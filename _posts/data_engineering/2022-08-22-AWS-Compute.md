@@ -9,25 +9,25 @@ tags: aws python
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/edges2cats.png">
 <span style="font-size: 12px"><i>Screenshot from Christopher Hesse's amazing [Image-to-Image Demo](https://affinelayer.com/pixsrv/)</i></span>
 
-So you've built a cool app and want to show it off to the world. Maybe it's an AI that generates [cat pictures from scribbles](https://affinelayer.com/pixsrv/), a [viral LinkedIn post generator](https://viralpostgenerator.com), or an [English to RegEx translator](https://www.autoregex.xyz/). In all cases, you want a user to just click a link and immediately start interacting with your app, rather than needing to download and run it on their computer.
+So you've built a cool app and want to show it off to the world. Maybe it's an AI that generates [cat pictures from scribbles](https://affinelayer.com/pixsrv/), a [viral LinkedIn post generator](https://viralpostgenerator.com), or an [English to RegEx translator](https://www.autoregex.xyz/). You want a user to just click a link and immediately start interacting with your app, rather than needing to download and run it on their computer.
 
-This "immediate interactivity" is going to require a **server**, which takes user requests (e.g., the scribbles) and _serves_ responses (e.g., the generated cat images). You _could_ use your personal laptop, but it'll stop serving requests when it goes to sleep or you turn it off. A sophisticated hacker could also steal your private data, and your hard drive might melt if your computer tries serving too many requests once the app gets popular!
+This "immediate interactivity" is going to require a **server**, which takes user requests (e.g., cat scribbles) and _serves_ responses (e.g., AI-generated cat images). You _could_ use your personal laptop, but it'll stop serving requests when it goes to sleep or turns off. A sophisticated hacker could also steal your private data, and your hard drive might melt if your app gets popular and your computer tries serving too many requests!
 
-Unless you like hacked, melted laptops, you'll probably want to rent a server from the cloud. While you do lose full control over over the machine serving requests, cloud computing lets you abstract away a lot of configuration and maintenance you likely don't want to deal with anyway. And if you're willing to pay a bit more, you can easily rent a machine -- or several -- that's significantly stronger than your laptop.
+Unless you like hacked, melted laptops, you'll probably want to rent a server from the cloud. While you do sacrifice some control by not having access to the physical machine, you'll abstract away a lot of configuration and maintenance you likely don't want to deal with anyway. And if you're willing to pay a bit more, you can easily rent a machine -- or several -- that are significantly stronger than your laptop. So how do we get started?
 
 We previously covered a [high-level overview]({{  site.baseurl  }}/AWS-Intro) of the cloud, as well as a tutorial on [storing data]({{  site.baseurl  }}/AWS-Storage). But what about the _engines_ of the cloud? In this final post, we'll cover two compute-focused **Amazon Web Services**. We'll start with the fundamental cloud building block, **EC2**, before moving on to server-less computing with **Lambda**.
 
 ## Table of contents
 * [Background](#background)
-* [EC2](#ec2)
+* [EC2: Elastic Cloud Compute](#ec2-elastic-cloud-compute)
 * [Lambda](#lambda)
 
 ## Background
-The holiday season is a recurring chaotic time for retailers. Q4 accounts for **a staggering 33-39%** of [Macy's](https://ycharts.com/companies/M/revenues) and [Kohl's](https://ycharts.com/companies/KSS/revenues) yearly revenues, for example, and even with Prime Day in the summer, [Amazon's](https://ycharts.com/companies/AMZN/revenues) Q4 is still 29-32%. Holiday shopping means _a lot of users_ spending _a lot more time_ on your website.
+The holiday season is a recurring chaotic time for retailers. Q4 accounts for **a staggering 33-39%** of [Macy's](https://ycharts.com/companies/M/revenues) and [Kohl's](https://ycharts.com/companies/KSS/revenues) yearly revenues, for example, and even with Prime Day in the summer, [Amazon's](https://ycharts.com/companies/AMZN/revenues) Q4 is still around 31%. Much of this holiday rush [takes place online](https://www.cbre.com/insights/articles/omnichannel-what-is-the-share-of-e-commerce-in-overall-retail-sales), translating to _a lot of users_ spending _a lot more time_ on your website.
 
-This extra load is often much more than your servers -- configured for normal traffic the rest of the year -- can handle. You need to do something: the last thing you want is for your site to be down, millions of dollars of sales slipping by as frustrated shoppers switch to another website.
+This extra load is often much more than your servers -- configured for normal traffic the rest of the year -- can handle. You need to do something: the last thing you want is for your site to be down, [millions of dollars of sales slipping by](https://www.independent.co.uk/news/business/amazon-down-internet-outage-sales-b1861737.html) as frustrated shoppers switch to another website.<sup>[[1]](#1-background)</sup>
 
-One way to handle the additional load is to buy more computers. And there are indeed [stories of early Amazon engineers](https://open.spotify.com/episode/14LmWeOMRZysw2i2vYSOuw?si=ce630660e3b44461) preparing for the holidays by buying the most powerful servers they could find, hoping they'd handle the spike in requests! But when the holiday buzz ended, that extra compute would end up sitting around unused until the next holiday season.<sup>[[1]](#1-background)</sup>
+One way to handle the additional load is to buy more computers. And there are indeed [stories of early Amazon engineers](https://open.spotify.com/episode/14LmWeOMRZysw2i2vYSOuw?si=ce630660e3b44461) preparing for the holidays by buying the most powerful servers they could find, hoping they'd handle the spike in requests! But when the holiday buzz ended, that extra compute would end up sitting around unused until the next holiday season.<sup>[[2]](#2-background)</sup>
 
 Ideally, you'd be able to _scale up_ when you need the compute, then _scale down_ when you don't need the extra power. This **elasticity** is a central goal of cloud computing -- use only what you need, when you need it. And being able to **quickly** get up and running, without needing to buy and set up the hardware, was another key need.
 
@@ -38,7 +38,7 @@ Amazon Web Services set out to address needs like these in the fledgling interne
 ## EC2: Elastic Cloud Compute
 Amazon's first offering, EC2, is the fundamental building block of the cloud: the virtual server. Virtual servers are [logical partitions](https://en.wikipedia.org/wiki/Logical_partition) of physical servers sitting in data centers. They're like miniature computers we can reserve _inside_ a bigger computer. Whether they're running simulations for a weather forecast, fetching data from a database, or sending the HTML for your app's fancy webpage, virtual servers are the engines powering the cloud.
 
-At AWS, these engines are called **EC2** instances. EC2 stands for "Elastic Compute Cloud" and was Amazon's first public cloud offering, in 2006. EC2 instances are modular and configurable, meaning you can easily add or remove instances that meet your specific needs. You can specify both the hardware (e.g., the compute, memory, GPU, etc.)<sup>[[2]](#2-ec2)</sup> and software (e.g., its operating system and programs).
+At AWS, these engines are called **EC2** instances. EC2 stands for "Elastic Compute Cloud" and was Amazon's first public cloud offering, in 2006. EC2 instances are modular and configurable, meaning you can easily add or remove instances that meet your specific needs. You can specify both the hardware (e.g., the compute, memory, GPU, etc.)<sup>[[3]](#3-ec2)</sup> and software (e.g., its operating system and programs).
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/ec2_intro.png">
 
@@ -121,7 +121,15 @@ But sometimes you don't want an instance to be running constantly in the backgro
 
 ## Footnotes
 #### 1. [Background](#background)
+In researching for this post, I found plenty of interesting statistics about the cost of websites that are clunky or down. Some of the more interesting ones:
+* Taobao's Singles Day 20-minute crash in 2021 could have cost [several billion dollars](https://queue-it.com/blog/singles-day-statistics/) in sales.
+* A webpage that loads within two seconds has an average bounce rate of 9%. That number [jumps to 38%](https://www.pingdom.com/blog/page-load-time-really-affect-bounce-rate/) when the webpage takes five seconds to load.
+
+
+
+
+#### 2. [Background](#background)
 For hyper-growth early Amazon, the extra compute purchased during the holiday season would eventually just serve the normal business needs as the company grew. But for most companies, this extra compute wouldn't be helpful to have most of the year.
 
-#### 2. [EC2: Elastic Cloud Compute](#ec2-elastic-cloud-compute)
+#### 3. [EC2: Elastic Cloud Compute](#ec2-elastic-cloud-compute)
 It's tempting to say that you choose what _hardware_ you want your virtual server to have when you're deciding the amount of memory and CPU your instance will have, but this is likely provisioned via software as well.
