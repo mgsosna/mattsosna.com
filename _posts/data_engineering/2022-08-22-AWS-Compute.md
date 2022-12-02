@@ -38,7 +38,7 @@ Amazon Web Services set out to address needs like these in the fledgling interne
 ## EC2: Elastic Cloud Compute
 We can use Amazon EC2 to access the fundamental building block of the cloud: the virtual server. Virtual servers are [logical partitions](https://en.wikipedia.org/wiki/Logical_partition) of physical servers sitting in data centers. They're like miniature computers we can reserve _inside_ a bigger computer. Whether they're running simulations for a weather forecast, fetching data from a database, or sending the HTML for your app's fancy webpage, virtual servers are the engines powering the cloud.
 
-At AWS, these engines are called **EC2** instances, or "Elastic Cloud Compute." Released in 2006, they were [one of Amazon's first cloud services](https://aws.amazon.com/blogs/aws/aws-blog-the-first-five-years/), and have grown to be super valuable (cite). EC2 instances are modular and configurable, meaning you can easily add or remove instances that meet your specific needs. You can specify both the hardware (e.g., the compute, memory, GPU, etc.)<sup>[[3]](#3-ec2)</sup> and software (e.g., its operating system and programs).
+At AWS, these engines are called **EC2** instances, or "Elastic Compute Cloud." Released in 2006, they were [one of Amazon's first cloud services](https://aws.amazon.com/blogs/aws/aws-blog-the-first-five-years/), and have grown to be super valuable (cite). EC2 instances are modular and configurable, meaning you can easily add or remove instances that meet your specific needs. You can specify both the hardware (e.g., the compute, memory, GPU, etc.)<sup>[[3]](#3-ec2)</sup> and software (e.g., its operating system and programs).
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/ec2_intro.png">
 
