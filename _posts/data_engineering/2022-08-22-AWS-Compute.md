@@ -13,7 +13,7 @@ So you've built a cool app and want to show it off to the world. Maybe it's an A
 
 This "immediate interactivity" is going to require a **server**, which takes user requests (e.g., cat scribbles) and _serves_ responses (e.g., AI-generated cat images). You _could_ use your personal laptop, but it'll stop serving requests when it goes to sleep or turns off. A sophisticated hacker could also steal your private data, and your hard drive might melt if your app gets popular and your computer tries serving too many requests!
 
-Unless you like hacked, melted laptops, you'll probably want to rent a server from the cloud. While you do sacrifice some control by not having access to the physical machine, you'll abstract away a lot of configuration and maintenance you likely don't want to deal with anyway. And if you're willing to pay a bit more, you can easily rent a machine -- or several -- that are significantly stronger than your laptop. So how do we get started?
+Unless you like hacked, melted laptops, you'll probably want to [rent a server from the cloud]({{  site.baseurl  }}/AWS-Intro). While you do sacrifice some control by not having access to the physical machine, you'll abstract away a lot of configuration and maintenance you likely don't want to deal with anyway. And if you're willing to pay a bit more, you can easily rent a machine -- or several -- that are significantly stronger than your laptop. So how do we get started?
 
 We previously covered a [high-level overview]({{  site.baseurl  }}/AWS-Intro) of the cloud, as well as a tutorial on [storing data]({{  site.baseurl  }}/AWS-Storage). But what about the _engines_ of the cloud? In this final post, we'll cover two compute-focused **Amazon Web Services**. We'll start with the fundamental cloud building block, **EC2**, before moving on to server-less computing with **Lambda**.
 
@@ -36,9 +36,9 @@ Amazon Web Services set out to address needs like these in the fledgling interne
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/ec2_landing.png" alt="AWS EC2 landing page">
 
 ## EC2: Elastic Cloud Compute
-Amazon's first offering, EC2, is the fundamental building block of the cloud: the virtual server. Virtual servers are [logical partitions](https://en.wikipedia.org/wiki/Logical_partition) of physical servers sitting in data centers. They're like miniature computers we can reserve _inside_ a bigger computer. Whether they're running simulations for a weather forecast, fetching data from a database, or sending the HTML for your app's fancy webpage, virtual servers are the engines powering the cloud.
+We can use Amazon EC2 to access the fundamental building block of the cloud: the virtual server. Virtual servers are [logical partitions](https://en.wikipedia.org/wiki/Logical_partition) of physical servers sitting in data centers. They're like miniature computers we can reserve _inside_ a bigger computer. Whether they're running simulations for a weather forecast, fetching data from a database, or sending the HTML for your app's fancy webpage, virtual servers are the engines powering the cloud.
 
-At AWS, these engines are called **EC2** instances. EC2 stands for "Elastic Compute Cloud" and was Amazon's first public cloud offering, in 2006. EC2 instances are modular and configurable, meaning you can easily add or remove instances that meet your specific needs. You can specify both the hardware (e.g., the compute, memory, GPU, etc.)<sup>[[3]](#3-ec2)</sup> and software (e.g., its operating system and programs).
+At AWS, these engines are called **EC2** instances, or "Elastic Cloud Compute." Released in 2006, they were [one of Amazon's first cloud services](https://aws.amazon.com/blogs/aws/aws-blog-the-first-five-years/), and have grown to be super valuable (cite). EC2 instances are modular and configurable, meaning you can easily add or remove instances that meet your specific needs. You can specify both the hardware (e.g., the compute, memory, GPU, etc.)<sup>[[3]](#3-ec2)</sup> and software (e.g., its operating system and programs).
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/ec2_intro.png">
 
