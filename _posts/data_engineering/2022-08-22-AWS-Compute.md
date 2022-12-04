@@ -19,7 +19,7 @@ We previously covered a [high-level overview]({{  site.baseurl  }}/AWS-Intro) of
 
 ## Table of contents
 * [Background](#background)
-* [EC2: Elastic Cloud Compute](#ec2-elastic-cloud-compute)
+* [EC2: Elastic Compute Cloud](#ec2-elastic-compute-cloud)
 * [Lambda](#lambda)
 
 ## Background
@@ -35,12 +35,21 @@ Amazon Web Services set out to address needs like these in the fledgling interne
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/ec2_landing.png" alt="AWS EC2 landing page">
 
-## EC2: Elastic Cloud Compute
+## EC2: Elastic Compute Cloud
 We can use Amazon EC2 to access the fundamental building block of the cloud: the virtual server. Virtual servers are [logical partitions](https://en.wikipedia.org/wiki/Logical_partition) of physical servers sitting in data centers. They're like miniature computers we can reserve _inside_ a bigger computer. Whether they're running simulations for a weather forecast, fetching data from a database, or sending the HTML for your app's fancy webpage, virtual servers are the engines powering the cloud.
 
 At AWS, these engines are called **EC2** instances, or "Elastic Compute Cloud." Released in 2006, they were [one of Amazon's first cloud services](https://aws.amazon.com/blogs/aws/aws-blog-the-first-five-years/), and have grown to be super valuable (cite). EC2 instances are modular and configurable, meaning you can easily add or remove instances that meet your specific needs. You can specify both the hardware (e.g., the compute, memory, GPU, etc.)<sup>[[3]](#3-ec2)</sup> and software (e.g., its operating system and programs).
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/ec2_intro.png">
+
+Things you can actually do with an EC2 instance:
+* Host a Wordpress site, host a MySQL database, backend for a web app
+* Super flexible. You "own" these machines. And can pick memory-optimized, general-purpose, storage-optimized, etc.
+  * But this comes at the cost of you needing to worry about security vulnerabilities, CPU utilization, memory utilization, etc.
+* But scaling this is complicated. Let's say [distributed backend for web app](https://www.youtube.com/watch?v=e8Vh9-hsRBo)
+  * Load balancer -> target groups -> automatic scaling group -> one of many EC2s, which actually performs the computation
+
+
 
 ### Set up
 #### AMI
@@ -115,9 +124,20 @@ exit
 
 
 ## Lambda
-Lambda is _server-less_ computing. This is a bit of a confusing term because there _is_ a server involved... you just don't have to worry about the configurations. With an EC2 instance, you need to choose how much CPU and RAM you want the instance to have. Your instance will be there when you submit your requests, run your app, etc. But it'll still be quietly running in the background when you're not using it. This is often what you want $-$ you don't know when someone will make a request to your database, so you want the server to be ready at any time to serve that request. (Or for larger websites, there may never be a time where users _aren't_ making requests to your database. Think Amazon or Google displaying search results.)
+Lambda is _server-less_ computing. This is a bit misleading because there _is_ a server involved... it just becomes a black box abstracted away from you.
+
+With an EC2 instance, you need to choose how much CPU and RAM you want the instance to have. Your instance will be there when you submit your requests, run your app, etc. But it'll still be quietly running in the background when you're not using it. This is often what you want $-$ you don't know when someone will make a request to your database, so you want the server to be ready at any time to serve that request. (Or for larger websites, there may never be a time where users _aren't_ making requests to your database. Think Amazon or Google displaying search results.)
 
 But sometimes you don't want an instance to be running constantly in the background. You may have a tiny operation you want to run, like saving a log to S3, any time a user clicks on something. Or you want to write to a database or kick off a data processing pipeline whenever a file is uploaded to S3. For this, a lambda is the way to go.
+
+So in Lambda, you just focus on the code. You upload it to create a lambda function. Get an ARN, which you can then reference from anywhere.
+* Great for small one-off scripts.
+* Have an API Gateway in front of Lambda, so any time you invoke a REST API on the API Gateway, the endpoint will point to a Lambda function.
+
+Because abstracted away, a lot less configurability. Basically can just specify the amount of memory on the machine(s).
+
+Downside:
+* If Lambda is inactive, there's a brief warmup period. Subsequent calls will be fine. Not an issue with EC2, since it's always on.
 
 ## Footnotes
 #### 1. [Background](#background)
@@ -131,5 +151,5 @@ In researching for this post, I found plenty of interesting statistics about the
 #### 2. [Background](#background)
 For hyper-growth early Amazon, the extra compute purchased during the holiday season would eventually just serve the normal business needs as the company grew. But for most companies, this extra compute wouldn't be helpful to have most of the year.
 
-#### 3. [EC2: Elastic Cloud Compute](#ec2-elastic-cloud-compute)
+#### 3. [EC2: Elastic Compute Cloud](#ec2-elastic-compute-cloud)
 It's tempting to say that you choose what _hardware_ you want your virtual server to have when you're deciding the amount of memory and CPU your instance will have, but this is likely provisioned via software as well.
