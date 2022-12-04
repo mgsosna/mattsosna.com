@@ -31,6 +31,10 @@ The thing to remember
 * "Getting to the bottom of it." Following the trail.
 * No one actually knows everything. If they do, they're probably extremely busy and high-up. (If they are and they're willing to talk to you, hold onto them! Set up 1:1's if you can.)
 
+How to find out what a piece of code does? In a smaller company, you could ask someone, or read some documentation. But here it's easier (and sometimes the only way) to just read the code itself. And as an oncall, sometimes that's just what you have to do when there's time pressure.
+
+Understanding the interview process better: thinking coolly under pressure.
+
 ### 1b. Learning quickly
 One thing that surprised me is how little open-source software I use in my job. When you're at a company of FAANG's scale, where users are numbered in the _billions_ rather than thousands or millions, non-custom solutions simply don't work. The one-in-a-million edge case comes up constantly. The inefficiency of an operation starts to wear on your servers.
 
@@ -48,3 +52,14 @@ Also getting good at Airflow / DAGs. Pipelines will have dependencies, which wil
 
 ## 3. Specialization
 In a startup, you're responsible for a wide range of the analytics-engineering spectrum. In a big company, you really specialize. This doesn't mean that your work is all the same, though: as an MLE, your work will range from running experiments, learning from domain experts,
+
+Culture matters. Meta is very engineer-driven, meaning you have the freedom to choose what you work on (within some bounds, but still). With this comes responsibility, though: you are evaluated on the impact you provide to the team and the broader org. So you can choose to work on stuff that ultimately doesn't pay off. It becomes important to identify the right questions to pursue, and to think long-term with questions like "who will _maintain_ this service long-term? What is the alerting? etc."
+
+Scale.
+* E3: doing self-contained units of a larger project.
+* E4: doing large pieces of a project, owning smaller projects.
+* E5: impacting your team. Leading projects.
+* E6: leading a team.
+* E7: leading across multiple teams.
+
+On-call shifts. Stressful but great way to quickly learn a space. And how to communicate with other teams, debug issues. etc.
