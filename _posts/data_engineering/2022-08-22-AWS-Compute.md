@@ -11,7 +11,7 @@ tags: aws python
 
 So you've built a cool app and want to show it off to the world. Maybe it's an AI that generates [cat pictures from scribbles](https://affinelayer.com/pixsrv/), a [viral LinkedIn post generator](https://viralpostgenerator.com), or an [English to RegEx translator](https://www.autoregex.xyz/). You want a user to just click a link and immediately start interacting with your app, rather than needing to download and run it on their computer.
 
-This "immediate interactivity" is going to require a **server**, which takes user requests (e.g., cat scribbles) and _serves_ responses (e.g., AI-generated cat images). You _could_ use your personal laptop, but it'll stop serving requests when it goes to sleep or turns off. A sophisticated hacker could steal your private data. Your hard drive also might melt if your app gets popular and your computer tries serving too many requests!
+This "immediate interactivity" is going to require a **server**, which takes user requests (e.g., cat scribbles) and _serves_ responses (e.g., AI-generated cat images). You _could_ use your personal laptop, but it'll stop serving requests when it goes to sleep or turns off, and a sophisticated hacker could probably steal your private data. The cherry on top is that your hard drive might melt if your computer tries serving too many requests at once!
 
 Unless you like hacked, melted laptops, you'll probably want to [rent a server from the cloud]({{  site.baseurl  }}/AWS-Intro). While you do sacrifice some control by not having access to the physical machine, you'll abstract away a lot of configuration and maintenance you likely don't want to deal with anyway. And if you're willing to pay a bit more, you can easily rent a machine -- or several -- that are significantly stronger than your laptop. So how do we get started?
 
@@ -27,13 +27,11 @@ The holiday season is a recurring chaotic time for retailers. Q4 accounts for **
 
 Put yourself in the shoes of an Amazon infrastructure engineer in October 2005, a few years after the dot-com bubble, but before the cloud industry has really started. You know you have to do _something_ to handle the tsunami of traffic on the horizon: the last thing you want is for the site to be down, [millions of dollars of sales slipping by](https://www.independent.co.uk/news/business/amazon-down-internet-outage-sales-b1861737.html) as frustrated shoppers switch to another website.<sup>[[1]](#1-background)</sup>
 
-One way to handle the additional load is to buy more computers. (There are indeed [stories of early Amazon engineers](https://open.spotify.com/episode/14LmWeOMRZysw2i2vYSOuw?si=ce630660e3b44461) preparing for the holidays by buying the most powerful servers they could find and crossing their fingers!) These extra servers should indeed handle the spike in traffic. But when the holiday buzz ends, that extra compute will end up sitting around unused until the next holiday season.<sup>[[2]](#2-background)</sup>
+One way to handle the additional load is to _buy more computers_. (There are indeed [stories of early Amazon engineers](https://open.spotify.com/episode/14LmWeOMRZysw2i2vYSOuw?si=ce630660e3b44461) preparing for the holidays by buying the most powerful servers they could find and crossing their fingers!) These extra servers should indeed handle the spike in traffic. But when the holiday buzz ends, that extra compute will end up sitting around unused until the next holiday season.<sup>[[2]](#2-background)</sup>
 
 The alternative would be to _rent_ compute somehow. Ideally, you'd be able to _scale up_ when you need the compute, then _scale down_ once you're done. You'd be able to **elastically** and **quickly** increase and decrease your resources to meet your immediate needs, rather than needing to guess ahead of time.
 
-Cloud computing is so ubiquitous today that the answer is simply
-
-Amazon Web Services set out to address needs like these in the fledgling internet. We've [already covered]({{  site.baseurl  }}/AWS-Storage) one of their core early offerings: Amazon Simple Storage Service (S3), a catch-all Dropbox analogue for storing data. But Amazon's _very first_ offering was a compute service: Elastic Cloud Compute.
+Amazon Web Services was born out of needs like these in the fledgling internet: dynamically accessing the compute resources you need, when you need them. We've [already covered]({{  site.baseurl  }}/AWS-Storage) one of their core early offerings: Amazon Simple Storage Service (S3), a catch-all Dropbox analogue for storing data. But Amazon's _very first_ offering was a compute service: Elastic Cloud Compute.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/ec2_landing.png" alt="AWS EC2 landing page">
 
@@ -143,15 +141,14 @@ Downside:
 
 ## Footnotes
 #### 1. [Background](#background)
-In researching for this post, I found plenty of interesting statistics about the cost of websites that are clunky or down. Some of the more interesting ones:
-* Taobao's Singles Day 20-minute crash in 2021 could have cost [several billion dollars](https://queue-it.com/blog/singles-day-statistics/) in sales.
-* A webpage that loads within two seconds has an average bounce rate of 9%. That number [jumps to 38%](https://www.pingdom.com/blog/page-load-time-really-affect-bounce-rate/) when the webpage takes five seconds to load.
-
-
-
+In researching for this post, I found plenty of interesting statistics about how expensive it can be for a popular website to be unresponsive or unavailable. Some of the more interesting stats:
+* [Taobao](https://en.wikipedia.org/wiki/Taobao), a Chinese online shopping platform, had a 20-minute crash during Singles' Day in 2021 that may have cost [**several billion dollars**](https://queue-it.com/blog/singles-day-statistics/) in sales.
+* A webpage that loads within two seconds has an average [bounce rate](https://en.wikipedia.org/wiki/Bounce_rate) of 9%. That number [**jumps to 38%**](https://www.pingdom.com/blog/page-load-time-really-affect-bounce-rate/) when the webpage takes five seconds to load.
 
 #### 2. [Background](#background)
-For hyper-growth early Amazon, the extra compute purchased during the holiday season would eventually just serve the normal business needs as the company grew. But for most companies, this extra compute wouldn't be helpful to have most of the year.
+For hyper-growth early Amazon, the extra compute purchased during the holiday season would eventually just serve the normal business needs as the company grew. But for most companies, this extra compute would be a hindrance most of the year.
+
+As a side note, there's a common narrative that AWS spun out of Amazon trying to utilize all this "extra compute" sitting around Q1-Q3. They had all these unused servers, so why not just let customers use them? My [favorite rebuttal](https://open.spotify.com/episode/14LmWeOMRZysw2i2vYSOuw?si=ce630660e3b44461&nd=1) of this narrative is that when Q4 came up the following year, Amazon obviously couldn't just terminate all those customers to take back their servers! Amazon would be stuck needing to buy a bunch more servers again.
 
 #### 3. [EC2: Elastic Compute Cloud](#ec2-elastic-compute-cloud)
 It's tempting to say that you choose what _hardware_ you want your virtual server to have when you're deciding the amount of memory and CPU your instance will have, but this is likely provisioned via software as well.
