@@ -25,31 +25,26 @@ We previously covered a [high-level overview]({{  site.baseurl  }}/AWS-Intro) of
 ## Background
 The holiday season is a recurring chaotic time for retailers. Q4 accounts for **a staggering 33-39%** of [Macy's](https://ycharts.com/companies/M/revenues) and [Kohl's](https://ycharts.com/companies/KSS/revenues) yearly revenues, for example, and even with Prime Day in the summer, [Amazon's](https://ycharts.com/companies/AMZN/revenues) Q4 is still around 31%. Much of this holiday rush [takes place online](https://www.cbre.com/insights/articles/omnichannel-what-is-the-share-of-e-commerce-in-overall-retail-sales), translating to _a lot more users_ spending _a lot more time_ on stores' websites.
 
-Put yourself in the shoes of an Amazon infrastructure engineer in October 2005, a few years after the dot-com bubble, but before the cloud industry has really started. You know you have to do _something_ to handle the tsunami of traffic on the horizon: the last thing you want is for the site to be down, [millions of dollars of sales slipping by](https://www.independent.co.uk/news/business/amazon-down-internet-outage-sales-b1861737.html) as frustrated shoppers switch to another website.<sup>[[1]](#1-background)</sup>
+Put yourself in the shoes of an Amazon infrastructure engineer in October 2005, a few years after the [dot-com bubble](https://en.wikipedia.org/wiki/Dot-com_bubble), but before the cloud industry really started. You know you have to do _something_ to handle the tsunami of traffic on the horizon: the last thing you want is for the site to be down, [millions of dollars of sales slipping by](https://www.independent.co.uk/news/business/amazon-down-internet-outage-sales-b1861737.html) as frustrated shoppers switch to another website.<sup>[[1]](#1-background)</sup>
 
 One way to handle the additional load is to _buy more computers_. (There are indeed [stories of early Amazon engineers](https://open.spotify.com/episode/14LmWeOMRZysw2i2vYSOuw?si=ce630660e3b44461) preparing for the holidays by buying the most powerful servers they could find and crossing their fingers!) These extra servers should indeed handle the spike in traffic. But when the holiday buzz ends, that extra compute will end up sitting around unused until the next holiday season.<sup>[[2]](#2-background)</sup>
 
-The alternative would be to _rent_ compute somehow. Ideally, you'd be able to _scale up_ when you need the compute, then _scale down_ once you're done. You'd be able to **elastically** and **quickly** increase and decrease your resources to meet your immediate needs, rather than needing to guess ahead of time.
+The alternative would be to _rent_ compute somehow. Ideally, resources would **elastically** and **automatically** increase and decrease to your immediate needs, rather than needing to guess ahead of time. You'd abstract away the physical hardware, instead just dipping into a "pool" of resources.
 
-Amazon Web Services was born out of needs like these in the fledgling internet: dynamically accessing the compute resources you need, when you need them. We've [already covered]({{  site.baseurl  }}/AWS-Storage) one of their core early offerings: Amazon Simple Storage Service (S3), a catch-all Dropbox analogue for storing data. But Amazon's _very first_ offering was a compute service: Elastic Cloud Compute.
+Amazon Web Services was born out of needs like these in the fledgling internet: dynamically accessing the compute resources you need, when you need them. We've [already covered]({{  site.baseurl  }}/AWS-Storage) one of their fundamental _storage_ offerings: Amazon Simple Storage Service (S3), a catch-all Dropbox analogue for storing data. But let's now turn to Amazon's fundamental _compute_ offering: **Elastic Compute Cloud.**
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/ec2_landing.png" alt="AWS EC2 landing page">
 
 ## EC2: Elastic Compute Cloud
-We can use Amazon EC2 to access the fundamental building block of the cloud: the virtual server. Virtual servers are [logical partitions](https://en.wikipedia.org/wiki/Logical_partition) of physical servers sitting in data centers. They're like miniature computers we can reserve _inside_ a bigger computer. Whether they're running simulations for a weather forecast, fetching data from a database, or sending the HTML for your app's fancy webpage, virtual servers are the engines powering the cloud.
+We can use **Amazon EC2** to access the fundamental building block of the cloud: the **virtual server**. Data centers are filled with servers, which are [logically partitioned](https://en.wikipedia.org/wiki/Logical_partition) into virtual servers, allowing multiple people to simultaneously and independently use the hardware.
 
-At AWS, these engines are called **EC2** instances, or "Elastic Compute Cloud." Released in 2006, they were [one of Amazon's first cloud services](https://aws.amazon.com/blogs/aws/aws-blog-the-first-five-years/), and have grown to be super valuable (cite). EC2 instances are modular and configurable, meaning you can easily add or remove instances that meet your specific needs. You can specify both the hardware (e.g., the compute, memory, GPU, etc.)<sup>[[3]](#3-ec2)</sup> and software (e.g., its operating system and programs).
+One server could be simultaneously running simulations for a weather forecast, fetching data from multiple databases, sending the HTML for a dozen webpages, and more. Importantly, this physical server would be abstracted away from its users beyond the configuration of their virtual servers, letting them focus on their applications.
+
+At AWS, virtual servers are called **EC2 instances**. Released in 2006, EC2 was [one of Amazon's first cloud services](https://aws.amazon.com/blogs/aws/aws-blog-the-first-five-years/) and has grown to be a [central component of the tech stacks](https://aws.amazon.com/ec2/customers/) of Netflix, Pinterest, Lyft, and more. EC2 instances are modular and configurable, allowing users to optimize for compute, memory, GPU, storage, or a combination depending on their needs. A GPU-optimized instance could be used for training machine learning models, for example, while a storage-optimized instance could host a database.
+
+Let's now create an EC2 instance to take a closer look. We [log into our AWS account](https://aws.amazon.com/login), then navigate to EC2 from the menu of services. We should see something like the image below.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/ec2_intro.png">
-
-Things you can actually do with an EC2 instance:
-* Host a Wordpress site, host a MySQL database, backend for a web app
-* Super flexible. You "own" these machines. And can pick memory-optimized, general-purpose, storage-optimized, etc.
-  * But this comes at the cost of you needing to worry about security vulnerabilities, CPU utilization, memory utilization, etc.
-* But scaling this is complicated. Let's say [distributed backend for web app](https://www.youtube.com/watch?v=e8Vh9-hsRBo)
-  * Load balancer -> target groups -> automatic scaling group -> one of many EC2s, which actually performs the computation
-
-
 
 ### Set up
 #### AMI
@@ -139,6 +134,12 @@ Because abstracted away, a lot less configurability. Basically can just specify 
 Downside:
 * If Lambda is inactive, there's a brief warmup period. Subsequent calls will be fine. Not an issue with EC2, since it's always on.
 
+Things you can actually do with an EC2 instance:
+* Super flexible. You "own" these machines. And can pick memory-optimized, general-purpose, storage-optimized, etc.
+  * But this comes at the cost of you needing to worry about security vulnerabilities, CPU utilization, memory utilization, etc.
+* But scaling this is complicated. Let's say [distributed backend for web app](https://www.youtube.com/watch?v=e8Vh9-hsRBo)
+  * Load balancer -> target groups -> automatic scaling group -> one of many EC2s, which actually performs the computation
+
 ## Footnotes
 #### 1. [Background](#background)
 In researching for this post, I found plenty of interesting statistics about how expensive it can be for a popular website to be unresponsive or unavailable. Some of the more interesting stats:
@@ -149,6 +150,3 @@ In researching for this post, I found plenty of interesting statistics about how
 For hyper-growth early Amazon, the extra compute purchased during the holiday season would eventually just serve the normal business needs as the company grew. But for most companies, this extra compute would be a hindrance most of the year.
 
 As a side note, there's a common narrative that AWS spun out of Amazon trying to utilize all this "extra compute" sitting around Q1-Q3. They had all these unused servers, so why not just let customers use them? My [favorite rebuttal](https://open.spotify.com/episode/14LmWeOMRZysw2i2vYSOuw?si=ce630660e3b44461&nd=1) of this narrative is that when Q4 came up the following year, Amazon obviously couldn't just terminate all those customers to take back their servers! Amazon would be stuck needing to buy a bunch more servers again.
-
-#### 3. [EC2: Elastic Compute Cloud](#ec2-elastic-compute-cloud)
-It's tempting to say that you choose what _hardware_ you want your virtual server to have when you're deciding the amount of memory and CPU your instance will have, but this is likely provisioned via software as well.
