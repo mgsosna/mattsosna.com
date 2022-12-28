@@ -55,24 +55,30 @@ The default AMI comes with a Linux kernel optimized for EC2, [the system and ser
 <img src="{{ site.baseurl  }}/images/data_engineering/aws/compute/ec2_ami.png" alt="EC2 Amazon Machine Images">
 
 #### Instance Type
-Next up is **Instance Type.** This is where we can choose the hardware for our server. We won't want to deviate from the `t2.micro` option, which is covered by the Free Tier. In a production setting, we could decide whether to optimize for **CPU** (for running a [wide range of system operations simultaneously](https://www.weka.io/learn/hpc/cpu-vs-gpu)), **GPU** (for machine learning or graphics processing), **storage** (for slow reads and writes of persistent data), **memory** (for [fast reads and writes of volatile data](https://www.backblaze.com/blog/whats-diff-ram-vs-storage/)), or some balance of these.
+Next up is **Instance Type**, where we choose the hardware for our server. We won't want to deviate from the `t2.micro` option, which is covered by the Free Tier. In a production setting, we could decide to optimize for **CPU** (for running a [wide range of system operations simultaneously](https://www.weka.io/learn/hpc/cpu-vs-gpu)), **GPU** (for machine learning or graphics processing), **storage** (for slow reads and writes of persistent data), **memory** (for [fast reads and writes of volatile data](https://www.backblaze.com/blog/whats-diff-ram-vs-storage/)), or some combination.
 
 We can't change the instance type once we launch our instance, so make sure you don't accidentally click [the one that charges $31.21 per hour](https://www.todayilearnedcloud.com/Amazon-EC2-How-Much-Does-The-Most-Expensive-Instance-Cost/)! Triple-checking that we've selected `t2.micro`, we can continue to the next step.
 
 #### Key Pair
-Next we'll create a key pair. From the [AWS website](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/get-set-up-for-amazon-ec2.html):
-> AWS uses public-key cryptography to secure the login information for your instance. A Linux instance has no password; you use a key pair to log in to your instance securely. You specify the name of the key pair when you launch your instance, then provide the private key when you log in using SSH.
+We'll now create a key pair. [AWS uses public-key cryptography](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/get-set-up-for-amazon-ec2.html) to secure the login information for EC2 instances. Rather than a password, we'll use the key pair to remotely log into our instance via [SSH](https://www.techtarget.com/searchsecurity/definition/Secure-Shell).
 
-* Pick a region geographically close to where you are
-* AMI: the template. Like a class in Python
-  * Operating system, software, etc. Can get predefined ones from AWS, or create your own and reuse it later.
-* Instance type: how powerful our machine should be
-  * e.g., compute-optimized (processing power), memory-optimized (if storing a lot of in-memory cache), GPU-optimized (e.g., gaming), storage-optimized, general-purpose
-  * These are fixed because they're hardware.
-* Additional configuration: can set your availability zone within your geographic region, but most likely you don't have a preference.
-  * The kind of network, purchasing options, IP addresses for security group, stopping behavior, etc.
-  * Bootstrap shell scripts: code that's run before the instance is officially online. Useful if setting up the instance for someone else
-  * For storage: we can do ephemeral (free), which disappears when we release the instance. But we can also go for Amazon Elastic Block Storage (EBS), or S3
+We'll click on `Create a new key pair`. We then give it a name and stick with the RSA and .pem defaults. (Select PuTTY if you're using Windows.)
+
+<center>
+<img src="{{ site.baseurl  }}/images/data_engineering/aws/compute/key-pair.jpg" alt="Amazon EC2 key pair" height="70%" width="70%">
+</center>
+
+Once we click `Create key pair`, Amazon will save a public part of our key, and our computer will download the private key. Make sure you don't lose this .pem (or .ppk) file, as we'll use it to identify ourselves when remotely accessing the EC2 instance.
+
+#### Network settings
+We now set the rules for how to access our EC2 instance via the internet. For this demo, let's just click `Select existing security group`, then our default VPC ([virtual private cloud](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html)). If you followed along in the previous [AWS Storage post]({{  site.baseurl  }}/AWS-Storage), you'll have already tinkered with the inbound and outbound access rules for this VPC.
+
+#### Configure storage
+We'll leave our storage config at the default values, which are well within the Free Tier limits. Any data we write to our instance will be deleted once our demo is over; if we cared about persisting this data, we could click `Add new volume` to reserve an [Amazon Elastic Block Storage (EBS)](https://aws.amazon.com/ebs/) volume and save our data there. But let's stick with the root volume for now.
+
+#### Advanced details
+We'll skip this section for our demo. But this is where we can specify configurations like on-demand [spot instances](https://aws.amazon.com/ec2/spot/), shutdown and [hibernate](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html) behavior, detailed [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) logs, and more.
+
 * For Security Group, we can just set IP as 0.0.0.0/0. Open to the world.
   * Then need to create a key pair, which will let us SSH into the instance
     * Public key that AWS stores, and private one that we store
@@ -103,11 +109,22 @@ chmod 0400 matt_ec2_key.pem
 ssh -i matt_ec2_key.pem ec2-user@xx.xxx.xxx.xxx
 ```
 
-Now we're in the machine.
+Now we're in the machine. The `whoami` command tells us about the user.
 
 ```bash
 whoami
 # ec2-user
+```
+
+We can then download and run a [sample Python file](https://raw.githubusercontent.com/mgsosna/code_samples/master/calculate_mean.py) for calculating the mean of some numbers.
+
+```bash
+# Download file and give it the same name
+curl -O https://raw.githubusercontent.com/mgsosna/code_samples/master/calculate_mean.py
+
+# Run it
+python3 calculate_mean.py 1 -5 0 33   # 7.25
+python3 calculate_mean.py 0 1e5 -1e5  # 0.0
 ```
 
 ```bash
