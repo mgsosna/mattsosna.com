@@ -38,32 +38,30 @@ Amazon Web Services was born out of needs like these in the fledgling internet: 
 ## EC2: Elastic Compute Cloud
 We can use **Amazon EC2** to access the fundamental building block of the cloud: the **virtual server**. Data centers are filled with servers, which are [logically partitioned](https://en.wikipedia.org/wiki/Logical_partition) into virtual servers, allowing multiple people to simultaneously and independently use the hardware.
 
-One server could be simultaneously running simulations for a weather forecast, fetching data from multiple databases, sending the HTML for a dozen webpages, and more. Importantly, this physical server would be abstracted away from its users beyond the configuration of their virtual servers, letting them focus on their applications.
+One server could be simultaneously running simulations for a weather forecast, fetching data from multiple databases, sending the HTML for a dozen webpages, and more. Importantly, this physical server would be abstracted away from its users beyond the configurations of their virtual servers, letting them focus on their applications.
 
 At AWS, virtual servers are called **EC2 instances**. Released in 2006, EC2 was [one of Amazon's first cloud services](https://aws.amazon.com/blogs/aws/aws-blog-the-first-five-years/) and has grown to be a [central component of the tech stacks](https://aws.amazon.com/ec2/customers/) of Netflix, Pinterest, Lyft, and more. EC2 instances are modular and configurable, allowing users to optimize for compute, memory, GPU, storage, or a combination depending on their needs. A GPU-optimized instance could be used for training machine learning models, for example, while a storage-optimized instance could host a database.
 
-Let's now create an EC2 instance to take a closer look. We [log into our AWS account](https://aws.amazon.com/login), then navigate to EC2 from the menu of services. We should see something like the image below.
+Let's now create an EC2 instance to take a closer look. We [log into our AWS account](https://aws.amazon.com/login), then navigate to EC2 from the menu of services. We should see something like the image below. Let's click on the `Launch instance` button and begin.
 
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/ec2_intro.png">
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/ec2_setup1.png" alt="Setting up AWS EC2">
 
 ### Set up
-#### AMI
-The first thing you do when you launch an instance is select the [Amazon Machine Image](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html). This is like a Docker image that specifies the basic configurations of your instance: the operating system, application server, and applications required for your server to run. Another way to think of this is like a Python class: a reusable template.
+#### AMI: Amazon Machine Image
+The first thing we'll do when launching an EC2 instance is select the [**Amazon Machine Image**](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html). An AMI specifies the basic software configuration our instance: the operating system, [application server](https://www.gartner.com/en/information-technology/glossary/application-server), and applications required for your server to run. AMIs are like [Docker images](https://www.tutorialspoint.com/docker/docker_images.htm): **reusable templates** that let us create the exact environment we want each time.
 
-The basic AMI comes with a Linux kernel optimized for EC2, [the system and service manager systemd](https://en.wikipedia.org/wiki/Systemd), [the GCC compiler](https://en.wikipedia.org/wiki/GNU_Compiler_Collection), and other very low-level software. We could create our own, e.g., if we had strong opinions about optimizing for our custom use case. But this is an intro to AWS tutorial, so let's just choose the default Amazon Linux 2 AMI.
+The default AMI comes with a Linux kernel optimized for EC2, [the system and service manager _systemd_](https://en.wikipedia.org/wiki/Systemd), [the GCC compiler](https://en.wikipedia.org/wiki/GNU_Compiler_Collection), and other very low-level software. We could create our own AMI if we had strong opinions about how to optimize for our use case. But this is an intro tutorial, so let's just choose the default Amazon Linux 2 AMI.
 
 <img src="{{ site.baseurl  }}/images/data_engineering/aws/compute/ec2_ami.png" alt="EC2 Amazon Machine Images">
 
 #### Instance Type
-Next up is **Instance Type.** This is where we can choose the hardware for our server. We won't want to deviate from the `t2.micro` option, which is covered by the Free Tier. In a production setting, we could decide whether to optimize for compute (e.g., if running a lot of computations), memory (if needing to store a lot of data in cache), GPU (e.g., for gaming), storage (e.g., if reading and writing a lot to disk), or some balance of these.
+Next up is **Instance Type.** This is where we can choose the hardware for our server. We won't want to deviate from the `t2.micro` option, which is covered by the Free Tier. In a production setting, we could decide whether to optimize for **CPU** (for running a [wide range of system operations simultaneously](https://www.weka.io/learn/hpc/cpu-vs-gpu)), **GPU** (for machine learning or graphics processing), **storage** (for slow reads and writes of persistent data), **memory** (for [fast reads and writes of volatile data](https://www.backblaze.com/blog/whats-diff-ram-vs-storage/)), or some balance of these.
 
-Once we choose an instance type, we can't go back -- unlike an application or even the operating system, this is the hardware of the machine. We can't yet warp the metal with a few code commands. But anyway, let's choose the `t2.micro` option.
+We can't change the instance type once we launch our instance, so make sure you don't accidentally click [the one that charges $31.21 per hour](https://www.todayilearnedcloud.com/Amazon-EC2-How-Much-Does-The-Most-Expensive-Instance-Cost/)! Triple-checking that we've selected `t2.micro`, we can continue to the next step.
 
 #### Key Pair
 Next we'll create a key pair. From the [AWS website](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/get-set-up-for-amazon-ec2.html):
 > AWS uses public-key cryptography to secure the login information for your instance. A Linux instance has no password; you use a key pair to log in to your instance securely. You specify the name of the key pair when you launch your instance, then provide the private key when you log in using SSH.
-
-<img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/ec2_setup1.png" alt="Setting up AWS EC2">
 
 * Pick a region geographically close to where you are
 * AMI: the template. Like a class in Python
