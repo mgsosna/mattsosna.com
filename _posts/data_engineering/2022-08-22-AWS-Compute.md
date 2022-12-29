@@ -40,7 +40,7 @@ We can use **Amazon EC2** to access the fundamental building block of the cloud:
 
 One server could be simultaneously running simulations for a weather forecast, fetching data from multiple databases, sending the HTML for a dozen webpages, and more. Importantly, this physical server would be abstracted away from its users beyond the configurations of their virtual servers, letting them focus on their applications.
 
-At AWS, virtual servers are called **EC2 instances**. Released in 2006, EC2 was [one of Amazon's first cloud services](https://aws.amazon.com/blogs/aws/aws-blog-the-first-five-years/) and has grown to be a [central component of the tech stacks](https://aws.amazon.com/ec2/customers/) of Netflix, Pinterest, Lyft, and more. EC2 instances are modular and configurable, allowing users to optimize for compute, memory, GPU, storage, or a combination depending on their needs. A GPU-optimized instance could be used for training machine learning models, for example, while a storage-optimized instance could host a database.
+At AWS, virtual servers are called **EC2 instances**. Released in 2006, EC2 was [one of Amazon's first cloud services](https://aws.amazon.com/blogs/aws/aws-blog-the-first-five-years/) and has grown to be a [central component of the tech stacks](https://aws.amazon.com/ec2/customers/) of Netflix, Pinterest, Lyft, and many others. EC2 instances are modular and configurable, allowing users to optimize for compute, memory, GPU, storage, or a combination depending on their needs. A GPU-optimized instance could be used for training machine learning models, for example, while a storage-optimized instance could host a database.
 
 Let's now create an EC2 instance to take a closer look. We [log into our AWS account](https://aws.amazon.com/login), then navigate to EC2 from the menu of services. We should see something like the image below. Let's click on the `Launch instance` button and begin.
 
@@ -77,46 +77,96 @@ We now set the rules for how to access our EC2 instance via the internet. For th
 We'll leave our storage config at the default values, which are well within the Free Tier limits. Any data we write to our instance will be deleted once our demo is over; if we cared about persisting this data, we could click `Add new volume` to reserve an [Amazon Elastic Block Storage (EBS)](https://aws.amazon.com/ebs/) volume and save our data there. But let's stick with the root volume for now.
 
 #### Advanced details
-We'll skip this section for our demo. But this is where we can specify configurations like on-demand [spot instances](https://aws.amazon.com/ec2/spot/), shutdown and [hibernate](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html) behavior, detailed [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) logs, and more.
+We'll skip this section for our demo. But this is where we can specify configurations like on-demand [spot instances](https://aws.amazon.com/ec2/spot/), shutdown and [hibernate](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html) behavior, whether we want detailed [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) logs, and more.
 
-* For Security Group, we can just set IP as 0.0.0.0/0. Open to the world.
-  * Then need to create a key pair, which will let us SSH into the instance
-    * Public key that AWS stores, and private one that we store
-* SSH: Secure Shell. Works for Unix. Need Putty for Windows but we'll connect to Linux server
-  * SSH is a network protocol that provides [a secure way to access a computer](https://www.techtarget.com/searchsecurity/definition/Secure-Shell) over an unsecured network (like the internet). Strong password and public key authentication, encrypted data communications between two computers.
-  * Most basic use of SSH is to connect to a remote host for a terminal session. In other words: controlling a remote server from the command line. Once we've SSH'd into the server, it'll be as if our computer is that machine.
-* Tags = useful if you have a lot of EC2 instances. e.g., for a big company, the team that is using this instance.
+### Connecting to our instance
+Our instance will be available within a few minutes after we hit `Create`. In the EC2 home page, we can then click on our instance and see something like the image below.
 
-We'll see a public DNS and a public IP. That IP is how we'll access it. We can also check our EC2 instance's inbound rules and confirm that port 22 is open.
+<center>
+<img src="{{ site.baseurl  }}/images/data_engineering/aws/compute/ec2-instances.png" alt="Amazon EC2 instance info">
+</center>
+
+To be able to access our instance through SSH, we'll need to modify the Security Group to allow inbound traffic. On our instance page, we'll click on the `Security` tab at the bottom, then the link for the instance's security group.
+
+<center>
+<img src="{{ site.baseurl  }}/images/data_engineering/aws/compute/ec2-security-groups.png" alt="Amazon EC2 security groups">
+</center>
+
+On the Security Group page, click `Edit inbound rules`, then `Add rule`. Select **SSH** for `Type`, then **My IP** for `Source`. Finally, click `Save rules`.
+
+So let's try connecting to our instance now.
 
 ```bash
-ssh ec2-user@xx.xxx.xxx.xxx
+ssh ec2-user@xx.xx.xx.xxx
+# ec2-user@ec2-xx-xx-xx-xxx.compute-1.amazonaws.com: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).
 ```
 
-* It'll say the authenticity of the host can't be guaranteed. Do we want to continue? Yes.
-* Then it'll say that we can't connect: permission denied. That's because we need to pass in our key. (The `.pem` file.)
+We get a Permission denied error because we haven't passed in our private key. Let's change directories to where the private key is and try again.
 
 ```bash
-ssh -i matt_ec2_key.pem ec2-user@xx.xxx.xxx.xxx
+cd path/to/your/key
+ssh -i matt-test.pem ec2-user@ec2-xx-xx-xx-xxx.compute-1.amazonaws.com
+# The authenticity of host 'ec2-xx-xx-xx-xxx.compute-1.amazonaws.com
+# (xx.xx.xx.xxx)' can't be established.
+# ED25519 key fingerprint is SHA256:xxxxxxxxxxxxxxxxxxxxxxxxxxxxx.
+# This key is not known by any other names
+# Are you sure you want to continue connecting (yes/no/[fingerprint])?
+# yes
 ```
 
-* It'll say Warning: unprotected private key file. Permission 0644 is too open
-  * This permission is what's on the file when you first download it.
-* To fix this, we'll need to `chmod` the file.
+So far so good, but then we get another error:
 
 ```bash
-chmod 0400 matt_ec2_key.pem
-ssh -i matt_ec2_key.pem ec2-user@xx.xxx.xxx.xxx
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# @         WARNING: UNPROTECTED PRIVATE KEY FILE!          @
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Permissions 0644 for 'matt-test.pem' are too open.
+# It is required that your private key files are NOT accessible by others.
+# This private key will be ignored.
+# Load key "matt-test.pem": bad permissions
+# ec2-user@ec2-xx-xx-xx-xxx.compute-1.amazonaws.com: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).
 ```
 
-Now we're in the machine. The `whoami` command tells us about the user.
+The error is that our private key has permissions 0644, which means that anyone can open the file and read it. AWS considers this too insecure: anyone with a copy of the file could impersonate you and access your instance.
+
+So we'll need to modify the file privacy to ensure it can't be publicy read. To do so, we run the following command in the Terminal:
 
 ```bash
+chmod 400 matt-test.pem
+```
+
+* Add section on what chmod 400 does
+
+Now when we try to connect, we succeed:
+
+```bash
+ssh -i matt-test.pem ec2-user@ec2-xx-xx-xx-xxx.compute-1.amazonaws.com
+# The authenticity of host 'ec2-xx-xx-xx-xxx.compute-1.amazonaws.com
+# (xx.xx.xx.xxx)' can't be established.
+# ED25519 key fingerprint is SHA256:xxxxxxxxxxxxxxxxxxxxxxxxxxxxx.
+# This key is not known by any other names
+# Are you sure you want to continue connecting (yes/no/[fingerprint])?
+# yes
+
+#        __|  __|_  )
+#        _|  (     /   Amazon Linux 2 AMI
+#       ___|\___|___|
+```
+
+We're in! Let's run some quick commands to explore the instance.
+
+```bash
+ls
+# (nothing)
+
 whoami
 # ec2-user
+
+python3 --version
+# Python 3.7.15
 ```
 
-We can then download and run a [sample Python file](https://raw.githubusercontent.com/mgsosna/code_samples/master/calculate_mean.py) for calculating the mean of some numbers.
+Python already comes installed, which is convenient! Let's download and run a [sample Python file](https://raw.githubusercontent.com/mgsosna/code_samples/master/calculate_mean.py) for calculating the mean of some numbers.
 
 ```bash
 # Download file and give it the same name
@@ -127,9 +177,17 @@ python3 calculate_mean.py 1 -5 0 33   # 7.25
 python3 calculate_mean.py 0 1e5 -1e5  # 0.0
 ```
 
+Finally, we can sever the SSH connection with the `exit` command.
+
 ```bash
-exit
+[ec2-user@ip-xx-xx-xx-xxx ~]$ exit
+# logout
+# Connection to ec2-xx-xx-xx-xxx.compute-1.amazonaws.com closed.
 ```
+
+* SSH: Secure Shell. Works for Unix. Need Putty for Windows but we'll connect to Linux server
+  * SSH is a network protocol that provides [a secure way to access a computer](https://www.techtarget.com/searchsecurity/definition/Secure-Shell) over an unsecured network (like the internet). Strong password and public key authentication, encrypted data communications between two computers.
+  * Most basic use of SSH is to connect to a remote host for a terminal session. In other words: controlling a remote server from the command line. Once we've SSH'd into the server, it'll be as if our computer is that machine.
 
 
 
