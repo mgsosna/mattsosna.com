@@ -80,13 +80,15 @@ We'll leave our storage config at the default values, which are well within the 
 We'll skip this section for our demo. But this is where we can specify configurations like on-demand [spot instances](https://aws.amazon.com/ec2/spot/), shutdown and [hibernate](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html) behavior, whether we want detailed [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) logs, and more.
 
 ### Connecting to our instance
-Our instance will be available within a few minutes after we hit `Create`. In the EC2 home page, we can then click on our instance and see something like the image below.
+Our instance will be available within a few minutes after we hit `Create`. On the EC2 home page, we can then click on `Instances` and see something like the image below.
 
 <center>
 <img src="{{ site.baseurl  }}/images/data_engineering/aws/compute/ec2-instances.png" alt="Amazon EC2 instance info">
 </center>
 
-To be able to access our instance through SSH, we'll need to modify the Security Group to allow inbound traffic. On our instance page, we'll click on the `Security` tab at the bottom, then the link for the instance's security group.
+Let's now connect to our instance. We'll use [**SSH**](https://www.techtarget.com/searchsecurity/definition/Secure-Shell), a network protocol that enables secure communication over an unsecured network (like the internet). Once we've SSH'd into our instance, we will be able to control the machine as if we were in a Terminal on our laptop.
+
+The first thing to do is **modify the instance's security group to allow inbound traffic.** On our instance page, we'll click on the `Security` tab at the bottom, then the link for the instance's security group.
 
 <center>
 <img src="{{ site.baseurl  }}/images/data_engineering/aws/compute/ec2-security-groups.png" alt="Amazon EC2 security groups">
@@ -94,15 +96,18 @@ To be able to access our instance through SSH, we'll need to modify the Security
 
 On the Security Group page, click `Edit inbound rules`, then `Add rule`. Select **SSH** for `Type`, then **My IP** for `Source`. Finally, click `Save rules`.
 
-So let's try connecting to our instance now.
+So let's try connecting to our instance now. The command is `ssh` followed by the Public IPv4 DNS, available on the Instance page. You can also go to `Connect` > `SSH client` to get the address.
 
+{% include header-bash.html %}
 ```bash
 ssh ec2-user@xx.xx.xx.xxx
-# ec2-user@ec2-xx-xx-xx-xxx.compute-1.amazonaws.com: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).
+# ec2-user@ec2-xx-xx-xx-xxx.compute-1.amazonaws.com:
+# Permission denied (publickey,gssapi-keyex,gssapi-with-mic).
 ```
 
-We get a Permission denied error because we haven't passed in our private key. Let's change directories to where the private key is and try again.
+We get a Permission denied error because we haven't passed in our private key. Let's change directories to the one with our key and try again.
 
+{% include header-bash.html %}
 ```bash
 cd path/to/your/key
 ssh -i matt-test.pem ec2-user@ec2-xx-xx-xx-xxx.compute-1.amazonaws.com
@@ -116,6 +121,7 @@ ssh -i matt-test.pem ec2-user@ec2-xx-xx-xx-xxx.compute-1.amazonaws.com
 
 So far so good, but then we get another error:
 
+{% include header-bash.html %}
 ```bash
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # @         WARNING: UNPROTECTED PRIVATE KEY FILE!          @
@@ -124,21 +130,24 @@ So far so good, but then we get another error:
 # It is required that your private key files are NOT accessible by others.
 # This private key will be ignored.
 # Load key "matt-test.pem": bad permissions
-# ec2-user@ec2-xx-xx-xx-xxx.compute-1.amazonaws.com: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).
+# ec2-user@ec2-xx-xx-xx-xxx.compute-1.amazonaws.com:
+# Permission denied (publickey,gssapi-keyex,gssapi-with-mic).
 ```
 
-The error is that our private key has permissions 0644, which means that anyone can open the file and read it. AWS considers this too insecure: anyone with a copy of the file could impersonate you and access your instance.
+The error is that our private key has [permission code 644](https://chmodcommand.com/chmod-0644/), which means that anyone can read the file. This is the [default access level](https://www.namecheap.com/support/knowledgebase/article.aspx/400/205/file-permissions/) for new files, but AWS considers this too insecure: anyone with your key could impersonate you.
 
-So we'll need to modify the file privacy to ensure it can't be publicy read. To do so, we run the following command in the Terminal:
+So we'll need to modify the file privacy to make it more secure. To do so, we use [**chmod**](https://en.wikipedia.org/wiki/Chmod) to change the read and write permissions of the file. Specifically, we'll change the file so that **the only valid action is a read by the owner (us).** Even if someone copied our private key to another computer, or a different user on our network somehow found the key, the file wouldn't open because that person isn't the owner. As an additional precaution, we remove our write access as well.
 
+The `chmod` code for [this permission level is 400](https://chmodcommand.com/chmod-400/): owner can only read (`4`), security group can't read/write/execute (`0`), and others can't read/write/execute (`0`). Let's therefore run this command in the Terminal:
+
+{% include header-bash.html %}
 ```bash
 chmod 400 matt-test.pem
 ```
 
-* Add section on what chmod 400 does
-
 Now when we try to connect, we succeed:
 
+{% include header-bash.html %}
 ```bash
 ssh -i matt-test.pem ec2-user@ec2-xx-xx-xx-xxx.compute-1.amazonaws.com
 # The authenticity of host 'ec2-xx-xx-xx-xxx.compute-1.amazonaws.com
@@ -153,8 +162,9 @@ ssh -i matt-test.pem ec2-user@ec2-xx-xx-xx-xxx.compute-1.amazonaws.com
 #       ___|\___|___|
 ```
 
-We're in! Let's run some quick commands to explore the instance.
+We're in! To the left of our cursor we should see something like `[ec2-user@ip-xx-xx-xx-xxx ~]$`, where we previously just saw `$`. Let's now run some quick commands to explore the instance.
 
+{% include header-bash.html %}
 ```bash
 ls
 # (nothing)
@@ -166,10 +176,11 @@ python3 --version
 # Python 3.7.15
 ```
 
-Python already comes installed, which is convenient! Let's download and run a [sample Python file](https://raw.githubusercontent.com/mgsosna/code_samples/master/calculate_mean.py) for calculating the mean of some numbers.
+Python already comes installed, which is convenient! Let's download a [sample Python file](https://raw.githubusercontent.com/mgsosna/code_samples/master/calculate_mean.py) from GitHub and run some basic calculations on our EC2 instance. We'll use `curl` to download the file from the URL, then pass in some arguments to `calculate_mean.py` to get their average value.
 
+{% include header-bash.html %}
 ```bash
-# Download file and give it the same name
+# Download file
 curl -O https://raw.githubusercontent.com/mgsosna/code_samples/master/calculate_mean.py
 
 # Run it
@@ -177,19 +188,89 @@ python3 calculate_mean.py 1 -5 0 33   # 7.25
 python3 calculate_mean.py 0 1e5 -1e5  # 0.0
 ```
 
-Finally, we can sever the SSH connection with the `exit` command.
+Let's now train a random forest classifier on some generated data. We'll download `numpy`, `pandas`, and `scikit-learn`, open Python, generate the data, then create the model.
 
+Let's first download the necessary libraries.
+
+{% include header-bash.html %}
 ```bash
-[ec2-user@ip-xx-xx-xx-xxx ~]$ exit
+python3 -m pip install numpy pandas scikit-learn
+# Defaulting to user installation because normal site-packages is not writeable
+# Collecting numpy
+#   Downloading numpy-1.21.6-cp37-cp37m-manylinux_2_12_x86_64.manylinux2010_x86_64.whl (15.7 MB)
+#      |████████████████████████████████| 15.7 MB 25.1 MB/s
+# Installing collected packages: numpy
+# Successfully installed numpy-1.21.6
+# Defaulting to user installation because normal site-packages is not writeable
+# Collecting pandas
+#   Downloading pandas-1.3.5-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (11.3 MB)
+#      |████████████████████████████████| 11.3 MB 23.8 MB/s
+# Requirement already satisfied: numpy>=1.17.3; platform_machine != "aarch64" and platform_machine != "arm64" and python_version < "3.10" in ./.local/lib/python3.7/site-packages (from pandas) (1.21.6)
+# Collecting pytz>=2017.3
+#   Downloading pytz-2022.7-py2.py3-none-any.whl (499 kB)
+#      |████████████████████████████████| 499 kB 29.1 MB/s
+# Collecting python-dateutil>=2.7.3
+#   Downloading python_dateutil-2.8.2-py2.py3-none-any.whl (247 kB)
+#      |████████████████████████████████| 247 kB 32.8 MB/s
+# Collecting six>=1.5
+#   Downloading six-1.16.0-py2.py3-none-any.whl (11 kB)
+# Installing collected packages: pytz, six, python-dateutil, pandas
+# Successfully installed pandas-1.3.5 python-dateutil-2.8.2 pytz-2022.7 six-1.16.0
+# Defaulting to user installation because normal site-packages is not writeable
+# Collecting scikit-learn
+#   Downloading scikit_learn-1.0.2-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (24.8 MB)
+#      |████████████████████████████████| 24.8 MB 19.7 MB/s
+# Requirement already satisfied: numpy>=1.14.6 in ./.local/lib/python3.7/site-packages (from scikit-learn) (1.21.6)
+# Collecting scipy>=1.1.0
+#   Downloading scipy-1.7.3-cp37-cp37m-manylinux_2_12_x86_64.manylinux2010_x86_64.whl (38.1 MB)
+#      |████████████████████████████████| 38.1 MB 41.1 MB/s
+# Collecting threadpoolctl>=2.0.0
+#   Downloading threadpoolctl-3.1.0-py3-none-any.whl (14 kB)
+# Collecting joblib>=0.11
+#   Downloading joblib-1.2.0-py3-none-any.whl (297 kB)
+#      |████████████████████████████████| 297 kB 34.3 MB/s
+# Installing collected packages: scipy, threadpoolctl, joblib, scikit-learn
+# Successfully installed joblib-1.2.0 scikit-learn-1.0.2 scipy-1.7.3 threadpoolctl-3.1.0
+```
+
+We can now run Python, generate our data, train the model, and generate some predictions. We'll use `np.random.normal` for the features and `np.random.choice` for the labels.
+
+{% include header-bash.html %}
+```bash
+python3
+# Python 3.7.15 (default, Oct 31 2022, 22:44:31)
+# [GCC 7.3.1 20180712 (Red Hat 7.3.1-15)] on linux
+# Type "help", "copyright", "credits" or "license" for more information.
+>>> import numpy as np
+>>> import pandas as pd
+>>> from sklearn.ensemble import RandomForestClassifier
+>>>
+>>> x1 = np.random.normal(0, 1, 5000)
+>>> x2 = np.random.normal(0, 1, 5000)
+>>> x3 = np.random.normal(0, 1, 5000)
+>>> y = np.random.choice([0, 1], 5000)
+>>>
+>>> df = pd.DataFrame({'x1': x1, 'x2': x2, 'x3': x3, 'y': y})
+>>> X = df[['x1', 'x2', 'x3']]
+>>> y = df['y']
+>>>
+>>> rf = RandomForestClassifier(n_estimators=100)
+>>> rf.fit(X, y)
+# RandomForestClassifier()
+>>> rf.predict(X[:10])
+# array([0, 1, 0, 0, 1, 1, 1, 0, 0, 1])
+```
+
+Tada! You've (technically) trained a machine learning model in the cloud. Since we've hit the pinnacle of EC2 use cases (😜), let's sever our SSH connection and terminate our instance.
+
+{% include header-bash.html %}
+```bash
+exit
 # logout
 # Connection to ec2-xx-xx-xx-xxx.compute-1.amazonaws.com closed.
 ```
 
-* SSH: Secure Shell. Works for Unix. Need Putty for Windows but we'll connect to Linux server
-  * SSH is a network protocol that provides [a secure way to access a computer](https://www.techtarget.com/searchsecurity/definition/Secure-Shell) over an unsecured network (like the internet). Strong password and public key authentication, encrypted data communications between two computers.
-  * Most basic use of SSH is to connect to a remote host for a terminal session. In other words: controlling a remote server from the command line. Once we've SSH'd into the server, it'll be as if our computer is that machine.
-
-
+Now on our Instance page on the EC2 page, we can click on `Instance state` > `Terminate instance`. Note that we'll lose our Python libraries and the `calculate_mean.py` file, since the instance's data will be wiped as it's made available for someone else to use. If we want to hold onto the instance a little longer, we can click `Stop instance` instead.
 
 ## Lambda
 Lambda is _server-less_ computing. This is a bit misleading because there _is_ a server involved... it just becomes a black box abstracted away from you.
