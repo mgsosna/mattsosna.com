@@ -290,14 +290,16 @@ All this abstraction is a tremendous step forward from the internet of the early
 ### When is EC2 _not_ the right choice?
 EC2 is fantastic for giving us all the flexibility we want to fine-tune our instance. We choose the hardware, the machine image, and many other options. (The [EC2 set up](#set-up) section in this post was dozens of lines long!)
 
-But this puts the responsibility on us to make sure we're configuring our instance(s) properly. It may be straightforward if you're just running simulations, but what about a full-scale application with a database, caching layer, frontend, etc.? Scaling a complex service here can involve many moving pieces, even with some automated help.
+But this puts the responsibility on _us_ to make sure we're configuring our instances properly. It may be straightforward if you're just running simulations, but what about a full-scale application with a database, caching layer, frontend, etc.? Scaling a complex service here can involve many moving pieces, even with some automated help.
 
-One other issue is that **our instance is only accessible while it's running.** If we have some code that we want to execute infrequently, do we really want to keep an instance running? If this code is computationally heavy, we may need an instance that's just sitting around
+One other issue is that **our instance is only accessible while it's running.** If we have some code that we want to execute infrequently, do we really want to keep an instance running? If this code is computationally heavy, we may need an instance that's just sitting around, costing us money but not really being used.
 
 
 
 ### What is Lambda?
 In 2014, Amazon released **Lambda**, pushing the abstraction of the cloud to a new level. Lambda is _server-less_ computing. This is a bit misleading because there _is_ a server involved... it just becomes a black box abstracted away from you.
+
+Lambda runs code in response to _events_ and automatically manages the underlying compute resources for you.
 
 With an EC2 instance, you need to choose how much CPU and RAM you want the instance to have. Your instance will be there when you submit your requests, run your app, etc. But it'll still be quietly running in the background when you're not using it. This is often what you want $-$ you don't know when someone will make a request to your database, so you want the server to be ready at any time to serve that request. (Or for larger websites, there may never be a time where users _aren't_ making requests to your database. Think Amazon or Google displaying search results.)
 
@@ -311,6 +313,74 @@ Because abstracted away, a lot less configurability. Basically can just specify 
 
 Downside:
 * If Lambda is inactive, there's a brief warmup period. Subsequent calls will be fine. Not an issue with EC2, since it's always on.
+
+### Demo
+Let's set up a Lambda function that returns the mean of a set of numbers.
+
+In the AWS Console, we start by navigating to the Lambda homepage. We then click the big orange `Create function` button. We'll stick with the "Author from scratch" option, then give our function a name (`calculate_mean`) and select the Python 3.9 runtime. Then we scroll down and click `Create function`.
+
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/lambda-setup.png" alt="AWS Lambda setup">
+
+We're then taken to the Lambda function page. Scrolling down to the `Code` tab, we see a basic template provided for our function:
+
+{% include header-python.html %}
+```python
+import json
+
+def lambda_handler(event, context):
+    # TODO implement
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Hello from Lambda!')
+    }
+```
+
+And in the `Test` tab, we see a simple JSON input we can use to test our function.
+
+```javascript
+{
+  "key1": "value1",
+  "key2": "value2",
+  "key3": "value3"
+}
+```
+
+We'll want to change both of these for our "calculate mean" function. Let's start by changing the test input to an array of numbers, like below. Make sure to give your test a name (e.g., `my_array`) and hit `Save`. You should see a green banner at the top that says, _"The test event **my_array** was successfully saved."_
+
+```javascript
+{
+  "nums": [1, 2, 3, 4, 5]
+}
+```
+
+Now let's go back to the Lambda function and change it to the code below. Specifically, we remove the `json` import, extract the `nums` field from `event`, and change the return `body` field to calculate the mean. In a production setting, we'd want to add error handling for empty arrays, arrays with non-numbers, etc., but this is fine for now.
+
+{% include header-python.html %}
+```python
+def lambda_handler(event, context):
+
+  nums = event['nums']
+
+  return {
+    'statusCode': 200,
+    'body': sum(nums)/len(nums)
+  }
+```
+
+Save your function (⌘ + `s`, or `File` > `Save`), then click `Deploy`. You should see a green banner that says, _"Successfully updated the function **calculate_mean**."_ Now hit `Test`, which should generate some logs like below. The import thing is that the response `body` field should be the mean of the array of numbers in your test file (for us 3, the mean 1 to 5).
+
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/lambda-test.png" alt="Testing an AWS Lambda function">
+
+Congrats, we have a Lambda function! But we can only really interact with this function in the Lambda console. What we really want is **to be able to _trigger_ this function from anywhere**, passing in whatever set of numbers whose average we urgently need. So let's scroll to the top of the `calculate_mean` function page, where we can see the triggers (and destinations) for our function.
+
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/lambda-trigger.png" alt="Triggering an AWS Lambda function">
+
+When we click on the `Triggers` button, we're taken to a drop-down menu with an astonishing number of services, from [Alexa](https://aws.amazon.com/alexaforbusiness/), [AWS IoT](https://aws.amazon.com/iot/), and [DynamoDB](https://aws.amazon.com/dynamodb/), to non-AWS services like [Auth0](https://auth0.com/), [Datadog](https://www.datadoghq.com/), and [Shopify](https://www.shopify.com/).
+
+Let's choose **[API Gateway](https://aws.amazon.com/api-gateway/)** to create an HTTP endpoint for our function. This will let us invoke our Lambda function from any code that can send an HTTP request.
+
+
+
 
 
 ## Footnotes
