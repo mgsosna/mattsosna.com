@@ -18,9 +18,12 @@ Unless you like hacked, melted laptops, you'll probably want to [rent a server f
 We previously covered a [high-level overview]({{  site.baseurl  }}/AWS-Intro) of the cloud, as well as a tutorial on [storing data]({{  site.baseurl  }}/AWS-Storage). But what about the _engines_ of the cloud? In this final post, we'll cover two compute-focused **Amazon Web Services**. We'll start with the fundamental cloud building block, **EC2**, before moving on to server-less computing with **Lambda**.
 
 ## Table of contents
-* [Background](#background)
-* [EC2: Elastic Compute Cloud](#ec2-elastic-compute-cloud)
-* [Lambda](#lambda)
+* [**Background**](#background)
+* [**EC2: Elastic Compute Cloud**](#ec2-elastic-compute-cloud)
+  * [Set up](#set-up)
+  * [Connecting to our instance](#connecting-to-our-instance)
+  * [Beyond the basics](#beyond-the-basics)
+* [**Lambda**](#lambda)
 
 ## Background
 The holiday season is a recurring chaotic time for retailers. Q4 accounts for **a staggering 33-39%** of [Macy's](https://ycharts.com/companies/M/revenues) and [Kohl's](https://ycharts.com/companies/KSS/revenues) yearly revenues, for example, and even with Prime Day in the summer, [Amazon's](https://ycharts.com/companies/AMZN/revenues) Q4 is still around 31%. Much of this holiday rush [takes place online](https://www.cbre.com/insights/articles/omnichannel-what-is-the-share-of-e-commerce-in-overall-retail-sales), translating to _a lot more users_ spending _a lot more time_ on stores' websites.
@@ -77,7 +80,7 @@ We now set the rules for how to access our EC2 instance via the internet. For th
 We'll leave our storage config at the default values, which are well within the Free Tier limits. Any data we write to our instance will be deleted once our demo is over; if we cared about persisting this data, we could click `Add new volume` to reserve an [Amazon Elastic Block Storage (EBS)](https://aws.amazon.com/ebs/) volume and save our data there. But let's stick with the root volume for now.
 
 #### Advanced details
-We'll skip this section for our demo. But this is where we can specify configurations like on-demand [spot instances](https://aws.amazon.com/ec2/spot/), shutdown and [hibernate](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html) behavior, whether we want detailed [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) logs, and more.
+We'll skip this section for our demo. But this is where we can specify configurations like using on-demand [spot instances](https://aws.amazon.com/ec2/spot/), shutdown and [hibernate](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html) behavior, whether we want detailed [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) logs, and more.
 
 ### Connecting to our instance
 Our instance will be available within a few minutes after we hit `Create`. On the EC2 home page, we can then click on `Instances` and see something like the image below.
@@ -272,8 +275,29 @@ exit
 
 Now on our Instance page on the EC2 page, we can click on `Instance state` > `Terminate instance`. Note that we'll lose our Python libraries and the `calculate_mean.py` file, since the instance's data will be wiped as it's made available for someone else to use. If we want to hold onto the instance a little longer, we can click `Stop instance` instead.
 
+### Beyond the basics
+So we just created an EC2 instance, downloaded files from the internet, and ran some Python code. While this is awesome, we haven't experienced anything that we couldn't run on our own laptop, which is likely more powerful than a `t2.micro` server. **So what value are we really getting from EC2?**
+
+The first thing to note is that **there are a wide range of EC2 options beyond the Free Tier.** If we wanted to run simulations for a research paper, we could simply select an EC2 instance with more CPU or GPU than our laptop. This would get the job done more quickly, especially if we don't have a decent computer or can't dedicate all of its resources to the simulations. (It would also prevent damaging your own laptop, which I accidentally did in college with a horribly inefficient R script!)
+
+But more importantly, we need to remember that **EC2 instances are just _building blocks_.** For our research simulations, it may be more efficient to rent two or three instances and parallelize the calculations. If we're using an EC2 instance to host a Flask API for our website, when traffic grows we can simply duplicate the instance and add a load balancer to distribute traffic. Better yet, [we can automatically scale](https://aws.amazon.com/ec2/autoscaling/) the number of instances up and down to meet demand, letting us focus more on our actual application. Q4, while still a demanding time for retailers, has become so much more manageable with cloud computing.
+
+All this abstraction is a tremendous step forward from the internet of the early 2000's. And yet... sometimes even a virtual server isn't flexible or scalable enough for our use case. In that case, we may want a "server-less" option like **Amazon Lambda.**
+
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/lambda-intro.png" alt="Amazon Lambda homepage">
+
 ## Lambda
-Lambda is _server-less_ computing. This is a bit misleading because there _is_ a server involved... it just becomes a black box abstracted away from you.
+### When is EC2 _not_ the right choice?
+EC2 is fantastic for giving us all the flexibility we want to fine-tune our instance. We choose the hardware, the machine image, and many other options. (The [EC2 set up](#set-up) section in this post was dozens of lines long!)
+
+But this puts the responsibility on us to make sure we're configuring our instance(s) properly. It may be straightforward if you're just running simulations, but what about a full-scale application with a database, caching layer, frontend, etc.? Scaling a complex service here can involve many moving pieces, even with some automated help.
+
+One other issue is that **our instance is only accessible while it's running.** If we have some code that we want to execute infrequently, do we really want to keep an instance running? If this code is computationally heavy, we may need an instance that's just sitting around
+
+
+
+### What is Lambda?
+In 2014, Amazon released **Lambda**, pushing the abstraction of the cloud to a new level. Lambda is _server-less_ computing. This is a bit misleading because there _is_ a server involved... it just becomes a black box abstracted away from you.
 
 With an EC2 instance, you need to choose how much CPU and RAM you want the instance to have. Your instance will be there when you submit your requests, run your app, etc. But it'll still be quietly running in the background when you're not using it. This is often what you want $-$ you don't know when someone will make a request to your database, so you want the server to be ready at any time to serve that request. (Or for larger websites, there may never be a time where users _aren't_ making requests to your database. Think Amazon or Google displaying search results.)
 
@@ -288,11 +312,6 @@ Because abstracted away, a lot less configurability. Basically can just specify 
 Downside:
 * If Lambda is inactive, there's a brief warmup period. Subsequent calls will be fine. Not an issue with EC2, since it's always on.
 
-Things you can actually do with an EC2 instance:
-* Super flexible. You "own" these machines. And can pick memory-optimized, general-purpose, storage-optimized, etc.
-  * But this comes at the cost of you needing to worry about security vulnerabilities, CPU utilization, memory utilization, etc.
-* But scaling this is complicated. Let's say [distributed backend for web app](https://www.youtube.com/watch?v=e8Vh9-hsRBo)
-  * Load balancer -> target groups -> automatic scaling group -> one of many EC2s, which actually performs the computation
 
 ## Footnotes
 #### 1. [Background](#background)
