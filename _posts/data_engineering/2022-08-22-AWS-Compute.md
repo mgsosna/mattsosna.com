@@ -24,6 +24,10 @@ We previously covered a [high-level overview]({{  site.baseurl  }}/AWS-Intro) of
   * [Connecting to our instance](#connecting-to-our-instance)
   * [Beyond the basics](#beyond-the-basics)
 * [**Lambda**](#lambda)
+  * [When is EC2 not the right choice?](#when-is-ec2-not-the-right-choice)
+  * [What is Lambda?](#what-is-lambda)
+  * [Creating a function](#creating-a-function)
+  * [Triggering via API Gateway](#triggering-via-api-gateway)
 
 ## Background
 The holiday season is a recurring chaotic time for retailers. Q4 accounts for **a staggering 33-39%** of [Macy's](https://ycharts.com/companies/M/revenues) and [Kohl's](https://ycharts.com/companies/KSS/revenues) yearly revenues, for example, and even with Prime Day in the summer, [Amazon's](https://ycharts.com/companies/AMZN/revenues) Q4 is still around 31%. Much of this holiday rush [takes place online](https://www.cbre.com/insights/articles/omnichannel-what-is-the-share-of-e-commerce-in-overall-retail-sales), translating to _a lot more users_ spending _a lot more time_ on stores' websites.
@@ -314,7 +318,7 @@ Because abstracted away, a lot less configurability. Basically can just specify 
 Downside:
 * If Lambda is inactive, there's a brief warmup period. Subsequent calls will be fine. Not an issue with EC2, since it's always on.
 
-### Demo
+### Creating a function
 Let's set up a Lambda function that returns the mean of a set of numbers.
 
 In the AWS Console, we start by navigating to the Lambda homepage. We then click the big orange `Create function` button. We'll stick with the "Author from scratch" option, then give our function a name (`calculate_mean`) and select the Python 3.9 runtime. Then we scroll down and click `Create function`.
@@ -371,15 +375,67 @@ Save your function (⌘ + `s`, or `File` > `Save`), then click `Deploy`. You sho
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/lambda-test.png" alt="Testing an AWS Lambda function">
 
-Congrats, we have a Lambda function! But we can only really interact with this function in the Lambda console. What we really want is **to be able to _trigger_ this function from anywhere**, passing in whatever set of numbers whose average we urgently need. So let's scroll to the top of the `calculate_mean` function page, where we can see the triggers (and destinations) for our function.
+Let's try this now from the **AWS CLI**. (If you haven't downloaded the CLI, you can follow [these steps]({{  site.baseurl  }}/AWS-Intro/#cli-command-line-interface).) Open a Terminal window, create an input JSON file, and send the file to your Lambda function. Lambda will return the response as a file, `output.json` here, which we can then view.
+
+{% include header-bash.html %}
+```bash
+# Create input file
+echo '{"nums": [1, 2, 3]}' > input.json
+
+# Invoke Lambda function
+aws lambda invoke \
+--function-name calculate_mean \
+--payload file://input.json \
+--cli-binary-format raw-in-base64-out \
+output.json
+
+# {
+#     "StatusCode": 200,
+#     "ExecutedVersion": "$LATEST"
+# }
+
+# View the output
+cat output.json
+# {"statusCode": 200, "body": 2.0}
+```
+
+### Triggering via API Gateway
+Congrats, we have a Lambda function! But we can only really interact with this function in the Lambda console and on our personal computer. What we really want is **to be able to _trigger_ this function from anywhere**. So back in the browser, let's scroll to the top of the `calculate_mean` function page, where we can see the triggers (and destinations) for our function.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/lambda-trigger.png" alt="Triggering an AWS Lambda function">
 
-When we click on the `Triggers` button, we're taken to a drop-down menu with an astonishing number of services, from [Alexa](https://aws.amazon.com/alexaforbusiness/), [AWS IoT](https://aws.amazon.com/iot/), and [DynamoDB](https://aws.amazon.com/dynamodb/), to non-AWS services like [Auth0](https://auth0.com/), [Datadog](https://www.datadoghq.com/), and [Shopify](https://www.shopify.com/).
+When we click on the `Add trigger` button, we're taken to a drop-down menu with an astonishing number of services, from [Alexa](https://aws.amazon.com/alexaforbusiness/), [AWS IoT](https://aws.amazon.com/iot/), and [DynamoDB](https://aws.amazon.com/dynamodb/), to non-AWS services like [Auth0](https://auth0.com/), [Datadog](https://www.datadoghq.com/), and [Shopify](https://www.shopify.com/).
 
-Let's choose **[API Gateway](https://aws.amazon.com/api-gateway/)** to create an HTTP endpoint for our function. This will let us invoke our Lambda function from any code that can send an HTTP request.
+Let's choose **[API Gateway](https://aws.amazon.com/api-gateway/)** to create an HTTP endpoint for our function. This will let us invoke our Lambda function from any code that can send an HTTP request. We'll select `Create a new API`, `HTTP API` for API type, and `Open` for Security. Then click `Add`.
+
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/api-gateway.png" alt="AWS API Gateway setup">
+
+We should now see API Gateway as a trigger for our `calculate_mean` function. We can click on the link, `calculate_mean-API`, to be taken to its API Gateway page. On the left, we can then navigate to `Develop` > `Integrations` and attach our Lambda function to the gateway.
 
 
+We'll specify the array of numbers as a string parameter in the URL, like `calculate_mean?nums=1,2,3`. To access the values, we'll need to modify our function to pull out the numbers. We'll add a try-except block, where we first try pulling the `nums` param
+
+{% include header-python.html %}
+```python
+def lambda_handler(event, context):
+
+    # For GET requests
+    try:
+        nums = event["queryStringParameters"]["nums"]
+        nums = nums.split(",")
+        nums = [int(x) for x in nums]
+    except:
+        nums = event["nums"]
+
+    return {
+        'statusCode': 200,
+        'body': sum(nums) / len(nums)
+    }
+```
+
+
+
+## Conclusions
 
 
 
