@@ -13,7 +13,7 @@ So you've built a cool app and want to show it off to the world. Maybe it's an A
 
 This "immediate interactivity" is going to require a **server**, which takes user requests (e.g., cat scribbles) and _serves_ responses (e.g., AI-generated cat images). You _could_ use your personal laptop, but it'll stop serving requests when it goes to sleep or turns off, and a sophisticated hacker could probably steal your private data. The cherry on top is that your hard drive might melt if your computer tries serving too many requests at once!
 
-Unless you like hacked, melted laptops, you'll probably want to [rent a server from the cloud]({{  site.baseurl  }}/AWS-Intro). While you do sacrifice some control by not having access to the physical machine, you'll abstract away a lot of configuration and maintenance you likely don't want to deal with anyway. And if you're willing to pay a bit more, you can easily rent a machine -- or several -- that are significantly stronger than your laptop. So how do we get started?
+Unless you like hacked, melted laptops, you'll probably want to [rent a server from the cloud]({{  site.baseurl  }}/AWS-Intro). While you sacrifice some control by not having access to the physical machine, you'll abstract away a lot of configuration and maintenance you likely don't want to deal with anyway. And if you're willing to pay a bit more, you can easily rent a machine -- or several -- that are significantly stronger than your laptop. So how do we get started?
 
 We previously covered a [high-level overview]({{  site.baseurl  }}/AWS-Intro) of the cloud, as well as a tutorial on [storing data]({{  site.baseurl  }}/AWS-Storage). But what about the _engines_ of the cloud? In this final post, we'll cover two compute-focused **Amazon Web Services**. We'll start with the fundamental cloud building block, **EC2**, before moving on to server-less computing with **Lambda**.
 
@@ -24,10 +24,12 @@ We previously covered a [high-level overview]({{  site.baseurl  }}/AWS-Intro) of
   * [Connecting to our instance](#connecting-to-our-instance)
   * [Beyond the basics](#beyond-the-basics)
 * [**Lambda**](#lambda)
-  * [When is EC2 not the right choice?](#when-is-ec2-not-the-right-choice)
+  * [When is EC2 _not_ the right choice?](#when-is-ec2-not-the-right-choice)
   * [What is Lambda?](#what-is-lambda)
   * [Creating a function](#creating-a-function)
   * [Triggering via API Gateway](#triggering-via-api-gateway)
+* [**Conclusions**](#conclusions)
+* [**Footnotes**](#footnotes)
 
 ## Background
 The holiday season is a recurring chaotic time for retailers. Q4 accounts for **a staggering 33-39%** of [Macy's](https://ycharts.com/companies/M/revenues) and [Kohl's](https://ycharts.com/companies/KSS/revenues) yearly revenues, for example, and even with Prime Day in the summer, [Amazon's](https://ycharts.com/companies/AMZN/revenues) Q4 is still around 31%. Much of this holiday rush [takes place online](https://www.cbre.com/insights/articles/omnichannel-what-is-the-share-of-e-commerce-in-overall-retail-sales), translating to _a lot more users_ spending _a lot more time_ on stores' websites.
@@ -103,7 +105,7 @@ The first thing to do is **modify the instance's security group to allow inbound
 
 On the Security Group page, click `Edit inbound rules`, then `Add rule`. Select **SSH** for `Type`, then **My IP** for `Source`. Finally, click `Save rules`.
 
-So let's try connecting to our instance now. The command is `ssh` followed by the Public IPv4 DNS, available on the Instance page. You can also go to `Connect` > `SSH client` to get the address.
+So let's try connecting to our instance now. The command is `ssh` followed by the Public [IPv4 DNS](https://www.cloudns.net/blog/what-is-ipv4-everything-you-need-to-know/), available on the Instance page. You can also go to `Connect` > `SSH client` to get the address.
 
 {% include header-bash.html %}
 ```bash
@@ -292,36 +294,23 @@ All this abstraction is a tremendous step forward from the internet of the early
 
 ## Lambda
 ### When is EC2 _not_ the right choice?
-EC2 is fantastic for giving us all the flexibility we want to fine-tune our instance. We choose the hardware, the machine image, and many other options. (The [EC2 set up](#set-up) section in this post was dozens of lines long!)
+With EC2, we're given an entire virtual server. AWS gives us incredible flexibility in defining what this server will look like, letting us tinker with every hardware and software detail imaginable. This post's [EC2 setup section](#set-up) for a simple demo, for example, was dozens of lines long!
 
-But this puts the responsibility on _us_ to make sure we're configuring our instances properly. It may be straightforward if you're just running simulations, but what about a full-scale application with a database, caching layer, frontend, etc.? Scaling a complex service here can involve many moving pieces, even with some automated help.
+This flexibility means we can find some combination of EC2 instances that will meet essentially any task we can imagine. **But this puts the responsibility on _us_ to make sure we're configuring our instances properly.** This configuration may be straightforward if we're performing a single task like training a machine learning model. But optimizing our resource usage becomes much more challenging when we're juggling multiple instances, _especially if we have multiple instance types_. If our app is clunky, should we add more instances to host our database, fetch data from the database, or display it on the frontend? And how does this change as traffic to our app changes?
 
-One other issue is that **our instance is only accessible while it's running.** If we have some code that we want to execute infrequently, do we really want to keep an instance running? If this code is computationally heavy, we may need an instance that's just sitting around, costing us money but not really being used.
-
-
+Another issue is that **our instance is only accessible while it's running.** Just like how our laptop won't respond to inputs while it's sleeping or turned off, we can't use our EC2 instance unless it's running -- **_and charging us for its usage._** This is fine if we're constantly sending requests to our instance. But if we expect to use our instance sporadically, then it can be expensive and inefficient to keep the instance running while we're not using it.
 
 ### What is Lambda?
-In 2014, Amazon released **Lambda**, pushing the abstraction of the cloud to a new level. Lambda is _server-less_ computing. This is a bit misleading because there _is_ a server involved... it just becomes a black box abstracted away from you.
+In 2014, Amazon released [**Lambda**](https://aws.amazon.com/lambda/), pushing the abstraction of the cloud to a new level with **_server-less_ computing**. In contrast to EC2, we're given _zero_ information about the machine(s) running our code. Our [only tunable parameter](https://aws.amazon.com/lambda/pricing/) is the amount of memory our code is allowed to use.
 
-Lambda runs code in response to _events_ and automatically manages the underlying compute resources for you.
+Lambda executes code in response to _events_ and automatically manages the underlying compute resources. If our code isn't actively running on a machine, we're not paying for anything. This is ideal for one-off actions like [writing user actions to a database](https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway-tutorial.html) or [generating predictions from an ML model](https://aws.amazon.com/blogs/compute/pay-as-you-go-machine-learning-inference-with-aws-lambda/), but we can even build a [microservice-based web app](https://aws.amazon.com/getting-started/hands-on/build-serverless-web-app-lambda-apigateway-s3-dynamodb-cognito/) or [real-time streaming data processor](https://aws.amazon.com/blogs/compute/building-serverless-applications-with-streaming-data-part-1/).
 
-With an EC2 instance, you need to choose how much CPU and RAM you want the instance to have. Your instance will be there when you submit your requests, run your app, etc. But it'll still be quietly running in the background when you're not using it. This is often what you want $-$ you don't know when someone will make a request to your database, so you want the server to be ready at any time to serve that request. (Or for larger websites, there may never be a time where users _aren't_ making requests to your database. Think Amazon or Google displaying search results.)
+Our workflow in Lambda will involve setting up _**functions**_ that we then _trigger_ from other services. No need to stress about configuring hardware, ensuring its security patches are up to date, and efficiently utilizing our resources.
 
-But sometimes you don't want an instance to be running constantly in the background. You may have a tiny operation you want to run, like saving a log to S3, any time a user clicks on something. Or you want to write to a database or kick off a data processing pipeline whenever a file is uploaded to S3. For this, a lambda is the way to go.
-
-So in Lambda, you just focus on the code. You upload it to create a lambda function. Get an ARN, which you can then reference from anywhere.
-* Great for small one-off scripts.
-* Have an API Gateway in front of Lambda, so any time you invoke a REST API on the API Gateway, the endpoint will point to a Lambda function.
-
-Because abstracted away, a lot less configurability. Basically can just specify the amount of memory on the machine(s).
-
-Downside:
-* If Lambda is inactive, there's a brief warmup period. Subsequent calls will be fine. Not an issue with EC2, since it's always on.
+The one major downside is that **because we don't have a dedicated virtual server waiting for requests, there is a brief delay when we first begin triggering our functions**, as Lambda needs to find and reserve the necessary resources for us. Scattering our application across many Lambda functions, as opposed to one monolithic EC2 instance, can also **significantly increase the complexity of our app** as it grows. But these are often small prices to pay for the convenience of having the hardware completely abstracted away from us.
 
 ### Creating a function
-Let's set up a Lambda function that returns the mean of a set of numbers.
-
-In the AWS Console, we start by navigating to the Lambda homepage. We then click the big orange `Create function` button. We'll stick with the "Author from scratch" option, then give our function a name (`calculate_mean`) and select the Python 3.9 runtime. Then we scroll down and click `Create function`.
+Let's explore Lambda by setting up a function that returns the mean of a set of numbers. In the AWS Console, we start by navigating to the Lambda homepage. We then click the big orange `Create function` button. We'll stick with the "Author from scratch" option, then give our function a name (`calculate_mean`) and select the Python 3.9 runtime. Then we scroll down and click `Create function`.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/lambda-setup.png" alt="AWS Lambda setup">
 
@@ -349,7 +338,7 @@ And in the `Test` tab, we see a simple JSON input we can use to test our functio
 }
 ```
 
-We'll want to change both of these for our "calculate mean" function. Let's start by changing the test input to an array of numbers, like below. Make sure to give your test a name (e.g., `my_array`) and hit `Save`. You should see a green banner at the top that says, _"The test event **my_array** was successfully saved."_
+We'll want to change both of these for our `calculate_mean` function. Let's start by changing the test input to an array of numbers like below. Give your test a name (e.g., `my_array`) and hit `Save`. You should see a green banner at the top that says, _"The test event **my_array** was successfully saved."_
 
 ```javascript
 {
@@ -357,7 +346,7 @@ We'll want to change both of these for our "calculate mean" function. Let's star
 }
 ```
 
-Now let's go back to the Lambda function and change it to the code below. Specifically, we remove the `json` import, extract the `nums` field from `event`, and change the return `body` field to calculate the mean. In a production setting, we'd want to add error handling for empty arrays, arrays with non-numbers, etc., but this is fine for now.
+Now let's go back to the Lambda function and change it to the code below. Specifically, we remove the `json` import, extract the `nums` field from `event`, and change the return `body` field to calculate the mean. In a production setting, we'd want to add error handling for empty arrays, arrays with non-numbers, etc., but this is fine for now.<sup>[[3]](#3-creating-a-function)</sup>
 
 {% include header-python.html %}
 ```python
@@ -400,11 +389,11 @@ cat output.json
 ```
 
 ### Triggering via API Gateway
-Congrats, we have a Lambda function! But we can only really interact with this function in the Lambda console and on our personal computer. What we really want is **to be able to _trigger_ this function from anywhere**. So back in the browser, let's scroll to the top of the `calculate_mean` function page, where we can see the triggers (and destinations) for our function.
+Congrats, we have a Lambda function! But we can only really interact with this function in the Lambda console and on our personal computer. What we really want is **to be able to trigger this function from anywhere.** So back in the browser, let's scroll to the top of the `calculate_mean` function page, where we can see the triggers (and destinations) for our function.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/lambda-trigger.png" alt="Triggering an AWS Lambda function">
 
-When we click `Add trigger`, we're taken to a drop-down menu with an astonishing number of services, from [Alexa](https://aws.amazon.com/alexaforbusiness/), [AWS IoT](https://aws.amazon.com/iot/), and [DynamoDB](https://aws.amazon.com/dynamodb/), to non-AWS services like [Auth0](https://auth0.com/), [Datadog](https://www.datadoghq.com/), and [Shopify](https://www.shopify.com/). We could program Alexa to trigger a Lambda function to write to a database, for example, or send us a notification any time a new file is uploaded to one of our S3 buckets.
+When we click `Add trigger`, we're taken to a drop-down menu with an astonishing number of services, from [Alexa](https://aws.amazon.com/alexaforbusiness/), [AWS IoT](https://aws.amazon.com/iot/), and [DynamoDB](https://aws.amazon.com/dynamodb/), to non-AWS services like [Auth0](https://auth0.com/), [Datadog](https://www.datadoghq.com/), and [Shopify](https://www.shopify.com/). We could have Auth0 trigger a Lambda function that writes to a database whenever a user logs in, for example, or [Amazon SNS](https://aws.amazon.com/sns/) send us a notification any time a new file is uploaded to one of our S3 buckets.
 
 Let's choose **[API Gateway](https://aws.amazon.com/api-gateway/)** to create an HTTP endpoint for our function. This will let us invoke our Lambda function from any code that can send an HTTP request. We'll select `Create a new API`, `HTTP API` for API type, and `Open` for Security. Then click `Add`.
 
@@ -412,9 +401,9 @@ Let's choose **[API Gateway](https://aws.amazon.com/api-gateway/)** to create an
 
 We should now see API Gateway as a trigger for our `calculate_mean` function. The endpoint should look something like `https://xx.execute-api.us-east-1.amazonaws.com/default/calculate_mean`.
 
-If we click on the link, we're taken to a page that just says "Internal Server Error." This is because our Lambda function is configured to expect a JSON with the field `nums`, but our browser's HTTP request doesn't have this field. The easiest way to add in this field is as a [query string parameter](https://www.positly.com/support/query-string-parameters/), where _the URL itself_ has `nums` and the array of values. So instead of `/default/calculate_mean`, we would have something like `/default/calculate_mean?nums=1,2,3`.
+If we click on the link, we're taken to a page that just says "Internal Server Error." This is because our Lambda function is configured to expect a JSON with the field `nums`, but our browser's HTTP request doesn't have this field. An easy way to pass in this field is as a [**query string parameter**](https://www.positly.com/support/query-string-parameters/), where _the URL itself_ has `nums` and the array of values. So instead of `/default/calculate_mean`, we would have something like `/default/calculate_mean?nums=1,2,3`.
 
-So let's modify our Lambda function to be able to accept URL parameters. We'll add a try-except block, where we first try pulling the `nums` param from the query string (`event['queryStringParameters']`). We convert the string to a list of strings, then cast each number to float.
+So let's modify our Lambda function to accept URL parameters. We'll add a try-except block, where we first try pulling the `nums` param from the query string (`event['queryStringParameters']`). We convert the string to a list of strings, then cast each number to float. If the user passes in a JSON (as we did previously), we just pull the `nums` array from the `event` object.
 
 {% include header-python.html %}
 ```python
@@ -446,10 +435,10 @@ Awesome! Let's try one last thing. Open a Python window on your local machine (o
 import requests
 
 # Define variables
-endpoint = "<your API endpoint>"
+endpoint = "https://xxx.execute-api.us..." # replace with your URL
 nums = [1.5, 2, 3.5]
 
-# Format numbers from list to string
+# Cast list of numbers to string
 nums_str = ','.join([str(x) for x in nums])
 
 # Set the URL
@@ -472,11 +461,17 @@ So let's navigate to **API Gateway** in the AWS Console and delete our API endpo
 
 Next up is the Lambda function. Navigate to **Lambda** in the AWS Console and delete the function.
 
-Finally, if you haven't already, terminate your EC2 instance. Navigate to **EC2** in the console, stop your instance if you haven't already, and then terminate it.
+Finally, if you haven't already, terminate your EC2 instance. Navigate to **EC2** in the console, stop your instance if you haven't already, and then terminate it. You can also go to your security group and remove your IP address from the inbound traffic rules.
 
 ## Conclusions
+In this post, we explored two Amazon Web Services for compute: **EC2** and **Lambda.** We saw how **Amazon EC2 lets us reserve a virtual server with whatever exact configuration we'd like**, tailoring our resources to our use case. We created a server and SSH'd into it after modifying the read permissions of our private key. We then downloaded files from the internet, ran a Python script, and trained a classifier on some generated data.
 
+We then contrasted EC2 with **AWS Lambda, Amazon's "server-less" approach to compute.** We created a function for calculating the mean of an array of numbers and invoked the function from the console and AWS CLI. We then added an AWS API Gateway trigger, modified our function to take query string parameters, and called the function from our browser and local Python environment.
 
+Between our [intro]({{  site.baseurl  }}/AWS-Intro), [storage]({{  site.baseurl  }}/AWS-Storage), and compute posts, we've used seven fundamental services: IAM, S3, RDS, DynamoDB, EC2, Lambda, and API Gateway. While Amazon offers [over 200 services](https://www.aboutamazon.com/what-we-do/amazon-web-services), many build on these core services. With the knowledge we've gained in this series, we're well equipped to begin leveraging the cloud for our needs.
+
+Best,<br>
+Matt
 
 ## Footnotes
 #### 1. [Background](#background)
@@ -488,3 +483,10 @@ In researching for this post, I found plenty of interesting statistics about how
 For hyper-growth early Amazon, the extra compute purchased during the holiday season would eventually just serve the normal business needs as the company grew. But for most companies, this extra compute would be a hindrance most of the year.
 
 As a side note, there's a common narrative that AWS spun out of Amazon trying to utilize all this "extra compute" sitting around Q1-Q3. They had all these unused servers, so why not just let customers use them? My [favorite rebuttal](https://open.spotify.com/episode/14LmWeOMRZysw2i2vYSOuw?si=ce630660e3b44461&nd=1) of this narrative is that when Q4 came up the following year, Amazon obviously couldn't just terminate all those customers to take back their servers! Amazon would be stuck needing to buy a bunch more servers again.
+
+#### 3. [Creating a function](#creating-a-function)
+We can argue whether error handling should be within the Lambda function or at callers to the function. There are tradeoffs: adding error handling to the function means the checks are in one place, reducing mental load on developers interacting with the function. But checks make the function heavier -- they need to run _every_ time the function is called.
+
+We can keep the function lightweight by having callers guarantee valid inputs. But enforcing this responsibility is challenging, especially if the codebase is large and developers don't necessarily have the full context of the system. This also means there's no standardization on what checks are run and how errors are communicated back to the user.
+
+One intermediate option could be to have checks performed by [one Lambda function that then passes valid inputs to the actual function](https://stackoverflow.com/questions/31714788/can-an-aws-lambda-function-call-another). This increases the overall system complexity, but it allows for both reduced mental load on callers and a lightweight function. Ultimately, the right approach depends on your use case.
