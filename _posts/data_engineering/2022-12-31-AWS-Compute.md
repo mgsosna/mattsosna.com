@@ -199,7 +199,7 @@ python3 calculate_mean.py 0 1e5 -1e5  # 0.0
 
 Let's now train a random forest classifier on some generated data. We'll download `numpy`, `pandas`, and `scikit-learn`, open Python, generate the data, then create the model.
 
-Let's first download the necessary libraries.
+We'll first download the necessary libraries.
 
 {% include header-bash.html %}
 ```bash
@@ -242,7 +242,7 @@ python3 -m pip install numpy pandas scikit-learn
 # Successfully installed joblib-1.2.0 scikit-learn-1.0.2 scipy-1.7.3 threadpoolctl-3.1.0
 ```
 
-We can now run Python, generate our data, train the model, and generate some predictions. We'll use `np.random.normal` for the features and `np.random.choice` for the labels.
+We can now run Python, generate our data, train the model, and make some predictions. We'll use `np.random.normal` for the features and `np.random.choice` for the labels.
 
 {% include header-bash.html %}
 ```bash
@@ -270,7 +270,7 @@ python3
 # array([0, 1, 0, 0, 1, 1, 1, 0, 0, 1])
 ```
 
-Tada! You've (technically) trained a machine learning model in the cloud. Since we've hit the pinnacle of EC2 use cases (😜), let's sever our SSH connection and terminate our instance.
+Ta da! You've (technically) trained a machine learning model in the cloud. Since we've hit the pinnacle of EC2 use cases (😜), let's sever our SSH connection and terminate our instance.
 
 {% include header-bash.html %}
 ```bash
@@ -469,6 +469,8 @@ In this post, we explored two Amazon Web Services for compute: **EC2** and **Lam
 We then contrasted EC2 with **AWS Lambda, Amazon's "server-less" approach to compute.** We created a function for calculating the mean of an array of numbers and invoked the function from the console and AWS CLI. We then added an AWS API Gateway trigger, modified our function to take query string parameters, and called the function from our browser and local Python environment.
 
 Between our [intro]({{  site.baseurl  }}/AWS-Intro), [storage]({{  site.baseurl  }}/AWS-Storage), and compute posts, we've used seven fundamental services: IAM, S3, RDS, DynamoDB, EC2, Lambda, and API Gateway. While Amazon offers [over 200 services](https://www.aboutamazon.com/what-we-do/amazon-web-services), many build on these core services. With the knowledge we've gained in this series, we're well equipped to begin leveraging the cloud for our needs.
+
+Thanks for reading!
 
 Best,<br>
 Matt
