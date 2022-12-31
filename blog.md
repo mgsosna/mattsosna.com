@@ -150,6 +150,7 @@ permalink: /blog/
 1. [Why cloud computing?]({{  site.baseurl  }}/AWS-Intro)
 2. [Storage: S3, RDS, DynamoDB]({{  site.baseurl  }}/AWS-Storage)
   - <span style="font-size: 12px">Featured in _Toward Data Science_'s [9/29/22 editors' picks](https://towardsdatascience.com/data-where-engineering-and-science-meet-296f54131752)</span>
+3. [Compute: EC2, Lambda]({{  site.baseurl  }}/AWS-Compute)
 
 ## Computer science
 1. [Intro to data structures]({{  site.baseurl  }}/CSDS-Intro)
