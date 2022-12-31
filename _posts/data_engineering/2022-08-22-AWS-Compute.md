@@ -404,16 +404,17 @@ Congrats, we have a Lambda function! But we can only really interact with this f
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/lambda-trigger.png" alt="Triggering an AWS Lambda function">
 
-When we click on the `Add trigger` button, we're taken to a drop-down menu with an astonishing number of services, from [Alexa](https://aws.amazon.com/alexaforbusiness/), [AWS IoT](https://aws.amazon.com/iot/), and [DynamoDB](https://aws.amazon.com/dynamodb/), to non-AWS services like [Auth0](https://auth0.com/), [Datadog](https://www.datadoghq.com/), and [Shopify](https://www.shopify.com/).
+When we click `Add trigger`, we're taken to a drop-down menu with an astonishing number of services, from [Alexa](https://aws.amazon.com/alexaforbusiness/), [AWS IoT](https://aws.amazon.com/iot/), and [DynamoDB](https://aws.amazon.com/dynamodb/), to non-AWS services like [Auth0](https://auth0.com/), [Datadog](https://www.datadoghq.com/), and [Shopify](https://www.shopify.com/). We could program Alexa to trigger a Lambda function to write to a database, for example, or send us a notification any time a new file is uploaded to one of our S3 buckets.
 
 Let's choose **[API Gateway](https://aws.amazon.com/api-gateway/)** to create an HTTP endpoint for our function. This will let us invoke our Lambda function from any code that can send an HTTP request. We'll select `Create a new API`, `HTTP API` for API type, and `Open` for Security. Then click `Add`.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/api-gateway.png" alt="AWS API Gateway setup">
 
-We should now see API Gateway as a trigger for our `calculate_mean` function. We can click on the link, `calculate_mean-API`, to be taken to its API Gateway page. On the left, we can then navigate to `Develop` > `Integrations` and attach our Lambda function to the gateway.
+We should now see API Gateway as a trigger for our `calculate_mean` function. The endpoint should look something like `https://xx.execute-api.us-east-1.amazonaws.com/default/calculate_mean`.
 
+If we click on the link, we're taken to a page that just says "Internal Server Error." This is because our Lambda function is configured to expect a JSON with the field `nums`, but our browser's HTTP request doesn't have this field. The easiest way to add in this field is as a [query string parameter](https://www.positly.com/support/query-string-parameters/), where _the URL itself_ has `nums` and the array of values. So instead of `/default/calculate_mean`, we would have something like `/default/calculate_mean?nums=1,2,3`.
 
-We'll specify the array of numbers as a string parameter in the URL, like `calculate_mean?nums=1,2,3`. To access the values, we'll need to modify our function to pull out the numbers. We'll add a try-except block, where we first try pulling the `nums` param
+So let's modify our Lambda function to be able to accept URL parameters. We'll add a try-except block, where we first try pulling the `nums` param from the query string (`event['queryStringParameters']`). We convert the string to a list of strings, then cast each number to float.
 
 {% include header-python.html %}
 ```python
@@ -423,7 +424,8 @@ def lambda_handler(event, context):
     try:
         nums = event["queryStringParameters"]["nums"]
         nums = nums.split(",")
-        nums = [int(x) for x in nums]
+        nums = [float(x) for x in nums]
+    # For JSON
     except:
         nums = event["nums"]
 
@@ -433,7 +435,44 @@ def lambda_handler(event, context):
     }
 ```
 
+Don't forget to save the function and deploy it. Wait a few seconds, then copy your API endpoint into the URL address of a new tab on your browser. Add `?nums=1,2,3` to the end of the URL and hit enter.
 
+<img src="{{  site.baseurl  }}/images/data_engineering/aws/compute/api-result.png" alt="Result from AWS API Gateway">
+
+Awesome! Let's try one last thing. Open a Python window on your local machine (or your EC2, if you're feeling fancy) and run the following:
+
+{% include header-python.html %}
+```python
+import requests
+
+# Define variables
+endpoint = "<your API endpoint>"
+nums = [1.5, 2, 3.5]
+
+# Format numbers from list to string
+nums_str = ','.join([str(x) for x in nums])
+
+# Set the URL
+url = f"{endpoint}?nums={nums_str}"
+
+# Invoke the Lambda function through the API
+response = requests.get(url)
+
+# View the response
+print(response.json())
+# 2.3333333333333335
+```
+
+We see that we can even pass in floats via the URL string to our function, and that we're able to access it from anywhere. Congrats! 🎉
+
+### Cleaning up
+Our demos are over, so let's make sure to delete everything we created to avoid incurring charges. We should **start with our API endpoint, which is currently available for anyone on the internet to use** -- if someone guesses our URL, they could start sending hundreds or thousands of requests per second, which we'll have to pay AWS for.
+
+So let's navigate to **API Gateway** in the AWS Console and delete our API endpoint. You click on the button next to `calculate_mean-API`, then `Actions` > `Delete`.
+
+Next up is the Lambda function. Navigate to **Lambda** in the AWS Console and delete the function.
+
+Finally, if you haven't already, terminate your EC2 instance. Navigate to **EC2** in the console, stop your instance if you haven't already, and then terminate it.
 
 ## Conclusions
 
