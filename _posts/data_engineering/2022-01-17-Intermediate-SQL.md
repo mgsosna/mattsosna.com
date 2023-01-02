@@ -7,7 +7,7 @@ tags: sql
 
 When I started learning SQL, I found it hard to progress beyond the absolute basics. I loved [DataCamp's courses](https://www.datacamp.com/courses/introduction-to-sql) because I could just type the code directly into a console on the screen. But once the courses ended, how could I practice what I learned? And how could I continue improving, when all the tutorials I found just consisted of code snippits, without an underlying database I could query myself?
 
-I found myself in a "chicken or egg" problem $-$ I needed access to databases to learn enough SQL to get hired, but the only databases I was aware of were _at those companies_ where I was trying to get hired!
+I found myself in a "chicken or egg" problem -- I needed access to databases to learn enough SQL to get hired, but the only databases I was aware of were _at those companies_ where I was trying to get hired!
 
 **It turns out it's straightforward to create your own database to play with.** In this post, we'll create a simple relational database that will let us explore SQL topics beyond the basics. If you understand the below query, then you're prepared for the rest of this post. (And if not, check out the [SQL primer in the engineering essentials]({{  site.baseurl  }}/DS-transition-4/#sql) post and the [SQL vs. NoSQL]({{  site.baseurl  }}/SQL_vs_NoSQL) deep dive.)
 
@@ -77,9 +77,9 @@ CREATE TABLE classrooms (
 );
 ```
 
-In the first line, `DROP TABLE IF EXISTS classrooms`, deletes the `classrooms` table if it already exists. (Makes sense!) Postgres will stop us from deleting `classrooms` if other tables point to it, so we specify `CASCADE` to override this constraint.<sup>[[1]](#1-setting-up)</sup> This is ok $-$ if we're deleting `classrooms`, we're probably regenerating everything from scratch, so all the other tables are getting deleted too!
+In the first line, `DROP TABLE IF EXISTS classrooms`, deletes the `classrooms` table if it already exists. (Makes sense!) Postgres will stop us from deleting `classrooms` if other tables point to it, so we specify `CASCADE` to override this constraint.<sup>[[1]](#1-setting-up)</sup> This is ok -- if we're deleting `classrooms`, we're probably regenerating everything from scratch, so all the other tables are getting deleted too!
 
-Adding `DROP TABLE IF EXISTS` before `CREATE TABLE` lets us **codify our database schema in a script**, which is handy if we decide to change our database in some way down the road $-$ add a table, change the datatype of a column, etc. We can simply store the instructions for generating our database in a script, update that script when we want to make a change, and then rerun it.<sup>[[2]](#2-setting-up)</sup>
+Adding `DROP TABLE IF EXISTS` before `CREATE TABLE` lets us **codify our database schema in a script**, which is handy if we decide to change our database in some way down the road -- add a table, change the datatype of a column, etc. We can simply store the instructions for generating our database in a script, update that script when we want to make a change, and then rerun it.<sup>[[2]](#2-setting-up)</sup>
 
 We're also now able to [version control](https://www.atlassian.com/git/tutorials/what-is-version-control) our schema and share it. In fact, the entire database in this post can be recreated from [this script](https://github.com/mgsosna/sql_fun/blob/main/school/create_db.sql), so feel free to experiment!
 
@@ -200,7 +200,7 @@ SELECT * FROM students;
 */
 ```
 
-Finally, let's record some grades. Since grades correspond to _assignments_ $-$ such as homework, projects, attendance, and exams $-$ we'll actually use two tables to store our data more efficiently. `assignments` will contain data on the assignments themselves, while `grades` will record how each student performed on the assignments.
+Finally, let's record some grades. Since grades correspond to _assignments_ -- such as homework, projects, attendance, and exams -- we'll actually use two tables to store our data more efficiently. `assignments` will contain data on the assignments themselves, while `grades` will record how each student performed on the assignments.
 
 {% include header-sql.html %}
 ```sql
@@ -536,7 +536,7 @@ SELECT
 <img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/case_when_vs_coalesce.png" height="70%" width="70%" loading="lazy" alt="CASE WHEN and COALESCE operators">
 </center>
 
-Finally, there _is_ an `IF` statement in Postgres, but it's used for control flow on _multiple_ queries rather than within one. It's unlikely you'll be using `IF` much as a data scientist $-$ even as a data engineer, I'd imagine you'd handle such logic in a coordinator like [Airflow](https://airflow.apache.org/), so we'll skip it here.<sup>[[4]](#4-if-then-case-when--coalesce)
+Finally, there _is_ an `IF` statement in Postgres, but it's used for control flow on _multiple_ queries rather than within one. It's unlikely you'll be using `IF` much as a data scientist -- even as a data engineer, I'd imagine you'd handle such logic in a coordinator like [Airflow](https://airflow.apache.org/), so we'll skip it here.<sup>[[4]](#4-if-then-case-when--coalesce)
 
 ### Set operators: `UNION`, `INTERSECT`, and `EXCEPT`
 When we `JOIN` tables, we append data _horizontally_. In the below query, for example, we bring together Adam's data from the `students`, `grades`, and `assignments` tables, creating a table with those columns side by side.
@@ -648,7 +648,7 @@ FROM (
 */
 ```
 
-Choosing `UNION` or `UNION ALL` depends on how you want to handle duplicates. When writing complex queries, I prefer using `UNION ALL` to make sure the resulting table has the number of rows I expect $-$ if there are duplicates, I've likely messed up a `JOIN` somewhere earlier. Your query will be far more performant if you fix the issue at the source, rather than filtering at the end.
+Choosing `UNION` or `UNION ALL` depends on how you want to handle duplicates. When writing complex queries, I prefer using `UNION ALL` to make sure the resulting table has the number of rows I expect -- if there are duplicates, I've likely messed up a `JOIN` somewhere earlier. Your query will be far more performant if you fix the issue at the source, rather than filtering at the end.
 
 <img src="{{  site.baseurl  }}/images/data_engineering/intermediate_sql/union_vs_union_all.png">
 
@@ -976,7 +976,7 @@ INNER JOIN
 ### `WITH`
 Let's end this section by covering a technique that will empower us to write queries as complex as we can imagine, simply by stringing together subqueries. **`WITH` lets us name a subquery,** meaning we can then reference that subquery's results elsewhere.
 
-Let's say, for example, that we want to label whether students' scores in `grades` are higher than their average score. Knocking this out in one query seems straightforward $-$ we just need to calculate each average with a `GROUP BY` and then do something like `g.score > avg`, right? Let's start with the `GROUP BY` aggregation.
+Let's say, for example, that we want to label whether students' scores in `grades` are higher than their average score. Knocking this out in one query seems straightforward -- we just need to calculate each average with a `GROUP BY` and then do something like `g.score > avg`, right? Let's start with the `GROUP BY` aggregation.
 
 {% include header-sql.html %}
 ```sql
@@ -1033,7 +1033,7 @@ SELECT
     ...
 ```
 
-A cleaner and more scalable alternative is to use `WITH`. We can break our query into _two_ subqueries $-$ one to calculate the averages, and one to join that table of averages into `grades`.
+A cleaner and more scalable alternative is to use `WITH`. We can break our query into _two_ subqueries -- one to calculate the averages, and one to join that table of averages into `grades`.
 
 {% include header-sql.html %}
 ```sql
@@ -1078,7 +1078,7 @@ INNER JOIN
 
 The `WITH` query is substantially longer than just writing the window function twice. Why bother? Well, this more verbose query provides two important advantages: **scalability** and **readability.**
 
-Queries can become ridiculously long $-$ at Meta (Facebook), the longest query I've come across (so far!) was over 1000 lines and called 25 tables. This query would be completely unreadable without `WITH` clauses, which demarcate distinct, _named_, sections of the code.
+Queries can become ridiculously long -- at Meta (Facebook), the longest query I've come across (so far!) was over 1000 lines and called 25 tables. This query would be completely unreadable without `WITH` clauses, which demarcate distinct, _named_, sections of the code.
 
 When dealing with big data, we don't have the luxury of sequentially running those subqueries, saving the results to CSVs, and then performing the merges and analyses in Python. All the database interactions need to run in one go.
 
@@ -1312,7 +1312,7 @@ Matt
 #### 1. [Setting up](#setting-up)
 What actually happens when we specify `CASCADE` when dropping a table? A little demo can be helpful.
 
-Let's say we drop `classrooms` without dropping any other tables. None of the _data_ in `students` is affected $-$ we still see the original classroom IDs.
+Let's say we drop `classrooms` without dropping any other tables. None of the _data_ in `students` is affected -- we still see the original classroom IDs.
 
 {% include header-sql.html %}
 ```sql
