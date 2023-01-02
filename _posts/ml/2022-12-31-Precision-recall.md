@@ -2,9 +2,10 @@
 layout: post
 title: A deep dive on precision and recall
 author: matt_sosna
+tags: machine-learning statistics
 ---
 
-This post is about precision and recall.
+Two of the most important metrics of any machine learning system in production include **precision** and **recall**. 
 
 
 
@@ -29,6 +30,18 @@ The second approach, then, is to train a model to _predict_ whether content is b
 </center>
 
 The major caveat, though, is that the model classification is a _prediction._ We still need a human to review.<sup>[[1]](#1-intro)
+
+## Other things
+How do we quantify the _change_ in precision or recall? Let's say that we have our Baseline and Treatment. We're evaluating whether it's worth changing.
+
+To quantify the change in recall, we could do something like:
+
+$$\LARGE \frac{N_{new} - N_{old}}{N_{old}} $$
+
+Where $N$ is the
+
+## Code
+
 
 ## Footnotes
 #### 1. [Intro](#intro)

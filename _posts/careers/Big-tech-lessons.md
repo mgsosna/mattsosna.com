@@ -63,3 +63,5 @@ Scale.
 * E7: leading across multiple teams.
 
 On-call shifts. Stressful but great way to quickly learn a space. And how to communicate with other teams, debug issues. etc.
+
+Thinking about maintenance. You can create a cool system, but who will maintain it? Are you going to provide support the rest of your time at Meta? What about when you leave? 
