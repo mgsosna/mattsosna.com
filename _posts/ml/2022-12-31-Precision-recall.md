@@ -5,17 +5,23 @@ author: matt_sosna
 tags: machine-learning statistics
 ---
 
-<img src="{{  site.baseurl  }}/images/ml/precision_recall/base_pop.png">
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/base_pop.png" alt="Population under a magnifying glass">
 
-Imagine we're in charge of fighting misinformation on YouTube. This is a colossal task: with [over 500 hours of video uploaded every minute](https://www.statista.com/statistics/259477/hours-of-video-uploaded-to-youtube-every-minute/), how can we consistently identify abuse in a never-ending flood of information?
+Imagine we're in charge of fighting misinformation on YouTube. With [**_2.5 billion_ monthly active users**](https://www.businessofapps.com/data/youtube-statistics/), we feel the pressure of ensuring that the world can trust the data they get from the site. This is a colossal task: users upload [**over 500 hours of video every minute**](https://www.statista.com/statistics/259477/hours-of-video-uploaded-to-youtube-every-minute/), or **1.8 million hours per day.** How can we consistently identify abuse in a never-ending flood of information?
 
-There are two ways we can determine whether a video is misinformation. The first is the _slow but sure_ approach: **human review.** Given how nuanced misinformation is, sometimes you just need a person to look.
+Misinformation is complex and context-dependent. Did someone make a factually incorrect claim but say it was just their opinion? Was this claim a quote from a politician? Is the claim actually meant to be a joke, or sarcastic? To parse this nuance, we could have trained reviewers watch every video and follow some set of guidelines.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/manual_review.png" height="60%" width="60%">
 </center>
 
 **But this approach doesn't scale well.** To stay atop the torrent of videos, we would need _30,000 reviewers_ working nonstop to catch all misinformation. That's an unrealistic number, even for a company as large as Google. It's also _unlikely to work_: it assumes that each reviewer has perfect, up-to-date knowledge of all misleading claims and which violate YouTube's content policies. It also assumes everyone will be consistent in labeling whether a given video is misinformation... if not, we'll need even _more_ reviewers to re-review others' decisions, especially for borderline content.
+
+
+
+
+use [trained reviewers partnered with third-party fact-checkers](https://www.facebook.com/formedia/blog/third-party-fact-checking-how-it-works) to determine whether a video's claims match debunked hoaxes.
+
 
 Human review is necessary. But 30,000 reviewers isn't going to work. So we need some way to cut down that flood of videos to just borderline cases, ones where we _do_ need a human to review. Is there some way to remove 90%, or 99%, or 99.999% of videos from the review queue, so the videos that are left are actually worth looking at?
 
