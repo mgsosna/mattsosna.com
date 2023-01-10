@@ -9,15 +9,15 @@ tags: machine-learning statistics
 
 Imagine we're in charge of fighting misinformation on YouTube. With [**_2.5 billion_ monthly active users**](https://www.businessofapps.com/data/youtube-statistics/), the stakes are high: falsehoods like Covid miracle cures, election fraud conspiracies, or climate change denial have [serious global consequences](https://www.cnn.com/2023/01/08/americas/brazil-bolsonaro-supporters-breach-congress/index.html). We feel the pressure of ensuring that the world can trust the data it gets from the site. But this is a colossal task: users upload [**over 500 hours of video every minute**](https://www.statista.com/statistics/259477/hours-of-video-uploaded-to-youtube-every-minute/), or **1.8 million hours per day.** How can we consistently identify abuse in a never-ending flood of information?
 
-Misinformation is complex and context-dependent. Did someone make a factually incorrect claim but say it was just their opinion? Was this claim a quote from a politician? Is the claim actually meant to be a joke, or sarcastic? Or is a false claim intentionally being made to mislead viewers? To parse this nuance, we _could_ have trained reviewers watch every video and follow some set of guidelines that define all misinformation.
+Misinformation is complex and context-dependent. Did someone make a factually incorrect claim but say it was just their opinion? Was this claim a quote from a politician? Is the claim actually meant to be a joke, or sarcastic? Or is a false claim intentionally being made to mislead viewers? To parse this nuance, we _could_ set some rules, train a bunch of people, and have them watch every video and label the violating ones.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/manual_review.png" height="60%" width="60%">
 </center>
 
-**But this approach doesn't scale well.** To stay atop the torrent of videos, we would need _30,000 reviewers_ working nonstop to catch all misinformation. (Make that _100,000_ if reviewers only work 8-hour shifts and have a lunch break.) 100,000 is an unrealistic number, even for a company as large as Google.<sup>[[1]](#1-intro)</sup> But even if we could get 100,000 reviewers, good luck training them to be consistent, as well as have perfect, up-to-date knowledge of all misleading claims and which violate YouTube's content policies.
+**But this approach doesn't scale well.** To stay atop the torrent of videos, we would need _30,000 reviewers_ working nonstop to catch all misinformation. Actually, make that _100,000_ if reviewers only work 8-hour shifts and have a lunch break. 100,000 is an unrealistic number, even for a company as large as Google.<sup>[[1]](#1-intro)</sup>
 
-Human review is necessary. But 100,000 reviewers isn't going to work. So we need some way to cut down that flood of videos to just borderline cases, ones where we _do_ need a human to review. Is there some way to remove 90%, or 99%, or 99.999% of videos from the review queue, so the videos that are left are actually worth looking at?
+Human review is necessary, but 100,000 reviewers isn't going to work. So we need some way to cut down that flood of videos to just borderline cases, ones where we _do_ need a human to review. Is there some way to remove 90%, or 99%, or 99.999% of videos from the review queue, so the videos that are left are actually worth a closer look?
 
 Given how strong OCR, NLP, and AI content understanding in general is these days, our second approach is to **train a model (or several dozen) to _predict_ whether content is bad.** Using a model has the tremendous advantage that it is thousands or even millions of times faster than a human at labeling whether content is abusive.
 
@@ -60,7 +60,7 @@ Where $N_{old}$ is the number of abusive videos caught with the old method and $
 
 ## Footnotes
 #### 1. [Intro](#)
-Google only has [150,000 employees](https://www.macrotrends.net/stocks/charts/GOOG/alphabet/number-of-employees), to put the infeasibility of hiring 100,000 reviewers in perspective.
+Google only has [150,000 employees](https://www.macrotrends.net/stocks/charts/GOOG/alphabet/number-of-employees), to put the infeasibility of hiring 100,000 reviewers in perspective. The number is actually probably more like 101,000: for simplicity, we're omitting the reviewers we'd need to handle [user appeals](https://www.tspa.org/curriculum/ts-fundamentals/content-moderation-and-operations/user-appeals/). Sometimes a reviewer makes a mistake and takes down a benign video, and a user complains. We'd need some extra workers to handle _re-reviewing_ videos.
 
 #### 2. [Intro](#intro)
 The major point in this paragraph is that models generate predictions, which have inherent uncertainty relative to human review. But a whole separate, more uncomfortable issue is that human review has uncertainty, too! Even experts disagree with one another, and reviewers themselves can be inconsistent.
