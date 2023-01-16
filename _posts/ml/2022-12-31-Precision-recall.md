@@ -15,17 +15,21 @@ Misinformation is complex and context-dependent. Did someone make a factually in
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/manual_review.png" height="60%" width="60%">
 </center>
 
-**But this approach doesn't scale well.** To stay atop the torrent of videos, we would need _30,000 reviewers_ working nonstop to catch all misinformation. Actually, make that _100,000_ if reviewers only work 8-hour shifts and have a lunch break. Add 1,000 to handle _re-review_ of videos that we take down but users [appeal](https://www.tspa.org/curriculum/ts-fundamentals/content-moderation-and-operations/user-appeals/). We're left with 101,000 reviewers, an unrealistic number even for a company as large as Google.<sup>[[1]](#1-intro)</sup>
+**But this approach doesn't scale well.** To stay atop the torrent of videos, we would need _30,000 reviewers_ working nonstop to catch all misinformation. Actually, make that _100,000_ if reviewers only work 8-hour shifts and have a lunch break. Add 1,000 to handle _re-reviewing_ taken-down videos that users [appeal](https://www.tspa.org/curriculum/ts-fundamentals/content-moderation-and-operations/user-appeals/). We're left with 101,000 reviewers, an unrealistic number even for a company as large as Google.<sup>[[1]](#1-intro)</sup>
 
-We need some way to reduce the amount of content that requires a human reviewer. Given the tremendous advances in [computer vision](https://www.ibm.com/topics/computer-vision) and [natural language processing](https://www.ibm.com/topics/natural-language-processing) over the past decade, **what if we train a classifier (or several dozen) to _predict_ whether content is bad?** Our classifier will output some probability that a video is information. We can set some threshold on this probability, then only send videos that are likely to be misinformation out for manual review.
+We need some way to reduce the amount of content that requires manual review. Given the tremendous advances in [computer vision](https://www.ibm.com/topics/computer-vision) and [natural language processing](https://www.ibm.com/topics/natural-language-processing) over the past decade, **what if we train a classifier (or several dozen) to _predict_ whether content is bad?** Our classifier will output the probability that a video is misinformation, and we can set some threshold above which we send over the video to review.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/misinfo_flow.png" height="70%" width="70%">
 </center>
 
-Depending on where we set this threshold, we can cut down 90%, or 99%, or 99.999%, or any percent of videos to review. Congrats! We set our threshold to require a video to be 99.9999999% likely to be misinformation, hire 1 reviewer, and call it a day.
+Depending on where we set this threshold, we can cut down 90%, or 99%, or 99.999%, or any percent of videos to review. Awesome -- so we set our threshold to exclude 99.9999999% of videos, hire one reviewer to handle the remaining 1 minute per day, and congratulate ourselves for solving a tough problem.
 
-But... that doesn't quite work. Unless our model is perfect (which it never is), we're probably missing a lot of bad content by setting our threshold so high. But if we set our threshold too low, we might get so many videos that we need to hire more reviewers than we can afford. **So how do we choose a threshold? What are the tradeoffs we face when picking a number that determines whether a video is sent to review or not?**
+But... that doesn't quite work. Unless our model is perfect (which it never is), **we're definitely missing a lot of bad content by setting our threshold so high.** Even if our model _is_ really accurate and we can automatically un-publish anything the model predicts to be violating, we'd still want _some_ people to review its decisions: we may not uncover biases or blind spots in our model if we never audit its outputs.
+
+On the other hand, though, if we set our threshold for manual review too low, we'll start digging into the bulk of the green distribution above: the benign videos. The number of reviewers we'll need to hire will quickly skyrocket, and much of what those reviewers look at will also not be misinformation.
+
+**So how do we choose a threshold? What are the tradeoffs we face when picking a number that determines whether a video is sent to review or not?**
 
 To answer these questions, we need to understand **precision** and **recall**, two metrics that are provide a framework for navigating the tradeoffs of systems involving machine learning classifiers.
 
