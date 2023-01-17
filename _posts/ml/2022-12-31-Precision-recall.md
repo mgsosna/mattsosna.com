@@ -42,6 +42,41 @@ It helps to view a confusion matrix.
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/confusion_matrix.png" alt="Confusion matrix" height="50%" width="50%">
 </center>
 
+## Demo
+
+{% include header-python.html %}
+```python
+import numpy as np
+import pandas as pd
+
+is_misinfo = np.concatenate(
+    [
+        np.random.choice([0, 1], p=[0.8, 0.2], size=250),
+        np.random.choice([0, 1], p=[0.6, 0.4], size=250),
+        np.random.choice([0, 1], p=[0.4, 0.6], size=250),
+        np.random.choice([0, 1], p=[0.2, 0.8], size=250),
+    ]
+)
+
+feature_1 = range(1000) + np.random.normal(0, 1, 1000)
+
+df = pd.DataFrame(
+    {
+        'is_misinfo': is_misinfo,
+        'feature_1': feature_1,
+    }
+)
+```
+
+
+We'll want to calculate the AUC: area under the curve. We'll look at the false positive rate (FPR) vs. the true positive rate (TPR). This lets us know that for a given threshold, what is our ratio of true positives to false positives?
+
+The perfect model would have an AUC of 1: there are never any false positives. The model's outputted probabilities are perfectly 0 or 1, and they perfectly divide the true and false labels.
+
+In reality, no model is perfect. We'll have predicted probabilities of 0.3, or 0.49, for videos that look a _little_ sketchy. We'll have some probabilities of 0.55, or 0.6, for videos that look pretty sketchy but our model isn't 100% sure about. Depending on where we set our binarization threshold, we'll either count those videos as predicted misinformation, or not.
+
+
+
 ## Other things
 How do we quantify the _change_ in precision or recall? Let's say that we have our Baseline and Treatment. We're evaluating whether it's worth changing.
 
@@ -51,7 +86,12 @@ $$\LARGE \frac{N_{new} - N_{old}}{N_{old}} $$
 
 Where $N_{old}$ is the number of abusive videos caught with the old method and $N_{new}$ with the new.
 
-## Code
+## Taking it to the next level
+I briefly mentioned that we may want _multiple_ classifiers for a task as complex as catching misinformation. One approach we could take is that if we have a _set number_ of videos that we want to review per day (rather than a set probability threshold, which as we've shown can be much harder to determine), we could try flipping this classification problem into a regression one.
+
+[Facebook's News Feed](https://about.fb.com/news/2021/01/how-does-news-feed-predict-what-you-want-to-see/) works like this. There are a set of component models that target small chunks of a problem, like whether a user will like a piece of content, or start following the page that posted the content, etc. These models can be incredibly complex, but they ultimately output a probability that the action will occur. Then you can simply attach weights to each of the probabilities, sum them, and rank by these scores.  
+
+
 
 
 ## Footnotes
