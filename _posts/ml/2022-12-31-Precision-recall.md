@@ -34,13 +34,29 @@ On the other hand, though, if we set our threshold for manual review too low, we
 To answer these questions, we need to understand **precision** and **recall**, two metrics that are provide a framework for navigating the tradeoffs of systems involving machine learning classifiers.
 
 ## Definitions
-Two of the most important metrics of any machine learning system in production include **precision** and **recall**.
+Our core problem is deciding how to binarize _the probability that something is misinformation_ into whether we treat the video as 1) abusive or 2) benign. In this case, in our training data we would call abusive videos as "positive" labels and benign videos as "negative."
 
-It helps to view a confusion matrix.
+To build a framework for approaching this question of how to optimally threshold our classifier outputs, let's first construct a **confusion matrix.** At whatever threshold we set, our model will either predict that a video 1) _is_ or 2) _is not_ misinfo. Meanwhile, in the real world, this video either 1) _is_ or 2) _is not_ misinfo. This leads us with four possibilities:
+* **True Positive:** the model correctly identifies misinfo.
+* **False Positive:** the model predicts misinfo, but the video is benign.
+* **False Negative:** the model predicts benign, but the video is misinfo
+* **True Negative:** the model correctly identifies a benign video.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/confusion_matrix.png" alt="Confusion matrix" height="50%" width="50%">
 </center>
+
+Precision is _when our model thinks something is abusive, how often is it <u>actually</u> abusive?_ In other words:
+
+$$\frac{TP}{TP+FP}$$
+
+You can think of this as the left column of the confusion matrix.
+
+Recall is _of all the positive labels, how many did we <u>actually</u> catch?_ In other words:
+
+$$\frac{TP}{TP+FN}$$
+
+You can think of this as the top row of the confusion matrix.
 
 ## Demo
 
