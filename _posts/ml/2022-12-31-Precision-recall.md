@@ -38,35 +38,46 @@ One core challenge we face is deciding how to convert a classifier's predicted _
 
 A similar problem is comparing models. Let's say we build a new classifier that uses a different algorithm than our current approach. How can we tell if it's better?
 
-We need a framework for evaluating model performance. One helpful method is the **confusion matrix.** At whatever threshold we set, our model will either predict that a video 1) _is_ or 2) _is not_ misinfo. Meanwhile, in the real world, this video either 1) _is_ or 2) _is not_ misinfo. This leads us with four possibilities:
+We need a framework for evaluating model performance. The typical way we evaluate the performance of machine learning models is by splitting our data into _training_ and _test_ sets. The model is trained on the training data, then asked to predict the labels of the test data. At whatever threshold we set, our model will either predict that a video 1) _is_ or 2) _is not_ misinfo. Meanwhile, in the real world, this video either 1) _is_ or 2) _is not_ misinfo. This leads us with four possibilities:
 * **True Positive:** the model correctly identifies misinfo.
 * **False Positive:** the model predicts misinfo, but the video is benign.
 * **False Negative:** the model predicts benign, but the video is misinfo
 * **True Negative:** the model correctly identifies a benign video.
 
+We can arrange these possibilities in a **confusion matrix.** The columns of the matrix are the _predicted_ abuse and benign labels, and the rows are the _actual_ abuse and benign labels.
+
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/confusion_matrix.png" alt="Confusion matrix" height="50%" width="50%">
 </center>
 
-Precision is _when our model thinks something is abusive, how often is it <u>actually</u> abusive?_ In other words:
+Our first impression is that we want to maximize **accuracy:** our model's ability to detect true positives and true negatives. A model with perfect accuracy would perfectly predict the test set's labels and never have any false positives or false negatives.
+
+$$\frac{TP+TN}{TP+FP+FN+TN}$$
+
+Accuracy often works fine as a metric. But if our labels are imbalanced, it's easy for a model to learn a cheap way to "game" the system. Imagine that because abusive videos are (thankfully) rare, our training data has 99.9% benign labels and 0.1% abusive labels. A model that always predicts that a video is benign will be 99.9% accurate. That's not good at all -- we're missing all the videos we want to catch!
+
+If it's important for us to catch all the bad videos, we'll want to use a metric like **recall.** Recall is _of all the positive labels, how many did we <u>actually</u> catch?_ In other words:
+
+$$\frac{TP}{TP+FN}$$
+
+We can think of this as the top row of the confusion matrix.
+
+<center>
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/cm_recall.png" alt="Recall columns of confusion matrix" height="50%" width="50%">
+</center>
+
+Recall is valuable, but it's also easy to "game": a model that always predicts that a video is abusive will have perfect recall. But we won't get much value out of this model, since we'll also be labeling benign videos as abusive.
+
+Another metric we can get from a confusion matrix, then, is **precision.** Precision is _when our model thinks something is abusive, how often is it <u>actually</u> abusive?_ In other words:
 
 $$\frac{TP}{TP+FP}$$
 
-You can think of this as the left column of the confusion matrix.
+We can think of this as the left column of the confusion matrix.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/cm_precision.png" alt="Precision columns of confusion matrix" height="50%" width="50%">
 </center>
 
-Recall is _of all the positive labels, how many did we <u>actually</u> catch?_ In other words:
-
-$$\frac{TP}{TP+FN}$$
-
-You can think of this as the top row of the confusion matrix.
-
-<center>
-<img src="{{  site.baseurl  }}/images/ml/precision_recall/cm_recall.png" alt="Recall columns of confusion matrix" height="50%" width="50%">
-</center>
 
 ## Demo
 
