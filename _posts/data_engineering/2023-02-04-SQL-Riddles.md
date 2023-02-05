@@ -6,7 +6,7 @@ tags: sql
 ---
 
 ## Dependent vs. independent filters
-I came across this one recently. The goal of the query is to filter out all rows that meet _any one_ of three conditions. In the table below, for example, let's say that we want to only return active users, i.e., ones who _have_ logged in during the last 28 days, _have_ posted before, and are _not_ a new account.
+I came across this one recently. The goal of the query is to **remove all rows that meet _any one_ of three conditions.** In the table below, for example, let's say that we want to only return active users, i.e., ones who _have_ logged in during the last 28 days, _have_ posted before, and are _not_ a new account.
 
 | **user_id** |**no_login_l28**| **has_never_posted** | **is_new_account** |
 | -- | -- |
@@ -22,7 +22,29 @@ I came across this one recently. The goal of the query is to filter out all rows
 
 In other words, we want our query to only user 8, who has False values for `no_login_l28`, `has_never_posted`, and `is_new_account`.
 
-How should we structure the `WHERE` clause of our query? Think for a minute -- **we need to be careful not to return rows where _any_ of the columns is `False`.** When you're ready, take a look at the options below.
+Let's start with the top of our query. We'll define these rows in a subquery so we don't need to create a new table just for this exercise. (But if you want to, check out [this post]({{  site.baseurl  }}/Intermediate-SQL).)
+
+{% include header-sql.html %}
+```sql
+WITH tab(user_id, no_login_l28, has_never_posted, is_new_account) AS (
+    VALUES
+	  (1, True, True, True),
+	  (2, True, True, False),
+	  (3, True, False, True),
+	  (4, True, False, False),
+	  (5, False, True, True),
+	  (6, False, True, False),
+	  (7, False, False, True),
+	  (8, False, False, False)
+)
+SELECT
+    user_id
+FROM tab
+WHERE
+    ...
+```
+
+How should we structure the `WHERE` clause of our query? Think for a minute -- **we need to be careful not to return rows where _any_ of the columns is `False`.** When you're ready, take a look at the options below. Two are correct and two are wrong.
 
 **Option 1: Multiple `AND NOT`**
 {% include header-sql.html %}
@@ -68,4 +90,8 @@ Ready for the answers? Alright, here we go.
 
 **Option 1.** This one tripped me up a bit. A data scientist on my team submitted a PR with this filter, which I was convinced would pull in rows 2-8 because the query would require a user to have `False` values for all three columns. But to my surprise, Option 1 actually works **because the three filters are evaluated independently.** ✅
 
-**Option 2.** This was the filter I initially thought was correct. 
+**Option 2.** This was the filter I initially thought was correct, since I didn't realize the filters would be evaluated independently. But this filter will actually return users 2-8, since anyone who has at least one `True` for `no_login_l28`, `has_never_posted`, and `is_new_account` will be allowed through. ❌
+
+**Option 3.** This was how I initially thought the filter needed to be worded. If a user has `True` for _any_ of `no_login_l28`, `has_never_posted`, or `is_new_account`, then lines 3-5 evaluate to `True`, the `NOT` flips this to `False`, and those rows are ultimately excluded. Indeed, this works, and I find this easier to understand than Option 1, but both are valid. ✅
+
+**Option 4.** This returns the same incorrect result as Option 2. Lines 3-5 evaluate to `True` only for user 1, meaning that when we flip the boolean with `NOT`, all remaining users are pulled through. ❌
