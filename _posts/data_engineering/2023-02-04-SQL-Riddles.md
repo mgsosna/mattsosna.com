@@ -5,7 +5,7 @@ author: matt_sosna
 tags: sql
 ---
 
-## Dependent vs. independent filters
+### Riddle 1: Dependent vs. independent filters
 I came across this one recently. The goal of the query is to **remove all rows that meet _any one_ of three conditions.** In the table below, for example, let's say that we want to only return active users, i.e., ones who _have_ logged in during the last 28 days, _have_ posted before, and are _not_ a new account.
 
 | **user_id** |**no_login_l28**| **has_never_posted** | **is_new_account** |
@@ -95,3 +95,65 @@ Ready for the answers? Alright, here we go.
 **Option 3.** This was how I initially thought the filter needed to be worded. If a user has `True` for _any_ of `no_login_l28`, `has_never_posted`, or `is_new_account`, then lines 3-5 evaluate to `True`, the `NOT` flips this to `False`, and those rows are ultimately excluded. Indeed, this works, and I find this easier to understand than Option 1, but both are valid. ✅
 
 **Option 4.** This returns the same incorrect result as Option 2. Lines 3-5 evaluate to `True` only for user 1, meaning that when we flip the boolean with `NOT`, all remaining users are pulled through. ❌
+
+### Riddle 2: Joins with `WHERE` vs. `ON`
+Take a look at the query below. We have two tables, `customers` and `orders`. `customers` contains customer IDs and the "tier" they're in -- bronze, silver, or gold. `orders` contains order ID, customer ID, a review of the item purchased, and its purchase price.
+
+```sql
+WITH customers(id, tier) AS (
+    VALUES
+    (100, 'bronze'),
+    (200, 'gold'),
+    (300, 'gold'),
+    (400, 'silver')
+),
+orders(id, customer_id, review, price) AS (
+    VALUES
+    (1, 100, 'It was great!', 99.99),
+    (2, 100, 'I loved it!', 49.99),
+    (3, 200, NULL, 99.99),
+    (4, 300, NULL, 129.99),
+    (5, 300, 'Free pills! Click here.', 199.99),
+    (6, 400, 'Loved it!', 39.99),
+    (7, 400, NULL, 39.99),
+    (8, 400, 'Hated it!', 39.99)
+)
+...
+```
+
+Now let's say we want to calculate the total dollars spent by customer tier. We filter the `orders` table to remove a spam review about pills before joining.
+
+Predict what the resulting query will look like.
+
+{% include header-sql.html %}
+```sql
+...
+SELECT
+    c.tier,
+    SUM(o.price)
+FROM customers c
+LEFT JOIN orders o
+    ON c.id = o.customer_id
+WHERE
+    o.review != 'Free pills! Click here.'
+GROUP BY
+    1
+ORDER BY
+    1
+```
+
+Ready? Here's what comes out.
+
+| **tier** | **sum** |
+| --- | --- |
+| bronze | 149.98 |
+| silver | 79.98 |
+{:.mbtablestyle}  
+
+Wait a minute. Where did gold tier go? The calculation for silver tier is also wrong: it should be $119.17.
+
+The issue, it turns out, is due to [**the order of filtering in `WHERE` vs. `ON`**](https://mode.com/sql-tutorial/sql-joins-where-vs-on/)**.** Normally, filtering occurs after the tables are joined. But sometimes you want to filter the two tables before they join. When there's a filter in `ON`, then it's like a `WHERE` that's applied to only one of the tables.
+
+What happens above is that NULLs are filtered out. But watch what we get when we do it this way.
+
+Example [here](https://trevorscode.com/why-is-my-left-join-behaving-like-an-inner-join-and-filtering-out-all-the-right-side-rows/) is really good.
