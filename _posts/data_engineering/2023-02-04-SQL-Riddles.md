@@ -97,63 +97,87 @@ Ready for the answers? Alright, here we go.
 **Option 4.** This returns the same incorrect result as Option 2. Lines 3-5 evaluate to `True` only for user 1, meaning that when we flip the boolean with `NOT`, all remaining users are pulled through. ❌
 
 ### Riddle 2: Joins with `WHERE` vs. `ON`
-Take a look at the query below. We have two tables, `customers` and `orders`. `customers` contains customer IDs and the "tier" they're in -- bronze, silver, or gold. `orders` contains order ID, customer ID, a review of the item purchased, and its purchase price.
+Take a look at the query below. We have two tables, `customers` and `reviews`. `customers` contains customer IDs and their total spend. `reviews` contains information about reviews left by customers: the review ID, customer ID, and whether the review was reported as spam.
 
+{% include header-sql.html %}
 ```sql
-WITH customers(id, tier) AS (
+WITH customers(id, total_spend) AS (
     VALUES
-    (100, 'bronze'),
-    (200, 'gold'),
-    (300, 'gold'),
-    (400, 'silver')
+    (100, 1583.49),
+    (200, 8739.03),
+    (300, 431.00),
+    (400, 1.00),
+    (500, 22.27)
 ),
-orders(id, customer_id, review, price) AS (
+reviews(id, customer_id, reported_as_spam) AS (
     VALUES
-    (1, 100, 'It was great!', 99.99),
-    (2, 100, 'I loved it!', 49.99),
-    (3, 200, NULL, 99.99),
-    (4, 300, NULL, 129.99),
-    (5, 300, 'Free pills! Click here.', 199.99),
-    (6, 400, 'Loved it!', 39.99),
-    (7, 400, NULL, 39.99),
-    (8, 400, 'Hated it!', 39.99)
+    (1, 100, False),
+    (2, 100, False),
+    (3, 400, True),
+    (4, 400, True),
+    (5, 500, False)
 )
 ...
 ```
 
-Now let's say we want to calculate the total dollars spent by customer tier. We filter the `orders` table to remove a spam review about pills before joining.
-
-Predict what the resulting query will look like.
+Now let's say we want a query that adds the number of non-spam reviews written by each customer. Since not each customer has left a review, we'll want to left join `reviews` to `customers`. We can structure our query like this:
 
 {% include header-sql.html %}
 ```sql
 ...
 SELECT
-    c.tier,
-    SUM(o.price)
+    c.id,
+    c.total_spend,
+    COALESCE(COUNT(r.id), 0) AS n_reviews
 FROM customers c
-LEFT JOIN orders o
-    ON c.id = o.customer_id
+LEFT JOIN reviews r
+    ON c.id = r.customer_id
 WHERE
-    o.review != 'Free pills! Click here.'
+    NOT r.reported_as_spam
 GROUP BY
-    1
+    1, 2
 ORDER BY
     1
 ```
 
 Ready? Here's what comes out.
 
-| **tier** | **sum** |
-| --- | --- |
-| bronze | 149.98 |
-| silver | 79.98 |
+| **id** | **total_spend** | **n_reviews** |
+| --- | --- | --- |
+| 100 | 1583.49 | 2
+| 500 | 22.27 | 1
 {:.mbtablestyle}  
 
-Wait a minute. Where did gold tier go? The calculation for silver tier is also wrong: it should be $119.17.
+Wait a minute. Where did users 200, 300, and 400 go? Looking closely, we can see that users 200 and 300 have never left any reviews. 400 only has spam reviews, but they were completely removed as well. Since we did a left join, these users should still be in the table and have a 0 for `n_reviews`. Instead, our left join [behaved like an inner join](https://trevorscode.com/why-is-my-left-join-behaving-like-an-inner-join-and-filtering-out-all-the-right-side-rows/).
 
 The issue, it turns out, is due to [**the order of filtering in `WHERE` vs. `ON`**](https://mode.com/sql-tutorial/sql-joins-where-vs-on/)**.** Normally, filtering occurs after the tables are joined. But sometimes you want to filter the two tables before they join. When there's a filter in `ON`, then it's like a `WHERE` that's applied to only one of the tables.
 
-What happens above is that NULLs are filtered out. But watch what we get when we do it this way.
+To do this properly, we need to pre-filter `reviews` before joining with `customers`. We can do this by adding `AND NOT r.reported_as_spam` to the `LEFT JOIN` block. See below:
 
-Example [here](https://trevorscode.com/why-is-my-left-join-behaving-like-an-inner-join-and-filtering-out-all-the-right-side-rows/) is really good.
+{% include header-sql.html %}
+```sql
+...
+SELECT
+	c.id,
+	c.total_spend,
+	COALESCE(COUNT(r.id), 0) AS n_reviews
+FROM customers c
+LEFT JOIN reviews r
+	ON c.id = r.customer_id
+	AND NOT r.reported_as_spam
+GROUP BY
+	1, 2
+ORDER BY
+	1
+```
+
+Now we get the expected result.
+
+| **id** | **total_spend** | **n_reviews** |
+| --- | --- | --- |
+| 100 | 1583.49 | 2
+| 200 | 8739.03 | 0
+| 300 | 431.00 | 0
+| 400 | 1.00 | 0
+| 500 | 22.27 | 1
+{:.mbtablestyle}
