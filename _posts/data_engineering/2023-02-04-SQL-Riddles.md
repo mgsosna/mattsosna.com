@@ -1,22 +1,22 @@
 ---
 layout: post
-title: SQL Riddles to Test You
+title: SQL Riddles to Test Your Wits
 author: matt_sosna
 tags: sql
 ---
 
-SQL is a deceptively simple language. Across its many dialects, you can query databases in a vernacular similar to English. **What you see is what you get... until you don't.**
+SQL is a deceptively simple language. Across its many dialects, users can query databases in a syntax similar to English. **What you see is what you get... until you don't.**
 
-Every now and then, I come across a query that produces a result completely different from what I expect, teaching me little nuances about the language. I've compiled three recent head-scratchers in this post, and I've arranged them as riddles to make them more interesting. Try to figure out the answer before reading the end of each section!
+Every now and then I come across a query that produces a result completely different from what I expected, teaching me little nuances about the language. I've compiled three recent head-scratchers in this post, and I've arranged them as riddles to make them more interesting. Try to figure out the answer before reading the end of each section!
 
-I've also included quick [**common table expressions (CTEs)**](https://learnsql.com/blog/what-is-common-table-expression/) to generate the table in each example, so you don't need to try querying your company's production tables! But to get really comfortable with SQL, I recommend creating your own database and tables. Check out [this post]({{  site.baseurl  }}/Intermediate-SQL) to learn how.
+I've also included quick [**common table expressions (CTEs)**](https://learnsql.com/blog/what-is-common-table-expression/) to generate the tables in each example, so you don't need to try querying your company's production tables! But to get really comfortable with SQL, I actually recommend creating your own database and tables to play with. Check out [this post]({{  site.baseurl  }}/Intermediate-SQL) to learn how.
 
-Finally, an obligatory side note that the actual data and topics in each query are just illustrative examples. 🙂
+Finally, an obligatory note that the actual data and topics in each query are just illustrative examples. 🙂
 
-## Riddle 1: Timestamps
+## Riddle 1: Timestamp Specificity
 Imagine we have a table called `purchases` with purchase IDs, amounts, and times the purchase were made. Let's say it looks like this:
 
-| **transaction_id** | **amount** | **dt** |
+| **id** | **amount** | **dt** |
 | --- | --- | -- |
 | 1 | 0.99 | 2023-02-15 00:00:00 |
 | 2 | 9.99 | 2023-02-15 07:15:00 |
@@ -28,7 +28,7 @@ As a CTE, this would look something like this. Note that we need to specify that
 
 {% include header-sql.html %}
 ```sql
-WITH purchases(transaction_id, amount, dt) AS (
+WITH purchases(id, amount, dt) AS (
     VALUES
     (1::bigint, 0.99::float, '2023-02-15 00:00:00 GMT'::timestamp),
     (2, 9.99, '2023-02-15 07:15:00 GMT'),
@@ -57,13 +57,13 @@ We mysteriously receive the following response.
 | 0.99 |
 {:.mbtablestyle}
 
-What happened? There were three purchases made on Feb 15: transaction IDs 1, 2, and 3. The sum should therefore be \$26.97. Instead, only the first purchase was counted.
+What happened? There were three purchases made on Feb 15: IDs 1, 2, and 3. The sum should therefore be \$26.97. Instead, only the first purchase was counted.
 
 ### Hint
 If you change the filter to `2023-02-16`, no rows are returned.
 
 ### Answer
-The `dt` column is a timestamp that includes both date and time. Our `WHERE` filter only specifies the date. Rather than rejecting this query, Postgres automatically reformats the date string to `2023-02-15 00:00:00`. This matches only the first transaction in the table. We're therefore taking only the sum of one row.
+The `dt` column is a timestamp that includes both date and time. Our `WHERE` filter only specifies the date. Rather than rejecting this query, Postgres automatically reformats the date string to `2023-02-15 00:00:00`. This matches only the first transaction in the table, so we're therefore taking only the sum of one row.
 
 If we wanted to select all rows corresponding to Feb 15, we should first cast the timestamp to date.
 
@@ -84,9 +84,9 @@ We now get the expected result.
 {:.mbtablestyle}
 
 ## Riddle 2: Dependent vs. independent filters
-Alright, next riddle. The goal of the query is to **remove all rows that meet _any one_ of three conditions.** In the table below, for example, let's say that we want to only return tenured and active users, i.e., ones who _have_ logged in during the last 28 days, _have_ posted before, and are _not_ a new account.
+Alright, next riddle. We have a table called `users`, and our goal is to **remove all rows that meet _any one_ of three conditions.** In the table below, for example, let's say that we want to only return tenured and active users, i.e., ones who _have_ logged in during the last 28 days, _have_ posted before, and are _not_ a new account.
 
-| **user_id** |**no_login_l28**| **has_never_posted** | **is_new_account** |
+| **id** |**no_login_l28**| **has_never_posted** | **is_new_account** |
 | -- | -- |
 | 1 | True | True | True |
 | 2 | True | True | False |
@@ -104,7 +104,7 @@ Let's start with the top of our query.
 
 {% include header-sql.html %}
 ```sql
-WITH tab(user_id, no_login_l28, has_never_posted, is_new_account) AS (
+WITH tab(id, no_login_l28, has_never_posted, is_new_account) AS (
     VALUES
     (1, True, True, True),
     (2, True, True, False),
@@ -116,7 +116,7 @@ WITH tab(user_id, no_login_l28, has_never_posted, is_new_account) AS (
     (8, False, False, False)
 )
 SELECT
-    user_id
+    id
 FROM tab
 WHERE
     ...
@@ -293,3 +293,11 @@ Now we get the expected result.
 | 400 | 1.00 | 0
 | 500 | 22.27 | 1
 {:.mbtablestyle}
+
+## Conclusions
+This post shared three SQL wrinkles that can lead to unexpected results: timestamp specificity, dependent versus independent filters, and left joins acting like inner joins. I specifically provided simple examples to keep the focus on the syntax, but you'll likely encounter SQL nuances like these nestled within large, complex queries.
+
+These bugs can be incredibly challenging to identify, especially for queries with many components. Whenever I'm confused by a result, I try to break the query into its pieces and verify each component's result. And when in doubt, create some simple CTEs with test data and confirm the results do what you expect.
+
+Happy querying!<br>
+Matt
