@@ -11,7 +11,7 @@ Every now and then I come across a query that produces a result completely diffe
 
 I've also included quick [**common table expressions (CTEs)**](https://learnsql.com/blog/what-is-common-table-expression/) to generate the tables in each example, so you don't need to try querying your company's production tables! But to get really comfortable with SQL, I actually recommend creating your own database and tables to play with. Check out [this post]({{  site.baseurl  }}/Intermediate-SQL) to learn how.
 
-Finally, an obligatory note that the actual data and topics in each query are just illustrative examples. 🙂
+Note that all queries are in Postgres - you may get different results in a different dialect. Finally, an obligatory note that the actual data and topics in each query are just illustrative examples. 🙂
 
 ## Riddle 1: Timestamp Specificity
 Imagine we have a table called `purchases` with purchase IDs, amounts, and times the purchase were made. Let's say it looks like this:
@@ -24,7 +24,7 @@ Imagine we have a table called `purchases` with purchase IDs, amounts, and times
 | 4 | 7.99 | 2023-02-16 14:22:09 |
 {:.mbtablestyle}
 
-As a CTE, this would look something like this. Note that we need to specify that the `dt` column is a timestamp so it isn't interpreted as a string. We also only need to specify the data types for one of the rows; the rest are inferred.
+As a CTE, this would look something like this. Note that we need to specify that the `dt` column format is a timestamp so it isn't interpreted as a string. We also only need to specify the data types for one of the rows; the rest are inferred.
 
 {% include header-sql.html %}
 ```sql
@@ -260,9 +260,9 @@ If you create a CTE for `reviews` with spam reviews filtered out, _then_ join on
 ### Answer
 Looking closely, we can see that users 200 and 300 have never left any reviews. 400 only has spam reviews, but they were completely removed as well. Since we did a left join, these users should still be in the table and have a 0 for `n_reviews`. Instead, our left join [behaved like an inner join](https://trevorscode.com/why-is-my-left-join-behaving-like-an-inner-join-and-filtering-out-all-the-right-side-rows/).
 
-The issue, it turns out, is due to [**the order of filtering in `WHERE` vs. `ON`**](https://mode.com/sql-tutorial/sql-joins-where-vs-on/)**.** `WHERE` clauses are evaluated _after_ joins. Our left join brings in null values for `reported_as_spam` for users 200 and 300. The `WHERE` filter then removes all rows where `reported_as_spam` is True, which removes user 400. However, this filter also removes null values, so users 200 and 300 are also removed.
+The issue, it turns out, is that **`WHERE` clauses are evaluated _after_ joins.** Our left join brings in null values for `reported_as_spam` for users 200 and 300. The `WHERE` filter then removes all rows where `reported_as_spam` is True, which removes user 400. However, this filter also removes null values, so users 200 and 300 are also removed.
 
-To do this properly, we need to pre-filter `reviews` before joining with `customers`. As the hint states, we can create a CTE for `reviews` and perform the filtering there. But more efficiently, let's perform the filtering _within_ the join.
+To do this properly, we need to pre-filter `reviews` before joining with `customers`. As the hint states, we can create a CTE for `reviews` and perform the filtering there. But more efficiently, [let's perform the filtering _within_ the join](https://mode.com/sql-tutorial/sql-joins-where-vs-on/).
 
 We can do this by adding `AND NOT r.reported_as_spam` to the `LEFT JOIN` block. See below:
 
