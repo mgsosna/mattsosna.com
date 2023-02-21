@@ -104,7 +104,7 @@ Let's start with the top of our query.
 
 {% include header-sql.html %}
 ```sql
-WITH tab(id, no_login_l28, has_never_posted, is_new_account) AS (
+WITH users(id, no_login_l28, has_never_posted, is_new_account) AS (
     VALUES
     (1, True, True, True),
     (2, True, True, False),
@@ -117,7 +117,7 @@ WITH tab(id, no_login_l28, has_never_posted, is_new_account) AS (
 )
 SELECT
     id
-FROM tab
+FROM users
 WHERE
     ...
 ```
@@ -297,7 +297,7 @@ Now we get the expected result.
 ## Conclusions
 This post shared three SQL wrinkles that can lead to unexpected results: timestamp specificity, dependent versus independent filters, and left joins acting like inner joins. I specifically provided simple examples to keep the focus on the syntax, but you'll likely encounter SQL nuances like these nestled within large, complex queries.
 
-These bugs can be incredibly challenging to identify, especially for queries with many components. Whenever I'm confused by a result, I try to break the query into its pieces and verify each component's result. And when in doubt, create some simple CTEs with test data and confirm the results do what you expect.
+These bugs can be incredibly challenging to identify, especially for queries with many components. Whenever I'm confused by a result, I try to break the query into its pieces and verify each component's result. But when in doubt, write some simple CTEs with test data and confirm the results do what you expect.
 
 Happy querying!<br>
 Matt
