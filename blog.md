@@ -145,6 +145,7 @@ permalink: /blog/
   - <span style="font-size: 12px">Featured in _Toward Data Science_'s [2/3/22 editors' picks](https://towardsdatascience.com/to-solve-complex-problems-find-the-right-dots-to-connect-f6cf650725dc)</span>
 3. [3 levels of technical abstraction when sharing your code]({{ site.baseurl }}/Sharing-projects)
 4. [A hands-on demo of big data with Spark]({{  site.baseurl  }}/Spark-intro)
+5. [SQL riddles to test your wits]({{  site.baseurl  }}/SQL-Riddles)
 
 ### AWS essentials
 1. [Why cloud computing?]({{  site.baseurl  }}/AWS-Intro)
