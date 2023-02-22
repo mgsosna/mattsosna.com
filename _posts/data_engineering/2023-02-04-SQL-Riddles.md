@@ -170,7 +170,7 @@ WHERE
 When are conditions in a filter evaluated separately versus together? If they're evaluated together, can we condense all conditions down to one `True` or `False` value?
 
 ### Answer
-**Option 1.** This one tripped me up a bit. A data scientist on my team submitted a PR with this filter, which I was convinced would pull in rows 2-8 because the query would require a user to have `False` values for all three columns. But to my surprise, Option 1 actually works **because the three filters are evaluated independently.** ✅
+**Option 1.** This one tripped me up a bit. A data scientist on my team submitted a PR with this filter, which I was convinced would pull in rows 2-7 because the query would only remove users with `False` values for all three columns. But to my surprise, Option 1 actually works **because the three filters are evaluated independently.** ✅
 
 **Option 2.** This was the filter I initially thought was correct, since I didn't realize the filters would be evaluated independently. But this filter will actually return users 2-8, since anyone who has at least one `True` for `no_login_l28`, `has_never_posted`, and `is_new_account` will be allowed through. ❌
 
