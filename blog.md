@@ -146,6 +146,7 @@ permalink: /blog/
 3. [3 levels of technical abstraction when sharing your code]({{ site.baseurl }}/Sharing-projects)
 4. [A hands-on demo of big data with Spark]({{  site.baseurl  }}/Spark-intro)
 5. [SQL riddles to test your wits]({{  site.baseurl  }}/SQL-Riddles)
+  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [3/16/23 editors' picks](https://towardsdatascience.com/python-and-beyond-expand-your-data-science-programming-toolkit-4f4612949)</span>
 
 ### AWS essentials
 1. [Why cloud computing?]({{  site.baseurl  }}/AWS-Intro)
