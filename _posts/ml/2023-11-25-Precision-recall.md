@@ -1,26 +1,41 @@
 ---
 layout: post
-title: A deep dive on precision and recall
+title: A practical lens on precision and recall
 author: matt_sosna
 tags: machine-learning statistics
 ---
 
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/base_pop.png" alt="Population under a magnifying glass">
 
-Imagine we're in charge of fighting misinformation on YouTube. With [**_2.5 billion_ monthly active users**](https://www.businessofapps.com/data/youtube-statistics/), the stakes are high: falsehoods like Covid miracle cures, election fraud conspiracies, or climate change denial have [serious global consequences](https://www.cnn.com/2023/01/08/americas/brazil-bolsonaro-supporters-breach-congress/index.html). We feel the pressure of ensuring that the world can trust the data it gets from the site. But this is a colossal task: users upload [**over 500 hours of video every minute**](https://www.statista.com/statistics/259477/hours-of-video-uploaded-to-youtube-every-minute/), or **1.8 million hours per day.** How can we consistently identify abuse in a never-ending flood of information?
+_Disclaimer: the examples in this post are for illustrative purposes and are not commentary on any specific content policy at any specific company. All views expressed in this article are mine and do not reflect my employer._
 
-Misinformation is complex and context-dependent. Did someone make a factually incorrect claim but say it was just their opinion? Is the claim a quote from a politician? Is the post sarcastic? Or is a false claim intentionally being made to mislead viewers? To parse this nuance, we _could_ set some rules, train a bunch of people, and have them watch every video and label the violating ones.
+Why is there _any_ spam on social media? Aside from spammers, literally no one enjoys clickbait scams or phishing attempts. We have _decades_ of training data to feed machine learning classifiers and deterministic rules. So why does spam on every major tech platform feel inevitable? After all these years, why do bot farms still exist?
+
+The answer, in short, is that it is _really_ hard to fight spam at scale, and exponentially harder to do so without harming genuine advertisers and users. In this post, we'll use **precision** and **recall** as a framework for the spam problem and see that there are "equilibria" of spam prevalence driven by finance, regulations, and user sentiment.
+
+## The context
+Imagine we're in charge of fighting spam at YouTube<sup>[[1]](#1-the-context)</sup>. Our task is to ensure that our [**_2.5 billion_ monthly active users**](https://www.businessofapps.com/data/youtube-statistics/) only see high-quality videos: no "get rich quick" schemes, blatant reposts of existing content, videos that have nothing to do with their thumbnails, etc. Users must trust that they won't have have their credit cards or identities stolen if they click on a link to an external page at the end of a video.
+
+But this is a colossal task: users upload [**over 500 hours of video every minute**](https://www.statista.com/statistics/259477/hours-of-video-uploaded-to-youtube-every-minute/), or **1.8 million hours per day.** How can we consistently ensure quality in a never-ending flood of information?
+
+Spam isn't always obvious to spot. A video could repeatedly urge users to click on a link because it's a fundraiser for a humanitarian crisis -- we definitely don't want to block that. A video could appear to be a repost of a sports event because it's a different news station that also filmed the event. To parse nuance like this, we _could_ set some rules, train a bunch of people, and have them watch every video and label the spammy ones.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/manual_review.png" height="60%" width="60%">
 </center>
 
-**But this approach doesn't scale well.** To stay atop the torrent of videos, we would need _30,000 reviewers_ working nonstop to catch all misinformation. Actually, make that _100,000_ if reviewers only work 8-hour shifts and have a lunch break. Add 1,000 to handle _re-reviewing_ videos we delete that users then [appeal](https://www.tspa.org/curriculum/ts-fundamentals/content-moderation-and-operations/user-appeals/). We're left with 101,000 reviewers, an unrealistic number even for a company as large as Google.<sup>[[1]](#1-intro)</sup>
+**But this approach doesn't scale well.** To stay atop the torrent of videos, we would need _30,000 reviewers_ working nonstop to catch all spam. Actually, make that _100,000_ if reviewers only work 8-hour shifts and have a lunch break. Add 1,000 to handle _re-reviewing_ videos whose deletion decisions users [appeal](https://www.tspa.org/curriculum/ts-fundamentals/content-moderation-and-operations/user-appeals/). We're left with 101,000 reviewers, an unrealistic number even for a company as large as Google.<sup>[[2]](#2-intro)</sup>
 
-We need some way to reduce the amount of content that requires manual review. Given the tremendous advances in [computer vision](https://www.ibm.com/topics/computer-vision) and [natural language processing](https://www.ibm.com/topics/natural-language-processing) over the past decade, **what if we train a classifier (or several dozen) to _predict_ whether content is bad?** Our model(s) will output the probability that a video is misinformation, and we can set some threshold above which we send the video over to review.
+We need some way to reduce the amount of content that requires manual review. Given the tremendous advances in [computer vision](https://www.ibm.com/topics/computer-vision) and [natural language processing](https://www.ibm.com/topics/natural-language-processing) over the past decade, **what if we train a classifier (or several dozen) to _predict_ whether content is bad?** The classifier(s) would take in a video and output a probability that the video is spam.
 
 <center>
-<img src="{{  site.baseurl  }}/images/ml/precision_recall/misinfo_flow.png" height="70%" width="70%">
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/scaled_review.png" height="70%" width="70%">
+</center>
+
+Our model(s) will output the probability that a video is spam, and we can set some threshold above which we send the video over to review.
+
+<center>
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_flow.png" height="70%" width="70%">
 </center>
 
 Depending on where we set this threshold, we can cut down 90%, or 99%, or 99.999%, or any percent of videos to review. Awesome -- so we set our threshold to exclude 99.9999999% of videos, hire one reviewer to handle the remaining 1 minute per day, and congratulate ourselves for solving a tough problem.
@@ -40,10 +55,10 @@ To ensure our model doesn't _overfit_ to our training data and just memorize eve
 
 We've thrown around the word "performance" here, but we'll need to be much more specific to answer the questions from the previous section. Let's zoom in on these specific abuse _probabilities_ that our model outputs.
 
-To compare our model outputs to the real-world labels, we need to convert a model's _probability that a video is abusive_ into a binary "yes, this is misinformation" or "no, this is benign" label. When we set a threshold (typically 50%), our model will then either predict that a video _is_ or _is not_ abusive. Meanwhile, in the real world, this video either _is_ or _is not_ misinfo. This leads us with four possibilities:
-* **True Positive:** the model correctly identifies misinfo.
-* **False Positive:** the model predicts misinfo, but the video is benign.
-* **False Negative:** the model predicts benign, but the video is misinfo
+To compare our model outputs to the real-world labels, we need to convert a model's _probability that a video is abusive_ into a binary "yes, this is spam" or "no, this is benign" label. When we set a threshold (typically 50%), our model will then either predict that a video _is_ or _is not_ abusive. Meanwhile, in the real world, this video either _is_ or _is not_ spam. This leads us with four possibilities:
+* **True Positive:** the model correctly identifies spam.
+* **False Positive:** the model predicts spam, but the video is benign.
+* **False Negative:** the model predicts benign, but the video is spam
 * **True Negative:** the model correctly identifies a benign video.
 
 We can arrange these possibilities in a **confusion matrix.** The columns of the matrix are the _predicted_ abuse and benign labels, and the rows are the _actual_ abuse and benign labels.
@@ -84,7 +99,7 @@ We can think of this as the left column of the confusion matrix.
 
 
 Specifically, we need a framework for the following:
-1. Determining how to convert a classifier's predicted _probability that a video is misinformation_ into an _"is abusive"_ or _"is benign"_ label.
+1. Determining how to convert a classifier's predicted _probability that a video is spam into an _"is abusive"_ or _"is benign"_ label.
 2. Comparing the performance of one model to another.
 
 
@@ -95,7 +110,7 @@ Specifically, we need a framework for the following:
 import numpy as np
 import pandas as pd
 
-is_misinfo = np.concatenate(
+is_spam = np.concatenate(
     [
         np.random.choice([0, 1], p=[0.8, 0.2], size=250),
         np.random.choice([0, 1], p=[0.6, 0.4], size=250),
@@ -108,7 +123,7 @@ feature_1 = range(1000) + np.random.normal(0, 1, 1000)
 
 df = pd.DataFrame(
     {
-        'is_misinfo': is_misinfo,
+        'is_spam': is_spam,
         'feature_1': feature_1,
     }
 )
@@ -119,7 +134,7 @@ We'll want to calculate the AUC: area under the curve. We'll look at the false p
 
 The perfect model would have an AUC of 1: there are never any false positives. The model's outputted probabilities are perfectly 0 or 1, and they perfectly divide the true and false labels.
 
-In reality, no model is perfect. We'll have predicted probabilities of 0.3, or 0.49, for videos that look a _little_ sketchy. We'll have some probabilities of 0.55, or 0.6, for videos that look pretty sketchy but our model isn't 100% sure about. Depending on where we set our binarization threshold, we'll either count those videos as predicted misinformation, or not.
+In reality, no model is perfect. We'll have predicted probabilities of 0.3, or 0.49, for videos that look a _little_ sketchy. We'll have some probabilities of 0.55, or 0.6, for videos that look pretty sketchy but our model isn't 100% sure about. Depending on where we set our binarization threshold, we'll either count those videos as predicted spam, or not.
 
 
 
@@ -133,13 +148,18 @@ $$\LARGE \frac{N_{new} - N_{old}}{N_{old}} $$
 Where $N_{old}$ is the number of abusive videos caught with the old method and $N_{new}$ with the new.
 
 ## Taking it to the next level
-I briefly mentioned that we may want _multiple_ classifiers for a task as complex as catching misinformation. One approach we could take is that if we have a _set number_ of videos that we want to review per day (rather than a set probability threshold, which as we've shown can be much harder to determine), we could try flipping this classification problem into a regression one.
+I briefly mentioned that we may want _multiple_ classifiers for a task as complex as catching spam. One approach we could take is that if we have a _set number_ of videos that we want to review per day (rather than a set probability threshold, which as we've shown can be much harder to determine), we could try flipping this classification problem into a regression one.
 
 [Facebook's News Feed](https://about.fb.com/news/2021/01/how-does-news-feed-predict-what-you-want-to-see/) works like this. There are a set of component models that target small chunks of a problem, like whether a user will like a piece of content, or start following the page that posted the content, etc. These models can be incredibly complex, but they ultimately output a probability that the action will occur. Then you can simply attach weights to each of the probabilities, sum them, and rank by these scores.  
 
 
+From a financial standpoint, there is some "optimal" amount of bad stuff on a platform, given the cost of manual review, engineering development, etc. to identify and delete that bad content and the long-term benefit of users staying on the platform. To push a company beyond that point would require regulation (so there are significant financial penalties), an internal acceptance of operating sub-optimally (but with a higher ethical standard, for example) or to have users lower the threshold at which they would leave a platform.
+
 
 
 ## Footnotes
-#### 1. [Intro](#)
+#### 1. [The context](#the-context)
+If you're curious, here are YouTube's actual [terms of service](https://support.google.com/youtube/answer/2801973?hl=en) regarding spam.
+
+#### 2. [The context](#the-context)
 Google only has [150,000 employees](https://www.macrotrends.net/stocks/charts/GOOG/alphabet/number-of-employees), to put the infeasibility of hiring 100,000 reviewers in perspective.
