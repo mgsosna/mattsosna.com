@@ -18,19 +18,52 @@ Why is there _any_ spam on social media? Aside from spammers, literally no one e
 The answer, in short, is that it is _really_ hard to fight spam at scale, and exponentially harder to do so without harming genuine advertisers and users. In this post, we'll use **precision** and **recall** as a framework for the spam problem. We'll see that eradicating 100% of spam is impractical and actually undesirable, and that there is some "equilibrium" spam prevalence based on finance, regulations, and user sentiment.
 
 ## The context
-Imagine we're in charge of fighting spam at YouTube. Our task is to ensure that our [**_2.5 billion_ monthly active users**](https://www.businessofapps.com/data/youtube-statistics/)<sup>[[1]](#1-the-context)</sup> only see high-quality videos: no "get rich quick" schemes, blatant reposts of existing content, videos that have nothing to do with their thumbnails, etc. Users must trust that they won't have have their credit cards or identities stolen if they click on a link at the end of a video.
+Imagine you're launching a competitor to TikTok and Instagram. (Forget that they have [1.1 billion](https://www.demandsage.com/tiktok-user-statistics/) and [2 billion](https://www.statista.com/statistics/272014/global-social-networks-ranked-by-number-of-users/) monthly active users, respectively; you're feeling ambitious!) Your key differentiator in this tight market is that you guarantee users will have only the highest quality of videos: absolutely no "get rich quick" schemes, blatant reposts of existing content, URLs that infect your computer with malware, etc.
 
-But quality assurance at this scale is a colossal task: users upload [**over 500 hours of video every minute**](https://www.statista.com/statistics/259477/hours-of-video-uploaded-to-youtube-every-minute/), or **1.8 million hours per day.** How can we consistently ensure quality in a never-ending flood of information?
-
-Spam isn't always obvious. A video that repeatedly urges users to click on a link might actually be a fundraiser for humanitarian relief after a crisis -- we definitely don't want to block that! Videos that appear to be reposts might actually be commentary or footage of an event from another angle. To parse nuance like this, we _could_ train a bunch of people on YouTube's [terms of service](https://support.google.com/youtube/answer/2801973?hl=en) and have them watch every video and label the spammy ones.
+To achieve this, you have a small army of reviewers ready to watch each video and confirm it's not spam before it's allowed on the platform. You know how important it is to have manual review because _spam isn't always immediately obvious_: a video that repeatedly urges users to click on a link might actually be a first aid fundraiser after a crisis -- we definitely don't want to block that! Videos that appear to be reposts might just be an ad campaign with tiny variations based on the target demographic. **You need a human touch to parse this nuance,** you argue.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/manual_review.png" height="60%" width="60%">
 </center>
 
-**But this approach doesn't scale well.** To stay atop the torrent of videos, we would need _30,000 reviewers_ working nonstop to catch all spam. Actually, make that _100,000_ if reviewers only work 8-hour shifts and have a lunch break. Add 1,000 to handle _re-reviewing_ videos that were deleted but whose creators [claim were incorrectly deleted](https://www.tspa.org/curriculum/ts-fundamentals/content-moderation-and-operations/user-appeals/). We're left with 101,000 reviewers, an unrealistic number even for a company as large as Google.<sup>[[2]](#2-intro)</sup>
+The app launches. To your delight, your "integrity first" message resonates with users and they join in droves. But your video reviewers stare in dread at the thousands of hours of video being uploaded per day. There's just no way to get through the firehose of videos... even watching them on 2x speed! Users are also complaining that their uploaded videos are stuck forever in review.
 
-We need some way to reduce the amount of content that requires manual review. Given the tremendous advances in [computer vision](https://www.ibm.com/topics/computer-vision) and [natural language processing](https://www.ibm.com/topics/natural-language-processing) over the past decade, **what if we train a classifier to _predict_ whether content is bad?** Our fancy model (which is likely an ensemble of classifiers, each tailored to a different type of spam) takes in a video and outputs the probability that the video violates any of YouTube's spam policies.
+You therefore decide to automate out your human reviewers by **writing a series of well-crafted `if`-`else` statements** that automatically label videos as spam based on data like video length, the words extracted from the audio, the number of URLs in the summary, the pixel similarity to other videos, etc. You push your changes to the upload section in prod and let the floodgates through. Videos are getting uploaded now, everyone's happy!
+
+Well, not for long. Creators are furious as our automation constantly takes down their benign videos, and users are complaining about the deluge of spam on the platform. You update your code to fix the mistakes again and again. But no matter how complex you make your decision trees, they still constantly fail on basic edge cases, like videos tinted red or with no audio.
+
+
+
+
+
+
+But the complaints start rolling in as fast as the signups: there's spam everywhere!
+
+
+
+
+
+
+But quality assurance at this scale is a colossal task: users upload [**over 500 hours of video every minute**](https://www.statista.com/statistics/259477/hours-of-video-uploaded-to-youtube-every-minute/), or **1.8 million hours per day.** How can we consistently ensure quality in a never-ending flood of information?
+
+Spam isn't always obvious. A video that repeatedly urges users to click on a link might actually be a first aid fundraiser after a crisis -- we definitely don't want to block that! Videos that appear to be reposts might just be an ad campaign with tiny variations based on the target demographic. **To parse this nuance, we decide to hire a bunch of people**, train them on YouTube's [terms of service](https://support.google.com/youtube/answer/2801973?hl=en), and have them manually watch every video and label the spammy ones.
+
+<center>
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/manual_review.png" height="60%" width="60%">
+</center>
+
+**But this approach doesn't scale well.** To stay atop the torrent of videos, we would need _75,000 reviewers_ watching videos 24/7 to audit everything. Actually, make that _240,000_ if reviewers only work 8-hour shifts and have a lunch break. Add 1,000 to handle _re-reviewing_ videos whose creators [claim were incorrectly deleted](https://www.tspa.org/curriculum/ts-fundamentals/content-moderation-and-operations/user-appeals/). We're left with 241,000 reviewers, or [60% more people](https://www.macrotrends.net/stocks/charts/GOOG/alphabet/number-of-employees) than all Google employees. That's not going to work.
+
+We therefore decide to **simply codify our terms of service as a series of well-crafted `if`-`else` statements** that automatically label videos as spam, but no matter how complex we make our decision trees, they still constantly fail on basic edge cases, like videos tinted red or with no audio. Creators are furious as our automation constantly takes down their benign videos, and users are complaining about the deluge of spam on the platform.
+
+
+The feature space is just too massive for a human to understand: how can we deterministically say a video is spam from data like video length, the words extracted from the audio, the number of URLs in the summary, the pixel similarity to other videos, etc.?
+
+
+We need some way to reduce the amount of content that requires manual review. Given the tremendous advances in [computer vision](https://www.ibm.com/topics/computer-vision) and [natural language processing](https://www.ibm.com/topics/natural-language-processing) over the past decade, **what if we train a classifier to _predict_ whether content is bad?**
+
+
+Our fancy model (which is likely an ensemble of classifiers, each tailored to a different type of spam) takes in a video and outputs the probability that the video violates any of YouTube's spam policies.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/scaled_review.png" height="70%" width="70%">
@@ -48,13 +81,13 @@ But... that doesn't quite work. Unless our classifier is perfect (which it never
 
 On the other hand, though, if we set our threshold for manual review too low, we'll start digging into the bulk of the green distribution above: the benign videos. The number of reviewers we'll need to hire will quickly skyrocket, and they'll spend much of their time reviewing benign videos.
 
-The unsettling thing to realize is that **_there is actually no perfect threshold at all_**, meaning either 1) we miss spam if we set the threshold too high, or 2) we waste reviewer hours by reviewing benign content. In this simple example below, you can see that while green circles tend to be on the left and yellow triangles on the right, there is no line we can draw that will perfectly separate the circles and triangles.
+The unsettling thing to realize is that **_there is actually no perfect threshold at all_**, meaning we either 1) miss spam if we set the threshold too high, or 2) waste reviewer hours by reviewing benign content. Until we have a superhuman [AGI](https://en.wikipedia.org/wiki/Artificial_general_intelligence) that can perfectly discern spam and non-spam videos in all countries and all languages, our model probabilities won't perfectly line up with spam and non-spam. In the simple example below, we can see that while green circles tend to be on the left and yellow triangles on the right, there is no line we can draw that will perfectly separate the circles and triangles.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/boundary.png" height="70%" width="70%">
 </center>
 
-**So how do we choose a threshold? What are the tradeoffs we face when picking a number that determines whether a video is sent to review or not? And how do we compare the performance of multiple potential models?**
+**So how do we choose a "least-bad" threshold? What are the tradeoffs we face when picking a number that determines whether a video is sent to review or not? And how do we compare the performance of multiple potential models?**
 
 To answer these questions, we need to understand **precision** and **recall**, two metrics that are provide a framework for navigating the tradeoffs of systems involving machine learning classifiers.
 
@@ -170,6 +203,3 @@ From a financial standpoint, there is some "optimal" amount of bad stuff on a pl
 ## Footnotes
 #### 1. [The context](#the-context)
 2.5 billion MAU is a _lot_ of users! The only app with more monthly users is Facebook at [3.03 billion](https://www.statista.com/statistics/272014/global-social-networks-ranked-by-number-of-users/) in Oct 2023.
-
-#### 2. [The context](#the-context)
-Google only has [150,000 employees](https://www.macrotrends.net/stocks/charts/GOOG/alphabet/number-of-employees), to put the infeasibility of hiring 100,000 reviewers in perspective.
