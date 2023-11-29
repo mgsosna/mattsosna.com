@@ -20,47 +20,42 @@ The answer, in short, is that it is _really_ hard to fight spam at scale, and ex
 ## Our app
 Imagine you're launching a competitor to TikTok and Instagram. (Forget that they have [**1.1 billion**](https://www.demandsage.com/tiktok-user-statistics/) and [**2 billion**](https://www.statista.com/statistics/272014/global-social-networks-ranked-by-number-of-users/) monthly active users, respectively; you're feeling ambitious!) Your key differentiator in this tight market is that you guarantee users will have only the highest quality of videos: absolutely no "get rich quick" schemes, blatant reposts of existing content, URLs that infect your computer with malware, etc.
 
-### Attempt 1: Deterministic Rules
-To achieve this quality guarantee, you've investing months into writing code that will flag spam. **Thousands of `if`-`else` statements** convert data such as the number of URLs in the summary, the video length, keywords extracted from the audio, the pixel similarity to existing videos, etc. into a decision on whether the video is spam. When a video is uploaded, it's run through all these rules and only allowed on the platform if it passes.
+### Attempt 1: Human Review
+To achieve this quality guarantee, you've hired a staggering 1,000 reviewers to audit every upload before it's allowed on the platform. **Some things just need a human touch**, you argue: video spam is too complex and context-dependent to rely on automated logic. A video that urges you to click on a URL could be a malicious phishing attempt or a fundraiser for Alzheimer's research, for example -- the stakes are too high to automate a decision like that.
 
 <center>
-<img src="{{  site.baseurl  }}/images/ml/precision_recall/decision_tree.png" height="80%" width="80%">
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/manual_review.png" height="60%" width="60%">
 </center>
 
-The app launches. To your delight, your "integrity first" message resonates with users and they join in droves. But the complaints start rolling in as fast as the signups: there's spam everywhere! Worse, users are furious that their genuine videos are being incorrectly blocked.
+The app launches. To your delight, your "integrity first" message resonates with users and they join in droves. You quickly reach millions of users uploading 50,000 hours of video per day.
 
-You update your code to fix the incorrect decisions, but the complaints just keep piling on. **No matter how complex you make your logic, your code still constantly fails** on basic edge cases, like videos tinted red or those without audio. Small tweaks to fix one wrong decision lead to dozens of other videos now being labeled incorrectly. The code becomes such a mess that now even you have no idea how it works.
+In other words, each reviewer now has _50 hours of video to review per day_. They either have to watch at 6x speed and incorrectly label some videos or watch them carefully but not get to every video. You quickly hire more reviewers, but as your app grows and the mountain of uploads to review only gets larger, you're realizing you're going to bankrupt the company before you can hire enough people to process all videos. You need a different strategy.
 
 ### Attempt 2: Machine Learning
-What were you thinking -- the feature space for identifying spam videos is just too massive for a human to understand. Finding the exact thresholds to set, how features interact with each other, even _which_ features to use is best left to a machine.
+We can't replace a person's intuition and expertise, but maybe we can get close with careful automation. Given the tremendous advances in [computer vision](https://www.ibm.com/topics/computer-vision) and [natural language processing](https://www.ibm.com/topics/natural-language-processing) over the past decade, we use ML to _extract features_ from the videos: the pixel similarity to existing videos, keywords from the audio, etc. etc.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/numbers.png" height="85%" width="85%">
 </center>
 
-Given the tremendous advances in [computer vision](https://www.ibm.com/topics/computer-vision), [natural language processing](https://www.ibm.com/topics/natural-language-processing), and machine learning in general over the past decade, we decide to **train a classifier to _predict_ whether a video is spam.** Our fancy model takes in a video and outputs the probability that the video is spam.<sup>[[1]](#1-attempt-2-machine-learning)</sup>
+Rather than parse this nuance ourselves with deterministic rules, we use ML. Finding the exact thresholds to set, how features interact with each other, even _which_ features to use is best left to a machine. ML allows us to **train a classifier that _predicts_ whether a video is spam.** Our fancy model takes in a video and outputs the probability that the video is spam.<sup>[[1]](#1-attempt-2-machine-learning)</sup>
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/scaled_review.png" height="60%" width="60%">
 </center>
 
+Things are great, but then we run into precision-recall issues.
 
-
-
-So we
- Identifying the right features and parameters to use should be left to a machine.
-
-* We build classifiers, but we run into this issue of precision vs. recall.
 
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/boundary.png" height="75%" width="75%">
 </center>
 
+### Attempt 3: Human Review + Machine Learning
+We need some way to reduce the amount of content that requires manual review.
 
- Let's build spam classifiers to learn the space and partition it.
 
-But this is now a black box. Why did the model say yes vs. no? There's just no way to optimally partition it, even with loads of data. New types of abuse appear.
 
 
 
@@ -263,3 +258,14 @@ Our model is probably actually an ensemble of models. [Facebook's News Feed](htt
 
 #### 2. [Attempt 3: Human Review](#attempt-3-human-review)
 To illustrate how impractical 100% human review is, consider YouTube. Users upload [**over 500 hours of video every minute**](https://www.statista.com/statistics/259477/hours-of-video-uploaded-to-youtube-every-minute/), or **1.8 million hours per day.** To stay atop the torrent of videos, we would need _75,000 reviewers_ watching videos 24/7 to audit everything. Actually, make that _240,000_ if reviewers only work 8-hour shifts and have a lunch break. Add 1,000 to handle _re-reviewing_ videos whose creators [claim were incorrectly deleted](https://www.tspa.org/curriculum/ts-fundamentals/content-moderation-and-operations/user-appeals/). We're left with 241,000 reviewers, or [60% more people](https://www.macrotrends.net/stocks/charts/GOOG/alphabet/number-of-employees) than all Google employees. That's not going to work.
+
+#### 3. Deterministic rules
+To achieve this quality guarantee, you've investing months into writing code that will flag spam. **Thousands of `if`-`else` statements** convert data such as the number of URLs in the summary, the video length, keywords extracted from the audio, the pixel similarity to existing videos, etc. into a decision on whether the video is spam. When a video is uploaded, it's run through all these rules and only allowed on the platform if it passes.
+
+<center>
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/decision_tree.png" height="80%" width="80%">
+</center>
+
+The app launches. To your delight, your "integrity first" message resonates with users and they join in droves. But the complaints start rolling in as fast as the signups: there's spam everywhere! Worse, users are furious that their genuine videos are being incorrectly blocked.
+
+You update your code to fix the incorrect decisions, but the complaints just keep piling on. **No matter how complex you make your logic, your code still constantly fails** on basic edge cases, like videos tinted red or those without audio. Small tweaks to fix one wrong decision lead to dozens of other videos now being labeled incorrectly. The code becomes such a mess that now even you have no idea how it works.
