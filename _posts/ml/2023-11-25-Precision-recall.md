@@ -9,7 +9,7 @@ tags: machine-learning statistics
 
 _Disclaimer: the examples in this post are for illustrative purposes and are not commentary on any specific content policy at any specific company. All views expressed in this article are mine and do not reflect my employer._
 
-Why is there _any_ spam on social media? Aside from spammers, literally no one enjoys clickbait scams or phishing attempts. We have _decades_ of training data to feed machine learning classifiers and deterministic rules. So why does spam on every major tech platform feel inevitable? After all these years, why do bot farms still exist?
+Why is there _any_ spam on social media? Aside from spammers, literally no one enjoys clickbait scams or phishing attempts. We have _decades_ of training data to feed machine learning classifiers. So why does spam on every major tech platform feel inevitable? After all these years, why do bot farms still exist?
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/feed.png" height="75%" width="75%">
@@ -32,27 +32,25 @@ The app launches. To your delight, your "integrity first" message resonates with
 In other words, each reviewer now has _50 hours of video to review per day_. They try watching at 6x speed to get through all the videos, but they make mistakes: users start complaining both that **their videos are being incorrectly blocked _and_ that spam is making it onto the platform.** You quickly hire more reviewers, but as your app grows and the firehose of uploads only gets bigger, you realize you'll bankrupt the company long before you can hire enough eyes.<sup>[[1]](#1-attempt-1-human-review)</sup> You need a different strategy.
 
 ### Attempt 2: Machine Learning
-We can't replace a human's intuition, but maybe we can get close with machine learning. Given the tremendous advances in [computer vision](https://www.ibm.com/topics/computer-vision) and [natural language processing](https://www.ibm.com/topics/natural-language-processing) over the past decade, we can _extract features_ from the videos: the pixel similarity to existing videos, keywords from the audio, whether the video appears to have been [generated with AI](https://www.techtarget.com/searchenterpriseai/definition/generative-AI), etc. We can then see how these features relate to whether a video is spam.
+You can't replace a human's intuition, but maybe you can get close with machine learning. Given the tremendous advances in [computer vision](https://www.ibm.com/topics/computer-vision) and [natural language processing](https://www.ibm.com/topics/natural-language-processing) over the past decade, you can _extract features_ from the videos: the pixel similarity to existing videos, keywords from the audio, whether the video appears to have been [generated with AI](https://www.techtarget.com/searchenterpriseai/definition/generative-AI), etc. You can then see how these features relate to whether a video is spam.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/numbers.png" height="85%" width="85%">
 </center>
 
-Determining the relationship between features and spam labels is best left to an algorithm.<sup>[[2]](#2-attempt-2-machine-learning)</sup> The feature space is simply too large for a human to understand: features will interact non-linearly, have complex dependencies, be useful in some contexts and useless in others, etc.
-
-So you use machine learning to **train a classifier that _predicts_ whether a video is spam.** Your model<sup>[[3]](#3-attempt-2-machine-learning)</sup> takes in a video and outputs the probability that the video is spam.
+Determining the relationship between features and spam labels is best left to an algorithm.<sup>[[2]](#2-attempt-2-machine-learning)</sup> The feature space is simply too large for a human to understand: features interact non-linearly, have complex dependencies, are useful in some contexts but useless in others, and so on. So you use machine learning to **train a classifier that _predicts_ whether a video is spam.** Your model<sup>[[3]](#3-attempt-2-machine-learning)</sup> takes in a video and outputs the probability that the video is spam.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/scaled_review.png" height="60%" width="60%">
 </center>
 
-Things are great, but then we run into precision-recall issues. You'd hoped to see something like this when looking at your benign and spam data: a clear partitioning, some probability of spam below which all videos are benign and above which all videos are spam.
+When you first run your classifier on videos we know are spam and benign, you hope to see something like below: two distributions neatly separable by their probability of being spam. In this ideal state, there is a spam probability threshold below which all videos are benign and above which all videos are spam, and you can use that threshold to perfectly categorize new videos.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_dist1.png" height="90%" width="90%">
 </center>
 
-But in actuality, the distributions overlap. The vast majority of benign videos have a low probability and the vast majority of spam videos have a high probability, but there's an uncomfortable middle area where the distributions overlap.
+But what you actually see is that **the probability distributions overlap.** While the vast majority of benign videos have a low probability and the vast majority of spam videos have a high probability, **there's an uncomfortable middle area where you can't tell if a video is spam or not.**
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_dist2.png" height="90%" width="90%">
@@ -76,7 +74,7 @@ The unsettling thing to realize is that **_there is actually no perfect threshol
 Are we out of luck? No. What if we combine ML and human review?
 
 
-center>
+<center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/boundary2.png" height="95%" width="95%">
 </center>
 
