@@ -32,74 +32,42 @@ The app launches. To your delight, your "integrity first" message resonates with
 In other words, each reviewer now has _50 hours of video to review per day_. They try watching at 6x speed to get through all the videos, but they make mistakes: users start complaining both that **their videos are being incorrectly blocked _and_ that spam is making it onto the platform.** You quickly hire more reviewers, but as your app grows and the firehose of uploads only gets bigger, you realize you'll bankrupt the company long before you can hire enough eyes.<sup>[[1]](#1-attempt-1-human-review)</sup> You need a different strategy.
 
 ### Attempt 2: Machine Learning
-You can't replace a human's intuition, but maybe you can get close with machine learning. Given the tremendous advances in [computer vision](https://www.ibm.com/topics/computer-vision) and [natural language processing](https://www.ibm.com/topics/natural-language-processing) over the past decade, you can _extract features_ from the videos: the pixel similarity to existing videos, keywords from the audio, whether the video appears to have been [generated with AI](https://www.techtarget.com/searchenterpriseai/definition/generative-AI), etc. You can then see how these features relate to whether a video is spam.
+You can't replace a human's intuition, but maybe you can get close with machine learning. Given the tremendous advances in [computer vision](https://www.ibm.com/topics/computer-vision) and [natural language processing](https://www.ibm.com/topics/natural-language-processing) over the past decade, you can extract **features** from the videos: the pixel similarity to existing videos, keywords from the audio, whether the video appears to have been [generated with AI](https://www.techtarget.com/searchenterpriseai/definition/generative-AI), etc. You can then see how these features relate to whether a video is spam.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/numbers.png" height="85%" width="85%">
 </center>
 
-Determining the relationship between features and spam labels is best left to an algorithm.<sup>[[2]](#2-attempt-2-machine-learning)</sup> The feature space is simply too large for a human to understand: features interact non-linearly, have complex dependencies, are useful in some contexts but useless in others, and so on. So you use machine learning to **train a classifier that _predicts_ whether a video is spam.** Your model<sup>[[3]](#3-attempt-2-machine-learning)</sup> takes in a video and outputs the probability that the video is spam.
+Determining the relationship between features and spam labels is best left to an algorithm.<sup>[[2]](#2-attempt-2-machine-learning)</sup> The feature space is simply too large for a human to understand: features interact non-linearly, have complex dependencies, are useful in some contexts but useless in others, and so on. So you use machine learning to **train a classifier that _predicts_ whether a video is spam.** Your model takes in a video and outputs the probability that the video is spam.<sup>[[3]](#3-attempt-2-machine-learning)</sup>
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/scaled_review.png" height="60%" width="60%">
 </center>
 
-When you first run your classifier on videos we know are spam and benign, you hope to see something like below: two distributions neatly separable by their probability of being spam. In this ideal state, there is a spam probability threshold below which all videos are benign and above which all videos are spam, and you can use that threshold to perfectly categorize new videos.
+When you first run your classifier on videos you know are spam and benign, you hope to see something like below: two distributions neatly separable by their probability of being spam. In this ideal state, there is a spam probability threshold below which all videos are benign and above which all videos are spam, and you can use that threshold to perfectly categorize new videos.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_dist1.png" height="90%" width="90%">
 </center>
 
-But what you actually see is that **the probability distributions overlap.** While the vast majority of benign videos have a low probability and the vast majority of spam videos have a high probability, **there's an uncomfortable middle area where you can't tell if a video is spam or not.**
+But what you actually see is that **the probability distributions overlap.** Yes, the vast majority of benign videos have a low probability and the vast majority of spam videos have a high probability. But **there's an uncomfortable "intermediate" spam probability where it's impossible to tell if a video is spam or benign.**
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_dist2.png" height="90%" width="90%">
 </center>
 
-What this means is that **there is no threshold that perfectly separates spam from benign videos.**
+If you zoom in on where the distributions overlap, it looks something like this. There is no place to draw a line that perfectly separates benign videos from spam. If you set the threshold too high, then spam makes it onto the platform. If you set the threshold too low, then benign videos are incorrectly blocked.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/boundary.png" height="95%" width="95%">
 </center>
 
-
-
-The unsettling thing to realize is that **_there is actually no perfect threshold at all_**, meaning we either 1) miss spam if we set the threshold too high, or 2) waste reviewer hours by reviewing benign content. Until we have a superhuman [AGI](https://en.wikipedia.org/wiki/Artificial_general_intelligence) that can perfectly discern spam and non-spam videos in all countries and all languages, our model probabilities won't perfectly line up with spam and non-spam. In the simple example below, we can see that while green circles tend to be on the left and yellow triangles on the right, there is no line we can draw that will perfectly separate the circles and triangles.
-
-## Evaluation framework
-
-
-## Back to our app
-### Attempt 3: Machine Learning + Human Review
-Are we out of luck? No. What if we combine ML and human review?
-
-
-<center>
-<img src="{{  site.baseurl  }}/images/ml/precision_recall/boundary2.png" height="95%" width="95%">
-</center>
-
-
-
-If we run that 500 hours/minute firehose of videos through our classifier, we'd get some distribution of spam probabilities ($P(spam)$). We could then set some probability threshold above which we send the video to a human to review.
-
-<center>
-<img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_flow.png" height="70%" width="70%">
-</center>
-
-Depending on where we set this threshold, we can cut down 90%, or 99%, or 99.999%, or any percent of videos to review. Awesome -- so we set our threshold to exclude 99.9999999% of videos, hire one reviewer to handle the remaining 1 minute per day, and congratulate ourselves for solving a tough problem.
-
-But... that doesn't quite work. Unless our classifier is perfect (which it never is), **we're definitely missing a lot of bad content by setting our threshold so high.** Even if our model _is_ really accurate and we can automatically delete any video the model predicts is abusive, we'd still want _some_ people to review its decisions: we may not uncover biases or blind spots in our model if we never audit its outputs.
-
-On the other hand, though, if we set our threshold for manual review too low, we'll start digging into the bulk of the green distribution above: the benign videos. The number of reviewers we'll need to hire will quickly skyrocket, and they'll spend much of their time reviewing benign videos.
-
-**So how do we choose a "least-bad" threshold? What are the tradeoffs we face when picking a number that determines whether a video is sent to review or not? And how do we compare the performance of multiple potential models?**
-
-To answer these questions, we need to understand **precision** and **recall**, two metrics that are provide a framework for navigating the tradeoffs of systems involving machine learning classifiers.
+**So how do you choose a "least-bad" threshold?** To answer this question, we need to understand **precision** and **recall**, two metrics that provide a framework for navigating the tradeoffs of any classification system. We'll then revisit our app with our new understanding and see if there's a way to solve your spam problem.
 
 ## Evaluation Framework
-Let's start with a quick overview of how machine learning models are created and evaluated. Typically, our available data is split into _train_ and _test_ sets. (The test set can be split further to include _validation_ sets, too.) Our model uses an algorithm to learn the relationship between features and labels in our training data.
+Let's start with a quick overview of how machine learning models are created and evaluated. Typically, data is split into _train_ and _test_ sets. (The test set can be split further to include _validation_ sets, too.) Our model uses an algorithm to learn the relationship between features and labels in our training data.
 
-To ensure our model doesn't _overfit_ to our training data and just memorize every pair of features and labels, we use our _test_ set to evaluate its performance. We feed in the features from our test data, see what the model predicts, and compare those predictions to the actual labels. A solid performance on the test set ensures that our model is able to accurately generalize to data it hasn't seen before.
+To ensure our model doesn't _overfit_ to our training data and just memorize every pair of features and labels, we use our _test_ set to evaluate its performance. We feed in the features from our test data, see what the model predicts, and compare those predictions to the actual labels. **A solid performance on the test set ensures that our model is able to accurately generalize to data it hasn't seen before.**
 
 We've thrown around the word "performance" here, but we'll need to be much more specific to answer the questions from the previous section. Let's zoom in on these specific abuse _probabilities_ that our model outputs.
 
@@ -195,6 +163,38 @@ $$\LARGE \frac{N_{new} - N_{old}}{N_{old}} $$
 
 Where $N_{old}$ is the number of abusive videos caught with the old method and $N_{new}$ with the new.
 
+
+
+
+
+## Back to our app
+### Attempt 3: Machine Learning + Human Review
+Are we out of luck? No. What if we combine ML and human review?
+
+
+<center>
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/boundary2.png" height="95%" width="95%">
+</center>
+
+
+
+If we run that 500 hours/minute firehose of videos through our classifier, we'd get some distribution of spam probabilities ($P(spam)$). We could then set some probability threshold above which we send the video to a human to review.
+
+<center>
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_flow.png" height="70%" width="70%">
+</center>
+
+Depending on where we set this threshold, we can cut down 90%, or 99%, or 99.999%, or any percent of videos to review. Awesome -- so we set our threshold to exclude 99.9999999% of videos, hire one reviewer to handle the remaining 1 minute per day, and congratulate ourselves for solving a tough problem.
+
+But... that doesn't quite work. Unless our classifier is perfect (which it never is), **we're definitely missing a lot of bad content by setting our threshold so high.** Even if our model _is_ really accurate and we can automatically delete any video the model predicts is abusive, we'd still want _some_ people to review its decisions: we may not uncover biases or blind spots in our model if we never audit its outputs.
+
+On the other hand, though, if we set our threshold for manual review too low, we'll start digging into the bulk of the green distribution above: the benign videos. The number of reviewers we'll need to hire will quickly skyrocket, and they'll spend much of their time reviewing benign videos.
+
+**So how do we choose a "least-bad" threshold? What are the tradeoffs we face when picking a number that determines whether a video is sent to review or not? And how do we compare the performance of multiple potential models?**
+
+To answer these questions, we need to understand **precision** and **recall**, two metrics that are provide a framework for navigating the tradeoffs of systems involving machine learning classifiers.
+
+
 ## Taking it to the next level
 I briefly mentioned that we may want _multiple_ classifiers for a task as complex as catching spam. One approach we could take is that if we have a _set number_ of videos that we want to review per day (rather than a set probability threshold, which as we've shown can be much harder to determine), we could try flipping this classification problem into a regression one.
 
@@ -213,4 +213,4 @@ To illustrate how impractical 100% human review is, consider YouTube. Users uplo
 Note that machine learning isn't the only option for fighting spam. There _is_ a solid use case for hand-crafted deterministic rules for subsets of spam. Something like "how often should a user be allowed to post a video?" probably doesn't need a dedicated ML classifier and could be inferred from a distribution of the number of times users post in a day, for example.
 
 #### 3. [Attempt 2: Machine Learning](#attempt-2-machine-learning)
-Our model is probably actually an ensemble of models. [Facebook's News Feed](https://about.fb.com/news/2021/01/how-does-news-feed-predict-what-you-want-to-see/) works like this. There are a set of component models that target small chunks of a problem, like whether a user will like a piece of content, or start following the page that posted the content, etc. These models can be incredibly complex, but they ultimately output a probability that the action will occur. Then you can simply attach weights to each of the probabilities, sum them, and rank by these scores.  
+I write "model" here but our spam classifier can actually be an [ensemble](https://en.wikipedia.org/wiki/Ensemble_learning) of models, each trained on different subsets of spam. This is how [Facebook's News Feed](https://about.fb.com/news/2021/01/how-does-news-feed-predict-what-you-want-to-see/) works, for example. There are a set of component models that target small chunks of a problem, like whether a user will like a piece of content, or start following the page that posted the content, etc. These models can be incredibly complex, but they ultimately output a probability that the action will occur. Then you can simply attach weights to each of the probabilities, sum them, and rank by these scores. This is one way to navigate the tradeoff of high accuracy and low explainability of complex models (like what, exactly, leads to a person deciding to react with a heart emoji on a post) while having explainability in the overall ranking of an item in the feed.
