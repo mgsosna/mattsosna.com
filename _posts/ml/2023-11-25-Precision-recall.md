@@ -65,13 +65,11 @@ If you zoom in on where the distributions overlap, it looks something like this.
 **So how do you choose a "least-bad" threshold?** To answer this question, we need to understand **precision** and **recall**, two metrics that provide a framework for navigating the tradeoffs of any classification system. We'll then revisit our app with our new understanding and see if there's a way to solve your spam problem.
 
 ## Evaluation Framework
-Let's start with a quick overview of how machine learning models are created and evaluated. Typically, data is split into _train_ and _test_ sets. (The test set can be split further to include _validation_ sets, too.) Our model uses an algorithm to learn the relationship between features and labels in our training data.
+Let's start with a quick overview of how machine learning classifiers are created and evaluated. The data we're trying to understand is typically split into _training_ and _testing_ sets. The classifier is created by repeatedly traversing the training data and learning the relationship between features and labels.
 
-To ensure our model doesn't _overfit_ to our training data and just memorize every pair of features and labels, we use our _test_ set to evaluate its performance. We feed in the features from our test data, see what the model predicts, and compare those predictions to the actual labels. **A solid performance on the test set ensures that our model is able to accurately generalize to data it hasn't seen before.**
+To ensure the classifier hasn't _overfit_ to our training data (e.g., just memorized every pair of features and labels), we use our _testing_ set to evaluate its performance. We feed in the features from our test data, see what the model predicts, and compare those predictions to the actual labels. **A solid performance on the test set ensures that our model is able to accurately generalize to data it hasn't seen before.**
 
-We've thrown around the word "performance" here, but we'll need to be much more specific to answer the questions from the previous section. Let's zoom in on these specific abuse _probabilities_ that our model outputs.
-
-To compare our model outputs to the real-world labels, we need to convert a model's _probability that a video is abusive_ into a binary "yes, this is spam" or "no, this is benign" label. When we set a threshold (typically 50%), our model will then either predict that a video _is_ or _is not_ abusive. Meanwhile, in the real world, this video either _is_ or _is not_ spam. This leads us with four possibilities:
+But the word "performance" here isn't specific enough to help us answer the questions in the previous section. Let's zoom in on the specific ways our classifier can perform well -- or fail. Our model will either predict that a video _is_ or _is not_ spam. Meanwhile, in the real world, this video either _is_ or _is not_ spam. This leads us with four possibilities:
 * **True Positive:** the model correctly identifies spam.
 * **False Positive:** the model predicts spam, but the video is benign.
 * **False Negative:** the model predicts benign, but the video is spam
@@ -80,7 +78,7 @@ To compare our model outputs to the real-world labels, we need to convert a mode
 We can arrange these possibilities in a **confusion matrix.** The columns of the matrix are the _predicted_ abuse and benign labels, and the rows are the _actual_ abuse and benign labels.
 
 <center>
-<img src="{{  site.baseurl  }}/images/ml/precision_recall/confusion_matrix.png" alt="Confusion matrix" height="50%" width="50%">
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/cm2.png" alt="Confusion matrix" height="60%" width="60%">
 </center>
 
 Our first impression may be to maximize **accuracy:** our model's ability to detect true positives and true negatives. A model with perfect accuracy would perfectly predict the test set's labels and never have any false positives or false negatives.
