@@ -65,16 +65,19 @@ If you zoom in on where the distributions overlap, it looks something like this.
 **So how do you choose a "least-bad" threshold?** To answer this question, we need to understand **precision** and **recall**, two metrics that provide a framework for navigating the tradeoffs of any classification system. We'll then revisit our app with our new understanding and see if there's a way to solve your spam problem.
 
 ## Evaluation Framework
-Let's start with a quick overview of how machine learning classifiers are created and evaluated. The data we're trying to understand is typically split into _training_ and _testing_ sets. The classifier uses the training data to learn the relationship between features and labels.
+Let's start with a quick overview of how machine learning classifiers are created and evaluated. The data we're trying to understand is typically split into _train_ and _test_ sets. The classifier uses the training data to learn the relationship between features and labels.
 
 <center>
-<img src="{{  site.baseurl  }}/images/ml/precision_recall/training.png" alt="Training a machine learning classifier">
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/training1.png" alt="Training a machine learning classifier">
 </center>
 
+While understanding the data _we have_ is useful, the real prize is being able to predict the labels to data _we haven't seen before_. We measure our model's ability to do so with the _test_ data: data the model hasn't seen before, but where we know the labels (i.e., the "right answer" for a given combination of features). We feed in the features from our test data, see what the model predicts, and compare those predictions to the actual labels. **A solid performance on the test set ensures that our model is able to accurately generalize to new data.**
 
-Especially for complex classifiers with dozens or hundreds of features, it's easy for the resulting model to become _overfit_ to the training data -- in the extreme case, just memorizing every pair of features and labels. A predictive model is only useful if it can help us understand _new_ data, so we use the _testing_ data to evaluate our model's performance. We feed in the features from our test data, see what the model predicts, and compare those predictions to the actual labels. **A solid performance on the test set ensures that our model is able to accurately generalize to data it hasn't seen before.**
+<center>
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/training2.png" alt="Training a machine learning classifier" height="50%" width="50%">
+</center>
 
-But the word "performance" here isn't specific enough to help us answer the questions in the previous section. Let's zoom in on the specific ways our classifier can perform well -- or fail. Our model will either predict that a video _is_ or _is not_ spam. Meanwhile, in the real world, this video either _is_ or _is not_ spam. This leads us with four possibilities:
+Our classifier will either predict that a video 1) _is_ or 2) _is not_ spam. In the real world, a video either 1) _is_ or 2) _is not_ spam. This leads to four possible outcomes for each data point we feed into the model from the test set:
 * **True Positive:** the model correctly identifies spam.
 * **False Positive:** the model predicts spam, but the video is benign.
 * **False Negative:** the model predicts benign, but the video is spam
@@ -114,6 +117,10 @@ We can think of this as the left column of the confusion matrix.
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/cm_precision.png" alt="Precision columns of confusion matrix" height="50%" width="50%">
 </center>
 
+
+
+
+Especially for complex classifiers with dozens or hundreds of features, it's easy for the resulting model to _overfit_ to the training data -- in the extreme case, just memorizing every pair of features and labels.
 
 
 
