@@ -65,39 +65,45 @@ If you zoom in on where the distributions overlap, it looks something like this.
 **So how do you choose a "least-bad" threshold?** To answer this question, we need to understand **precision** and **recall**, two metrics that provide a framework for navigating the tradeoffs of any classification system. We'll then revisit our app with our new understanding and see if there's a way to solve your spam problem.
 
 ## Evaluation Framework
-Let's start with a quick overview of how machine learning classifiers are created and evaluated. The data we're trying to understand is typically split into _train_ and _test_ sets. The classifier uses the training data to learn the relationship between features and labels.
+Let's start with a quick overview of how machine learning classifiers are created and evaluated. The first step when training a model is to split our data into _train_ and _test_ sets. An algorithm then parses the training data to learn the relationship between features and labels.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/training1.png" alt="Training a machine learning classifier">
 </center>
 
-While understanding the data _we have_ is useful, the real prize is being able to predict the labels to data _we haven't seen before_. We measure our model's ability to do so with the _test_ data: data the model hasn't seen before, but where we know the labels (i.e., the "right answer" for a given combination of features). We feed in the features from our test data, see what the model predicts, and compare those predictions to the actual labels. **A solid performance on the test set ensures that our model is able to accurately generalize to new data.**
+The result is a model that can take in any vector of features and return a probability of the positive label (for us, whether a video is spam). We usually binarize this probability at 0.5 to say whether the model classifies the input as a positive label.
+
+Our model is a best effort at understanding the data it was given. But while understanding the data _we have_ is useful, the real goal is to be able to predict the labels for data _we haven't seen before_.<sup>[[4]](#4-evaluation-framework)</sup> We measure our model's ability to do so with the _test_ data: feature-label pairs that weren't used to train the model. We feed in the features from our test data, see what the model predicts, and compare those predictions to the actual labels. **A solid performance on the test set ensures that our model is able to accurately generalize to new data.**
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/training2.png" alt="Training a machine learning classifier" height="50%" width="50%">
 </center>
 
-Our classifier will either predict that a video 1) _is_ or 2) _is not_ spam. In the real world, a video either 1) _is_ or 2) _is not_ spam. This leads to four possible outcomes for each data point we feed into the model from the test set:
+There are four components to measuring our model's ability to classify new data, based on the four possible outcomes of a prediction:
 * **True Positive:** the model correctly identifies spam.
 * **False Positive:** the model predicts spam, but the video is benign.
-* **False Negative:** the model predicts benign, but the video is spam
+* **False Negative:** the model predicts benign, but the video is spam.
 * **True Negative:** the model correctly identifies a benign video.
 
-We can arrange these possibilities in a **confusion matrix.** The columns of the matrix are the _predicted_ abuse and benign labels, and the rows are the _actual_ abuse and benign labels.
+We can arrange these possibilities in a **confusion matrix.** The columns of the matrix are the _predicted_ spam and benign labels, and the rows are the _actual_ spam and benign labels.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/cm2.png" alt="Confusion matrix" height="60%" width="60%">
 </center>
 
-Our first impression may be to maximize **accuracy:** our model's ability to detect true positives and true negatives. A model with perfect accuracy would perfectly predict the test set's labels and never have any false positives or false negatives.
+### Metric 1: Accuracy
+Our first impression may be to maximize **accuracy:** our model's ability to detect true positives (TP) and true negatives (TN). In other words, _what proportion of labels did our model correctly predict?_ A model with perfect accuracy would have zero false positives (FP) or false negatives (FN).
 
-$$\frac{TP+TN}{TP+FP+FN+TN}$$
+$$Accuracy = \frac{TP+TN}{TP+FP+FN+TN}$$
 
-Accuracy often works fine as a metric. But if our labels are imbalanced, it's easy for a model to learn a cheap way to "game" the system. Imagine that because abusive videos are (thankfully) rare, our training data has 99.9% benign labels and 0.1% abusive labels. A model that always predicts that a video is benign will be 99.9% accurate. That's not good at all -- we're missing all the videos we want to catch!
+Accuracy is an intuitive metric to start with. But if our [labels are imbalanced](https://developers.google.com/machine-learning/data-prep/construct/sampling-splitting/imbalanced-data), our model may struggle to learn how to predict the less frequent labels... or even learn a cheap way to "game" the system. Imagine that because spam videos are relatively rare, our training data has 99.9% benign labels and 0.1% spam labels. **A model that always predicts that a video is benign will be 99.9% accurate.** That's not good at all -- we're missing all the videos we want to catch!
 
-If it's important for us to catch all the bad videos, we'll want to use a metric like **recall.** Recall is _of all the positive labels, how many did we <u>actually</u> catch?_ In other words:
+There are techniques we can use such as upsampling the minority class or [ranking the raw probabilities outputted from the classifier](https://stats.stackexchange.com/questions/122409/why-downsample). But optimizing the training of our model on another metric may be more useful for our task.
 
-$$\frac{TP}{TP+FN}$$
+### Metric 2: Recall
+If it's important for us to catch all the bad videos, we'll want to use a metric like **recall.** Recall is _of all the positive labels, how many did we catch?_ In other words:
+
+$$Recall = \frac{TP}{TP+FN}$$
 
 We can think of this as the top row of the confusion matrix.
 
@@ -105,11 +111,12 @@ We can think of this as the top row of the confusion matrix.
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/cm_recall.png" alt="Recall columns of confusion matrix" height="50%" width="50%">
 </center>
 
+### Metric 3: Precision
 Recall is valuable, but it's also easy to "game": a model that always predicts that a video is abusive will have perfect recall. But we won't get much value out of this model, since we'll also be labeling benign videos as abusive.
 
 Another metric we can get from a confusion matrix, then, is **precision.** Precision is _when our model thinks something is abusive, how often is it <u>actually</u> abusive?_ In other words:
 
-$$\frac{TP}{TP+FP}$$
+$$Precision = \frac{TP}{TP+FP}$$
 
 We can think of this as the left column of the confusion matrix.
 
@@ -119,8 +126,6 @@ We can think of this as the left column of the confusion matrix.
 
 
 
-
-Especially for complex classifiers with dozens or hundreds of features, it's easy for the resulting model to _overfit_ to the training data -- in the extreme case, just memorizing every pair of features and labels.
 
 
 
@@ -187,7 +192,6 @@ Are we out of luck? No. What if we combine ML and human review?
 </center>
 
 
-
 If we run that 500 hours/minute firehose of videos through our classifier, we'd get some distribution of spam probabilities ($P(spam)$). We could then set some probability threshold above which we send the video to a human to review.
 
 <center>
@@ -205,13 +209,10 @@ On the other hand, though, if we set our threshold for manual review too low, we
 To answer these questions, we need to understand **precision** and **recall**, two metrics that are provide a framework for navigating the tradeoffs of systems involving machine learning classifiers.
 
 
-## Taking it to the next level
-I briefly mentioned that we may want _multiple_ classifiers for a task as complex as catching spam. One approach we could take is that if we have a _set number_ of videos that we want to review per day (rather than a set probability threshold, which as we've shown can be much harder to determine), we could try flipping this classification problem into a regression one.
-
-[Facebook's News Feed](https://about.fb.com/news/2021/01/how-does-news-feed-predict-what-you-want-to-see/) works like this. There are a set of component models that target small chunks of a problem, like whether a user will like a piece of content, or start following the page that posted the content, etc. These models can be incredibly complex, but they ultimately output a probability that the action will occur. Then you can simply attach weights to each of the probabilities, sum them, and rank by these scores.  
-
-
+## Equilibria
 From a financial standpoint, there is some "optimal" amount of bad stuff on a platform, given the cost of manual review, engineering development, etc. to identify and delete that bad content and the long-term benefit of users staying on the platform. To push a company beyond that point would require regulation (so there are significant financial penalties), an internal acceptance of operating sub-optimally (but with a higher ethical standard, for example) or to have users lower the threshold at which they would leave a platform.
+
+Regulations, user sentiment.
 
 
 
@@ -224,3 +225,6 @@ Note that machine learning isn't the only option for fighting spam. There _is_ a
 
 #### 3. [Attempt 2: Machine Learning](#attempt-2-machine-learning)
 I write "model" here but our spam classifier can actually be an [ensemble](https://en.wikipedia.org/wiki/Ensemble_learning) of models, each trained on different subsets of spam. This is how [Facebook's News Feed](https://about.fb.com/news/2021/01/how-does-news-feed-predict-what-you-want-to-see/) works, for example. There are a set of component models that target small chunks of a problem, like whether a user will like a piece of content, or start following the page that posted the content, etc. These models can be incredibly complex, but they ultimately output a probability that the action will occur. Then you can simply attach weights to each of the probabilities, sum them, and rank by these scores. This is one way to navigate the tradeoff of high accuracy and low explainability of complex models (like what, exactly, leads to a person deciding to react with a heart emoji on a post) while having explainability in the overall ranking of an item in the feed.
+
+#### 4. [Evaluation framework](#evaluation-framework)
+Modeling just the existing data can be useful, too, but this falls more in the realm of business intelligence or data analytics. The goal there is to understand our data, the relationships between features, etc. but there is not necessarily a _predictive_ component of trying to understand future data.
