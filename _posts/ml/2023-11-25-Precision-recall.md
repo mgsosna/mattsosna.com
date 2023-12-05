@@ -56,27 +56,26 @@ But what you actually see is that **the probability distributions overlap.** Yes
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_dist2.png" height="90%" width="90%">
 </center>
 
-If you zoom in on where the distributions overlap, it looks something like this. There is no place to draw a line that perfectly separates benign videos from spam. If you set the threshold too high, then spam makes it onto the platform. If you set the threshold too low, then benign videos are incorrectly blocked.
+If you zoom in on where the distributions overlap, it looks something like this. Nowhere can you draw a line that perfectly separates benign videos from spam. If you set the threshold too high, then spam makes it onto the platform. If you set the threshold too low, then benign videos are incorrectly blocked.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/boundary.png" height="95%" width="95%">
 </center>
 
-**So how do you choose a "least-bad" threshold?** To answer this question, we need to understand **precision** and **recall**, two metrics that provide a framework for navigating the tradeoffs of any classification system. We'll then revisit our app with our new understanding and see if there's a way to solve your spam problem.
+**So how do you choose a "least-bad" threshold?** To answer this question, we need to understand **precision** and **recall**, two metrics that provide a framework for navigating the tradeoffs of any classification system. We'll then revisit your app with our new understanding and see if there's a way to optimally classify spam.
 
 ## Evaluation Framework
-Let's start with a quick overview of how machine learning classifiers are created and evaluated. The first step when training a model is to split our data into _train_ and _test_ sets. An algorithm then parses the training data to learn the relationship between features and labels.
+### Model Creation
+Let's start with a quick overview of how machine learning classifiers are created and evaluated, using our spam classifier as an example. The first step when training a model is to split our data into _train_ and _test_ sets. An algorithm then parses the training data to learn the relationship between features and labels (spam or benign). The result is a model that can take in any vector of features and return a probability of the positive label (whether a video is spam). This probability is then binarized -- usually at 0.5 -- to say whether the model classifies the input as a positive (spam) or negative (benign) label.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/training1.png" alt="Training a machine learning classifier">
 </center>
 
-The result is a model that can take in any vector of features and return a probability of the positive label (for us, whether a video is spam). We usually binarize this probability at 0.5 to say whether the model classifies the input as a positive label.
-
-Our model is a best effort at understanding the data it was given. But while understanding the data _we have_ is useful, the real goal is to be able to predict the labels for data _we haven't seen before_.<sup>[[4]](#4-evaluation-framework)</sup> We measure our model's ability to do so with the _test_ data: feature-label pairs that weren't used to train the model. We feed in the features from our test data, see what the model predicts, and compare those predictions to the actual labels. **A solid performance on the test set ensures that our model is able to accurately generalize to new data.**
+Our model is a best effort at understanding the data it was given. But while understanding the data _we have_ is useful, the real goal is to be able to predict the labels for data _we haven't seen before_, like incoming uploaded videos.<sup>[[4]](#4-evaluation-framework)</sup> We measure our model's ability to do so with the _test_ data: feature-label pairs that weren't used to train the model. We feed in the features from our test data, see what the model predicts, and compare those predictions to the actual labels. (This is why we don't train the model on all available data: we need some holdout labeled data to assess the model's performance.)
 
 <center>
-<img src="{{  site.baseurl  }}/images/ml/precision_recall/training2.png" alt="Training a machine learning classifier" height="50%" width="50%">
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/training2.png" alt="Training a machine learning classifier" height="55%" width="55%">
 </center>
 
 There are four components to measuring our model's ability to classify new data, based on the four possible outcomes of a prediction:
@@ -88,17 +87,19 @@ There are four components to measuring our model's ability to classify new data,
 We can arrange these possibilities in a **confusion matrix.** The columns of the matrix are the _predicted_ spam and benign labels, and the rows are the _actual_ spam and benign labels.
 
 <center>
-<img src="{{  site.baseurl  }}/images/ml/precision_recall/cm2.png" alt="Confusion matrix" height="60%" width="60%">
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/cm2.png" alt="Confusion matrix" height="55%" width="55%">
 </center>
 
+**A solid performance on the test set ensures that our model is able to accurately generalize to new data.** But how do we explicitly quantify performance?
+
 ### Metric 1: Accuracy
-Our first impression may be to maximize **accuracy:** our model's ability to detect true positives (TP) and true negatives (TN). In other words, _what proportion of labels did our model correctly predict?_ A model with perfect accuracy would have zero false positives (FP) or false negatives (FN).
+Our first approach may be to maximize **accuracy:** our model's ability to detect true positives (TP) and true negatives (TN). Accuracy, in other words, is **_the proportion of labels that our model correctly predicted_**. A model with perfect accuracy would have zero false positives (FP) or false negatives (FN).
 
 $$Accuracy = \frac{TP+TN}{TP+FP+FN+TN}$$
 
-Accuracy is an intuitive metric to start with. But if our [labels are imbalanced](https://developers.google.com/machine-learning/data-prep/construct/sampling-splitting/imbalanced-data), our model may struggle to learn how to predict the less frequent labels... or even learn a cheap way to "game" the system. Imagine that because spam videos are relatively rare, our training data has 99.9% benign labels and 0.1% spam labels. **A model that always predicts that a video is benign will be 99.9% accurate.** That's not good at all -- we're missing all the videos we want to catch!
+Accuracy is an intuitive metric to start with. But if our [labels are imbalanced](https://developers.google.com/machine-learning/data-prep/construct/sampling-splitting/imbalanced-data), our model may struggle to learn how to predict the less frequent labels or even converge on a nonsensical approach. Imagine that because spam videos are relatively rare, our training data has 99.9% benign labels and 0.1% spam labels. **A model that always predicts that a video is benign will be 99.9% accurate.** That's not good at all -- we're missing all the videos we want to catch!
 
-There are techniques we can use such as upsampling the minority class or [ranking the raw probabilities outputted from the classifier](https://stats.stackexchange.com/questions/122409/why-downsample). But optimizing the training of our model on another metric may be more useful for our task.
+Because of nuances like this, we should never solely rely on accuracy when judging a model. Other metrics will help us get a more holistic picture.
 
 ### Metric 2: Recall
 If it's important for us to catch all the bad videos, we'll want to use a metric like **recall.** Recall is _of all the positive labels, how many did we catch?_ In other words:
@@ -125,7 +126,8 @@ We can think of this as the left column of the confusion matrix.
 </center>
 
 
-
+### Optimizing for a metric
+There are techniques we can use such as upsampling the minority class or [ranking the raw probabilities outputted from the classifier](https://stats.stackexchange.com/questions/122409/why-downsample). But optimizing the training of our model on another metric may be more useful for our task.
 
 
 
