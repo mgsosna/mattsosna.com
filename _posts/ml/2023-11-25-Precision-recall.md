@@ -102,11 +102,11 @@ Accuracy is an intuitive metric to start with. But if [one label is far more fre
 Because of pitfalls like these, we should never solely rely on accuracy when judging a model. Let's look at other metrics that can give us a more holistic picture.
 
 ### Metric 2: Recall
-If it's important for us to catch all the bad videos, we'll want to use a metric like **recall**. Recall is **_the proportion of <u>positive</u> labels our model correctly predicted._** In other words:
+If it's important for our model to flag all positive labels, we'll want a metric like **recall**. Recall is **_the proportion of <u>positive</u> labels our model correctly predicted._** In other words:
 
 $$Recall = \frac{TP}{TP+FN}$$
 
-We can think of this as the top row of the confusion matrix. Recall is the number of true positives divided by the total number of _positive labels_: labels our model caught (true positives) and missed (false negatives).
+We can think of this as the top row of the confusion matrix. Recall is the number of true positives divided by the total number of _positive labels_: labels our model caught (true positives) and missed (false negatives). A model with 100% recall is one that correctly flagged all positive labels in the test set.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/cm_recall.png" alt="Recall columns of confusion matrix" height="50%" width="50%">
@@ -125,17 +125,24 @@ We can think of this as the left column of the confusion matrix. Precision is th
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/cm_precision.png" alt="Precision columns of confusion matrix" height="50%" width="50%">
 </center>
 
-(something more about precision)
+Precision is a useful metric when there's a high cost of false positives. A classifier that predicts [whether someone is likely to commit a crime](https://www.brennancenter.org/our-work/research-reports/predictive-policing-explained) could lead to innocent people being arrested, for example. But precision also suffers from the pitfall of accuracy: if positive labels are rare in the training data, a model that always predicts "benign" would have high accuracy.
+
+So clearly we can't rely solely on any metric we've discussed so far. How do we strike a balance between accuracy, precision, and recall when solving our spam problem?
+
+### Striking a balance
+Going back to the distribution overlap diagram from before, we can reframe the x-axis as a tradeoff between recall and precision.
+
+<center>
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/boundary2.png" height="85%" width="85%">
+</center>
 
 
-### Optimizing for a metric
 There are techniques we can use such as upsampling the minority class or [ranking the raw probabilities outputted from the classifier](https://stats.stackexchange.com/questions/122409/why-downsample). But optimizing the training of our model on another metric may be more useful for our task.
 
 
 
-Specifically, we need a framework for the following:
-1. Determining how to convert a classifier's predicted _probability that a video is spam into an _"is abusive"_ or _"is benign"_ label.
-2. Comparing the performance of one model to another.
+
+
 
 
 ## Demo
@@ -178,7 +185,7 @@ How do we quantify the _change_ in precision or recall? Let's say that we have o
 
 To quantify the change in recall, we could do something like:
 
-$$\LARGE \frac{N_{new} - N_{old}}{N_{old}} $$
+$$\frac{N_{new} - N_{old}}{N_{old}} $$
 
 Where $N_{old}$ is the number of abusive videos caught with the old method and $N_{new}$ with the new.
 
@@ -191,9 +198,7 @@ Where $N_{old}$ is the number of abusive videos caught with the old method and $
 Are we out of luck? No. What if we combine ML and human review?
 
 
-<center>
-<img src="{{  site.baseurl  }}/images/ml/precision_recall/boundary2.png" height="95%" width="95%">
-</center>
+
 
 
 If we run that 500 hours/minute firehose of videos through our classifier, we'd get some distribution of spam probabilities ($P(spam)$). We could then set some probability threshold above which we send the video to a human to review.
