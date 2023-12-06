@@ -18,51 +18,51 @@ Why is there _any_ spam on social media? Aside from spammers, literally no one e
 The answer, in short, is that it is _really_ hard to fight spam at scale, and exponentially harder to do so without harming genuine users and advertisers. In this post, we'll use **precision** and **recall** as a framework for the spam problem. We'll see that eradicating 100% of spam is impractical and actually undesirable, and that there is some "equilibrium" spam prevalence based on finance, regulations, and user sentiment.
 
 ## Our app
-Imagine you're launching a competitor to TikTok and Instagram. (Forget that they have [**1.1 billion**](https://www.demandsage.com/tiktok-user-statistics/) and [**2 billion**](https://www.statista.com/statistics/272014/global-social-networks-ranked-by-number-of-users/) monthly active users, respectively; you're feeling ambitious!) Your key differentiator in this tight market is that you guarantee users will have only the highest quality of videos: absolutely no "get rich quick" schemes, blatant reposts of existing content, URLs that infect your computer with malware, etc.
+Imagine we're launching a competitor to TikTok and Instagram. (Forget that they have [**1.1 billion**](https://www.demandsage.com/tiktok-user-statistics/) and [**2 billion**](https://www.statista.com/statistics/272014/global-social-networks-ranked-by-number-of-users/) monthly active users, respectively; we're feeling ambitious!) Our key differentiator in this tight market is that we guarantee users will have only the highest quality of videos: absolutely no "get rich quick" schemes, blatant reposts of existing content, URLs that infect your computer with malware, etc.
 
 ### Attempt 1: Human Review
-To achieve this quality guarantee, you've hired a staggering 1,000 reviewers to audit every upload before it's allowed on the platform. **Some things just need a human touch**, you argue: video spam is too complex and context-dependent to rely on automated logic. A video that urges you to click on a URL could be a malicious phishing attempt or a fundraiser for Alzheimer's research, for example -- the stakes are too high to automate a decision like that.
+To achieve this quality guarantee, we've hired a staggering 1,000 reviewers to audit every upload before it's allowed on the platform. **Some things just need a human touch**, we argue: video spam is too complex and context-dependent to rely on automated logic. A video that urges users to click on a URL could be a malicious phishing attempt or a fundraiser for Alzheimer's research, for example -- the stakes are too high to automate a decision like that.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/manual_review.png" height="60%" width="60%">
 </center>
 
-The app launches. To your delight, your "integrity first" message resonates with users and they join in droves. You quickly reach millions of users uploading 50,000 hours of video per day.
+The app launches. To our delight, our "integrity first" message resonates with users and they join in droves. We quickly reach millions of users uploading 50,000 hours of video per day.
 
-In other words, each reviewer now has _50 hours of video to review per day_. They try watching at 6x speed to get through all the videos, but they make mistakes: users start complaining both that **their videos are being incorrectly blocked _and_ that spam is making it onto the platform.** You quickly hire more reviewers, but as your app grows and the firehose of uploads only gets bigger, you realize you'll bankrupt the company long before you can hire enough eyes.<sup>[[1]](#1-attempt-1-human-review)</sup> You need a different strategy.
+In other words, each reviewer now has _50 hours of video to review per day_. They try watching at 6x speed to get through all the videos, but they make mistakes: users start complaining both that **their videos are being incorrectly blocked _and_ that spam is making it onto the platform.** We quickly hire more reviewers, but as our app grows and the firehose of uploads only gets bigger, we realize we'll bankrupt the company long before we can hire enough eyes.<sup>[[1]](#1-attempt-1-human-review)</sup> We need a different strategy.
 
 ### Attempt 2: Machine Learning
-You can't replace a human's intuition, but maybe you can get close with machine learning. Given the tremendous advances in [computer vision](https://www.ibm.com/topics/computer-vision) and [natural language processing](https://www.ibm.com/topics/natural-language-processing) over the past decade, you can extract **features** from the videos: the pixel similarity to existing videos, keywords from the audio, whether the video appears to have been [generated with AI](https://www.techtarget.com/searchenterpriseai/definition/generative-AI), etc. You can then see how these features relate to whether a video is spam.
+We can't replace a human's intuition, but maybe we can get close with machine learning. Given the tremendous advances in [computer vision](https://www.ibm.com/topics/computer-vision) and [natural language processing](https://www.ibm.com/topics/natural-language-processing) over the past decade, we can extract **features** from the videos: the pixel similarity to existing videos, keywords from the audio, whether the video appears to have been [generated with AI](https://www.techtarget.com/searchenterpriseai/definition/generative-AI), etc. We can then see how these features relate to whether a video is spam.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/numbers.png" height="85%" width="85%">
 </center>
 
-Determining the relationship between features and spam labels is best left to an algorithm.<sup>[[2]](#2-attempt-2-machine-learning)</sup> The feature space is simply too large for a human to understand: features interact non-linearly, have complex dependencies, are useful in some contexts but useless in others, and so on. So you use machine learning to **train a classifier that _predicts_ whether a video is spam.** Your model takes in a video and outputs the probability that the video is spam.<sup>[[3]](#3-attempt-2-machine-learning)</sup>
+Determining the relationship between features and spam labels is best left to an algorithm.<sup>[[2]](#2-attempt-2-machine-learning)</sup> The feature space is simply too large for a human to understand: features interact non-linearly, have complex dependencies, are useful in some contexts but useless in others, and so on. So we use machine learning to **train a classifier that _predicts_ whether a video is spam.** Our model takes in a video and outputs the probability that the video is spam.<sup>[[3]](#3-attempt-2-machine-learning)</sup>
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/scaled_review.png" height="60%" width="60%">
 </center>
 
-When you first run your classifier on videos you know are spam and benign, you hope to see something like below: two distributions neatly separable by their probability of being spam. In this ideal state, there is a spam probability threshold below which all videos are benign and above which all videos are spam, and you can use that threshold to perfectly categorize new videos.
+When we first run our classifier on videos we know are spam and benign, we hope to see something like below: two distributions neatly separable by their probability of being spam. In this ideal state, there is a spam probability threshold below which all videos are benign and above which all videos are spam, and we can use that threshold to perfectly categorize new videos.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_dist1.png" height="90%" width="90%">
 </center>
 
-But what you actually see is that **the probability distributions overlap.** Yes, the vast majority of benign videos have a low probability and the vast majority of spam videos have a high probability. But **there's an uncomfortable "intermediate" spam probability where it's impossible to tell if a video is spam or benign.**
+But what we actually see is that **the probability distributions overlap.** Yes, the vast majority of benign videos have a low probability and the vast majority of spam videos have a high probability. But **there's an uncomfortable "intermediate" spam probability where it's impossible to tell if a video is spam or benign.**
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_dist2.png" height="90%" width="90%">
 </center>
 
-If you zoom in on where the distributions overlap, it looks something like this. Nowhere can you draw a line that perfectly separates benign videos from spam. If you set the threshold too high, then spam makes it onto the platform. If you set the threshold too low, then benign videos are incorrectly blocked.
+If we zoom in on where the distributions overlap, it looks something like this. Nowhere can we draw a line that perfectly separates benign videos from spam. If we set the threshold too high, then spam makes it onto the platform. If we set the threshold too low, then benign videos are incorrectly blocked.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/boundary.png" height="95%" width="95%">
 </center>
 
-**So how do you choose a "least-bad" threshold?** To answer this question, we need to understand **precision** and **recall**, two metrics that provide a framework for navigating the tradeoffs of any classification system. We'll then revisit your app with our new understanding and see if there's a way to optimally classify spam.
+**So how do we choose a "least-bad" threshold?** To answer this question, we need to understand **precision** and **recall**, two metrics that provide a framework for navigating the tradeoffs of any classification system. We'll then revisit our app with our new understanding and see if there's a way to optimally classify spam.
 
 ## Evaluation Framework
 ### Model Creation
@@ -72,7 +72,7 @@ Let's start with a quick overview of how machine learning classifiers are create
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/training1.png" alt="Training a machine learning classifier">
 </center>
 
-Our model is a best effort at understanding the data it was given. But while understanding the data _we have_ is useful, the real goal is to be able to predict the labels for data _we haven't seen before_, like incoming uploaded videos.<sup>[[4]](#4-evaluation-framework)</sup> We measure our model's ability to do so with the _test_ data: feature-label pairs that weren't used to train the model. We feed in the features from our test data, see what the model predicts, and compare those predictions to the actual labels. (This is why we don't train the model on all available data: we need some holdout labeled data to assess the model's performance.)
+Our model is a best effort at understanding the data it was given. But while understanding the data _we have_ is useful, the real goal is to be able to predict the labels for data _we haven't seen before_, like incoming uploaded videos.<sup>[[4]](#4-evaluation-framework)</sup> We measure our model's ability to do so with the _test_ data: feature-label pairs that weren't used to train the model. We feed in the features from our test data, see what the model predicts, and compare those predictions to the actual labels. (This is why we don't train the model on all available data: we need some holdout labels to audit the model's predictions.)
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/training2.png" alt="Training a machine learning classifier" height="55%" width="55%">
@@ -90,40 +90,42 @@ We can arrange these possibilities in a **confusion matrix.** The columns of the
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/cm2.png" alt="Confusion matrix" height="55%" width="55%">
 </center>
 
-**A solid performance on the test set ensures that our model is able to accurately generalize to new data.** But how do we explicitly quantify performance?
+**A solid performance on the test set ensures that our model is able to accurately generalize to new data.** But how do we explicitly quantify performance? And how do we ensure our model is actually useful for our business need?
 
 ### Metric 1: Accuracy
 Our first approach may be to maximize **accuracy:** our model's ability to detect true positives (TP) and true negatives (TN). Accuracy, in other words, is **_the proportion of labels that our model correctly predicted_**. A model with perfect accuracy would have zero false positives (FP) or false negatives (FN).
 
 $$Accuracy = \frac{TP+TN}{TP+FP+FN+TN}$$
 
-Accuracy is an intuitive metric to start with. But if our [labels are imbalanced](https://developers.google.com/machine-learning/data-prep/construct/sampling-splitting/imbalanced-data), our model may struggle to learn how to predict the less frequent labels or even converge on a nonsensical approach. Imagine that because spam videos are relatively rare, our training data has 99.9% benign labels and 0.1% spam labels. **A model that always predicts that a video is benign will be 99.9% accurate.** That's not good at all -- we're missing all the videos we want to catch!
+Accuracy is an intuitive metric to start with. But if [one label is far more frequent than the other](https://developers.google.com/machine-learning/data-prep/construct/sampling-splitting/imbalanced-data), our model may struggle to learn how to predict the less frequent labels. It may even converge on a nonsensical rule! To illustrate this, if we randomly sampled uploaded videos to our app, our training data may end up with 99.9% benign videos and 0.1% spam. **A model that always predicts that a video is benign would be 99.9% accurate.** That's not good at all -- we'd miss all the videos we want to catch!
 
-Because of nuances like this, we should never solely rely on accuracy when judging a model. Other metrics will help us get a more holistic picture.
+Because of pitfalls like these, we should never solely rely on accuracy when judging a model. Let's look at other metrics that can give us a more holistic picture.
 
 ### Metric 2: Recall
-If it's important for us to catch all the bad videos, we'll want to use a metric like **recall.** Recall is _of all the positive labels, how many did we catch?_ In other words:
+If it's important for us to catch all the bad videos, we'll want to use a metric like **recall**. Recall is **_the proportion of <u>positive</u> labels our model correctly predicted._** In other words:
 
 $$Recall = \frac{TP}{TP+FN}$$
 
-We can think of this as the top row of the confusion matrix.
+We can think of this as the top row of the confusion matrix. Recall is the number of true positives divided by the total number of _positive labels_: labels our model caught (true positives) and missed (false negatives).
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/cm_recall.png" alt="Recall columns of confusion matrix" height="50%" width="50%">
 </center>
 
-### Metric 3: Precision
-Recall is valuable, but it's also easy to "game": a model that always predicts that a video is abusive will have perfect recall. But we won't get much value out of this model, since we'll also be labeling benign videos as abusive.
+That 99.9% accurate "always predict benign" model would have _zero_ recall, a glaring red flag indicating the model should be immediately thrown out. But we shouldn't rely solely on recall when investigating models, since it can be similarly "gamed": **a model that always predicts that a video is spam would have 100% recall.** That's also not what we want -- no videos would be able to be uploaded to our app.
 
-Another metric we can get from a confusion matrix, then, is **precision.** Precision is _when our model thinks something is abusive, how often is it <u>actually</u> abusive?_ In other words:
+### Metric 3: Precision
+When our model classifies a video as spam, how often is it _actually_ spam? This is the core idea behind **precision**, or **_the proportion of predicted positive labels that are true positives_**. As an equation, precision takes the following form:
 
 $$Precision = \frac{TP}{TP+FP}$$
 
-We can think of this as the left column of the confusion matrix.
+We can think of this as the left column of the confusion matrix. Precision is the number of true positives divided by the total number of _predictions_: those that were correct (true positives) and incorrect (false positives).
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/cm_precision.png" alt="Precision columns of confusion matrix" height="50%" width="50%">
 </center>
+
+(something more about precision)
 
 
 ### Optimizing for a metric
