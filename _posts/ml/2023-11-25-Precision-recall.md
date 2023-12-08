@@ -66,7 +66,7 @@ If we zoom in on where the distributions overlap, it looks something like this. 
 
 ## Evaluation Framework
 ### Model Creation
-Let's start with a quick overview of how machine learning classifiers are created and evaluated, using our spam classifier as an example. The first step when training a model is to split our data into _train_ and _test_ sets. An algorithm then parses the training data to learn the relationship between features and labels (spam or benign). The result is a model that can take in any vector of features and return a probability of the positive label (whether a video is spam). This probability is then binarized -- usually at 0.5 -- to say whether the model classifies the input as a positive (spam) or negative (benign) label.
+Let's start with a quick overview of how machine learning classifiers are created and evaluated, using our spam classifier as an example. The first step when training a model is to split our data into **_train_** and **_test_** sets. An algorithm then parses the training data to learn the relationship between features and labels (spam or benign). The result is a model that can take in a feature vector and return the probability of the positive label (whether the video is spam). This probability is then binarized -- by default at 0.5 -- to say whether the model classifies the input as a positive or negative label.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/training1.png" alt="Training a machine learning classifier">
@@ -84,7 +84,7 @@ There are four components to measuring our model's ability to classify new data,
 * **False Negative:** the model predicts benign, but the video is spam.
 * **True Negative:** the model correctly identifies a benign video.
 
-We can arrange these possibilities in a **confusion matrix.** The columns of the matrix are the _predicted_ spam and benign labels, and the rows are the _actual_ spam and benign labels.
+We can arrange these outcomes in a **confusion matrix.** The columns of the matrix are the _predicted_ spam and benign labels, and the rows are the _actual_ spam and benign labels.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/cm2.png" alt="Confusion matrix" height="55%" width="55%">
@@ -92,14 +92,29 @@ We can arrange these possibilities in a **confusion matrix.** The columns of the
 
 **A solid performance on the test set ensures that our model is able to accurately generalize to new data.** But how do we explicitly quantify performance? And how do we ensure our model is actually useful for our business need?
 
+### Classification threshold
+We said earlier that our model actually outputs a _probability_ that a video is spam, and that by default we binarize this probability at 0.5 into predicted "spam" and "benign" labels. If we look at one feature of our model, the "sketchiness" of a URL in the summary, for example, we might see a curve like this.
+
+<center>
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/classify1.png" height="75%" width="75%">
+</center>
+
+But 0.5 isn't always the best threshold. We could set it to 0.2, 0.65, or any value between 0 and 1.
+
+<center>
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/classify2.png">
+</center>
+
+[WIP] Where we set this threshold will change the confusion matrix. So let's look at some metrics to see how good stuff is.
+
 ### Metric 1: Accuracy
 Our first approach may be to maximize **accuracy:** our model's ability to detect true positives (TP) and true negatives (TN). Accuracy, in other words, is **_the proportion of labels that our model correctly predicted_**. A model with perfect accuracy would have zero false positives (FP) or false negatives (FN).
 
 $$Accuracy = \frac{TP+TN}{TP+FP+FN+TN}$$
 
-Accuracy is an intuitive metric to start with. But if [one label is far more frequent than the other](https://developers.google.com/machine-learning/data-prep/construct/sampling-splitting/imbalanced-data), our model may struggle to learn how to predict the less frequent labels. It may even converge on a nonsensical rule! To illustrate this, if we randomly sampled uploaded videos to our app, our training data may end up with 99.9% benign videos and 0.1% spam. **A model that always predicts that a video is benign would be 99.9% accurate.** That's not good at all -- we'd miss all the videos we want to catch!
+Accuracy is an intuitive metric to start with, but it can hide some blindspots in our model. If [one label is far more frequent than the other](https://developers.google.com/machine-learning/data-prep/construct/sampling-splitting/imbalanced-data), for example, our model may struggle to predict the less frequent labels or even converge on a nonsensical rule! If our training data was just a random sample of uploaded videos, for example, we may end up with 99.9% benign videos and 0.1% spam. **A model that always predicts that a video is benign would be 99.9% accurate.** That's not good at all -- we'd miss all the videos we want to catch!
 
-Because of pitfalls like these, we should never solely rely on accuracy when judging a model. Let's look at other metrics that can give us a more holistic picture.
+Even with balanced data, we should never rely solely on accuracy when judging a model. Let's look at other metrics that can give us a more holistic picture.
 
 ### Metric 2: Recall
 If it's important for our model to flag all positive labels, we'll want a metric like **recall**. Recall is **_the proportion of <u>positive</u> labels our model correctly predicted._** In other words:
@@ -112,7 +127,7 @@ We can think of this as the top row of the confusion matrix. Recall is the numbe
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/cm_recall.png" alt="Recall columns of confusion matrix" height="50%" width="50%">
 </center>
 
-That 99.9% accurate "always predict benign" model would have _zero_ recall, a glaring red flag indicating the model should be immediately thrown out. But we shouldn't rely solely on recall when investigating models, since it can be similarly "gamed": **a model that always predicts that a video is spam would have 100% recall.** That's also not what we want -- no videos would be able to be uploaded to our app.
+That 99.9% accurate "always predict benign" model would have _zero_ recall, a glaring red flag indicating the model should be immediately thrown out. Ideally, our model is sensitive enough to catch all spam labels in the test set. But to ensure this sensitivity doesn't come at the expense of mis-labeling benign videos, we need to look at one more metric: precision.
 
 ### Metric 3: Precision
 When our model classifies a video as spam, how often is it _actually_ spam? This is the core idea behind **precision**, or **_the proportion of predicted positive labels that are true positives_**. As an equation, precision takes the following form:
@@ -125,23 +140,53 @@ We can think of this as the left column of the confusion matrix. Precision is th
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/cm_precision.png" alt="Precision columns of confusion matrix" height="50%" width="50%">
 </center>
 
-Precision is a useful metric when there's a high cost of false positives. A classifier that predicts [whether someone is likely to commit a crime](https://www.brennancenter.org/our-work/research-reports/predictive-policing-explained) could lead to innocent people being arrested, for example. But precision also suffers from the pitfall of accuracy: if positive labels are rare in the training data, a model that always predicts "benign" would have high accuracy.
+Precision is a crucial metric for understanding how confident we should be when our model predicts that a video is spam. When a high-precision model predicts that a video is spam, the video is likely spam; if the model has low precision, who knows if it's actually spam unless we look at it ourselves.
 
-So clearly we can't rely solely on any metric we've discussed so far. How do we strike a balance between accuracy, precision, and recall when solving our spam problem?
+It may therefore be tempting to just optimize for precision, maximizing our confidence in the model's predictions. **But the more we prioritize precision, the more _conservative_ our model will be with labeling videos as spam**, meaning we'll inevitably miss some spam videos that should have been caught.
 
-### Striking a balance
-Going back to the distribution overlap diagram from before, we can reframe the x-axis as a tradeoff between recall and precision.
+To illustrate this, let's look at that diagram of the overlap of benign and spam distributions again. Our classifier outputs a probability that a video is spam, which then needs to be binarized into a benign or spam label. We have two options below: thresholds A and B.
 
 <center>
-<img src="{{  site.baseurl  }}/images/ml/precision_recall/boundary2.png" height="85%" width="85%">
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/boundary1.png" height="90%" width="90%">
 </center>
 
+Every video to the right of threshold B is spam, so a classifier that binarizes at that spam probability will have 100% precision. That's impressive, but that threshold misses the two spam videos to the left. Those videos would be incorrectly classified benign (false negatives) because our model isn't confident enough that they're spam. Meanwhile, a model whose cutoff is threshold A would catch those spam videos, but it would also mis-label the three benign videos to the right (false positives), resulting in lower precision.  
 
-There are techniques we can use such as upsampling the minority class or [ranking the raw probabilities outputted from the classifier](https://stats.stackexchange.com/questions/122409/why-downsample). But optimizing the training of our model on another metric may be more useful for our task.
+### Striking a balance
+This tradeoff gets at the inherent tension between precision and recall: **choosing whether we are more comfortable with false positives or false negatives, and by how much.** We can redraw our figure to highlight this tradeoff.
+
+<center>
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/boundary2.png" height="90%" width="90%">
+</center>
+
+* Show a plot of precision vs. recall.
+
+
+A distinction to highlight:
+* Within a model, where to select a threshold
+* Between models
+
+### Comparing models
+We can look at AUC-ROC to evaluate how well a model in general works, which we could then use to compare models.
 
 
 
+Need to talk about **sensitivity** and **specificity.**
+* True positive rate: sensitivity (recall)
+* False positive rate: 1 - specificity
+  * The proportion of "not spam" samples that were incorrectly classified as spam.
 
+$$ FPR = \frac{FP}{FP+TN}$$
+
+TPR vs. FPR plot: diagonal line shows us where the proportion of true positives equals the proportion of false positives.
+* (1,1) = all spam correctly classified, but all benign incorrectly classified.
+* (0.75, 1) = all spam correctly classified, and 75% of benign incorrectly classified
+* (0, 0) = all spam incorrectly classified, all benign correctly classified
+* Connecting the dots = an ROC graph (receiver operating characteristic)
+  * AUC lets us compare one ROC curve to another.
+
+
+ROC curves let us summarize the confusion matrices of setting threshold at different values.
 
 
 
@@ -223,6 +268,9 @@ From a financial standpoint, there is some "optimal" amount of bad stuff on a pl
 
 Regulations, user sentiment.
 
+Precision is a useful metric when there's a high cost of false positives. Relying on a low-precision classifier that predicts [whether someone is likely to commit a crime](https://www.brennancenter.org/our-work/research-reports/predictive-policing-explained), for example, would lead to innocent people being arrested.
+
+If our data is heavily imbalanced, we can perform techniques like [upsampling the minority class](https://developers.google.com/machine-learning/data-prep/construct/sampling-splitting/imbalanced-data).
 
 
 ## Footnotes
