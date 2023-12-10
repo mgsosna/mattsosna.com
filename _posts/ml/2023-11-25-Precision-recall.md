@@ -21,7 +21,7 @@ The answer, in short, is that it is _really_ hard to fight spam at scale, and ex
 Imagine we're launching a competitor to TikTok and Instagram. (Forget that they have [**1.1 billion**](https://www.demandsage.com/tiktok-user-statistics/) and [**2 billion**](https://www.statista.com/statistics/272014/global-social-networks-ranked-by-number-of-users/) monthly active users, respectively; we're feeling ambitious!) Our key differentiator in this tight market is that we guarantee users will have only the highest quality of videos: absolutely no "get rich quick" schemes, blatant reposts of existing content, URLs that infect your computer with malware, etc.
 
 ### Attempt 1: Human Review
-To achieve this quality guarantee, we've hired a staggering 1,000 reviewers to audit every upload before it's allowed on the platform. **Some things just need a human touch**, we argue: video spam is too complex and context-dependent to rely on automated logic. A video that urges users to click on a URL could be a malicious phishing attempt or a fundraiser for Alzheimer's research, for example -- the stakes are too high to automate a decision like that.
+To achieve this quality guarantee, we've hired a staggering 1,000 reviewers to audit every upload before it's allowed on the platform. **Some things just need a human touch**, we argue: video spam is too complex and context-dependent to rely on automated logic. A video that urges users to click on a URL could be a malicious phishing attempt or a benign fundraiser for Alzheimer's research, for example -- the stakes are too high to automate a decision like that.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/manual_review.png" height="60%" width="60%">
@@ -29,7 +29,7 @@ To achieve this quality guarantee, we've hired a staggering 1,000 reviewers to a
 
 The app launches. To our delight, our "integrity first" message resonates with users and they join in droves. We quickly reach millions of users uploading 50,000 hours of video per day.
 
-In other words, each reviewer now has _50 hours of video to review per day_. They try watching at 6x speed to get through all the videos, but they make mistakes: users start complaining both that **their videos are being incorrectly blocked _and_ that spam is making it onto the platform.** We quickly hire more reviewers, but as our app grows and the firehose of uploads only gets bigger, we realize we'll bankrupt the company long before we can hire enough eyes.<sup>[[1]](#1-attempt-1-human-review)</sup> We need a different strategy.
+In other words, each reviewer now has _50 hours of video to review per day_. They try watching at 6x speed to get through all the videos, but they make mistakes: users start complaining both that **their benign videos are being blocked _and_ that spam is making it onto the platform.** We quickly hire more reviewers, but as our app grows and the firehose of uploads only gets bigger, we realize we'll bankrupt the company long before we can hire enough eyes.<sup>[[1]](#1-attempt-1-human-review)</sup> We need a different strategy.
 
 ### Attempt 2: Machine Learning
 We can't replace a human's intuition, but maybe we can get close with machine learning. Given the tremendous advances in [computer vision](https://www.ibm.com/topics/computer-vision) and [natural language processing](https://www.ibm.com/topics/natural-language-processing) over the past decade, we can extract **features** from the videos: the pixel similarity to existing videos, keywords from the audio, whether the video appears to have been [generated with AI](https://www.techtarget.com/searchenterpriseai/definition/generative-AI), etc. We can then see how these features relate to whether a video is spam.
@@ -44,7 +44,7 @@ Determining the relationship between features and spam labels is best left to an
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/scaled_review.png" height="60%" width="60%">
 </center>
 
-When we first run our classifier on videos we know are spam and benign, we hope to see something like below: two distributions neatly separable by their probability of being spam. In this ideal state, there is a spam probability threshold below which all videos are benign and above which all videos are spam, and we can use that threshold to perfectly categorize new videos.
+When we first run our classifier on videos we know are spam and benign, we hope to see something like below: two distributions neatly separable by their probability of being spam. In this ideal state, there is a spam probability threshold below which _all videos are benign_ and above which _all videos are spam_, and we can use that threshold to perfectly categorize new videos.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_dist1.png" height="90%" width="90%">
@@ -66,10 +66,16 @@ If we zoom in on where the distributions overlap, it looks something like this. 
 
 ## Evaluation Framework
 ### Model Creation
-Let's start with a quick overview of how machine learning classifiers are created and evaluated, using our spam classifier as an example. The first step when training a model is to split our data into **_train_** and **_test_** sets. An algorithm then parses the training data to learn the relationship between features and labels (spam or benign). The result is a model that can take in a feature vector and return the probability of the positive label (whether the video is spam). This probability is then binarized -- by default at 0.5 -- to say whether the model classifies the input as a positive or negative label.
+Let's start with a quick overview of how machine learning classifiers are created and evaluated, using our spam classifier as an example. The first step when training our model is to split our data into **_train_** and **_test_** sets. An algorithm then parses the training data to learn the relationship between features and labels (spam or benign). The result is a model that can take in the features of a video and return the probability it is spam.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/training1.png" alt="Training a machine learning classifier">
+</center>
+
+Probabilities are great, but we need some way to convert numbers like 0.17 or 0.55 into a decision on whether a video is spam or not. So we binarize this probability -- by default at 0.5 -- into a _spam_ or _benign_ classification. For a strong feature in our model, the probability curve (black line) and classifications (yellow and blue regions) might look like this.
+
+<center>
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/classify1.png" height="75%" width="75%">
 </center>
 
 Our model is a best effort at understanding the data it was given. But while understanding the data _we have_ is useful, the real goal is to be able to predict the labels for data _we haven't seen before_, like incoming uploaded videos.<sup>[[4]](#4-evaluation-framework)</sup> We measure our model's ability to do so with the _test_ data: feature-label pairs that weren't used to train the model. We feed in the features from our test data, see what the model predicts, and compare those predictions to the actual labels. (This is why we don't train the model on all available data: we need some holdout labels to audit the model's predictions.)
@@ -90,22 +96,13 @@ We can arrange these outcomes in a **confusion matrix.** The columns of the matr
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/cm2.png" alt="Confusion matrix" height="55%" width="55%">
 </center>
 
-**A solid performance on the test set ensures that our model is able to accurately generalize to new data.** But how do we explicitly quantify performance? And how do we ensure our model is actually useful for our business need?
-
-### Classification threshold
-We said earlier that our model actually outputs a _probability_ that a video is spam, and that by default we binarize this probability at 0.5 into predicted "spam" and "benign" labels. If we look at one feature of our model, the "sketchiness" of a URL in the summary, for example, we might see a curve like this.
-
-<center>
-<img src="{{  site.baseurl  }}/images/ml/precision_recall/classify1.png" height="75%" width="75%">
-</center>
-
-But 0.5 isn't always the best threshold. We could set it to 0.2, 0.65, or any value between 0 and 1.
+We said earlier that our model's spam probabilities are binarized at 0.5 into _spam_ and _benign_ classifications. But 0.5 isn't always the best threshold; we could set it to 0.2, 0.65, or any value between 0 and 1.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/classify2.png">
 </center>
 
-[WIP] Where we set this threshold will change the confusion matrix. So let's look at some metrics to see how good stuff is.
+**These thresholds will generate different confusion matrices, reflecting differing ability of each model to accurately generalize to new data.** But how do we quantify how well a model performs on new data? To answer this, we'll need to review a few metrics.
 
 ### Metric 1: Accuracy
 Our first approach may be to maximize **accuracy:** our model's ability to detect true positives (TP) and true negatives (TN). Accuracy, in other words, is **_the proportion of labels that our model correctly predicted_**. A model with perfect accuracy would have zero false positives (FP) or false negatives (FN).
@@ -147,7 +144,7 @@ It may therefore be tempting to just optimize for precision, maximizing our conf
 To illustrate this, let's look at that diagram of the overlap of benign and spam distributions again. Our classifier outputs a probability that a video is spam, which then needs to be binarized into a benign or spam label. We have two options below: thresholds A and B.
 
 <center>
-<img src="{{  site.baseurl  }}/images/ml/precision_recall/boundary1.png" height="90%" width="90%">
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/boundary1.png" height="85%" width="85%">
 </center>
 
 Every video to the right of threshold B is spam, so a classifier that binarizes at that spam probability will have 100% precision. That's impressive, but that threshold misses the two spam videos to the left. Those videos would be incorrectly classified benign (false negatives) because our model isn't confident enough that they're spam. Meanwhile, a model whose cutoff is threshold A would catch those spam videos, but it would also mis-label the three benign videos to the right (false positives), resulting in lower precision.  
