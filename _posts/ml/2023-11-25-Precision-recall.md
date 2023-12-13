@@ -72,7 +72,7 @@ Let's start with a quick overview of how machine learning classifiers are create
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/training1.png" alt="Training a machine learning classifier">
 </center>
 
-Probabilities are great, but we need some way to convert numbers like 0.17 or 0.55 into a decision on whether a video is spam or not. So we binarize this probability -- by default at 0.5 -- into a _spam_ or _benign_ classification. For a strong feature in our model, the probability curve (black line) and classifications (yellow and blue regions) might look like this.
+Probabilities are great, but we need some way to convert numbers like 0.17 or 0.55 into a decision on whether a video is spam or not. So we binarize the outputted probabilities -- by default at 0.5 -- into _spam_ or _benign_ classifications. For an arbitrary feature in our model, the model's probability curve (black line) and classifications (yellow and green regions) might look like this.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/classify1.png" height="75%" width="75%">
@@ -96,16 +96,16 @@ We can arrange these outcomes in a **confusion matrix.** The columns of the matr
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/cm2.png" alt="Confusion matrix" height="55%" width="55%">
 </center>
 
-We said earlier that our model's spam probabilities are binarized at 0.5 into _spam_ and _benign_ classifications. But 0.5 isn't always the best threshold; we could set it to 0.2, 0.65, or any value between 0 and 1.
+We said earlier that our model's spam probabilities are binarized at 0.5 into _spam_ and _benign_ classifications. But 0.5 isn't always the best threshold, especially if the data is imbalanced. We could set our threshold to any value between 0 and 1 to better partition our classifications.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/classify2.png">
 </center>
 
-**These thresholds will generate different confusion matrices, reflecting differing ability of each model to accurately generalize to new data.** But how do we quantify how well a model performs on new data? To answer this, we'll need to review a few metrics.
+**These thresholds will generate different confusion matrices, reflecting differing ability of each model to accurately generalize to new data.** So how we choose a threshold? To answer this, we'll need to review a few metrics.
 
 ### Metric 1: Accuracy
-Our first approach may be to maximize **accuracy:** our model's ability to detect true positives (TP) and true negatives (TN). Accuracy, in other words, is **_the proportion of labels that our model correctly predicted_**. A model with perfect accuracy would have zero false positives (FP) or false negatives (FN).
+Our first strategy for finding a metric that produces the best model may be to maximize **accuracy:** our model's ability to detect true positives (TP) and true negatives (TN). Accuracy, in other words, is **_the proportion of labels that our model correctly predicted_**. A model with perfect accuracy would have zero false positives (FP) or false negatives (FN).
 
 $$Accuracy = \frac{TP+TN}{TP+FP+FN+TN}$$
 
@@ -118,7 +118,7 @@ If it's important for our model to flag all positive labels, we'll want a metric
 
 $$Recall = \frac{TP}{TP+FN}$$
 
-We can think of this as the top row of the confusion matrix. Recall is the number of true positives divided by the total number of _positive labels_: labels our model caught (true positives) and missed (false negatives). A model with 100% recall is one that correctly flagged all positive labels in the test set.
+We can think of this as the top row of the confusion matrix. Recall is the number of true positives divided by the total number of _positive labels_: labels our model caught (true positives) and missed (false negatives). A model with 100% recall is one that correctly classified all positive labels in the test set.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/cm_recall.png" alt="Recall columns of confusion matrix" height="50%" width="50%">
@@ -141,7 +141,7 @@ Precision is a crucial metric for understanding how confident we should be when 
 
 It may therefore be tempting to just optimize for precision, maximizing our confidence in the model's predictions. **But the more we prioritize precision, the more _conservative_ our model will be with labeling videos as spam**, meaning we'll inevitably miss some spam videos that should have been caught.
 
-To illustrate this, let's look at that diagram of the overlap of benign and spam distributions again. Our classifier outputs a probability that a video is spam, which then needs to be binarized into a benign or spam label. We have two options below: thresholds A and B.
+To illustrate this, let's look at that diagram of the overlap of benign and spam distributions again. We can binarize our spam probabilities at two thresholds: A or B.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/boundary1.png" height="85%" width="85%">
@@ -150,11 +150,41 @@ To illustrate this, let's look at that diagram of the overlap of benign and spam
 Every video to the right of threshold B is spam, so a classifier that binarizes at that spam probability will have 100% precision. That's impressive, but that threshold misses the two spam videos to the left. Those videos would be incorrectly classified benign (false negatives) because our model isn't confident enough that they're spam. Meanwhile, a model whose cutoff is threshold A would catch those spam videos, but it would also mis-label the three benign videos to the right (false positives), resulting in lower precision.  
 
 ### Striking a balance
-This tradeoff gets at the inherent tension between precision and recall: **choosing whether we are more comfortable with false positives or false negatives, and by how much.** We can redraw our figure to highlight this tradeoff.
+This tradeoff gets at the inherent tension between precision and recall: **when we increase our classification threshold, we (usually) increase precision but inevitably decrease recall.** We can redraw our figure to highlight this tradeoff.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/boundary2.png" height="90%" width="90%">
 </center>
+
+Another way to visualize this is by plotting precision and recall as a function of the classification threshold. Using a [classifier I trained on some sample data](#code), we can see how precision increases as we increase our threshold but recall steadily decreases. The higher our threshold, the more accurate our model's predictions become, but also the more spam videos we miss.
+
+<center>
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/precision_vs_recall.png" height="80%" width="80%">
+</center>
+
+The solution here is to critically ask, **"Are we more comfortable with false positives or false negatives, and by how much?"** Is it worse if some of our users are incorrectly blocked from uploading videos or if some users encounter scams on the platform?
+
+Based on the plot above, if we wanted to catch 99% of spam with our classifier, we'd have to settle for around 45% precision -- an embarrassingly low number that would result in thousands of benign videos being blocked daily. If we were comfortable with only catching 90%, we could perhaps get up to 60% precision... still not great.
+
+We can work to improve the features and then maybe we see this.
+
+<center>
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/precision_vs_recall2.png" height="80%" width="80%">
+</center>
+
+We can summarize it as an AUC.
+
+<center>
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/auc2.png" height="80%" width="80%">
+</center>
+
+
+
+
+We can get at this by drawing a plot of the true positive rate versus false positive rate. Different thresholds will produce different points along this plot. It's bumpy because it's recalculated for every data point, rather than every possible threshold (between data points).
+
+Decrease classification threshold = increase both TPR and FPR. So what level of FPR are we wiling to accept? FPR is also 1 - recall.
+
 
 * Show a plot of precision vs. recall.
 
@@ -187,31 +217,7 @@ ROC curves let us summarize the confusion matrices of setting threshold at diffe
 
 
 
-## Demo
 
-{% include header-python.html %}
-```python
-import numpy as np
-import pandas as pd
-
-is_spam = np.concatenate(
-    [
-        np.random.choice([0, 1], p=[0.8, 0.2], size=250),
-        np.random.choice([0, 1], p=[0.6, 0.4], size=250),
-        np.random.choice([0, 1], p=[0.4, 0.6], size=250),
-        np.random.choice([0, 1], p=[0.2, 0.8], size=250),
-    ]
-)
-
-feature_1 = range(1000) + np.random.normal(0, 1, 1000)
-
-df = pd.DataFrame(
-    {
-        'is_spam': is_spam,
-        'feature_1': feature_1,
-    }
-)
-```
 
 
 We'll want to calculate the AUC: area under the curve. We'll look at the false positive rate (FPR) vs. the true positive rate (TPR). This lets us know that for a given threshold, what is our ratio of true positives to false positives?
@@ -268,6 +274,76 @@ Regulations, user sentiment.
 Precision is a useful metric when there's a high cost of false positives. Relying on a low-precision classifier that predicts [whether someone is likely to commit a crime](https://www.brennancenter.org/our-work/research-reports/predictive-policing-explained), for example, would lead to innocent people being arrested.
 
 If our data is heavily imbalanced, we can perform techniques like [upsampling the minority class](https://developers.google.com/machine-learning/data-prep/construct/sampling-splitting/imbalanced-data).
+
+## Code
+Here is the code for generating the data and classifier, as well as plotting the precision vs. recall graph.
+
+{% include header-python.html %}
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import precision_recall_curve
+from sklearn.model_selection import train_test_split
+
+# Generate labels
+is_spam = np.concatenate(
+    [
+        np.random.choice([0, 1], p=[0.9, 0.1], size=200),
+        np.random.choice([0, 1], p=[0.8, 0.2], size=200),
+        np.random.choice([0, 1], p=[0.6, 0.4], size=200),
+        np.random.choice([0, 1], p=[0.4, 0.6], size=200),
+        np.random.choice([0, 1], p=[0.1, 0.9], size=200),
+    ]
+)
+
+# Generate features
+feature_1 = [np.random.normal(0, 1.5, 1) if x == 0 else np.random.normal(3, 1.5, 1) for x in is_spam]
+feature_2 = [np.random.normal(0, 2.5, 1) if x == 0 else np.random.normal(3, 2.5, 1) for x in is_spam]
+
+df = pd.DataFrame(
+    {
+        'is_spam': is_spam,
+        'feature_1': feature_1,
+        'feature_2': feature_2,
+    }
+)
+
+############################################################
+# Train classifier
+X = df[['feature_1', 'feature_2']]
+y = df['is_spam']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y)
+
+mod = LogisticRegression()
+mod.fit(X_train, y_train)
+
+############################################################
+# Generate predictions
+preds = mod.predict_proba(X_test)[:,1]
+precision, recall, thresholds = precision_recall_curve(y_test, preds)
+
+df = pd.DataFrame(
+    {
+        'precision': precision[:-1],
+        'recall': recall[:-1],
+        'threshold': thresholds,
+    }
+)
+
+############################################################
+# Plot precision/recall vs. threshold
+plt.plot(df['threshold'], df['precision'], label='Precision', color='C0')
+plt.plot(df['threshold'], df['recall'], label='Recall', color='goldenrod')
+plt.xlabel("Classification threshold", fontsize=14)
+plt.ylabel("Precision or Recall", fontsize=14)
+plt.legend(fontsize=12, framealpha=1)
+plt.grid()
+plt.savefig("precision_vs_recall.png", dpi=400, bbox_inches='tight')
+plt.show()
+```
 
 
 ## Footnotes
