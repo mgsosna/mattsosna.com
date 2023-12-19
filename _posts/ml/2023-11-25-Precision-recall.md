@@ -187,24 +187,19 @@ So by any metric, we can celebrate our improved ability to fight spam with our n
 ### Attempt 3: Machine Learning + Human Review
 If we continue thinking solely in terms of machine learning, we're going to spend a lot of effort chasing diminishing returns. Yes, we can find better features, algorithms, and hyperparameters to improve model fit. But if we take a step back, we can see that **our classifier is really only one part of a _funnel_ for identifying spam**, and that we'll be far more successful investing in _the funnel as a whole_ rather than just the machine learning portion.
 
-If we revisit our overlapping spam distribution figure from before, we can define three regions of spam probabilities: confidently benign, confidently spam, and "not sure." We spent much of this post explaining precision and recall as a way to navigate the region of uncertainty in terms of our classifier threshold. But we can take this a step further by bringing back our human reviewers.
+If we revisit our overlapping spam distribution figure from before, we can define three regions of spam probabilities: confidently benign, confidently spam, and "not sure." We spent much of this post using precision and recall to understand the tradeoffs of binarizing that uncertainty region into benign and spam. But it doesn't have to be so black and white if we combine our classifier with those human reviewers from before.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_dist3.png">
 </center>
 
-
-What if we rely on our classifier for these videos where it's very confident? Then for the videos it's not sure about, we pull in our human reviewers.
-
-
-
-
-(change figure so it's like the ends get enforced automatically, and the middle is sent out to review.)
-
+What if instead of wringing our hands trying to find the perfect classification threshold, we lowered the stakes by setting thresholds for the boundaries of that gray region above? If our classifier is confident a video is spam or benign, we let it automate that decision for us. But if it's unsure, we send the video to a human for the final decision.
 
 <center>
-<img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_flow.png" height="70%" width="70%">
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_flow.png">
 </center>
+
+
 
 Depending on where we set this threshold, we can cut down 90%, or 99%, or 99.999%, or any percent of videos to review. Awesome -- so we set our threshold to exclude 99.9999999% of videos, hire one reviewer to handle the remaining 1 minute per day, and congratulate ourselves for solving a tough problem.
 
@@ -212,14 +207,9 @@ But... that doesn't quite work. Unless our classifier is perfect (which it never
 
 On the other hand, though, if we set our threshold for manual review too low, we'll start digging into the bulk of the green distribution above: the benign videos. The number of reviewers we'll need to hire will quickly skyrocket, and they'll spend much of their time reviewing benign videos.
 
-**So how do we choose a "least-bad" threshold? What are the tradeoffs we face when picking a number that determines whether a video is sent to review or not? And how do we compare the performance of multiple potential models?**
-
-To answer these questions, we need to understand **precision** and **recall**, two metrics that are provide a framework for navigating the tradeoffs of systems involving machine learning classifiers.
-
-
 Finally, we can use a high-recall classifier for proxy labels of spam if we wanted to get estimates of how prevalent spam was on our platform.
 
-
+### Stable states
 From a financial standpoint, there is some "optimal" amount of bad stuff on a platform, given the cost of manual review, engineering development, etc. to identify and delete that bad content and the long-term benefit of users staying on the platform. To push a company beyond that point would require regulation (so there are significant financial penalties), an internal acceptance of operating sub-optimally (but with a higher ethical standard, for example) or to have users lower the threshold at which they would leave a platform.
 
 Regulations, user sentiment.
