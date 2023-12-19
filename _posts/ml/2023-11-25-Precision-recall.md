@@ -150,106 +150,57 @@ To illustrate this, let's look at that diagram of the overlap of benign and spam
 Every video to the right of threshold B is spam, so a classifier that binarizes at that spam probability will have 100% precision. That's impressive, but that threshold misses the two spam videos to the left. Those videos would be incorrectly classified benign (false negatives) because our model isn't confident enough that they're spam. Meanwhile, a model whose cutoff is threshold A would catch those spam videos, but it would also mis-label the three benign videos to the right (false positives), resulting in lower precision.  
 
 ### Striking a balance
-This tradeoff gets at the inherent tension between precision and recall: **when we increase our classification threshold, we (usually) increase precision but inevitably decrease recall.** We can redraw our figure to highlight this tradeoff.
+This tradeoff gets at the inherent tension between precision and recall: **when we increase our classification threshold, we _increase precision_ but _decrease recall_.** We can redraw our figure to highlight this tradeoff.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/boundary2.png" height="90%" width="90%">
 </center>
 
-Another way to visualize this is by plotting precision and recall as a function of the classification threshold. Using a [classifier I trained on some sample data](#code), we can see how precision increases as we increase our threshold but recall steadily decreases. The higher our threshold, the more accurate our model's predictions become, but also the more spam videos we miss.
+Another way to visualize this is to plot precision and recall as a function of the classification threshold. Using a [classifier I trained on some sample data](#code), we can see how precision increases as we increase our threshold but recall steadily decreases. The higher our threshold, the more accurate our model's predictions become, but also the more spam videos we miss.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/precision_vs_recall.png" height="80%" width="80%">
 </center>
 
-The solution here is to critically ask, **"Are we more comfortable with false positives or false negatives, and by how much?"** Is it worse if some of our users are incorrectly blocked from uploading videos or if some users encounter scams on the platform?
+So how do we strike a balance? Ultimately, **we must ask whether we're more comfortable with false positives or false negatives, and by how much**. Is it worse if some users are incorrectly blocked from uploading videos or if they encounter scams on the platform? Is it worth blocking 100 benign videos to prevent 1 spam video? 1000 benign videos?
 
-Based on the plot above, if we wanted to catch 99% of spam with our classifier, we'd have to settle for around 45% precision -- an embarrassingly low number that would result in thousands of benign videos being blocked daily. If we were comfortable with only catching 90%, we could perhaps get up to 60% precision... still not great.
+Our app's main selling point was that users would never see spam videos. To achieve 100% recall with our classifier, we'd have to settle for around 45% precision -- an embarrassingly imprecise model that would result in thousands of benign videos being blocked daily. If we were comfortable with only catching 90% of spam, we could perhaps get up to 60% precision, but we'd still be blocking far too many videos as well as allowing spam through.
 
-We can work to improve the features and then maybe we see this.
+### Comparing models
+We go back to the drawing board, digging deep into the data to find better features associated with spam. We identify some promising trends and retrain our classifier. When we visualize the precision and recall versus classification threshold for our old and new models, we see something like the plot below; the solid lines are the old model and the dashed lines are the new.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/precision_vs_recall2.png" height="80%" width="80%">
 </center>
 
-We can summarize it as an AUC.
+That's looking a lot better! For most thresholds, the new model is a huge improvement in both precision and recall, making our tradeoff discussions more palatable. The highest precision we can now get while maintaining 100% recall is roughly 60%. At 90% recall, we have 85% precision.
+
+We can summarize our improvement in model fit across all thresholds with **AUC-ROC**, or the **Area Under the ROC** (Receiver Operator Characteristic). An ROC curve is a plot of the true positive rate (recall) versus the false positive rate (how often benign videos are flagged as spam). The area under this curve is 1 if our model can perfectly separate benign and spam videos across all thresholds, 0.5 if it is no better than randomly guessing (the gray dashed line below), and somewhere in between otherwise. This one number provides a quick way to show the overall improvement in our new model (with an AUC of 0.96) compared to the old one (AUC of 0.84).
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/auc2.png" height="80%" width="80%">
 </center>
 
+So by any metric, we can celebrate our improved ability to fight spam with our new classifier. But we're left looking uncomfortably at our commitment to absolutely zero spam videos on our app. To achieve 100% recall, do we really need to settle for 60% precision, barely better than a coin flip, when classifying videos uploaded to our app? Do we need to go back to model development, or is there anything else we can do?
 
-
-
-We can get at this by drawing a plot of the true positive rate versus false positive rate. Different thresholds will produce different points along this plot. It's bumpy because it's recalculated for every data point, rather than every possible threshold (between data points).
-
-Decrease classification threshold = increase both TPR and FPR. So what level of FPR are we wiling to accept? FPR is also 1 - recall.
-
-
-* Show a plot of precision vs. recall.
-
-
-A distinction to highlight:
-* Within a model, where to select a threshold
-* Between models
-
-### Comparing models
-We can look at AUC-ROC to evaluate how well a model in general works, which we could then use to compare models.
-
-
-
-Need to talk about **sensitivity** and **specificity.**
-* True positive rate: sensitivity (recall)
-* False positive rate: 1 - specificity
-  * The proportion of "not spam" samples that were incorrectly classified as spam.
-
-$$ FPR = \frac{FP}{FP+TN}$$
-
-TPR vs. FPR plot: diagonal line shows us where the proportion of true positives equals the proportion of false positives.
-* (1,1) = all spam correctly classified, but all benign incorrectly classified.
-* (0.75, 1) = all spam correctly classified, and 75% of benign incorrectly classified
-* (0, 0) = all spam incorrectly classified, all benign correctly classified
-* Connecting the dots = an ROC graph (receiver operating characteristic)
-  * AUC lets us compare one ROC curve to another.
-
-
-ROC curves let us summarize the confusion matrices of setting threshold at different values.
-
-
-
-
-
-
-We'll want to calculate the AUC: area under the curve. We'll look at the false positive rate (FPR) vs. the true positive rate (TPR). This lets us know that for a given threshold, what is our ratio of true positives to false positives?
-
-The perfect model would have an AUC of 1: there are never any false positives. The model's outputted probabilities are perfectly 0 or 1, and they perfectly divide the true and false labels.
-
-In reality, no model is perfect. We'll have predicted probabilities of 0.3, or 0.49, for videos that look a _little_ sketchy. We'll have some probabilities of 0.55, or 0.6, for videos that look pretty sketchy but our model isn't 100% sure about. Depending on where we set our binarization threshold, we'll either count those videos as predicted spam, or not.
-
-
-
-## Other things
-How do we quantify the _change_ in precision or recall? Let's say that we have our Baseline and Treatment. We're evaluating whether it's worth changing.
-
-To quantify the change in recall, we could do something like:
-
-$$\frac{N_{new} - N_{old}}{N_{old}} $$
-
-Where $N_{old}$ is the number of abusive videos caught with the old method and $N_{new}$ with the new.
-
-
-
-
-
-## Back to our app
+## Spam Prevalence Equilibria
 ### Attempt 3: Machine Learning + Human Review
-Are we out of luck? No. What if we combine ML and human review?
+If we continue thinking solely in terms of machine learning, we're going to spend a lot of effort chasing diminishing returns. Yes, we can find better features, algorithms, and hyperparameters to improve model fit. But if we take a step back, we can see that **our classifier is really only one part of a _funnel_ for identifying spam**, and that we'll be far more successful investing in _the funnel as a whole_ rather than just the machine learning portion.
+
+If we revisit our overlapping spam distribution figure from before, we can define three regions of spam probabilities: confidently benign, confidently spam, and "not sure." We spent much of this post explaining precision and recall as a way to navigate the region of uncertainty in terms of our classifier threshold. But we can take this a step further by bringing back our human reviewers.
+
+<center>
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_dist3.png">
+</center>
+
+
+What if we rely on our classifier for these videos where it's very confident? Then for the videos it's not sure about, we pull in our human reviewers.
 
 
 
 
+(change figure so it's like the ends get enforced automatically, and the middle is sent out to review.)
 
-If we run that 500 hours/minute firehose of videos through our classifier, we'd get some distribution of spam probabilities ($P(spam)$). We could then set some probability threshold above which we send the video to a human to review.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_flow.png" height="70%" width="70%">
@@ -266,7 +217,9 @@ On the other hand, though, if we set our threshold for manual review too low, we
 To answer these questions, we need to understand **precision** and **recall**, two metrics that are provide a framework for navigating the tradeoffs of systems involving machine learning classifiers.
 
 
-## Equilibria
+Finally, we can use a high-recall classifier for proxy labels of spam if we wanted to get estimates of how prevalent spam was on our platform.
+
+
 From a financial standpoint, there is some "optimal" amount of bad stuff on a platform, given the cost of manual review, engineering development, etc. to identify and delete that bad content and the long-term benefit of users staying on the platform. To push a company beyond that point would require regulation (so there are significant financial penalties), an internal acceptance of operating sub-optimally (but with a higher ethical standard, for example) or to have users lower the threshold at which they would leave a platform.
 
 Regulations, user sentiment.
@@ -274,6 +227,10 @@ Regulations, user sentiment.
 Precision is a useful metric when there's a high cost of false positives. Relying on a low-precision classifier that predicts [whether someone is likely to commit a crime](https://www.brennancenter.org/our-work/research-reports/predictive-policing-explained), for example, would lead to innocent people being arrested.
 
 If our data is heavily imbalanced, we can perform techniques like [upsampling the minority class](https://developers.google.com/machine-learning/data-prep/construct/sampling-splitting/imbalanced-data).
+
+## Conclusions
+Thanks for reading.<br>
+Matt
 
 ## Code
 Here is the code for generating the data and classifier, as well as plotting the precision vs. recall graph.
