@@ -183,7 +183,7 @@ We can summarize our improvement in model fit across all thresholds with **AUC-R
 
 So by any metric, we can celebrate our improved ability to fight spam with our new classifier. But we're left looking uncomfortably at our commitment to absolutely zero spam videos on our app. To achieve 100% recall, do we really need to settle for 60% precision, barely better than a coin flip, when classifying videos uploaded to our app? Do we need to go back to model development, or is there anything else we can do?
 
-## Spam Prevalence Equilibria
+## Back to our App
 ### Attempt 3: Machine Learning + Human Review
 If we continue thinking solely in terms of machine learning, we're going to spend a lot of effort chasing diminishing returns. Yes, we can find better features, algorithms, and hyperparameters to improve model fit. But if we take a step back, we can see that **our classifier is really only one part of a _funnel_ for identifying spam**, and that we'll be far more successful investing in _the funnel as a whole_ rather than just the machine learning portion.
 
@@ -193,37 +193,48 @@ If we revisit our overlapping spam distribution figure from before, we can defin
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_dist3.png">
 </center>
 
-What if instead of wringing our hands trying to find the perfect classification threshold, we lowered the stakes by setting thresholds for the boundaries of that gray region above? If our classifier is confident a video is spam or benign, we let it automate that decision for us. But if it's unsure, we send the video to a human for the final decision.
+What if instead of wringing our hands trying to find the perfect classification threshold, we instead set thresholds for the boundaries of that purple region above? If our classifier is confident a video is spam or benign, we let it automate that decision for us. **But if it's unsure, we send the video to a human for the final decision.**
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_flow.png">
 </center>
 
+We now face two precision-recall tradeoffs -- the lower and upper thresholds of the uncertainty region -- but **the stakes for false positives are much lower**: rather than risk blocking benign videos outright, we now risk wasting human review capacity. (While inefficient, our reviewers won't complain if they review some benign videos, whereas users will quit our app if we incorrectly block enough of their videos.)
 
+False negatives (letting a spam video through) are still costly, given our app's commitment to quality. So as long as we have human review capacity, we can make our uncertainty window as large as possible to ensure as many spam videos are caught as possible. But is this enough to assure that no spam videos make it onto the platform?
 
-Depending on where we set this threshold, we can cut down 90%, or 99%, or 99.999%, or any percent of videos to review. Awesome -- so we set our threshold to exclude 99.9999999% of videos, hire one reviewer to handle the remaining 1 minute per day, and congratulate ourselves for solving a tough problem.
+### Opportunity costs and adversarial actors
+The answer, unfortunately, is no. Even when combining the best of machine learning and human review, we cannot prevent 100% of spam from entering the platform.
 
-But... that doesn't quite work. Unless our classifier is perfect (which it never is), **we're definitely missing a lot of bad content by setting our threshold so high.** Even if our model _is_ really accurate and we can automatically delete any video the model predicts is abusive, we'd still want _some_ people to review its decisions: we may not uncover biases or blind spots in our model if we never audit its outputs.
+The first reason, which we [covered earlier](#attempt-1-human-review), is financial. Human review is expensive, and we cannot hire enough people to process all videos with an intermediate spam probability without bankrupting the company. **Beyond a certain level of investment, we both catch marginally less spam and cut into funding for other company initiatives** such as new features, market expansion, or customer support. There is also plenty of other safety work to do, such as preventing bad actors from hacking or impersonating users. At some point the opportunity costs of other work are so high that it becomes worth accepting some level of spam on the platform.
 
-On the other hand, though, if we set our threshold for manual review too low, we'll start digging into the bulk of the green distribution above: the benign videos. The number of reviewers we'll need to hire will quickly skyrocket, and they'll spend much of their time reviewing benign videos.
+<center>
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_investment.png" height="80%" width="80%">
+</center>
 
-Finally, we can use a high-recall classifier for proxy labels of spam if we wanted to get estimates of how prevalent spam was on our platform.
+The second reason we can't prevent 100% of spam is that **our classifier quickly becomes outdated as the spam feature space changes**. Spammers are _adversarial_, meaning they [change tactics](https://www.zdnet.com/article/facebooks-meta-says-bad-actors-are-changing-tactics-as-it-takes-down-six-more-groups/) as soon as companies identify rules to consistently block them. These bad actors are relentless; scamming people is [how they feed their families](https://open.spotify.com/episode/4b5s6nPbU7mE9ZXt8IdqXA?si=3bc062cf88e44b47), and they have infinite motivation to find ways to circumvent our app's rules. Cruelly, the features with the highest predictive power often become irrelevant as spammers investigate why their content is being blocked and then change their approach. The result is a [Red Queen](https://en.wikipedia.org/wiki/Red_Queen_hypothesis) arms race between platforms and spammers.
 
-### Stable states
-From a financial standpoint, there is some "optimal" amount of bad stuff on a platform, given the cost of manual review, engineering development, etc. to identify and delete that bad content and the long-term benefit of users staying on the platform. To push a company beyond that point would require regulation (so there are significant financial penalties), an internal acceptance of operating sub-optimally (but with a higher ethical standard, for example) or to have users lower the threshold at which they would leave a platform.
+### Spam equilibrium
+So if we can't have 0% spam on our platform, where do we end up? The answer to this depends on a number of competing factors.
 
-Regulations, user sentiment.
+<center>
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/equilibrium.png" height="90%" width="90%">
+</center>
 
-Precision is a useful metric when there's a high cost of false positives. Relying on a low-precision classifier that predicts [whether someone is likely to commit a crime](https://www.brennancenter.org/our-work/research-reports/predictive-policing-explained), for example, would lead to innocent people being arrested.
+The factors pushing for increased investment in fighting spam include regulations, our moral stance, and user anger when spam is high. If a law is passed that imposes severe financial penalties on our company whenever users get scammed on our app, you can be confident we'll be investing far into the diminishing returns part of the curve. We also don't want spam on our platform (having pitched our app as such), and we don't like when users are angry about spam. All of this pushes us towards investing in spam and keeping prevalence low.
 
-If our data is heavily imbalanced, we can perform techniques like [upsampling the minority class](https://developers.google.com/machine-learning/data-prep/construct/sampling-splitting/imbalanced-data).
+But there are also factors pushing against our investment. The first is the opportunity cost of not allocating funds to other company initiatives. The second is the economic reality of not always being able to allocate funds beyond a certain point at all. Finally, even when we're doing well users may not notice, providing little incentive to continue investing.
 
 ## Conclusions
-Thanks for reading.<br>
+This post used the question of "Why is there any spam on social media?" to explore precision, recall, and investment tradeoffs in classification systems. We started by covering different approaches to fighting spam (human review and machine learning) before discussing ways to quantify what we gain and lose when we set classification thresholds. We then discussed the numerous challenges with fighting spam on social media.
+
+Again, this post is my not a commentary on any content policy at any social media company and consists solely of my opinions. Thanks for reading!
+
+Best,<br>
 Matt
 
 ## Code
-Here is the code for generating the data and classifier, as well as plotting the precision vs. recall graph.
+Below is the code for generating the data and classifier mentioned in this post. The improved classifier was generated by decreasing the standard deviation of the random noise on lines 20 and 21.
 
 {% include header-python.html %}
 ```python
@@ -272,26 +283,14 @@ mod.fit(X_train, y_train)
 preds = mod.predict_proba(X_test)[:,1]
 precision, recall, thresholds = precision_recall_curve(y_test, preds)
 
-df = pd.DataFrame(
+df_pred = pd.DataFrame(
     {
         'precision': precision[:-1],
         'recall': recall[:-1],
         'threshold': thresholds,
     }
 )
-
-############################################################
-# Plot precision/recall vs. threshold
-plt.plot(df['threshold'], df['precision'], label='Precision', color='C0')
-plt.plot(df['threshold'], df['recall'], label='Recall', color='goldenrod')
-plt.xlabel("Classification threshold", fontsize=14)
-plt.ylabel("Precision or Recall", fontsize=14)
-plt.legend(fontsize=12, framealpha=1)
-plt.grid()
-plt.savefig("precision_vs_recall.png", dpi=400, bbox_inches='tight')
-plt.show()
 ```
-
 
 ## Footnotes
 #### 1. [Attempt 1: Human Review](#attempt-1-human-review)
