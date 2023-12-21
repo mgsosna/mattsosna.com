@@ -9,13 +9,13 @@ tags: machine-learning statistics
 
 _Disclaimer: the examples in this post are for illustrative purposes and are not commentary on any specific content policy at any specific company. All views expressed in this article are mine and do not reflect my employer._
 
-Why is there _any_ spam on social media? Aside from spammers, literally no one enjoys clickbait scams or phishing attempts. We have _decades_ of training data to feed machine learning classifiers. So why does spam on every major tech platform feel inevitable? After all these years, why do bot farms still exist?
+Why is there _any_ spam on social media? No one aside from the spammers themselves enjoys clickbait scams or phishing attempts. We have _decades_ of training data to feed machine learning classifiers. So why does spam on every major tech platform feel inevitable? After all these years, why do bot farms still exist?
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/feed.png" height="75%" width="75%">
 </center>
 
-The answer, in short, is that it is _really_ hard to fight spam at scale, and exponentially harder to do so without harming genuine users and advertisers. In this post, we'll use **precision** and **recall** as a framework for the spam problem. We'll see that eradicating 100% of spam is impractical and actually undesirable, and that there is some "equilibrium" spam prevalence based on finance, regulations, and user sentiment.
+The answer, in short, is that it is _really_ hard to fight spam at scale, and exponentially harder to do so without harming genuine users and advertisers. In this post, we'll use **precision** and **recall** as a framework for understanding the spam problem. We'll see that eradicating 100% of spam is impractical, and that there is some "equilibrium" spam prevalence based on finance, regulations, and user sentiment.
 
 ## Our app
 Imagine we're launching a competitor to TikTok and Instagram. (Forget that they have [**1.1 billion**](https://www.demandsage.com/tiktok-user-statistics/) and [**2 billion**](https://www.statista.com/statistics/272014/global-social-networks-ranked-by-number-of-users/) monthly active users, respectively; we're feeling ambitious!) Our key differentiator in this tight market is that we guarantee users will have only the highest quality of videos: absolutely no "get rich quick" schemes, blatant reposts of existing content, URLs that infect your computer with malware, etc.
@@ -114,7 +114,7 @@ Accuracy is an intuitive metric to start with, but it can hide some blindspots i
 Even with balanced data, we should never rely solely on accuracy when judging a model. Let's look at other metrics that can give us a more holistic picture.
 
 ### Metric 2: Recall
-If it's important for our model to flag all positive labels, we'll want a metric like **recall**. Recall is **_the proportion of <u>positive</u> labels our model correctly predicted._** In other words:
+To measure how well our model classified the positive samples in the test set, we'll want to look at our model's **recall**. Recall is **_the proportion of <u>positive</u> labels our model correctly predicted_**. In other words:
 
 $$Recall = \frac{TP}{TP+FN}$$
 
@@ -150,7 +150,7 @@ To illustrate this, let's look at that diagram of the overlap of benign and spam
 Every video to the right of threshold B is spam, so a classifier that binarizes at that spam probability will have 100% precision. That's impressive, but that threshold misses the two spam videos to the left. Those videos would be incorrectly classified benign (false negatives) because our model isn't confident enough that they're spam. Meanwhile, a model whose cutoff is threshold A would catch those spam videos, but it would also mis-label the three benign videos to the right (false positives), resulting in lower precision.  
 
 ### Striking a balance
-This tradeoff gets at the inherent tension between precision and recall: **when we increase our classification threshold, we _increase precision_ but _decrease recall_.** We can redraw our figure to highlight this tradeoff.
+This tradeoff gets at the inherent tension between precision and recall: **when we increase our classification threshold, we _increase precision_ but _decrease recall_**. We can redraw our figure to highlight this tradeoff.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/boundary2.png" height="90%" width="90%">
@@ -167,7 +167,7 @@ So how do we strike a balance? Ultimately, **we must ask whether we're more comf
 Our app's main selling point was that users would never see spam videos. To achieve 100% recall with our classifier, we'd have to settle for around 45% precision -- an embarrassingly imprecise model that would result in thousands of benign videos being blocked daily. If we were comfortable with only catching 90% of spam, we could perhaps get up to 60% precision, but we'd still be blocking far too many videos as well as allowing spam through.
 
 ### Comparing models
-We go back to the drawing board, digging deep into the data to find better features associated with spam. We identify some promising trends and retrain our classifier. When we visualize the precision and recall versus classification threshold for our old and new models, we see something like the plot below; the solid lines are the old model and the dashed lines are the new.
+We go back to the drawing board, digging deep into the data to find better features associated with spam. We identify some promising trends and retrain our classifier. When we visualize the precision and recall versus classification threshold for our two models, we see something like the plot below; the solid lines are the old model and the dashed lines are the new.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/precision_vs_recall2.png" height="80%" width="80%">
@@ -175,7 +175,7 @@ We go back to the drawing board, digging deep into the data to find better featu
 
 That's looking a lot better! For most thresholds, the new model is a huge improvement in both precision and recall, making our tradeoff discussions more palatable. The highest precision we can now get while maintaining 100% recall is roughly 60%. At 90% recall, we have 85% precision.
 
-We can summarize our improvement in model fit across all thresholds with **AUC-ROC**, or the **Area Under the ROC** (Receiver Operator Characteristic). An ROC curve is a plot of the true positive rate (recall) versus the false positive rate (how often benign videos are flagged as spam). The area under this curve is 1 if our model can perfectly separate benign and spam videos across all thresholds, 0.5 if it is no better than randomly guessing (the gray dashed line below), and somewhere in between otherwise. This one number provides a quick way to show the overall improvement in our new model (with an AUC of 0.96) compared to the old one (AUC of 0.84).
+We can summarize our improvement in model fit across all thresholds with **AUC-ROC**, or the **Area Under the ROC** (Receiver Operator Characteristic). An ROC curve is a plot of the true positive rate (recall) versus the false positive rate (how often benign videos are flagged as spam). The area under this curve is 1 if our model can perfectly separate benign and spam videos across all thresholds, 0.5 if it is no better than randomly guessing (the gray dashed line below), and somewhere in between otherwise. This one number provides a quick way to show the overall improvement in our new model (AUC = 0.96) compared to the old one (AUC = 0.84).
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/auc2.png" height="80%" width="80%">
@@ -187,7 +187,7 @@ So by any metric, we can celebrate our improved ability to fight spam with our n
 ### Attempt 3: Machine Learning + Human Review
 If we continue thinking solely in terms of machine learning, we're going to spend a lot of effort chasing diminishing returns. Yes, we can find better features, algorithms, and hyperparameters to improve model fit. But if we take a step back, we can see that **our classifier is really only one part of a _funnel_ for identifying spam**, and that we'll be far more successful investing in _the funnel as a whole_ rather than just the machine learning portion.
 
-If we revisit our overlapping spam distribution figure from before, we can define three regions of spam probabilities: confidently benign, confidently spam, and "not sure." We spent much of this post using precision and recall to understand the tradeoffs of binarizing that uncertainty region into benign and spam. But it doesn't have to be so black and white if we combine our classifier with those human reviewers from before.
+If we revisit our overlapping spam distribution figure from before, we can define three regions of spam probabilities: confidently benign, confidently spam, and "not sure." We just discussed how to use precision and recall to quantify the tradeoffs of binarizing that uncertainty region into benign and spam. But it doesn't have to be so black and white if we combine our classifier with those human reviewers from before.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_dist3.png">
@@ -206,29 +206,35 @@ False negatives (letting a spam video through) are still costly, given our app's
 ### Opportunity costs and adversarial actors
 The answer, unfortunately, is no. Even when combining the best of machine learning and human review, we cannot prevent 100% of spam from entering the platform.
 
-The first reason, which we [covered earlier](#attempt-1-human-review), is financial. Human review is expensive, and we cannot hire enough people to process all videos with an intermediate spam probability without bankrupting the company. **Beyond a certain level of investment, we both catch marginally less spam and cut into funding for other company initiatives** such as new features, market expansion, or customer support. There is also plenty of other safety work to do, such as preventing bad actors from hacking or impersonating users. At some point the opportunity costs of other work are so high that it becomes worth accepting some level of spam on the platform.
+The first reason, which we [covered earlier](#attempt-1-human-review), is financial. Human review is expensive, and we cannot hire enough people to process all videos with an intermediate spam probability without bankrupting the company. **Beyond a certain level of investment, we both catch marginally less spam and cut into funding for other company initiatives** such as new features, market expansion, or customer support. There is also plenty of other safety work that needs funding, such as preventing bad actors from hacking or impersonating users. At some point, the opportunity costs of other work are so high that we can actually have a better app overall if we accept some level of spam on the platform.
 
 <center>
 <img src="{{  site.baseurl  }}/images/ml/precision_recall/spam_investment.png" height="80%" width="80%">
 </center>
 
-The second reason we can't prevent 100% of spam is that **our classifier quickly becomes outdated as the spam feature space changes**. Spammers are _adversarial_, meaning they [change tactics](https://www.zdnet.com/article/facebooks-meta-says-bad-actors-are-changing-tactics-as-it-takes-down-six-more-groups/) as soon as companies identify rules to consistently block them. These bad actors are relentless; scamming people is [how they feed their families](https://open.spotify.com/episode/4b5s6nPbU7mE9ZXt8IdqXA?si=3bc062cf88e44b47), and they have infinite motivation to find ways to circumvent our app's rules. Cruelly, the features with the highest predictive power often become irrelevant as spammers investigate why their content is being blocked and then change their approach. The result is a [Red Queen](https://en.wikipedia.org/wiki/Red_Queen_hypothesis) arms race between platforms and spammers.
+The second reason we can't prevent 100% of spam is that **our classifier quickly becomes outdated as the spam feature space changes**. Spammers are _adversarial_, meaning they [change tactics](https://www.zdnet.com/article/facebooks-meta-says-bad-actors-are-changing-tactics-as-it-takes-down-six-more-groups/) as soon as companies identify rules to consistently block spam. These bad actors are relentless; scamming people is [how they feed their families](https://open.spotify.com/episode/4b5s6nPbU7mE9ZXt8IdqXA?si=3bc062cf88e44b47), and they have infinite motivation to find ways to circumvent our defenses.
+
+Cruelly, the features with the highest predictive power often become irrelevant as spammers investigate why their content is being blocked and then change their approach. The result is a [Red Queen arms race](https://en.wikipedia.org/wiki/Red_Queen_hypothesis) between platforms and spammers. If we don't constantly invest in innovating and iterating how we fight spam, spammers will quickly circumvent our defenses and overrun our platform with junk. But even with a stellar team of engineers and investigators, some spam will make it onto the platform before we can update our systems to catch it.
 
 ### Spam equilibrium
 So if we can't have 0% spam on our platform, where do we end up? The answer to this depends on a number of competing factors.
 
 <center>
-<img src="{{  site.baseurl  }}/images/ml/precision_recall/equilibrium.png" height="90%" width="90%">
+<img src="{{  site.baseurl  }}/images/ml/precision_recall/equilibrium.png" height="85%" width="85%">
 </center>
 
-The factors pushing for increased investment in fighting spam include regulations, our moral stance, and user anger when spam is high. If a law is passed that imposes severe financial penalties on our company whenever users get scammed on our app, you can be confident we'll be investing far into the diminishing returns part of the curve. We also don't want spam on our platform (having pitched our app as such), and we don't like when users are angry about spam. All of this pushes us towards investing in spam and keeping prevalence low.
+The first, and potentially strongest force, is regulation. If laws are passed that impose severe financial penalties whenever users get scammed on our app, the investment equilibrium shifts pretty heavily towards minimizing spam. But unless the laws really have some teeth, this force is countered by the opportunity cost of not working on other company initiatives (which themselves may have legal pressure from their own regulations).
 
-But there are also factors pushing against our investment. The first is the opportunity cost of not allocating funds to other company initiatives. The second is the economic reality of not always being able to allocate funds beyond a certain point at all. Finally, even when we're doing well users may not notice, providing little incentive to continue investing.
+The second set of forces comes from users. When spam is noticeable, users get angry; there are viral posts about family members losing life savings, users call on Congress to reign in our company, users leave or boycott our app. So we spend more effort fighting spam, spam prevalence decreases, and users stop complaining. But in the absence of this pressure from users, it can be hard to justify increased investment when no one notices the results.
+
+Finally, there is our company's internal stance on spam. How much of our company's maximum possible revenue are we willing to lose if it means investing more in fighting spam than what's economically optimal? Spam hurts our business, but so does over-investing in fighting it. How far down the diminishing returns are we willing to go based on our moral stance on spam?
+
+Ultimately, the sum of these forces results in some non-zero (and hopefully non-100!) amount of spam on our app. We realize our initial goal with launching our app was naïve given the world we live in. But we decide that's no reason to give up, so we build a strong anti-spam team, give them the resources they need, and start the never-ending fight for user safety.
 
 ## Conclusions
 This post used the question of "Why is there any spam on social media?" to explore precision, recall, and investment tradeoffs in classification systems. We started by covering different approaches to fighting spam (human review and machine learning) before discussing ways to quantify what we gain and lose when we set classification thresholds. We then discussed the numerous challenges with fighting spam on social media.
 
-Again, this post is my not a commentary on any content policy at any social media company and consists solely of my opinions. Thanks for reading!
+Again, this post is solely my opinions and is not commentary on any content policy at any company. Thanks for reading!
 
 Best,<br>
 Matt
@@ -297,10 +303,10 @@ df_pred = pd.DataFrame(
 To illustrate how impractical 100% human review is, consider YouTube. Users upload [**over 500 hours of video every minute**](https://www.statista.com/statistics/259477/hours-of-video-uploaded-to-youtube-every-minute/), or **1.8 million hours per day.** Reviewing this number of videos manually would require _75,000 reviewers_ watching videos 24/7, or _240,000_ if reviewers only work 8-hour shifts and have a lunch break. Add 1,000 to handle _re-reviewing_ videos whose creators [claim were incorrectly deleted](https://www.tspa.org/curriculum/ts-fundamentals/content-moderation-and-operations/user-appeals/). We're left with **241,000 reviewers**, or [160% the number of Google employees](https://www.macrotrends.net/stocks/charts/GOOG/alphabet/number-of-employees). That's not going to work.
 
 #### 2. [Attempt 2: Machine Learning](#attempt-2-machine-learning)
-Note that machine learning isn't the only option for fighting spam. There _is_ a solid use case for hand-crafted deterministic rules for subsets of spam. Something like "how often should a user be allowed to post a video?" probably doesn't need a dedicated ML classifier and could be inferred from a distribution of the number of times users post in a day, for example.
+Note that machine learning isn't the only option for fighting spam. There _is_ a solid use case for hand-crafted deterministic rules for subsets of spam. Something like "how often should a user be allowed to post a video?" probably doesn't need a dedicated classifier and could be inferred from a distribution of the number of times users post in a day, for example.
 
 #### 3. [Attempt 2: Machine Learning](#attempt-2-machine-learning)
-I write "model" here but our spam classifier can actually be an [ensemble](https://en.wikipedia.org/wiki/Ensemble_learning) of models, each trained on different subsets of spam. This is how [Facebook's News Feed](https://about.fb.com/news/2021/01/how-does-news-feed-predict-what-you-want-to-see/) works, for example. There are a set of component models that target small chunks of a problem, like whether a user will like a piece of content, or start following the page that posted the content, etc. These models can be incredibly complex, but they ultimately output a probability that the action will occur. Then you can simply attach weights to each of the probabilities, sum them, and rank by these scores. This is one way to navigate the tradeoff of high accuracy and low explainability of complex models (like what, exactly, leads to a person deciding to react with a heart emoji on a post) while having explainability in the overall ranking of an item in the feed.
+Throughout this post I use the singular "model" or "classifier" to refer to our system for catching spam. But spam is a vast, multi-faceted space, so we probably actually want an [ensemble](https://en.wikipedia.org/wiki/Ensemble_learning) of models, each trained on different subsets of spam. This ensemble approach is how [Facebook's News Feed](https://about.fb.com/news/2021/01/how-does-news-feed-predict-what-you-want-to-see/) works. Individual items in Feed are ranked by many models, each outputting a likelihood that a user will like the item, or comment on it, or start following the page that posted the item, etc.
 
 #### 4. [Evaluation framework](#evaluation-framework)
-Modeling just the existing data can be useful, too, but this falls more in the realm of business intelligence or data analytics. The goal there is to understand our data, the relationships between features, etc. but there is not necessarily a _predictive_ component of trying to understand future data.
+Modeling just the existing data can be useful, too, but this falls more in the realm of business intelligence or data analytics. The goal there is to understand our data, but there is not necessarily a _predictive_ component of trying to understand future data.
