@@ -123,6 +123,7 @@ permalink: /blog/
 2. [Linear regression via gradient descent]({{ site.baseurl }}/LR-grad-desc)
 3. [A deep dive on ARIMA models]({{  site.baseurl  }}/ARIMA-deep-dive)
   - <span style="font-size: 12px">Featured in _Toward Data Science_'s [8/19/21 editors' picks](https://towardsdatascience.com/which-data-science-skill-are-you-looking-to-level-up-cbe1d097624b)
+4. [A business lens on precision and recall]({{  site.baseurl  }}/Precision-recall)
 
 ### Theory
 1. [Fish schools as ensemble learning algorithms]({{  site.baseurl  }}/Collective-behavior)
