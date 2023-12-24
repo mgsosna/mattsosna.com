@@ -23,6 +23,12 @@ $$G = 1 - {p_k}^2 - (1-p_k)^2$$
 
 Total Gini impurity of the tree: weighted average.
 
+
+<center>
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/gini_impurity.png" height="75%" width="75%">
+</center>
+_Image adapted from Provost, Foster; Fawcett, Tom. Data Science for Business: What You Need to Know about Data Mining and Data-Analytic Thinking_
+
 ## Implementation
 ### Decision tree
 
