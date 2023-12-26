@@ -23,17 +23,21 @@ $$G = 1 - {p_k}^2 - (1-p_k)^2$$
 
 Total Gini impurity of the tree: weighted average.
 
+Below is a plot of the Gini impurity as a function of $p_▲$, the probability of randomly selecting a triangle from the node. The lowest impurity is one where all elements in the node are either _not_ triangles (i.e., squares) or all triangles. As the node becomes mixed, the impurity increases.
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/gini_impurity.png" height="75%" width="75%">
 </center>
-_Image adapted from Provost, Foster; Fawcett, Tom. Data Science for Business: What You Need to Know about Data Mining and Data-Analytic Thinking_
+<center>
+<i>Image adapted from Provost, Foster; Fawcett, Tom. Data Science for Business: What You Need to Know about Data Mining and Data-Analytic Thinking</i>
+</center>
 
 ## Implementation
 ### Decision tree
 
 Tree could be just one node if there's one rule that completely partitions the classes.
 
+{% include header-python.html %}
 ```python
 import numpy as np
 import pandas as pd
