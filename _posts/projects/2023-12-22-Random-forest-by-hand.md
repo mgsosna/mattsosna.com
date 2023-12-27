@@ -11,6 +11,16 @@ Random forests are one of the most popular machine learning models due to their 
 ### Decision tree
 Our goal is to find a path through our features that allow us to perfectly separate our classes.
 
+<center>
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/tree1.png" height="80%" width="80%">
+</center>
+
+A few things to note:
+* Not all branches of the tree are equally long. For some combinations of features, we can reach a decision quickly. For others, we need to partition our data multiple times before we can cleanly separate the classes.
+
+
+Our tree will be fit to our training data. If we let it grow as long as possible, it will be able to perfectly categorize every point in our training data. But then it won't be able to generalize to new data well.  
+
 We need a way to evaluate how well our tree partitions our labels. One common metric is **gini impurity**, which is calculated with the following equation:
 
 $$G = 1 - \sum_{k=1}^{m}{p_k}^2$$
