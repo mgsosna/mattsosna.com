@@ -5,15 +5,34 @@ title: Building a Random Forest by Hand
 tags: machine-learning
 ---
 
-Random forests are one of the most popular machine learning models due to their interpretability and robustness against overfitting. To gain an intuition on how they work, we'll build one by hand, starting with manually implementing a decision tree class followed by the entire forest.
+From [drug discovery](https://www.sciencedirect.com/science/article/abs/pii/S0957417416306819) to [species classification](https://www.mdpi.com/2072-4292/4/9/2661), [credit scoring](https://journals.sagepub.com/doi/abs/10.1177/2278533718765531) to [cybersecurity](https://www.sciencedirect.com/science/article/pii/S1877050916311127) and more, the random forest is a powerful algorithm for modeling our complex world. Its versatility and predictive prowess would seem to require cutting-edge complexity, but if we dig into what a random forest actually is, we see a shockingly simple set of rules working in tandem.
+
+
+
+
+
+
+
+Random forests are one of the most popular machine learning algorithms for both classification and regression due to their flexibility, interpretability, and performance. To gain an intuition on how they work, let's build one by hand, starting with manually implementing a decision tree class followed by the entire forest. It sounds complicated, but there are really only a few concepts -- how to iteratively partition the data and how to quantify how well they partition that data -- that are core to understanding the algorithm.
 
 ## Background
 ### Decision tree
-Our goal is to find a path through our features that allow us to perfectly separate our classes.
+A decision tree is a supervised learning algorithm that identifies **a set of simple rules that map features to labels.** In contrast to a model like logistic regression where the output is an equation, the algorithm is [nonparametric](https://machinelearningmastery.com/parametric-and-nonparametric-machine-learning-algorithms/), meaning it doesn't make strong assumptions on the relationship between features and labels. This means that trees are free to evolve however to best map to the dataset they're modeling.
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/tree1.png" height="80%" width="80%">
 </center>
+
+* Talk about ensemble algorithms
+
+
+[sklearn docs](https://scikit-learn.org/stable/modules/tree.html)
+* Don't need to pre-process the data as much, but will want to balance the data first.
+* Downside: small variations in data can result in totally different trees being produced.
+
+
+(For simplicity, we'll just talk about classification for now and revisit regression later.)
+
 
 A few things to note:
 * Not all branches of the tree are equally long. For some combinations of features, we can reach a decision quickly. For others, we need to partition our data multiple times before we can cleanly separate the classes.
@@ -119,3 +138,9 @@ class NodeProcessor:
 
         return weighted_gini, node_lower, node_upper
 ```
+
+Josh Starmer's [excellent video on how decision trees are built](https://www.youtube.com/watch?v=_L39rN6gz7Y)
+
+
+* Check what impurity metrics are offered by sklearn's `DecisionTreeClassifier` and `RandomForestClassifier` classes (and what the defaults are).
+* See if there's a cleaner way than needing two classes (`Node` and `NodeProcessor`). Maybe it should be like `NodeData` and `Node` does the work? We should also have some way to trigger the whole process (i.e., the actual decision tree). Maybe `DecisionTree`.
