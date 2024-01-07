@@ -56,9 +56,16 @@ Below is a plot of the Gini impurity as a function of $p_▲$, the probability o
 </center>
 
 ## Implementation
-### Decision tree
+### Tree Nodes
+Let's start with a `Node` class that will serve as a node in our decision tree. The class will have the following attributes used for training:
+* A dataframe representing the data (or subset) the node held during training.
+* The proportion of positive labels and Gini impurity of the dataframe.
+* Pointers to left and right child nodes, set to `None` if the node is a leaf.
 
-Tree could be just one node if there's one rule that completely partitions the classes.
+The class will also have the following attributes for classifying new data:
+* Information on which node to go to next (if the node is not a leaf) or which label to return.
+
+We can construct a `Node` class that meets these criteria with the below code. Because we calculate Gini impurity by assuming the dataframe target column is 1s and 0s, we have a `_check_df` method to ensure the data is in the correct format. The other methods just calculate $p_k$ and the Gini impurity.
 
 {% include header-python.html %}
 ```python
@@ -67,71 +74,93 @@ import pandas as pd
 
 class Node:
     """
-    Node in a decision tree. Assumes self.df has a column
-    called 'label' that consists of 0s and 1s.
-    """
-    def __init__(self, df: pd.DataFrame) -> None:
-        self.df = self._check_df(df)
-        self.pk = self.set_pk()
-        self.gini = self.set_gini()
+    Node in a decision tree.
 
-    def _check_df(self, df: pd.DataFrame) -> pd.DataFrame:
-        assert 'label' in df.columns, "df needs 'label' column"
-        assert not set(df['label']).difference({0,1}), "label column cannot have values besides {0,1}"
+    Parameters
+    ----------
+    df : pd.DataFrame
+      The dataframe (or subset) this node holds. Used for training.
+      All columns except target_col are assumed to be features.
+    target_col : str
+      The column in the dataframe with labels. Must be 0s and 1s, with
+      1s being the positive class.
+    pk : float
+      Proportion of node's df that contain the positive class.
+    gini : float
+      The node's Gini impurity.
+    left : Node
+      The left child of the node. None if no child.
+    right : Node
+      The right child of the node. None if no child.
+    feature : str
+      The column in the df whose splitting led to the largest reduction
+      in weighted Gini impurity in the child nodes.
+    threshold : float | int
+      The value of the feature column to split the df.
+    """
+    def __init__(
+        self,
+        df: pd.DataFrame,
+        target_col: str
+    ) -> None:
+        # For training
+        self.df = self._check_df(df, target_col)
+        self.target_col = target_col
+        self.pk = self._set_pk()
+        self.gini = self._set_gini()
+
+        # For training/inference
+        self.left = None
+        self.right = None
+
+        # For inference
+        self.feature = None
+        self.threshold = None
+
+    def _check_df(
+        self,
+        df: pd.DataFrame,
+        target_col: str
+    ) -> pd.DataFrame:
+        assert len(list(df)) > 1, \
+            "df must have features"
+        assert not set(df[target_col]).difference({0,1}), \
+            "target column cannot have values besides {0,1}"
         return df
 
-    def set_pk(self) -> float:
+    def _set_pk(self) -> float:
         """
         Sets pk, the proportion of samples that are of the positive class.
         Assumes samples is a list of ints, where 1 is the positive class
         and 0 is the negative class.
         """
-        return np.mean(self.df['label'].values)
+        return np.mean(self.df[self.target_col].values)
 
-    def set_gini(self) -> float:
+    def _set_gini(self) -> float:
         """
         Sets the Gini impurity.
         """
         return 1 - self.pk**2 - (1 - self.pk)**2
-
-class NodeProcessor:
-    def __init__(self, node: Node) -> None:
-        self.node = node
-        self.df = node.df
-
-    def split_on_feature(self, feature: str) -> tuple[int|float, Node, Node]:
-        """
-        Iterate through values of a feature and identify
-        """
-        values = []
-
-        # Skip last value, since it includes all rows
-        for thresh in self.df.sort_values(feature)[feature].unique()[:-1]:
-            values.append(self._process_split(thresh, feature))
-
-        return min(values, key=lambda x: x[0])
-
-    def _process_split(
-        self,
-        threshold: int|float,
-        feature: str
-    ) -> tuple[int|float, Node, Node]:
-        """
-        Actually do the work...
-        """
-        df_lower = self.df[self.df[feature] <= threshold]
-        df_upper = self.df[self.df[feature] > threshold]
-
-        node_lower = Node(df_lower)
-        node_upper = Node(df_upper)
-
-        prop_lower = len(df_lower) / len(self.df)
-        prop_upper = len(df_upper) / len(self.df)
-
-        weighted_gini = node_lower.gini * prop_lower + node_upper.gini * prop_upper
-
-        return weighted_gini, node_lower, node_upper
 ```
+
+We can instantiate a node like this.
+
+{% include header-python.html %}
+```python
+import pandas as pd
+df = pd.DataFrame({'feature': [1, 2, 3], 'label': [0, 0, 1]})
+node = Node(df, 'label')
+
+print(f"pk: {round(node.pk, 2)}, gini: {round(node.gini, 2)}")
+# pk: 0.33, gini: 0.44
+```
+
+
+### Decision tree
+
+
+Tree could be just one node if there's one rule that completely partitions the classes.
+
 
 Josh Starmer's [excellent video on how decision trees are built](https://www.youtube.com/watch?v=_L39rN6gz7Y)
 
