@@ -10,7 +10,7 @@ From [drug discovery](https://www.sciencedirect.com/science/article/abs/pii/S095
 I find that the best way to learn something is to play with it. So to gain an intuition on how random forests work, let's build one by hand in Python, starting with a decision tree and expanding to the full forest. We'll see first-hand how flexible and interpretable this algorithm is for both classification and regression applications. And while this project may sound complicated, there are really only a few core concepts we'll need to learn: 1) how to iteratively partition data, and 2) how to quantify how well data is partitioned.
 
 ## Background
-### Decision tree
+### Decision tree inference
 A decision tree is a supervised learning algorithm that identifies **a set of simple rules that map features to labels.** The model outputted by the algorithm (also called a decision tree) takes in a feature vector and outputs a label (for classification) or continuous value (for regression).
 
 <center>
@@ -23,9 +23,18 @@ Starting with the root, each node in the tree asks a binary question (e.g., _"is
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/tree2.png" height="70%" width="70%">
 </center>
 
-_Inference_, or this prediction process, is pretty straightforward. But _building_ this tree is much less obvious. How is the binary rule in each node determined? Which features are used to make a decision, and in what order? How do we choose a threshold like 0.5 or 1?
+### Decision tree training
+_Inference_, or this prediction process, is pretty straightforward. But _building_ this tree is much less obvious. How is the binary rule in each node determined? Which features are used in the tree, and in what order? Where does a threshold like 0.5 or 1 come from?
 
-To answer these questions, we need to understand how a decision tree algorithm evaluates how "mixed" a set of labels is, and how much less "mixed" it becomes when we split it into two subsets. One common metric is **gini impurity**, which is calculated with the following equation:
+To understand how decision trees are built, **we need to first understand how the algorithm evaluates how _"mixed"_ a set of labels is.**
+
+<center>
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/tree_data.png" height="75%" width="75%">
+</center>
+
+
+
+, and how much less "mixed" the set becomes when we split it into two subsets. One common metric is [**Gini impurity**](https://en.wikipedia.org/wiki/Decision_tree_learning#Gini_impurity), which is calculated with the following equation:
 
 $$G = 1 - \sum_{k=1}^{m}{p_k}^2$$
 
