@@ -26,7 +26,42 @@ Starting with the root, each node in the tree asks a binary question (e.g., _"is
 ### Decision tree training
 _Inference_, or this prediction process, is pretty straightforward. But _building_ this tree is much less obvious. How is the binary rule in each node determined? Which features are used in the tree, and in what order? Where does a threshold like 0.5 or 1 come from?
 
-To understand how decision trees are built, **we need to first understand how the algorithm evaluates how _"mixed"_ a set of labels is.**
+To understand how decision trees are built, let's imagine we're trying to partition a large dataset of shapes (squares and triangles) into smaller datasets of _only squares_ or _only triangles_ based on their features. In the ideal case, there's some categorical feature that perfectly separates the shapes.
+
+<center>
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/partitioning1.png" height="55%" width="55%">
+</center>
+
+But it's never _that_ easy. If you're lucky, maybe there's a continuous feature that has some threshold that perfectly separates the shapes instead. It takes a couple tries to find the exact threshold, but then you have your perfect split. (Phew!)
+
+<center>
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/partitioning2.png">
+</center>
+
+Well... it's never really that easy, either. In this toy example, all triangles and squares are identical, meaning it's trivial to separate their feature vectors. (Find one rule that works for one triangle and it works for all triangles!) **But in the real world, features don't map so neatly to labels.** If squares are benign users and triangles are spammers, for example, a feature like _number of clicks_ in a session might not be able to perfectly partition the classes at any threshold.
+
+<center>
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/partitioning3.png">
+</center>
+
+So what do we do if no feature at any threshold can perfectly split our data? In this case, **we need a way to quantify how _"mixed"_ a set of labels is.** One common metric is [**Gini impurity**](https://en.wikipedia.org/wiki/Decision_tree_learning#Gini_impurity), which is calculated with the following equation:
+
+$$G = 1 - \sum_{k=1}^{m}{p_k}^2$$
+
+Here, $p_k$ is the probability of a randomly-drawn sample belonging to class $k$ among our $m$ classes. A set with zero impurity would be one where all samples belong to one class; maximum impurity would be equal numbers of each class. If we only have two classes, the negative class probability is just the inverse of the positive class probability, so we can define the impurity solely in terms of $p_k$ like below.
+
+$$G = 1 - {p_k}^2 - (1-p_k)^2$$
+
+Below is a plot of the Gini impurity as a function of $p_▲$, the probability of randomly selecting a triangle from the node. The lowest impurity is one where all elements in the set are either _not_ triangles (i.e., squares) or triangles. As the set becomes mixed, the impurity increases.
+
+<center>
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/gini_impurity.png" height="75%" width="75%">
+</center>
+<center>
+<i>Image adapted from <a href="https://www.oreilly.com/library/view/data-science-for/9781449374273/" target="_blank">Data Science for Business: What You Need to Know about Data Mining and Data-Analytic Thinking</a></i>
+</center>
+
+With this in mind, let's reframe our earlier figures but imagine that we're processing a lot of data at once. At the root of the tree, the labels are unsorted. But as we move through the tree, we slowly start to isolate the triangles and squares until the leaf nodes only contain one of the shapes.<sup>[[1]](#1-decision-tree-training)</sup>
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/tree_data.png" height="75%" width="75%">
@@ -34,26 +69,7 @@ To understand how decision trees are built, **we need to first understand how th
 
 
 
-, and how much less "mixed" the set becomes when we split it into two subsets. One common metric is [**Gini impurity**](https://en.wikipedia.org/wiki/Decision_tree_learning#Gini_impurity), which is calculated with the following equation:
-
-$$G = 1 - \sum_{k=1}^{m}{p_k}^2$$
-
-Here, $p_k$ is the probability of a randomly-drawn sample belonging to class $k$ among our $m$ classes. A node with zero impurity would be one where all samples belong to one class.
-
-If we only have two classes, the negative class probability is just the inverse of the positive class probability, so we can define the impurity solely in terms of $p_k$ like below.
-
-$$G = 1 - {p_k}^2 - (1-p_k)^2$$
-
-Total Gini impurity of the tree: weighted average.
-
-Below is a plot of the Gini impurity as a function of $p_▲$, the probability of randomly selecting a triangle from the node. The lowest impurity is one where all elements in the node are either _not_ triangles (i.e., squares) or all triangles. As the node becomes mixed, the impurity increases.
-
-<center>
-<img src="{{  site.baseurl  }}/images/projects/decision_tree/gini_impurity.png" height="75%" width="75%">
-</center>
-<center>
-<i>Image adapted from Provost, Foster; Fawcett, Tom. Data Science for Business: What You Need to Know about Data Mining and Data-Analytic Thinking</i>
-</center>
+, and how much less "mixed" the set becomes when we split it into two subsets.
 
 
 ### Training
@@ -278,3 +294,7 @@ Josh Starmer's [excellent video on how decision trees are built](https://www.you
 
 
 * Check what impurity metrics are offered by sklearn's `DecisionTreeClassifier` and `RandomForestClassifier` classes (and what the defaults are).
+
+# Footnotes
+#### 1. [Decision Tree Training](#1-decision-tree-training)
+If you limit the depth of the tree, you'll end up with leaf nodes that are still a mixture of the classes. This is ok!
