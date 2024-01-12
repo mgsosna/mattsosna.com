@@ -48,11 +48,11 @@ So what do we do if no feature at any threshold can perfectly split our data? In
 
 $$G = 1 - \sum_{k=1}^{m}{p_k}^2$$
 
-Here, $p_k$ is the probability of a randomly-drawn sample belonging to class $k$ among our $m$ classes. A set with zero impurity would be one where all samples belong to one class; maximum impurity would be equal numbers of each class. If we only have two classes, the negative class probability is just the inverse of the positive class probability, so we can define the impurity solely in terms of $p_k$ like below.
+Here, $p_k$ is the probability of a randomly-drawn sample belonging to class $k$ among our $m$ classes. For our squares and triangles, since we only have two classes and the probabilities must sum to 1, we can just define the whole equation in terms of $p_k$.
 
 $$G = 1 - {p_k}^2 - (1-p_k)^2$$
 
-Below is a plot of the Gini impurity as a function of $p_▲$, the probability of randomly selecting a triangle from the node. The lowest impurity is one where all elements in the set are either _not_ triangles (i.e., squares) or triangles. As the set becomes mixed, the impurity increases.
+Below is a visual representation of the Gini impurity as a function of $p_▲$, the probability of randomly selecting a triangle from the set. (We've just replaced $p_k$ with $p_▲$ to indicate that triangles are the positive class.) The lowest impurity is when the elements in the set are either all _not_ triangles (i.e., squares) or all triangles. The impurity peaks when we have equal numbers of squares and triangles.
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/gini_impurity.png" height="75%" width="75%">
@@ -60,6 +60,30 @@ Below is a plot of the Gini impurity as a function of $p_▲$, the probability o
 <center>
 <i>Image adapted from <a href="https://www.oreilly.com/library/view/data-science-for/9781449374273/" target="_blank">Data Science for Business: What You Need to Know about Data Mining and Data-Analytic Thinking</a></i>
 </center>
+
+When identifying rules to partition our classes, then, we can simply **select a split such that we _minimize the Gini impurity_ of the subsets.** For a given feature, we can try splitting on all possible values of that feature, record the Gini impurity of the subsets, and then select the feature value that resulted in the lowest impurity.
+
+<center>
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/gini_split.png" height="70%" width="70%">
+</center>
+
+We can then repeat this process for all features, then select the feature whose optimal split resulted in the lowest Gini impurity overall. Below, we see that the optimal split for _number of clicks_ results in a lower Gini impurity than the best splits for _Age of account_ and _Last login_.
+
+<center>
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/gini_split_multiple.png">
+</center>
+
+
+We can find this optimal split by splitting on every value of every feature, recording the resulting Gini impurity of the subsets, then choosing the feature and threshold that resulted in the lowest impurity.
+
+
+The ideal case would be a split that produces a Gini impurity of zero in the subsets: a perfect split. But if that's not possible, we simply repeat the process for each subset, partitioning our data further to minimize the subset impurity.
+
+Here's what that process might look like for a trained tree:
+
+
+
+
 
 With this in mind, let's reframe our earlier figures but imagine that we're processing a lot of data at once. At the root of the tree, the labels are unsorted. But as we move through the tree, we slowly start to isolate the triangles and squares until the leaf nodes only contain one of the shapes.<sup>[[1]](#1-decision-tree-training)</sup>
 
