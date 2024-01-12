@@ -11,16 +11,16 @@ I find that the best way to learn something is to play with it. So to gain an in
 
 ## Background
 ### Decision tree inference
-A decision tree is a supervised learning algorithm that identifies **a set of simple rules that map features to labels.** The model outputted by the algorithm (also called a decision tree) takes in a feature vector and outputs a label (for classification) or continuous value (for regression).
+A decision tree is a supervised learning algorithm that identifies **a set of simple rules that map features to labels.** The model outputted by the algorithm (also called a decision tree) takes in a feature vector and outputs a label (for classification) or continuous value (for regression). A model that predicts whether a shopper will buy a product they viewed online, for example, might look like this.
 
 <center>
-<img src="{{  site.baseurl  }}/images/projects/decision_tree/tree1.png" height="70%" width="70%">
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/tree1.png" height="75%" width="75%">
 </center>
 
-Starting with the root, each node in the tree asks a binary question (e.g., _"is x greater than 0.5?"_) and passes the vector to one of two child nodes depending on the answer. If there are no children -- i.e., we're at a leaf node -- then the tree returns a response.
+Starting with the root, each node in the tree asks a binary question (e.g., _"did the user put the item in their shopping cart?"_) and passes the feature vector to one of two child nodes depending on the answer. If there are no children -- i.e., we're at a leaf node -- then the tree returns a response: green if yes, orange if no.
 
 <center>
-<img src="{{  site.baseurl  }}/images/projects/decision_tree/tree2.png" height="70%" width="70%">
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/tree2.png" height="75%" width="75%">
 </center>
 
 ### Decision tree training
@@ -61,39 +61,25 @@ Below is a visual representation of the Gini impurity as a function of $p_▲$, 
 <i>Image adapted from <a href="https://www.oreilly.com/library/view/data-science-for/9781449374273/" target="_blank">Data Science for Business: What You Need to Know about Data Mining and Data-Analytic Thinking</a></i>
 </center>
 
-When identifying rules to partition our classes, then, we can simply **select a split such that we _minimize the Gini impurity_ of the subsets.** For a given feature, we can try splitting on all possible values of that feature, record the Gini impurity of the subsets, and then select the feature value that resulted in the lowest impurity.
+When identifying rules to partition our classes, then, we can simply **select a split such that we _minimize the Gini impurity_ of the subsets.** For a given feature, we can try splitting on all possible values of that feature, record the Gini impurity of the subsets, and then select the feature value that resulted in the lowest impurity. Below, splitting the feature _Age of account_ on around 37 days best partitions the labels.
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/gini_split.png" height="70%" width="70%">
 </center>
 
-We can then repeat this process for all features, then select the feature whose optimal split resulted in the lowest Gini impurity overall. Below, we see that the optimal split for _number of clicks_ results in a lower Gini impurity than the best splits for _Age of account_ and _Last login_.
+We can repeat this process for all features and **select the feature whose optimal split resulted in the lowest Gini impurity.** Below, we see that the optimal split for _Number of clicks_ results in a lower Gini impurity than the best splits for _Age of account_ and _Last login_.
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/gini_split_multiple.png">
 </center>
 
-
-We can find this optimal split by splitting on every value of every feature, recording the resulting Gini impurity of the subsets, then choosing the feature and threshold that resulted in the lowest impurity.
-
-
-The ideal case would be a split that produces a Gini impurity of zero in the subsets: a perfect split. But if that's not possible, we simply repeat the process for each subset, partitioning our data further to minimize the subset impurity.
-
-Here's what that process might look like for a trained tree:
-
-
-
-
-
-With this in mind, let's reframe our earlier figures but imagine that we're processing a lot of data at once. At the root of the tree, the labels are unsorted. But as we move through the tree, we slowly start to isolate the triangles and squares until the leaf nodes only contain one of the shapes.<sup>[[1]](#1-decision-tree-training)</sup>
+**This split becomes the first fork in our decision tree.** We then repeat this process on each of the data subsets, iterating through features and values and choosing the feature that best partitions the data. Here's what the final tree might look like; notice how the squares and triangles are progressively isolated as we move down the tree.
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/tree_data.png" height="75%" width="75%">
 </center>
 
 
-
-, and how much less "mixed" the set becomes when we split it into two subsets.
 
 
 ### Training
