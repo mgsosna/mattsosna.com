@@ -14,13 +14,13 @@ I find that the best way to learn something is to play with it. So to gain an in
 A decision tree is a supervised learning algorithm that identifies **a set of simple rules that map features to labels.** The model outputted by the algorithm (also called a decision tree) takes in a feature vector and outputs a label (for classification) or continuous value (for regression). A model that predicts whether a shopper will buy a product they viewed online, for example, might look like this.
 
 <center>
-<img src="{{  site.baseurl  }}/images/projects/decision_tree/tree1.2.png" height="75%" width="75%">
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/tree1.png" height="75%" width="75%">
 </center>
 
 Starting with the root, each node in the tree asks a binary question (e.g., _"did the user put the item in their shopping cart?"_) and passes the feature vector to one of two child nodes depending on the answer. If there are no children -- i.e., we're at a leaf node -- then the tree returns a response: green if yes, orange if no.
 
 <center>
-<img src="{{  site.baseurl  }}/images/projects/decision_tree/tree2.2.png" height="75%" width="75%">
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/tree2.png" height="75%" width="75%">
 </center>
 
 ### Decision tree training
@@ -40,7 +40,7 @@ But it's never _that_ easy. If you're lucky, maybe there's a continuous feature 
 
 Well... it's never really that easy, either. In this toy example, all triangles and squares are identical, meaning it's trivial to separate their feature vectors. (Find one rule that works for one triangle and it works for all triangles!)
 
-**But in the real world, features don't map so neatly to labels.** Going back to our e-commerce example, a feature like _time spent on the site_ in a session might not be able to perfectly partition the classes at any threshold.
+**But in the real world, features don't map so neatly to labels.** Going back to our e-commerce example, a feature like _time spent on the site_ in a session might not be able to perfectly partition the classes even at any threshold.
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/partitioning3.3.png">
@@ -54,22 +54,22 @@ Here, $p_k$ is the probability of a randomly-drawn sample belonging to class $k$
 
 $$G = 1 - {p_k}^2 - (1-p_k)^2$$
 
-Below is a visual representation of the Gini impurity as a function of $p_▲$, the probability of randomly selecting a triangle from the set. (We've just replaced $p_k$ with $p_▲$ to indicate that triangles are the positive class.) The lowest impurity is when the elements in the set are either all _not_ triangles (i.e., squares) or all triangles. The impurity peaks when we have equal numbers of squares and triangles.
+Below is a visual representation of the Gini impurity as a function of $p_\checkmark$, the probability of randomly selecting a positive label from the set. (We've just replaced $p_k$ with $p_\checkmark$ to indicate that the checkmarks are the positive class.) The lowest impurity is when the elements in the set are either all _not_ checkmarks (i.e., x's) or all checkmarks. The impurity peaks when we have equal numbers of x's and checkmarks.
 
 <center>
-<img src="{{  site.baseurl  }}/images/projects/decision_tree/gini_impurity2.png" height="75%" width="75%">
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/gini_impurity2.png" height="80%" width="80%">
 </center>
 <center>
 <i>Image adapted from <a href="https://www.oreilly.com/library/view/data-science-for/9781449374273/" target="_blank">Data Science for Business: What You Need to Know about Data Mining and Data-Analytic Thinking</a></i>
 </center>
 
-When identifying rules to partition our classes, then, we can simply **select a split such that we _minimize the Gini impurity_ of the subsets.** For a given feature, we can try splitting on all possible values of that feature, record the Gini impurity of the subsets, and then select the feature value that resulted in the lowest impurity. Below, splitting the feature _Age of account_ on around 37 days best partitions the labels.
+When identifying rules to partition our classes, then, we can simply **select a split such that we _minimize the Gini impurity_ of the subsets.** For a given feature, we can try splitting on all possible values of that feature, record the Gini impurity of the subsets, and then select the feature value that resulted in the lowest impurity. Below, splitting the feature _Age of account_ on around 37 days best separates users who buy a product from those who don't (in our fake dataset).
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/gini_split.png" height="70%" width="70%">
 </center>
 
-We can repeat this process for all features and **select the feature whose optimal split resulted in the lowest Gini impurity.** Below, we see that the optimal split for _Number of clicks_ results in a lower Gini impurity than the best splits for _Age of account_ and _Last login_.
+We can repeat this process for all features and **select the feature whose optimal split resulted in the lowest Gini impurity.** Below, we see that the optimal split for _Session length_ results in a lower Gini impurity than the best splits for _Age of account_ and _Last login_.
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/gini_split_multiple.png">
@@ -78,7 +78,7 @@ We can repeat this process for all features and **select the feature whose optim
 **This split becomes the first fork in our decision tree.** We then repeat this process on each of the data subsets, iterating through features and values and choosing the feature that best partitions the data. Here's what the final tree might look like; notice how the squares and triangles are progressively isolated as we move down the tree.
 
 <center>
-<img src="{{  site.baseurl  }}/images/projects/decision_tree/tree_data.png" height="75%" width="75%">
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/tree_data2.png" height="75%" width="75%">
 </center>
 
 
