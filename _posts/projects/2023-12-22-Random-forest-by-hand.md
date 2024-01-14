@@ -17,7 +17,7 @@ A decision tree is a supervised learning algorithm that identifies **a set of si
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/tree1.png" height="75%" width="75%">
 </center>
 
-Starting with the root, each node in the tree asks a binary question (e.g., _"did the user put the item in their shopping cart?"_) and passes the feature vector to one of two child nodes depending on the answer. If there are no children -- i.e., we're at a leaf node -- then the tree returns a response: green if yes, orange if no.
+Starting with the root, each node in the tree asks a binary question (e.g., _"Was the session length longer than 5 minutes?"_) and passes the feature vector to one of two child nodes depending on the answer. If there are no children -- i.e., we're at a leaf node -- then the tree returns a response: green if yes, orange if no.
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/tree2.png" height="75%" width="75%">
@@ -63,28 +63,33 @@ Below is a visual representation of the Gini impurity as a function of $p_\check
 <i>Image adapted from <a href="https://www.oreilly.com/library/view/data-science-for/9781449374273/" target="_blank">Data Science for Business: What You Need to Know about Data Mining and Data-Analytic Thinking</a></i>
 </center>
 
-When identifying rules to partition our classes, then, we can simply **select a split such that we _minimize the Gini impurity_ of the subsets.** For a given feature, we can try splitting on all possible values of that feature, record the Gini impurity of the subsets, and then select the feature value that resulted in the lowest impurity. Below, splitting the feature _Age of account_ on around 37 days best separates users who buy a product from those who don't (in our fake dataset).
+When identifying rules to partition our classes, then, we can simply **select a split such that we _minimize the weighted Gini impurity_ of the subsets.** (Each subset has its own impurity, so we take the average weighted by the number of samples in each subset.) For a given feature, we can split the data on all possible values of that feature, record the weighted Gini impurity of the subsets, and then select the feature value that resulted in the lowest impurity.
+
+Below, splitting the feature _Age of account_ on 35 days best separates users who buy a product from those who don't (in our fake dataset).
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/gini_split.png" height="70%" width="70%">
 </center>
 
-We can repeat this process for all features and **select the feature whose optimal split resulted in the lowest Gini impurity.** Below, we see that the optimal split for _Session length_ results in a lower Gini impurity than the best splits for _Age of account_ and _Last login_.
+We can repeat this process for all features and **select the feature whose optimal split resulted in the lowest impurity.** Below, we see that the optimal split for _Session length_ results in a lower Gini impurity than the best splits for _Age of account_ and _Is frequent shopper_. _Is frequent shopper_ is a binary feature, so there's only one value to split with.
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/gini_split_multiple.png">
 </center>
 
-**This split becomes the first fork in our decision tree.** We then repeat this process on each of the data subsets, iterating through features and values and choosing the feature that best partitions the data. Here's what the final tree might look like; notice how the squares and triangles are progressively isolated as we move down the tree.
+**Splitting on _Session length > 5 min_ therefore becomes the first fork in our decision tree.** We then repeat our process of iterating through features and values and choosing the feature that best partitions the data for each subset, then _their_ subsets, and so on until we either have perfectly partitioned data or our tree reaches a maximum allowed depth. (More on that in the next section.)
+
+Below is the tree we saw earlier but with the training data displayed in each node. Notice how the positive and negative classes become progressively isolated as we move down the tree.
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/tree_data2.png" height="75%" width="75%">
 </center>
 
+### Random forests
+The decision tree above partitions the data until the subsets contain only labels of one class (i.e., Gini impurity = 0). But this isn't actually good -- we can end up with **overfit** models that are good at explaining their training data but struggle to generalize to new data. Think of it like memorizing the dataset rather than understanding the underlying patterns in the data.
 
+So we can limit the depth of the tree. But another approach is to leverage the strengths of **ensemble learning**. It turns out that when you take a lot of trees together, their errors cancel out. But need to have random allocations. Otherwise the same tree is trained every time.
 
-
-### Training
 
 
 
@@ -101,13 +106,6 @@ In contrast to models like logistic regression where the output is an equation, 
 (For simplicity, we'll just talk about classification for now and revisit regression later.)
 
 
-A few things to note:
-* Not all branches of the tree are equally long. For some combinations of features, we can reach a decision quickly. For others, we need to partition our data multiple times before we can cleanly separate the classes.
-
-
-Our tree will be fit to our training data. If we let it grow as long as possible, it will be able to perfectly categorize every point in our training data. But then it won't be able to generalize to new data well.  
-
-We need a way to evaluate how well our tree partitions our labels.
 
 ## Implementation
 ### Tree Nodes
