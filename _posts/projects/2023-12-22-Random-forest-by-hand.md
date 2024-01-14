@@ -43,7 +43,7 @@ Well... it's never really that easy, either. In this toy example, all triangles 
 **But in the real world, features don't map so neatly to labels.** Going back to our e-commerce example, a feature like _time spent on the site_ in a session might not be able to perfectly partition the classes even at any threshold.
 
 <center>
-<img src="{{  site.baseurl  }}/images/projects/decision_tree/partitioning3.3.png">
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/partitioning3.png">
 </center>
 
 So what do we do if no feature at any threshold can perfectly split our data? In this case, **we need a way to quantify how _"mixed"_ a set of labels is.** One common metric is [**Gini impurity**](https://en.wikipedia.org/wiki/Decision_tree_learning#Gini_impurity), which is calculated with the following equation:
@@ -82,7 +82,7 @@ We can repeat this process for all features and **select the feature whose optim
 Below is the tree we saw earlier but with the training data displayed in each node. Notice how the positive and negative classes become progressively isolated as we move down the tree.
 
 <center>
-<img src="{{  site.baseurl  }}/images/projects/decision_tree/tree_data2.png" height="75%" width="75%">
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/tree_data.png" height="75%" width="75%">
 </center>
 
 ### Random forests
