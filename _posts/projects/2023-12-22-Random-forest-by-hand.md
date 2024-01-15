@@ -17,11 +17,13 @@ A decision tree is a supervised learning algorithm that identifies **a set of si
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/tree1.png" height="75%" width="75%">
 </center>
 
-Starting with the root, each node in the tree asks a binary question (e.g., _"Was the session length longer than 5 minutes?"_) and passes the feature vector to one of two child nodes depending on the answer. If there are no children -- i.e., we're at a leaf node -- then the tree returns a response: green if yes, orange if no.
+Starting with the **root**, each node in the tree asks a binary question (e.g., _"Was the session length longer than 5 minutes?"_) and passes the feature vector to one of two child nodes depending on the answer. If there are no children -- i.e., we're at a **leaf node** -- then the tree returns a response.
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/tree2.png" height="75%" width="75%">
 </center>
+
+(We'll focus on classification in this blog post, but a decision tree regressor would look identical but with continuous values returned rather than class labels.)
 
 ### Decision tree training
 _Inference_, or this prediction process, is pretty straightforward. But _building_ this tree is much less obvious. How is the binary rule in each node determined? Which features are used in the tree, and in what order? Where does a threshold like 0.5 or 1 come from?
@@ -79,14 +81,29 @@ We can repeat this process for all features and **select the feature whose optim
 
 **Splitting on _Session length > 5 min_ therefore becomes the first fork in our decision tree.** We then repeat our process of iterating through features and values and choosing the feature that best partitions the data for each subset, then _their_ subsets, and so on until we either have perfectly partitioned data or our tree reaches a maximum allowed depth. (More on that in the next section.)
 
-Below is the tree we saw earlier but with the training data displayed in each node. Notice how the positive and negative classes become progressively isolated as we move down the tree.
+Below is the tree we saw earlier but with the training data displayed in each node. Notice how the positive and negative classes become progressively isolated as we move down the tree. Once we reach the bottom of the tree, the leaf nodes simply output the class in their nodes.
 
 <center>
-<img src="{{  site.baseurl  }}/images/projects/decision_tree/tree_data.png" height="75%" width="75%">
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/tree_data.png" height="70%" width="70%">
 </center>
 
 ### Random forests
-The decision tree above partitions the data until the subsets contain only labels of one class (i.e., Gini impurity = 0). But this isn't actually good -- we can end up with **overfit** models that are good at explaining their training data but struggle to generalize to new data. Think of it like memorizing the dataset rather than understanding the underlying patterns in the data.
+The decision tree above partitions the data until the subsets contain only labels of one class (i.e., Gini impurity = 0). While this maximizes our model's ability to explain its training data, we risk **overfitting** our model to our data. **Think of it like the model _memorizing_ every feature-label combination rather than learning the _underlying patterns_.** An overfit model struggles to generalize to new data, and classifying new data is usually our goal in the first place.
+
+There are a few ways to combat overfitting. One option is to **limit the depth of the tree**. If we limited the above tree to only two levels, for example, we would end the left branch at the _Is frequent shopper_ split.
+
+<center>
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/tree_data2.png" height="60%" width="60%">
+</center>
+
+The leaf nodes on the left branch now have mixed labels in their subsets. Allowing for this "impurity" might seem suboptimal, but it's a strong defense against noisy features: **if _Time idle_ and _Age of account_ were actually only correlated with our labels due to chance, a model that excluded those features would be better at generalizing to new data.** We also see that the tree uses the majority class (rather than the only class) to return a classification from the leaves.
+
+
+Examples:
+* Feature that's almost always 0, but happens to be 1 for a handful of cases and is biased towards positive class in the training data. Model would be like "whoa, I can get 100% purity by splitting here" (fairly low in the tree).
+
+
+
 
 So we can limit the depth of the tree. But another approach is to leverage the strengths of **ensemble learning**. It turns out that when you take a lot of trees together, their errors cancel out. But need to have random allocations. Otherwise the same tree is trained every time.
 
