@@ -81,14 +81,14 @@ We can repeat this process for all features and **select the feature whose optim
 
 **Splitting on _Session length > 5 min_ therefore becomes the first fork in our decision tree.** We then repeat our process of iterating through features and values and choosing the feature that best partitions the data for each subset, then _their_ subsets, and so on until we either have perfectly partitioned data or our tree reaches a maximum allowed depth. (More on that in the next section.)
 
-Below is the tree we saw earlier but with the training data displayed in each node. Notice how the positive and negative classes become progressively isolated as we move down the tree. Once we reach the bottom of the tree, the leaf nodes simply output the class in their nodes.
+Below is the tree we saw earlier but with the training data displayed in each node. Notice how the positive and negative classes become progressively isolated as we move down the tree. Once we reach the bottom of the tree, the leaf nodes output the majority class -- the _only_ class, in our case -- in their data subset.
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/tree_data.png" height="70%" width="70%">
 </center>
 
 ### Random forests
-The decision tree above partitions the data until the subsets contain only labels of one class (i.e., Gini impurity = 0). While this maximizes our model's ability to explain its training data, we risk **overfitting** our model to our data. **Think of it like the model _memorizing_ every feature-label combination rather than learning the _underlying patterns_.** An overfit model struggles to generalize to new data, and classifying new data is usually our goal in the first place.
+The decision tree above partitions the data until the subsets contain only labels of one class (i.e., Gini impurity = 0). While this maximizes our model's ability to explain its training data, we risk **overfitting** our model to our data. **Think of it like the model _memorizing_ every feature-label combination rather than learning the _underlying patterns_.** An overfit model struggles to generalize to new data, which is usually our goal in the first place.
 
 There are a few ways to combat overfitting. One option is to **limit the depth of the tree**. If we limited the above tree to only two levels, for example, we would end the left branch at the _Is frequent shopper_ split.
 
@@ -96,7 +96,16 @@ There are a few ways to combat overfitting. One option is to **limit the depth o
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/tree_data2.png" height="60%" width="60%">
 </center>
 
-The leaf nodes on the left branch now have mixed labels in their subsets. Allowing for this "impurity" might seem suboptimal, but it's a strong defense against noisy features: **if _Time idle_ and _Age of account_ were actually only correlated with our labels due to chance, a model that excluded those features would be better at generalizing to new data.** We also see that the tree uses the majority class (rather than the only class) to return a classification from the leaves.
+The leaf nodes on the left branch now have mixed labels in their subsets. Allowing for this "impurity" might seem suboptimal, but it's a strong defense against noisy features: **if _Time idle_ and _Age of account_ were actually only correlated with our labels due to chance, a model that excluded those features would be better at generalizing to new data.**
+
+Limiting tree depth is a good strategy, but we can pair it with an even stronger strategy: [**ensemble learning**](http://www.scholarpedia.org/article/Ensemble_learning). In machine learning -- [and in animal collectives]({{  site.baseurl }}/Collective-behavior) -- **aggregating a _set_ of predictions often achieves higher accuracy than any individual prediction.** Errors in individual models cancel out, allowing a clearer look at the underlying patterns in the data being modeled.
+
+This sounds great, but there needs to be _variation_ in model predictions for an ensemble to be useful. The algorithm we described in the last section -- splitting on all values of all features to get the lowest Gini impurity -- is deterministic. For a given dataset, our algorithm always outputs the same decision tree<sup>[[1]](#1-random-forests)</sup>, so training 10 or 100 trees as an ensemble wouldn't actually accomplish anything. So how is a forest any better than an individual tree?
+
+This is where _randomness_ comes in. The trees in a random forest aren't identical.
+
+
+
 
 
 Examples:
@@ -112,7 +121,7 @@ So we can limit the depth of the tree. But another approach is to leverage the s
 
 In contrast to models like logistic regression where the output is an equation, the algorithm is [nonparametric](https://machinelearningmastery.com/parametric-and-nonparametric-machine-learning-algorithms/), meaning it doesn't make strong assumptions on the relationship between features and labels. This means that trees are free to grow in whatever way best describes the dataset they're given.
 
-* Talk about ensemble algorithms
+
 
 
 [sklearn docs](https://scikit-learn.org/stable/modules/tree.html)
@@ -323,5 +332,34 @@ Josh Starmer's [excellent video on how decision trees are built](https://www.you
 * Check what impurity metrics are offered by sklearn's `DecisionTreeClassifier` and `RandomForestClassifier` classes (and what the defaults are).
 
 # Footnotes
-#### 1. [Decision Tree Training](#1-decision-tree-training)
-If you limit the depth of the tree, you'll end up with leaf nodes that are still a mixture of the classes. This is ok!
+#### 1. [Random forests](#random-forests)
+You can see for yourself how `sklearn` outputs identical decision trees for a given dataset with the below code. Note that we need to specify the same `random_state`.
+
+{% include header-python.html %}
+```python
+import numpy as np
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier
+
+# Params
+random_state = 42
+
+# Generate data
+df = pd.DataFrame(
+    {
+        'feature_1': np.random.normal(0, 1, 100),
+        'feature_2': np.random.normal(1, 1, 100),
+        'label': np.random.choice([0, 1], 100)
+    }
+)
+
+mod1 = DecisionTreeClassifier(random_state=random_state)
+mod1.fit(df[['feature_1', 'feature_2']], df['label'])
+
+mod2 = DecisionTreeClassifier(random_state=42)
+mod2.fit(df[['feature_1', 'feature_2']], df['label'])
+
+comparison = (mod1.tree_.value == mod2.tree_.value)
+print(comparison.all())
+# True
+```
