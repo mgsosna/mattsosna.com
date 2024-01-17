@@ -98,42 +98,25 @@ There are a few ways to combat overfitting. One option is to **limit the depth o
 
 The leaf nodes on the left branch now have mixed labels in their subsets. Allowing for this "impurity" might seem suboptimal, but it's a strong defense against noisy features: **if _Time idle_ and _Age of account_ were actually only correlated with our labels due to chance, a model that excluded those features would be better at generalizing to new data.**
 
-Limiting tree depth is a good strategy, but we can pair it with an even stronger strategy: [**ensemble learning**](http://www.scholarpedia.org/article/Ensemble_learning). In machine learning -- [and in animal collectives]({{  site.baseurl }}/Collective-behavior) -- **aggregating a _set_ of predictions often achieves higher accuracy than any individual prediction.** Errors in individual models cancel out, allowing a clearer look at the underlying patterns in the data being modeled.
+Limiting tree depth works well, but we can pair it with an even stronger strategy: [**ensemble learning**](http://www.scholarpedia.org/article/Ensemble_learning). In machine learning -- [and in animal collectives]({{  site.baseurl }}/Collective-behavior) -- **aggregating a _set_ of predictions often achieves higher accuracy than any individual prediction.** Errors in individual models cancel out, allowing a clearer look at the underlying patterns in the data being modeled.
 
 This sounds great, but there needs to be _variation_ in model predictions for an ensemble to be useful. The algorithm we described in the last section -- splitting on all values of all features to get the lowest Gini impurity -- is deterministic. For a given dataset, our algorithm always outputs the same decision tree<sup>[[1]](#1-random-forests)</sup>, so training 10 or 100 trees as an ensemble wouldn't actually accomplish anything. So how is a forest any better than an individual tree?
 
-This is where _randomness_ comes in. The trees in a random forest aren't identical.
+This is where _randomness_ comes in. Both _the way our data is split_ and _the data itself_ varies between trees in a random forest, allowing for variation in model predictions and greater protection against overfitting.
 
+Let's start with the data. Outliers can hijack our model with meaningless correlations, but they should be rare. We can protect against this by [bootstrapping](https://en.wikipedia.org/wiki/Bootstrapping_(statistics)) our data, or sampling with replacement. Below, we see that bootstrapping our dataset five times results in different datasets.
 
+<center>
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/bootstrap.png" height="70%" width="70%">
+</center>
 
+The second way is that random forests randomly select only a subset of the features when evaluating how to split the data. scikit-learn's `RandomForestClassifier`, [for example](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html), only considers the square root of the number of features when searching for the thresholds that minimize Gini impurity.
 
-
-Examples:
-* Feature that's almost always 0, but happens to be 1 for a handful of cases and is biased towards positive class in the training data. Model would be like "whoa, I can get 100% purity by splitting here" (fairly low in the tree).
-
-
-
-
-So we can limit the depth of the tree. But another approach is to leverage the strengths of **ensemble learning**. It turns out that when you take a lot of trees together, their errors cancel out. But need to have random allocations. Otherwise the same tree is trained every time.
-
-
-
-
-In contrast to models like logistic regression where the output is an equation, the algorithm is [nonparametric](https://machinelearningmastery.com/parametric-and-nonparametric-machine-learning-algorithms/), meaning it doesn't make strong assumptions on the relationship between features and labels. This means that trees are free to grow in whatever way best describes the dataset they're given.
-
-
-
-
-[sklearn docs](https://scikit-learn.org/stable/modules/tree.html)
-* Don't need to pre-process the data as much, but will want to balance the data first.
-* Downside: small variations in data can result in totally different trees being produced.
-
-
-(For simplicity, we'll just talk about classification for now and revisit regression later.)
-
-
+These methods might seem strange -- why wouldn't we use all our features, and why would we  purposely duplicate and drop rows in our data? And indeed, the resulting decision trees typically have significantly worse predictive power. But when we combine 100 of these Swiss-cheese trees, a surprising result emerges: a forest that is collectively more accurate than our original decision trees. (Make code example to confirm.)
 
 ## Implementation
+Let's now implement a random forest in Python to see for ourselves. We'll start with the nodes of a tree, followed by a decision tree and finally a random forest.
+
 ### Tree Nodes
 Let's start with a `Node` class that will serve as a node in our decision tree. The class will have the following attributes used for training:
 * A dataframe representing the data (or subset) the node held during training.
@@ -329,7 +312,11 @@ Tree could be just one node if there's one rule that completely partitions the c
 Josh Starmer's [excellent video on how decision trees are built](https://www.youtube.com/watch?v=_L39rN6gz7Y)
 
 
-* Check what impurity metrics are offered by sklearn's `DecisionTreeClassifier` and `RandomForestClassifier` classes (and what the defaults are).
+In contrast to models like logistic regression where the output is an equation, the algorithm is [nonparametric](https://machinelearningmastery.com/parametric-and-nonparametric-machine-learning-algorithms/), meaning it doesn't make strong assumptions on the relationship between features and labels. This means that trees are free to grow in whatever way best describes the dataset they're given.
+
+
+
+
 
 # Footnotes
 #### 1. [Random forests](#random-forests)
