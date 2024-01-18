@@ -104,7 +104,7 @@ This sounds great, but there needs to be _variation_ in model predictions for an
 
 This is where _randomness_ comes in. Both _the way our data is split_ and _the data itself_ varies between trees in a random forest, allowing for variation in model predictions and greater protection against overfitting.
 
-Let's start with the data. Outliers can hijack our model with meaningless correlations, but they should be rare. We can protect against this by [bootstrapping](https://en.wikipedia.org/wiki/Bootstrapping_(statistics)) our data, or sampling with replacement. Below, we see that bootstrapping our dataset five times results in different datasets.
+Let's start with the data. We can protect against outliers hijacking our model with meaningless correlations by [bootstrapping](https://en.wikipedia.org/wiki/Bootstrapping_(statistics)) our data, or sampling with replacement. The idea is that outliers are rare, so they're less likely to be randomly selected than samples reflecting genuine relationships between features and labels. Bootstrapping lets us give each decision tree in our forest a slightly different dataset that should still contain the same general trends.
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/bootstrap.png" height="70%" width="70%">
