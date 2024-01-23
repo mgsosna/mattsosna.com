@@ -112,7 +112,7 @@ Let's start with the data. We can protect against outliers hijacking our model w
 
 The second way is that random forests randomly select only a subset of the features when evaluating how to split the data. scikit-learn's `RandomForestClassifier`, [for example](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html), only considers the square root of the number of features when searching for the thresholds that minimize Gini impurity.
 
-These methods might seem strange -- why wouldn't we use all our features, and why would we  purposely duplicate and drop rows in our data? And indeed, the resulting decision trees typically have significantly worse predictive power. But when we combine 100 of these Swiss-cheese trees, a surprising result emerges: a forest that is collectively more accurate than our original decision trees. (Make code example to confirm.)
+These methods might seem strange -- why wouldn't we use all our features, and why would we  purposely duplicate and drop rows in our data? And indeed, each individual tree we produce this way typically has significantly _worse_ predictive power. But when we combine 100 of these Swiss-cheese trees, a surprising result emerges: a forest that is collectively more accurate than our original decision trees. (Make code example to confirm.)
 
 ## Implementation
 Let's now implement a random forest in Python to see for ourselves. We'll start with the nodes of a tree, followed by a decision tree and finally a random forest.
