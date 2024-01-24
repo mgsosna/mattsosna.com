@@ -112,21 +112,22 @@ Let's start with the data. We can protect against outliers hijacking our model w
 
 The second way is that random forests randomly select only a subset of the features when evaluating how to split the data. scikit-learn's `RandomForestClassifier`, [for example](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html), only considers the square root of the number of features when searching for the thresholds that minimize Gini impurity.
 
-These methods might seem strange -- why wouldn't we use all our features, and why would we  purposely duplicate and drop rows in our data? And indeed, each individual tree we produce this way typically has significantly _worse_ predictive power. But when we combine 100 of these Swiss-cheese trees, a surprising result emerges: a forest that is collectively more accurate than our original decision trees. (Make code example to confirm.)
+These methods might seem strange -- why wouldn't we use all our features, and why would we  purposely duplicate and drop rows in our data? And indeed, each individual tree we produce this way typically has significantly _worse_ predictive power. But when we combine 100 of these Swiss-cheese trees, a surprising result emerges: a forest that is collectively more accurate than our original decision trees.
 
 ## Implementation
 Let's now implement a random forest in Python to see for ourselves. We'll start with the nodes of a tree, followed by a decision tree and finally a random forest.
 
 ### Tree Nodes
-Let's start with a `Node` class that will serve as a node in our decision tree. The class will have the following attributes used for training:
-* A dataframe representing the data (or subset) the node held during training.
-* The proportion of positive labels and Gini impurity of the dataframe.
+Let's start with a `Node` class that will serve as a node in our decision tree. The class will have the following attributes used for **training**:
+* A subset of data (or entire dataset for the root node)
+* The proportion of positive labels and Gini impurity of this subset.
 * Pointers to left and right child nodes, set to `None` if the node is a leaf.
 
-The class will also have the following attributes for classifying new data:
-* Information on which node to go to next (if the node is not a leaf) or which label to return.
+The class will also have the following attributes for **classifying new data**:
+* A feature name and threshold, used to point the input towards the left or right child node (if the node is not a leaf)
+* Which label to return (if the node is a leaf)
 
-We can construct a `Node` class that meets these criteria with the below code. Because we calculate Gini impurity by assuming the dataframe target column is 1s and 0s, we have a `_check_df` method to ensure the data is in the correct format. The other methods just calculate $p_k$ and the Gini impurity.
+We can construct a `Node` class that meets these criteria with the below code. While the [source code in GitHub](https://github.com/mgsosna/ML_projects/tree/master/random_forest) has docstrings and input validation, I'll just share the bare minimum here for readability.
 
 {% include header-python.html %}
 ```python
@@ -135,38 +136,13 @@ import pandas as pd
 from typing_extensions import Self
 
 class Node:
-    """
-    Node in a decision tree.
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-      The dataframe (or subset) this node holds. Used for training.
-      All columns except target_col are assumed to be features.
-    target_col : str
-      The column in the dataframe with labels. Must be 0s and 1s, with
-      1s being the positive class.
-    pk : float
-      Proportion of node's df that contain the positive class.
-    gini : float
-      The node's Gini impurity.
-    left : Node
-      The left child of the node. None if no child.
-    right : Node
-      The right child of the node. None if no child.
-    feature : str
-      The column in the df whose splitting led to the largest reduction
-      in weighted Gini impurity in the child nodes.
-    threshold : float | int
-      The value of the feature column to split the df.
-    """
     def __init__(
         self,
         df: pd.DataFrame,
         target_col: str
     ) -> None:
         # For training
-        self.df = self._check_df(df, target_col)
+        self.df = df
         self.target_col = target_col
         self.pk = self._set_pk()
         self.gini = self._set_gini()
@@ -178,17 +154,6 @@ class Node:
         # For inference
         self.feature = None
         self.threshold = None
-
-    def _check_df(
-        self,
-        df: pd.DataFrame,
-        target_col: str
-    ) -> pd.DataFrame:
-        assert len(list(df)) > 1, \
-            "df must have features"
-        assert not set(df[target_col]).difference({0,1}), \
-            "target column cannot have values besides {0,1}"
-        return df
 
     def _set_pk(self) -> float:
         """
@@ -204,6 +169,8 @@ class Node:
         """
         return 1 - self.pk**2 - (1 - self.pk)**2
 ```
+
+So far the code is fairly lightweight. We instantiate the node by specifying a dataframe (`df`) and the column containing labels (`target_col`). `_set_pk` and `_set_gini` calculate $p_k$ (the proportion of 1's in target column) and the Gini impurity, respectively.
 
 Now let's add the logic for iterating through the values of a feature and identifying the threshold that minimizes the Gini impurity in the child nodes.
 
