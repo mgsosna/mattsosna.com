@@ -127,7 +127,7 @@ The class will also have the following attributes for **classifying new data**:
 * A feature name and threshold, used to point the input towards the left or right child node (if the node is not a leaf)
 * Which label to return (if the node is a leaf)
 
-We can construct a `Node` class that meets these criteria with the below code. While the [source code in GitHub](https://github.com/mgsosna/ML_projects/tree/master/random_forest) has docstrings and input validation, I'll just share the bare minimum here for readability.
+We can construct a `Node` class that meets these criteria with the below code. While the [source code in GitHub](https://github.com/mgsosna/ML_projects/tree/master/random_forest) has docstrings and input validation, I'll just share the bare minimum here for readability. Note that we'll call this file `node.py` and reference it later.
 
 {% include header-python.html %}
 ```python
@@ -136,6 +136,9 @@ import pandas as pd
 from typing_extensions import Self
 
 class Node:
+    """
+    Node in a decision tree.
+    """
     def __init__(
         self,
         df: pd.DataFrame,
@@ -170,7 +173,7 @@ class Node:
         return 1 - self.pk**2 - (1 - self.pk)**2
 ```
 
-So far the code is fairly lightweight. We instantiate the node by specifying a dataframe (`df`) and the column containing labels (`target_col`). `_set_pk` and `_set_gini` calculate $p_k$ (the proportion of 1's in target column) and the Gini impurity, respectively.
+So far the code is fairly lightweight. We instantiate the node by specifying a dataframe (`df`) and the column containing labels (`target_col`). We create empty attributes for the left and right child nodes (`self.left`, `self.right`) and the feature and threshold values used for inference. Finally, we calculate $p_k$ (the proportion of 1's in target column) and the Gini impurity with the `_set_pk` and `_set_gini` methods, respectively.
 
 Now let's add the logic for iterating through the values of a feature and identifying the threshold that minimizes the Gini impurity in the child nodes.
 
@@ -184,9 +187,10 @@ class Node:
         feature: str
     ) -> tuple[float, int|float, Self, Self]:
         """
-        Iterate through values of a feature and identify split that minimizes
-        weighted Gini impurity in child nodes. Returns tuple of weighted Gini
-        impurity, feature threshold, and left and right child nodes.
+        Iterate through values of a feature and identify split that
+        minimizes weighted Gini impurity in child nodes. Returns tuple
+        of weighted Gini impurity, feature threshold, and left and
+        right child nodes.
         """
         values = []
 
@@ -206,8 +210,8 @@ class Node:
         threshold: int|float
     ) -> tuple[float, int|float, Self|None, Self|None]:
         """
-        Splits df on the feature threshold and generates nodes for the data
-        subsets.
+        Splits df on the feature threshold and generates nodes for the
+        data subsets.
         """
         df_lower = self.df[self.df[feature] <= threshold]
         df_upper = self.df[self.df[feature] > threshold]
@@ -222,7 +226,8 @@ class Node:
         prop_lower = len(df_lower) / len(self.df)
         prop_upper = len(df_upper) / len(self.df)
 
-        weighted_gini = node_lower.gini * prop_lower + node_upper.gini * prop_upper
+        weighted_gini = node_lower.gini * prop_lower \
+          + node_upper.gini * prop_upper
 
         return weighted_gini, threshold, node_lower, node_upper
 ```
@@ -232,6 +237,7 @@ Let's quickly test it out. Below, we instantiate a node and have it find the opt
 {% include header-python.html %}
 ```python
 import pandas as pd
+
 df = pd.DataFrame({'feature': [1, 2, 3], 'label': [0, 0, 1]})
 node = Node(df, 'label')
 
@@ -256,24 +262,230 @@ from .node import Node
 
 class DecisionTree:
     """
-    Tree of nodes, with methods for building tree in a way that minimizes
-    Gini impurity.
+    Tree of nodes.
     """
     def __init__(
         self,
         df: pd.DataFrame,
         target_col: str,
+        feature_select: float = 1.0,
         max_depth: int = 4
     ) -> None:
         self.root = Node(df, target_col)
+        self.feature_select = feature_select
         self.max_depth = max_depth
 ```
 
-This tree begins with the root, which is a `Node` we instantiate with `df` and `target_col`. We can also set a maximum depth our tree can grow, which helps prevent overfitting.
+This tree begins with the root node, which is a `Node` we instantiate with `df` and `target_col`. `feature_select` controls the proportion of features we use when training the trees of a random forest; we'll default to 100% of features for the base decision tree class. `max_depth` specifies the maximum depth our tree can grow, which helps prevent overfitting.
 
 Now let's write the logic to process a split.
 
-Tree could be just one node if there's one rule that completely partitions the classes.
+{% include header-python.html %}
+```python
+class DecisionTree:
+    ...
+    def build_tree(self) -> None:
+        """
+        Builds tree using depth-first traversal. If verbose, prints
+        the node depths as the tree is being built.
+        """
+        features = list(self.root.df)
+        features.remove(self.root.target_col)
+
+        stack = [(self.root, 0)]
+
+        while stack:
+            current_node, depth = stack.pop()
+
+            if depth <= self.max_depth:
+                left, right = self._process_node(current_node, features)
+
+                if left and right:
+                    current_node.left = left
+                    current_node.right = right
+                    stack.append((left, depth+1))
+                    stack.append((right, depth+1))
+
+        return self
+
+    def _process_node(
+        self,
+        node: Node,
+        features: list[str]
+    ) -> tuple[Node|None, Node|None]:
+        """
+        Iterates through features, identifies split that minimizes
+        Gini impurity in child nodes, and identifies feature whose
+        split minimizes Gini impurity the most. Then returns child
+        nodes split on that feature.
+        """
+        # Randomly select features. No randomness if
+        # self.feature_select = 1.0 (default).
+        features = list(
+            np.random.choice(
+                features,
+                int(self.feature_select*len(features)),
+                replace=False
+            )
+        )
+
+        # Get Gini impurity for best split for each column
+        d = {}
+        for col in features:
+            feature_info = node.split_on_feature(col)
+            if feature_info[0] is not None:
+                d[col] = feature_info
+
+        # Select best column to split on
+        min_gini = np.inf
+        best_feature = None
+        for col, tup in d.items():
+            if tup[0] < min_gini:
+                min_gini = tup[0]
+                best_feature = col
+
+        # Only update if the best split reduces Gini impurity
+        if min_gini < node.gini:
+            # Update node
+            node.feature = best_feature
+            node.threshold = d[col][1]
+            return d[col][2:]
+
+        return None, None
+```
+
+Now for classification.
+
+{% include header-python.html %}
+```python
+class DecisionTree:
+    ...
+    def classify(self, feature_df: pd.DataFrame) -> list[int]:
+        """
+        Given a dataframe where each row is a feature vector, traverses
+        the tree to generate a predicted label.
+        """
+        return [
+          self._classify(self.root, f) for i, f in feature_df.iterrows()
+        ]
+
+    def _classify(self, node: Node, features: pd.Series) -> int:
+        """
+        Given a vector of features, traverse the node's children until
+        a leaf is reached, then return the most frequent class in the
+        node. If there are an equal number of positive and negative
+        labels, predicts the negative class.
+        """
+        # Child node
+        if node.feature is None or node.threshold is None:
+            return int(node.pk > 0.5)
+
+        if features[node.feature] < node.threshold:
+            return self._classify(node.left, features)
+        return self._classify(node.right, features)
+```
+
+
+### Random Forest
+Now the random forest.
+
+{% include header-python.html %}
+```python
+import pandas as pd
+
+from .decision_tree import DecisionTree
+
+class RandomForest:
+    """
+    Forest of decision trees.
+    """
+    def __init__(
+        self,
+        df: pd.DataFrame,
+        target_col: str,
+        n_trees: int = 100,
+        feature_select: float = 0.5,
+        max_depth: int = 4
+    ) -> None:
+        self.df = df
+        self.target_col = target_col
+        self.n_trees = n_trees
+        self.feature_select = feature_select
+        self.max_depth = max_depth
+        self.forest = []
+```
+
+Training is straightforward. We just do stuff. Note that this code is slow because we sequentially train trees. Because each one is independent, we could parallelize this.
+
+{% include header-python.html %}
+```python
+class RandomForest:
+    ...
+    def train(self) -> None:
+        """
+        Fit the forest to self.df
+        """
+        print("Bootstrapping data...")
+        bootstrap_dfs = [self._bootstrap() for _ in range(self.n_trees)]
+        self.forest = [
+            DecisionTree(
+              bdf,
+              self.target_col,
+              self.feature_select,
+              self.max_depth
+            )
+            for bdf in bootstrap_dfs
+        ]
+        print("Building trees...")
+        self.forest = [tree.build_tree() for tree in self.forest]
+        print(f"Trained forest with {self.n_trees} trees.")
+        return None
+```
+
+Classification is also straightforward...
+```python
+class RandomForest
+    ...
+    def classify(self, feature_df: pd.DataFrame) -> int:
+        """
+        Classify inputted feature vectors. Each tree in the forest
+        generates a predicted label and the most common label for
+        each feature vector is returned.
+        """
+        if not self.forest:
+            raise ValueError("RandomForest must first be trained.")
+        preds = pd.DataFrame(
+          [tree.classify(feature_df) for tree in self.forest]
+        )
+
+        # Return most common predicted label
+        return list(preds.mode().iloc[0])
+
+    def _bootstrap(self) -> pd.DataFrame:
+        """
+        Sample rows from self.df with replacement
+        """
+        return self.df.sample(len(self.df), replace=True)
+```
+
+If we do all this, we can see something neat.
+
+{% include header-python.html %}
+```python
+
+# Generating train and test data
+# 1. Fitting a decision tree
+# 2. Fitting a random forest
+# Bootstrapping data...
+# Building trees...
+# Trained forest with 50 trees.
+# Accuracy
+#  * Single decision tree: 0.62
+#  * Average random forest tree: 0.578
+#  * Full random forest: 0.8
+```
+
+
 
 
 Josh Starmer's [excellent video on how decision trees are built](https://www.youtube.com/watch?v=_L39rN6gz7Y)
