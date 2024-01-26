@@ -468,10 +468,42 @@ class RandomForest
         return self.df.sample(len(self.df), replace=True)
 ```
 
-If we do all this, we can see something neat.
+If we do all this, we can see something neat. If we run [run.py](https://github.com/mgsosna/ML_projects/blob/master/random_forest/run.py), we can compare the accuracies of our `DecisionTree` classifier, the average tree in a `RandomForest`, and the full `RandomForest`. Below, `train_df` has 400 rows and 100 columns and `test_df` has 100 rows and 100 columns.
 
 {% include header-python.html %}
 ```python
+# 1. Decision Tree
+print("1. Fitting a decision tree")
+decision_tree = DecisionTree(train_df, target_col='label')
+decision_tree.build_tree()
+tree_preds = decision_tree.classify(test_df)
+tree_accuracy = round(
+  accuracy_score(test_df['label'], tree_preds), 3
+)
+
+# 2. Random Forest
+print("2. Fitting a random forest")
+forest = RandomForest(train_df, target_col='label', n_trees=50)
+forest.train()
+forest_preds = forest.classify(test_df)
+forest_accuracy = round(
+  accuracy_score(test_df['label'], forest_preds), 3
+)
+
+# Get accuracy of average tree in forest
+tree_accs = []
+for i in range(forest.n_trees):
+    forest_tree_preds = forest.forest[i].classify(test_df)
+    tree_accs.append(
+      accuracy_score(test_df['label'], forest_tree_preds)
+    )
+forest_tree_accuracy = np.mean(tree_accs).round(3)
+
+# Display results
+print("Accuracy")
+print(f" * Single decision tree: {tree_accuracy}")
+print(f" * Average random forest tree: {forest_tree_accuracy}")
+print(f" * Full random forest: {forest_accuracy}")
 
 # Generating train and test data
 # 1. Fitting a decision tree
@@ -485,6 +517,7 @@ If we do all this, we can see something neat.
 #  * Full random forest: 0.8
 ```
 
+We can see that our single decision tree had an accuracy of 62%, above the average accuracy of 58% trees in our forest. But the entire random forest had an accuracy of 80%.
 
 
 
