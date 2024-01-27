@@ -5,13 +5,15 @@ title: Building a Random Forest by Hand
 tags: machine-learning
 ---
 
-From [drug discovery](https://www.sciencedirect.com/science/article/abs/pii/S0957417416306819) to [species classification](https://www.mdpi.com/2072-4292/4/9/2661), [credit scoring](https://journals.sagepub.com/doi/abs/10.1177/2278533718765531) to [cybersecurity](https://www.sciencedirect.com/science/article/pii/S1877050916311127) and more, the random forest is a popular and powerful algorithm for modeling our complex world. Its versatility and predictive prowess would seem to require cutting-edge complexity, but if we dig into what a random forest actually is, we see a shockingly simple set of rules working in tandem.
+From [drug discovery](https://www.sciencedirect.com/science/article/abs/pii/S0957417416306819) to [species classification](https://www.mdpi.com/2072-4292/4/9/2661), [credit scoring](https://journals.sagepub.com/doi/abs/10.1177/2278533718765531) to [cybersecurity](https://www.sciencedirect.com/science/article/pii/S1877050916311127) and more, the random forest is a popular and powerful algorithm for modeling our complex world. Its versatility and predictive prowess would seem to require cutting-edge complexity, but if we dig into what a random forest actually is, we see **a shockingly simple set of repeating steps.**
 
 I find that the best way to learn something is to play with it. So to gain an intuition on how random forests work, let's build one by hand in Python, starting with a decision tree and expanding to the full forest. We'll see first-hand how flexible and interpretable this algorithm is for both classification and regression applications. And while this project may sound complicated, there are really only a few core concepts we'll need to learn: 1) how to iteratively partition data, and 2) how to quantify how well data is partitioned.
 
 ## Background
 ### Decision tree inference
-A decision tree is a supervised learning algorithm that identifies **a set of simple rules that map features to labels.** The model outputted by the algorithm (also called a decision tree) takes in a feature vector and outputs a label (for classification) or continuous value (for regression). A model that predicts whether a shopper will buy a product they viewed online, for example, might look like this.
+A decision tree is a supervised learning algorithm that identifies **a branching set of binary rules that map features to labels** in a dataset. Unlike algorithms like logistic regression where the output is an equation, the decision tree algorithm is [nonparametric](https://machinelearningmastery.com/parametric-and-nonparametric-machine-learning-algorithms/), meaning it doesn't make strong assumptions on the relationship between features and labels. This means that decision trees are free to grow in whatever way best partitions their training data, so the resulting structure will vary between datasets.
+
+One major benefit of decision trees is their explainability: each step the tree takes in deciding how to predict a category (for classification) or continuous value (for regression) can be seen in the tree nodes. A model that predicts whether a shopper will buy a product they viewed online, for example, might look like this.
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/tree1.png" height="75%" width="75%">
@@ -42,7 +44,7 @@ But it's never _that_ easy. If you're lucky, maybe there's a continuous feature 
 
 Well... it's never really that easy, either. In this toy example, all triangles and squares are identical, meaning it's trivial to separate their feature vectors. (Find one rule that works for one triangle and it works for all triangles!)
 
-**But in the real world, features don't map so neatly to labels.** Going back to our e-commerce example, a feature like _time spent on the site_ in a session might not be able to perfectly partition the classes even at any threshold.
+**But in the real world, features don't map so neatly to labels.** Going back to our e-commerce example, a feature like _time spent on the site_ in a session might not be able to perfectly partition the classes at any threshold.
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/partitioning3.png">
@@ -67,7 +69,7 @@ Below is a visual representation of the Gini impurity as a function of $p_\check
 
 When identifying rules to partition our classes, then, we can simply **select a split such that we _minimize the weighted Gini impurity_ of the subsets.** (Each subset has its own impurity, so we take the average weighted by the number of samples in each subset.) For a given feature, we can split the data on all possible values of that feature, record the weighted Gini impurity of the subsets, and then select the feature value that resulted in the lowest impurity.
 
-Below, splitting the feature _Age of account_ on 35 days best separates users who buy a product from those who don't (in our fake dataset).
+Below, splitting the feature _Age of account_ on 35 days best separates users who buy a product from those who don't (in an imaginary dataset).
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/gini_split.png" height="70%" width="70%">
@@ -81,14 +83,14 @@ We can repeat this process for all features and **select the feature whose optim
 
 **Splitting on _Session length > 5 min_ therefore becomes the first fork in our decision tree.** We then repeat our process of iterating through features and values and choosing the feature that best partitions the data for each subset, then _their_ subsets, and so on until we either have perfectly partitioned data or our tree reaches a maximum allowed depth. (More on that in the next section.)
 
-Below is the tree we saw earlier but with the training data displayed in each node. Notice how the positive and negative classes become progressively isolated as we move down the tree. Once we reach the bottom of the tree, the leaf nodes output the majority class -- the _only_ class, in our case -- in their data subset.
+Below is the tree we saw earlier but with the training data displayed in each node. Notice how the positive and negative classes become progressively separated as we move down the tree. Once we reach the bottom of the tree, the leaf nodes output the majority class -- the _only_ class, in our case -- in their data subset.
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/tree_data.png" height="70%" width="70%">
 </center>
 
 ### Random forests
-The decision tree above partitions the data until the subsets contain only labels of one class (i.e., Gini impurity = 0). While this maximizes our model's ability to explain its training data, we risk **overfitting** our model to our data. **Think of it like the model _memorizing_ every feature-label combination rather than learning the _underlying patterns_.** An overfit model struggles to generalize to new data, which is usually our goal in the first place.
+The decision tree above partitions the data until the subsets contain only labels of one class (i.e., Gini impurity = 0). While this maximizes our model's ability to explain its training data, we risk **overfitting** our model to our data. **Think of it like the model _memorizing_ every feature-label combination rather than learning the _underlying patterns_.** An overfit model struggles to generalize to new data, which is usually our goal with modeling in the first place.
 
 There are a few ways to combat overfitting. One option is to **limit the depth of the tree**. If we limited the above tree to only two levels, for example, we would end the left branch at the _Is frequent shopper_ split.
 
@@ -100,9 +102,13 @@ The leaf nodes on the left branch now have mixed labels in their subsets. Allowi
 
 Limiting tree depth works well, but we can pair it with an even stronger strategy: [**ensemble learning**](http://www.scholarpedia.org/article/Ensemble_learning). In machine learning -- [and in animal collectives]({{  site.baseurl }}/Collective-behavior) -- **aggregating a _set_ of predictions often achieves higher accuracy than any individual prediction.** Errors in individual models cancel out, allowing a clearer look at the underlying patterns in the data being modeled.
 
+<center>
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/ensemble.png">
+</center>
+
 This sounds great, but there needs to be _variation_ in model predictions for an ensemble to be useful. The algorithm we described in the last section -- splitting on all values of all features to get the lowest Gini impurity -- is deterministic. For a given dataset, our algorithm always outputs the same decision tree<sup>[[1]](#1-random-forests)</sup>, so training 10 or 100 trees as an ensemble wouldn't actually accomplish anything. So how is a forest any better than an individual tree?
 
-This is where _randomness_ comes in. Both _the way our data is split_ and _the data itself_ varies between trees in a random forest, allowing for variation in model predictions and greater protection against overfitting.
+**This is where _randomness_ comes in.** Both _the way our data is split_ and _the data itself_ varies between trees in a random forest, allowing for variation in model predictions and greater protection against overfitting.
 
 Let's start with the data. We can protect against outliers hijacking our model with meaningless correlations by [bootstrapping](https://en.wikipedia.org/wiki/Bootstrapping_(statistics)) our data, or sampling with replacement. The idea is that outliers are rare, so they're less likely to be randomly selected than samples reflecting genuine relationships between features and labels. Bootstrapping lets us give each decision tree in our forest a slightly different dataset that should still contain the same general trends.
 
@@ -524,7 +530,6 @@ We can see that our single decision tree had an accuracy of 62%, above the avera
 Josh Starmer's [excellent video on how decision trees are built](https://www.youtube.com/watch?v=_L39rN6gz7Y)
 
 
-In contrast to models like logistic regression where the output is an equation, the algorithm is [nonparametric](https://machinelearningmastery.com/parametric-and-nonparametric-machine-learning-algorithms/), meaning it doesn't make strong assumptions on the relationship between features and labels. This means that trees are free to grow in whatever way best describes the dataset they're given.
 
 
 
