@@ -95,10 +95,10 @@ The decision tree above partitions the data until the subsets contain only label
 There are a few ways to combat overfitting. One option is to **limit the depth of the tree**. If we limited the above tree to only two levels, for example, we would end the left branch at the _Is frequent shopper_ split.
 
 <center>
-<img src="{{  site.baseurl  }}/images/projects/decision_tree/tree_data2.png" height="60%" width="60%">
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/tree_data2.png" height="65%" width="65%">
 </center>
 
-The leaf nodes on the left branch now have mixed labels in their subsets. Allowing for this "impurity" might seem suboptimal, but it's a strong defense against noisy features: **if _Time idle_ and _Age of account_ were actually only correlated with our labels due to chance, a model that excluded those features would be better at generalizing to new data.**
+The leaf nodes on the left branch now have mixed labels in their subsets. Allowing for this "impurity" might seem suboptimal, but it's a strong defense against noisy features: **if _Time idle_ and _Age of account_ had predictive power in our training data just due to chance, a model that excluded those features would be better at generalizing to new data.**
 
 Limiting tree depth works well, but we can pair it with an even stronger strategy: [**ensemble learning**](http://www.scholarpedia.org/article/Ensemble_learning). In machine learning -- [and in animal collectives]({{  site.baseurl }}/Collective-behavior) -- **aggregating a _set_ of predictions often achieves higher accuracy than any individual prediction.** Errors in individual models cancel out, allowing a clearer look at the underlying patterns in the data being modeled.
 
@@ -108,9 +108,9 @@ Limiting tree depth works well, but we can pair it with an even stronger strateg
 
 This sounds great, but there needs to be _variation_ in model predictions for an ensemble to be useful. The algorithm we described in the last section -- splitting on all values of all features to get the lowest Gini impurity -- is deterministic. For a given dataset, our algorithm always outputs the same decision tree<sup>[[1]](#1-random-forests)</sup>, so training 10 or 100 trees as an ensemble wouldn't actually accomplish anything. So how is a forest any better than an individual tree?
 
-**This is where _randomness_ comes in.** Both _the way our data is split_ and _the data itself_ varies between trees in a random forest, allowing for variation in model predictions and greater protection against overfitting.
+This is where _randomness_ comes in. **Both _the way our data is split_ and _the data itself_ varies between trees in a random forest**, allowing for variation in model predictions and greater protection against overfitting.
 
-Let's start with the data. We can protect against outliers hijacking our model with meaningless correlations by [bootstrapping](https://en.wikipedia.org/wiki/Bootstrapping_(statistics)) our data, or sampling with replacement. The idea is that outliers are rare, so they're less likely to be randomly selected than samples reflecting genuine relationships between features and labels. Bootstrapping lets us give each decision tree in our forest a slightly different dataset that should still contain the same general trends.
+Let's start with the data. We can protect against outliers hijacking our model with meaningless correlations by [**bootstrapping**](https://en.wikipedia.org/wiki/Bootstrapping_(statistics)) our data, or _sampling with replacement_. The idea is that outliers are rare, so they're less likely to be randomly selected than samples reflecting genuine relationships between features and labels. Bootstrapping lets us give each decision tree in our forest a slightly different dataset that should **still contain the same general trends.**
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/bootstrap.png" height="70%" width="70%">
@@ -118,22 +118,22 @@ Let's start with the data. We can protect against outliers hijacking our model w
 
 The second way is that random forests randomly select only a subset of the features when evaluating how to split the data. scikit-learn's `RandomForestClassifier`, [for example](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html), only considers the square root of the number of features when searching for the thresholds that minimize Gini impurity.
 
-These methods might seem strange -- why wouldn't we use all our features, and why would we  purposely duplicate and drop rows in our data? And indeed, each individual tree we produce this way typically has significantly _worse_ predictive power. But when we combine 100 of these Swiss-cheese trees, a surprising result emerges: a forest that is collectively more accurate than our original decision trees.
+These methods might seem strange -- why wouldn't we use all our features, and why would we  purposely duplicate and drop rows in our data? And indeed, each individual tree we produce this way often has significantly _worse_ predictive power than a normal decision tree. But when we aggregate dozens of these Swiss-cheese trees, a surprising result emerges: a forest that is collectively _more accurate_ than our original decision trees.
 
 ## Implementation
 Let's now implement a random forest in Python to see for ourselves. We'll start with the nodes of a tree, followed by a decision tree and finally a random forest.
 
-### Tree Nodes
-Let's start with a `Node` class that will serve as a node in our decision tree. The class will have the following attributes used for **training**:
+### Node
+Let's start with a class that will serve as a node in our decision tree. The class will have the following attributes used for **training**:
 * A subset of data (or entire dataset for the root node)
-* The proportion of positive labels and Gini impurity of this subset.
-* Pointers to left and right child nodes, set to `None` if the node is a leaf.
+* The proportion of positive labels and Gini impurity of this subset
+* Pointers to left and right child nodes, set to `None` if the node is a leaf
 
 The class will also have the following attributes for **classifying new data**:
 * A feature name and threshold, used to point the input towards the left or right child node (if the node is not a leaf)
 * Which label to return (if the node is a leaf)
 
-We can construct a `Node` class that meets these criteria with the below code. While the [source code in GitHub](https://github.com/mgsosna/ML_projects/tree/master/random_forest) has docstrings and input validation, I'll just share the bare minimum here for readability. Note that we'll call this file `node.py` and reference it later.
+We can construct a `Node` class that meets these criteria with the below code. While the [source code in GitHub](https://github.com/mgsosna/ML_projects/tree/master/random_forest) has more thorough docstrings and input validation, I'll share a slimmed down version here for readability. Note that we'll call this file `node.py` and reference it in later files.
 
 {% include header-python.html %}
 ```python
@@ -166,9 +166,9 @@ class Node:
 
     def _set_pk(self) -> float:
         """
-        Sets pk, the proportion of samples that are of the positive class.
-        Assumes samples is a list of ints, where 1 is the positive class
-        and 0 is the negative class.
+        Sets pk, the prop samples that are the positive class.
+        Assumes samples are an array of ints, where 1 is the positive
+        class and 0 is the negative class.
         """
         return np.mean(self.df[self.target_col].values)
 
@@ -181,13 +181,12 @@ class Node:
 
 So far the code is fairly lightweight. We instantiate the node by specifying a dataframe (`df`) and the column containing labels (`target_col`). We create empty attributes for the left and right child nodes (`self.left`, `self.right`) and the feature and threshold values used for inference. Finally, we calculate $p_k$ (the proportion of 1's in target column) and the Gini impurity with the `_set_pk` and `_set_gini` methods, respectively.
 
-Now let's add the logic for iterating through the values of a feature and identifying the threshold that minimizes the Gini impurity in the child nodes.
+Now let's add the logic for iterating through the values of a feature and identifying the threshold that minimizes the Gini impurity in the child nodes. The function `split_on_feature` runs the helper function `_process_split` on each unique value in a feature. If any values are left after removing nulls (for leaf nodes, the list will be empty), we return the Gini impurity, feature threshold, and left and right child nodes for the split that resulted in the lowest impurity.
 
 {% include header-python.html %}
 ```python
 class Node:
     ...
-
     def split_on_feature(
         self,
         feature: str
@@ -201,23 +200,29 @@ class Node:
         values = []
 
         for thresh in self.df[feature].unique():
-            if thresh == self.df[feature].max():
-                pass
             values.append(self._process_split(feature, thresh))
 
         values = [v for v in values if v[1] is not None]
         if values:
             return min(values, key=lambda x: x[0])
         return None, None, None, None
+```
 
+Here's `_process_split`, which does the actual work. We split `self.df` on the feature threshold, end early if either child dataset is empty, create child nodes with the subsets, and finally calculate the weighted Gini impurity.
+
+{% include header-python.html %}
+```python
+class Node:
+    ...
     def _process_split(
         self,
         feature: str,
         threshold: int|float
     ) -> tuple[float, int|float, Self|None, Self|None]:
         """
-        Splits df on the feature threshold and generates nodes for the
-        data subsets.
+        Splits df on the feature threshold. Returns weighted Gini
+        impurity, inputted threshold, and child nodes. If split
+        results in empty subset, returns Gini impurity and None's.
         """
         df_lower = self.df[self.df[feature] <= threshold]
         df_upper = self.df[self.df[feature] > threshold]
@@ -259,6 +264,8 @@ print(node.split_on_feature('feature'))
 ### Decision tree
 The next step is to arrange nodes in a tree to best partition training data and most accurately classify new data. Let's start with the basic structure, then the ability to train the classifier (i.e., build the tree) and generate predictions. We store our `decision_tree.py` file in the same directory as `node.py` and import `Node` from the file.
 
+Our `DecisionTree` class begins with the root node, which is a `Node` we instantiate with `df` and `target_col`. `feature_select` controls the proportion of features we use when training the trees of a random forest; we'll default to 100% of features for the base decision tree class. `max_depth` specifies the maximum depth our tree can grow, which helps prevent overfitting.
+
 {% include header-python.html %}
 ```python
 import numpy as np
@@ -268,7 +275,7 @@ from .node import Node
 
 class DecisionTree:
     """
-    Tree of nodes.
+    Decision tree classifier, constructed with Nodes
     """
     def __init__(
         self,
@@ -278,13 +285,13 @@ class DecisionTree:
         max_depth: int = 4
     ) -> None:
         self.root = Node(df, target_col)
+        self.features = list(df)
+        self.features.remove(target_col)
         self.feature_select = feature_select
         self.max_depth = max_depth
 ```
 
-This tree begins with the root node, which is a `Node` we instantiate with `df` and `target_col`. `feature_select` controls the proportion of features we use when training the trees of a random forest; we'll default to 100% of features for the base decision tree class. `max_depth` specifies the maximum depth our tree can grow, which helps prevent overfitting.
-
-Now let's write the logic to process a split.
+Now let's write the logic to build the tree. Proving that all that Leetcode I studied is useful outside of just coding interviews, we use a stack to perform a depth-first traversal, iteratively calling `_process_node` on each node and appending its children to the stack. Once we've processed all nodes, we return our `DecisionTree` instance.
 
 {% include header-python.html %}
 ```python
@@ -292,28 +299,31 @@ class DecisionTree:
     ...
     def build_tree(self) -> None:
         """
-        Builds tree using depth-first traversal. If verbose, prints
-        the node depths as the tree is being built.
+        Builds tree using depth-first traversal
         """
-        features = list(self.root.df)
-        features.remove(self.root.target_col)
-
         stack = [(self.root, 0)]
 
         while stack:
             current_node, depth = stack.pop()
 
             if depth <= self.max_depth:
-                left, right = self._process_node(current_node, features)
+                left, right = self._process_node(current_node)
 
                 if left and right:
                     current_node.left = left
                     current_node.right = right
-                    stack.append((left, depth+1))
                     stack.append((right, depth+1))
+                    stack.append((left, depth+1))
 
         return self
+```
 
+What actually happens in `_process_node`? We start by randomly selecting our features (or just all of them if `self.feature_select` is 1.0), followed by iterating through the features and calling the node's `split_on_feature` method to find the optimal split for each feature. We then find the feature whose split resulted in the lowest Gini impurity in the child nodes and compare it to our current impurity. If the best split resulted in a lower impurity, we return the child nodes; if not, we return `None` to indicate we should stop traversing.
+
+{% include header-python.html %}
+```python
+class DecisionTree:
+    ...
     def _process_node(
         self,
         node: Node,
@@ -329,8 +339,8 @@ class DecisionTree:
         # self.feature_select = 1.0 (default).
         features = list(
             np.random.choice(
-                features,
-                int(self.feature_select*len(features)),
+                self.features,
+                int(self.feature_select*len(self.features)),
                 replace=False
             )
         )
@@ -360,7 +370,7 @@ class DecisionTree:
         return None, None
 ```
 
-Now for classification.
+The above code allows us to build a tree. Now let's write the code for generating predictions.
 
 {% include header-python.html %}
 ```python
