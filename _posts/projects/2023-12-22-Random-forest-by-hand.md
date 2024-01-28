@@ -291,7 +291,7 @@ class DecisionTree:
         self.max_depth = max_depth
 ```
 
-Now let's write the logic to build the tree. Proving that all that Leetcode I studied is useful outside of just coding interviews, we use a stack to perform a depth-first traversal, iteratively calling `_process_node` on each node and appending its children to the stack. Once we've processed all nodes, we return our `DecisionTree` instance.
+Now let's write the logic to build the tree. Proving that all that Leetcode I studied is useful outside of just coding interviews, we use a stack to perform a depth-first traversal, iteratively calling `_process_node` on each node and appending its children to the stack. We also keep an eye on our current depth to ensure we don't exceed `self.max_depth`. Once we've processed all nodes, we return our `DecisionTree` instance.
 
 {% include header-python.html %}
 ```python
@@ -318,7 +318,7 @@ class DecisionTree:
         return self
 ```
 
-What actually happens in `_process_node`? We start by randomly selecting our features (or just all of them if `self.feature_select` is 1.0), followed by iterating through the features and calling the node's `split_on_feature` method to find the optimal split for each feature. We then find the feature whose split resulted in the lowest Gini impurity in the child nodes and compare it to our current impurity. If the best split resulted in a lower impurity, we return the child nodes; if not, we return `None` to indicate we should stop traversing.
+What actually happens in `_process_node`? We start by randomly selecting a subset of features (or just all of them if `self.feature_select` is 1.0), followed by iterating through those features and calling the node's `split_on_feature` method to find that feature's optimal split. We then find the feature whose split resulted in the lowest Gini impurity in the child nodes and compare it to our current node's impurity. If the best split resulted in a lower impurity, we return the child nodes; if not, we return `None` to indicate we should stop traversing.
 
 {% include header-python.html %}
 ```python
@@ -371,6 +371,7 @@ class DecisionTree:
 ```
 
 The above code allows us to build a tree. Now let's write the code for generating predictions.
+Our `classify` function is just a wrapper around the helper `_classify` and lets us generate predictions on a dataframe of feature vectors (rather than just one at a time). The real work is done in `_classify`, which recursively moves to the left or right child node depending on how the feature vector compares to the node's threshold. A leaf node has `None` for its `feature` and `threshold` attributes, so we then return a label of `1` if the node's $p_k$ is greater than 0.5, else `0`.
 
 {% include header-python.html %}
 ```python
@@ -401,9 +402,10 @@ class DecisionTree:
         return self._classify(node.right, features)
 ```
 
-
 ### Random Forest
-Now the random forest.
+We have everything we need for a decision tree classifier! The hardest work -- by far -- is behind us. Extending our classifier to a random forest just requires generating multiple trees on bootstrapped data, since we've already implemented randomized feature selection in `_process_node`.
+
+So let's create a `random_forest.py` file that contains a `RandomForest` class. As always, we instantiate the class with a dataframe (`df`) and target column, and like the `DecisionTree` class we have a `feature_select` and `max_depth` parameter. Instantiation now also takes an `n_trees` parameter.
 
 {% include header-python.html %}
 ```python
@@ -431,7 +433,7 @@ class RandomForest:
         self.forest = []
 ```
 
-Training is straightforward. We just do stuff. Note that this code is slow because we sequentially train trees. Because each one is independent, we could parallelize this.
+Training is straightforward: we create `n_trees` bootstrapped dataframes, instantiate a `DecisionTree` for each one, then call `.build_tree` to train each decision tree.
 
 {% include header-python.html %}
 ```python
@@ -441,7 +443,6 @@ class RandomForest:
         """
         Fit the forest to self.df
         """
-        print("Bootstrapping data...")
         bootstrap_dfs = [self._bootstrap() for _ in range(self.n_trees)]
         self.forest = [
             DecisionTree(
@@ -452,13 +453,18 @@ class RandomForest:
             )
             for bdf in bootstrap_dfs
         ]
-        print("Building trees...")
         self.forest = [tree.build_tree() for tree in self.forest]
-        print(f"Trained forest with {self.n_trees} trees.")
         return None
+
+    def _bootstrap(self) -> pd.DataFrame:
+        """
+        Sample rows from self.df with replacement
+        """
+        return self.df.sample(len(self.df), replace=True)
 ```
 
-Classification is also straightforward...
+Classification is also simple: we have each tree in the forest classify the inputted `feature_df`, then return the most common predicted label for each row. I found that the easiest way to do this was to cast the `preds` list to a dataframe and then take the mode.
+
 ```python
 class RandomForest
     ...
@@ -468,72 +474,25 @@ class RandomForest
         generates a predicted label and the most common label for
         each feature vector is returned.
         """
-        if not self.forest:
-            raise ValueError("RandomForest must first be trained.")
         preds = pd.DataFrame(
           [tree.classify(feature_df) for tree in self.forest]
         )
-
         # Return most common predicted label
         return list(preds.mode().iloc[0])
-
-    def _bootstrap(self) -> pd.DataFrame:
-        """
-        Sample rows from self.df with replacement
-        """
-        return self.df.sample(len(self.df), replace=True)
 ```
 
-If we do all this, we can see something neat. If we run [run.py](https://github.com/mgsosna/ML_projects/blob/master/random_forest/run.py), we can compare the accuracies of our `DecisionTree` classifier, the average tree in a `RandomForest`, and the full `RandomForest`. Below, `train_df` has 400 rows and 100 columns and `test_df` has 100 rows and 100 columns.
+And... that's it! If we run the script [run.py](https://github.com/mgsosna/ML_projects/blob/master/random_forest/run.py), we can compare the accuracies of our `DecisionTree` classifier, the average tree in a `RandomForest`, the full `RandomForest`, and scikit-learn's `RandomForestClassifier` for good measure. The results will vary by dataset, number of trees per forest, etc., but we can see that our lone decision tree has higher accuracy than the average tree in the forest, and that the full random forest is substantially stronger than individual trees. Unsurprisingly, scikit-learn has the highest accuracy... but we got fairly close!
 
-{% include header-python.html %}
-```python
-# 1. Decision Tree
-print("1. Fitting a decision tree")
-decision_tree = DecisionTree(train_df, target_col='label')
-decision_tree.build_tree()
-tree_preds = decision_tree.classify(test_df)
-tree_accuracy = round(
-  accuracy_score(test_df['label'], tree_preds), 3
-)
-
-# 2. Random Forest
-print("2. Fitting a random forest")
-forest = RandomForest(train_df, target_col='label', n_trees=50)
-forest.train()
-forest_preds = forest.classify(test_df)
-forest_accuracy = round(
-  accuracy_score(test_df['label'], forest_preds), 3
-)
-
-# Get accuracy of average tree in forest
-tree_accs = []
-for i in range(forest.n_trees):
-    forest_tree_preds = forest.forest[i].classify(test_df)
-    tree_accs.append(
-      accuracy_score(test_df['label'], forest_tree_preds)
-    )
-forest_tree_accuracy = np.mean(tree_accs).round(3)
-
-# Display results
-print("Accuracy")
-print(f" * Single decision tree: {tree_accuracy}")
-print(f" * Average random forest tree: {forest_tree_accuracy}")
-print(f" * Full random forest: {forest_accuracy}")
-
-# Generating train and test data
-# 1. Fitting a decision tree
-# 2. Fitting a random forest
-# Bootstrapping data...
-# Building trees...
-# Trained forest with 50 trees.
-# Accuracy
-#  * Single decision tree: 0.62
-#  * Average random forest tree: 0.578
-#  * Full random forest: 0.8
+{% include header-bash.html %}
+```bash
+Accuracy
+ * Single decision tree:   0.61
+ * Avg random forest tree: 0.595
+ * Full random forest:     0.81
+ * Scikit-learn forest:    0.89
 ```
 
-We can see that our single decision tree had an accuracy of 62%, above the average accuracy of 58% trees in our forest. But the entire random forest had an accuracy of 80%.
+# Conclusions
 
 
 
