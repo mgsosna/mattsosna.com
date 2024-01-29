@@ -1,7 +1,7 @@
 ---
 layout: post
 author: matt_sosna
-title: Building a Random Forest by Hand
+title: Building a Random Forest by Hand in Python
 tags: machine-learning
 ---
 
