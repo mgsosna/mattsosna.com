@@ -58,7 +58,7 @@ Here, $p_k$ is the probability of a randomly-drawn sample belonging to class $k$
 
 $$G = 1 - {p_k}^2 - (1-p_k)^2$$
 
-Below is a visual representation of the Gini impurity as a function of $p_\checkmark$, the probability of randomly selecting a positive label from the set. (We've just replaced $p_k$ with $p_\checkmark$ to indicate that the checkmarks are the positive class.) The lowest impurity is when the elements in the set are either all _not_ checkmarks (i.e., x's) or all checkmarks. The impurity peaks when we have equal numbers of x's and checkmarks.
+Below is a visual representation of the Gini impurity as a function of $p_\checkmark$, the probability of randomly selecting a positive label from the set.<sup>[[1]](#1-decision-tree-training)</sup> (We've just replaced $p_k$ with $p_\checkmark$ to indicate that the checkmarks are the positive class.) The lowest impurity is when the elements in the set are either all _not_ checkmarks (i.e., x's) or all checkmarks. The impurity peaks when we have equal numbers of x's and checkmarks.
 
 <center>
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/gini_impurity2.png" height="80%" width="80%">
@@ -106,7 +106,7 @@ Limiting tree depth works well, but we can pair it with an even stronger strateg
 <img src="{{  site.baseurl  }}/images/projects/decision_tree/ensemble.png">
 </center>
 
-This sounds great, but there needs to be _variation_ in model predictions for an ensemble to be useful. The algorithm we described in the last section -- splitting on all values of all features to get the lowest Gini impurity -- is deterministic. For a given dataset, our algorithm always outputs the same decision tree<sup>[[1]](#1-random-forests)</sup>, so training 10 or 100 trees as an ensemble wouldn't actually accomplish anything. So how is a forest any better than an individual tree?
+This sounds great, but there needs to be _variation_ in model predictions for an ensemble to be useful. The algorithm we described in the last section -- splitting on all values of all features to get the lowest Gini impurity -- is deterministic. For a given dataset, our algorithm always outputs the same decision tree<sup>[[2]](#2-random-forests)</sup>, so training 10 or 100 trees as an ensemble wouldn't actually accomplish anything. So how is a forest any better than an individual tree?
 
 This is where _randomness_ comes in. **Both _the way our data is split_ and _the data itself_ varies between trees in a random forest**, allowing for variation in model predictions and greater protection against overfitting.
 
@@ -481,7 +481,7 @@ class RandomForest
         return list(preds.mode().iloc[0])
 ```
 
-And... that's it! If we run the script [run.py](https://github.com/mgsosna/ML_projects/blob/master/random_forest/run.py), we can compare the accuracies of our `DecisionTree` classifier, the average tree in a `RandomForest`, the full `RandomForest`, and scikit-learn's `RandomForestClassifier` for good measure. The results will vary by dataset, number of trees per forest, etc., but we can see that our lone decision tree has higher accuracy than the average tree in the forest, and that the full random forest is substantially stronger than individual trees. Unsurprisingly, scikit-learn has the highest accuracy... but we got fairly close!
+And... that's it! If we run the script [run.py](https://github.com/mgsosna/ML_projects/blob/master/random_forest/run.py), we can compare the accuracies of our `DecisionTree` classifier, the average tree in a `RandomForest`, the full `RandomForest`, and scikit-learn's `RandomForestClassifier` for good measure. The results will vary by dataset, number of trees per forest, etc., but we can see that our lone decision tree has higher accuracy than the average tree in the forest, and that the full random forest is substantially stronger than individual trees. Unsurprisingly, scikit-learn has the highest accuracy... but we didn't do too badly!
 
 {% include header-bash.html %}
 ```bash
@@ -493,19 +493,16 @@ Accuracy
 ```
 
 # Conclusions
+In this post, we covered one of the most popular and powerful algorithms in machine learning: the random forest. We started with the theory, explaining how decision trees use metrics such as Gini impurity to identify the value of a feature that best splits a dataset. We then showed how we can build a tree by iteratively identifying the feature whose optimal split most reduces Gini impurity until the classes are either perfectly separated or we reach a maximum accepted depth. We explained how a random forest is constructed with dozens of decision trees, random feature selection, and bootstrapped datasets. Finally, we wrote some code to test the theory.
 
-
-
-Josh Starmer's [excellent video on how decision trees are built](https://www.youtube.com/watch?v=_L39rN6gz7Y)
-
-
-
-
-
-
+Thanks for reading!<br>
+Matt
 
 # Footnotes
-#### 1. [Random forests](#random-forests)
+#### 1. [Decision tree training](#decision-tree-training)
+This figure was a serious labor of love. Figuring out how to get the curve to transition from one color to another was tricky, but surprisingly the hardest part was dealing with the spacing of the x's and checkmarks to keep them cleanly within the circles but not too bunched up. I changed the icons and colors of this figure so many times that I ended up [writing a script](https://github.com/mgsosna/python-art/tree/main/color-transition) to generate it.
+
+#### 2. [Random forests](#random-forests)
 You can see for yourself how `sklearn` outputs identical decision trees for a given dataset with the below code. Note that we need to specify the same `random_state`.
 
 {% include header-python.html %}
