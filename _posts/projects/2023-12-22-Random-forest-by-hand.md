@@ -502,6 +502,12 @@ Matt
 #### 1. [Decision tree training](#decision-tree-training)
 This figure was a serious labor of love. Figuring out how to get the curve to transition from one color to another was tricky, but surprisingly the hardest part was dealing with the spacing of the x's and checkmarks to keep them cleanly within the circles but not too bunched up. I changed the icons and colors of this figure so many times that I ended up [writing a script](https://github.com/mgsosna/python-art/tree/main/color-transition) to generate it.
 
+Here's a version of the figure I had for a while before I thought I needed a clearer visual distinction from the toy example (partitioning shapes) and the main example in the post (e-commerce).
+
+<center>
+<img src="{{  site.baseurl  }}/images/projects/decision_tree/gini_impurity.png" height="75%" width="75%">
+</center>
+
 #### 2. [Random forests](#random-forests)
 You can see for yourself how `sklearn` outputs identical decision trees for a given dataset with the below code. Note that we need to specify the same `random_state`.
 
