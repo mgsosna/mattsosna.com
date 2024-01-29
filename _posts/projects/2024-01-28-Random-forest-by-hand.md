@@ -495,6 +495,8 @@ Accuracy
 # Conclusions
 In this post, we covered one of the most popular and powerful algorithms in machine learning: the random forest. We started with the theory, explaining how decision trees use metrics such as Gini impurity to identify the value of a feature that best splits a dataset. We then showed how we can build a tree by iteratively identifying the feature whose optimal split most reduces Gini impurity until the classes are either perfectly separated or we reach a maximum accepted depth. We explained how a random forest is constructed with dozens of decision trees, random feature selection, and bootstrapped datasets. Finally, we wrote some code to test the theory.
 
+If you're hungry for more, there are plenty of mini projects to try. You could visualize how the same feature can be used multiple times in a tree if it has a highly non-linear relationship with the target variable. We didn't cover regression in this post, but it wouldn't take much effort to modify our code to handle a continuous target. It'd be interesting to see how the predictive power of the vanilla `DecisionTree`, the average random forest tree, and the full forest diverge as a function of the amount of data and number of columns. Finally, if anyone wants to parallelize how `RandomForest` trains trees, feel free to submit a PR. 😜
+
 Thanks for reading!<br>
 Matt
 
