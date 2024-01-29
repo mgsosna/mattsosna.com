@@ -139,6 +139,9 @@ permalink: /blog/
 2. [Backend]({{  site.baseurl  }}/spamCatch-2)
 3. [Frontend & Deployment]({{  site.baseurl  }}/spamCatch-3)
 
+#### Machine Learning
+1. [Building a random forest by hand]({{  site.baseurl  }}/Random-forest-by-hand)
+
 ## Data engineering
 1. [SQL vs. NoSQL databases in Python]({{  site.baseurl  }}/SQL_vs_NoSQL/)
   - <span style="font-size: 12px">Featured in _Toward Data Science_'s [4/15/21 editors' picks](https://towardsdatascience.com/math-animations-irreproducible-research-and-telling-stories-with-data-d9b55aa3887b)</span>
