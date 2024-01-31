@@ -326,8 +326,7 @@ class DecisionTree:
     ...
     def _process_node(
         self,
-        node: Node,
-        features: list[str]
+        node: Node
     ) -> tuple[Node|None, Node|None]:
         """
         Iterates through features, identifies split that minimizes
