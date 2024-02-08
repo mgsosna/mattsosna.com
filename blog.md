@@ -141,6 +141,7 @@ permalink: /blog/
 
 #### Machine Learning
 1. [Building a random forest by hand]({{  site.baseurl  }}/Random-forest-by-hand)
+  - <span style="font-size: 12px">Featured in _Toward Data Science_'s [2/8/24 editors' picks](https://medium.com/p/e0bfb4934c7e)</span>
 
 ## Data engineering
 1. [SQL vs. NoSQL databases in Python]({{  site.baseurl  }}/SQL_vs_NoSQL/)
