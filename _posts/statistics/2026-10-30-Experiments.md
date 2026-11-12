@@ -1,19 +1,28 @@
 ---
 layout: post
-title: Experiment-driven design
+title: Experimentation under pressure
 author: matt_sosna
 tags: statistics
 ---
 
 _**Disclaimer:** The scenarios, metrics, and examples presented in this post are entirely fictionalized and for illustrative purposes only. They do not represent real-world data, internal operations, or specific policies of any past or current employer. All views, analyses, and opinions in this article are solely mine._
 
-It's Monday morning and your phone buzzes as you're sipping your morning coffee. "Have you seen the hacked accounts prevalence dashboard?" your coworker at Big Social Media Company messages you. "I think we have a problem."
+It's Monday morning and your phone buzzes as you're sipping your morning coffee. "Have you seen the hacked accounts dashboard?" your coworker at Big Social Media Company messages you. "I think we have a problem."
 
-You log in and see a worrying trend: the number of users reporting their accounts were hacked spiked over the weekend and just breached guardrail. Worse, it looks like the number is growing rapidly.
+You log in and see a critical alert: the number of users reporting their accounts were hacked just breached guardrail and is growing rapidly.
 
-<img src="{{  site.baseurl  }}/images/statistics/experiments/prevalence.png">
+<img src="{{  site.baseurl  }}/images/statistics/experiments/volume.png">
 
-Your mind starts racing. Could this be a bug? Daylight Savings Time was over the weekend, but this metric is hourly, not daily, so the extra hour shouldn't affect the values.
+Your mind starts racing. Could the metric calculation have a bug? Daylight Savings Time was over the weekend, but this metric is hourly, not daily, so the extra hour shouldn't affect the values.
+
+The spike implies an attack by bad actors bulk-compromising users' accounts. But when you look more closely you see that prevalence started inching upwards days ago, around Saturday. Could there have been a bad code change that bad actors discovered? Or are the upward trend and the spike unrelated?
+
+
+
+### Extra
+**Permutation tests**, from the famous ["There is only one test"](https://allendowney.blogspot.com/2011/05/there-is-only-one-test.html) article.
+
+Indeed, [most of your ideas will fail](https://medium.com/@atticusli/why-most-of-your-ideas-will-fail-90723698fa04), even when proposed by experts.
 
 
 
